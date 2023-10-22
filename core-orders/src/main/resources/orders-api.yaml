@@ -1,0 +1,700 @@
+openapi: 3.1.0
+info:
+  title: Orders Core API
+  version: 1.0.0
+  description: Enable orders platform
+  contact:
+    name: Gabriel M. Miranda
+    email: gabrielmirandatt@gmail.com
+    url: gabrielmirandatt@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+tags:
+  - name: customers
+    description: Handling customers
+  - name: orders
+    description: Handling orders
+  - name: products
+    description: Handling products
+paths:
+  /orders:
+    get:
+      tags:
+        - orders
+      summary: Find Orders By Query
+      description: Filter orders by parameters
+      operationId: findOrdersByQuery
+      parameters:
+        - name: status
+          in: query
+          description: Status values that need to be considered for filter
+          required: false
+          explode: true
+          schema:
+            type: string
+            item:
+              $ref: '#/components/schemas/OrderStatus'
+      responses:
+        '200':
+          $ref: '#/components/responses/OrderResponse'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - orders.read
+    post:
+      tags:
+        - orders
+      summary: Add New Order
+      description: Add a new order in the restaurant
+      operationId: addOrder
+      requestBody:
+        $ref: '#/components/requestBodies/OrderRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/OrderCreated'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - orders.write
+  /orders/{orderId}:
+    get:
+      tags:
+        - orders
+      summary: Find Order By ID
+      description: Returns a single order by ID
+      operationId: getOrderById
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of order to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/OrderResponse'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - orders.read
+  /orders/{orderId}/status/{status}:
+    post:
+      tags:
+        - orders
+      summary: Change Order Status
+      description: Changes order status given step
+      operationId: changeOrderStatus
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of order to change
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: path
+          description: status to change
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Ok
+        '412':
+          description: Invalid initial state
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - orders.read
+            - orders.write
+  /products:
+    get:
+      tags:
+        - products
+      summary: Find Products by Query
+      description: Filter products by parameters
+      operationId: findProductsByQuery
+      parameters:
+        - name: category
+          in: query
+          description: Category values that need to be considered for filter
+          required: false
+          explode: true
+          schema:
+            type: string
+            item:
+              $ref: '#/components/schemas/ProductCategory'
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductResponse'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - products.read
+    post:
+      tags:
+        - products
+      summary: Add Product in Menu
+      description: Add new product in the restaurant
+      operationId: addProduct
+      requestBody:
+        $ref: '#/components/requestBodies/ProductRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/ProductCreated'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - products.write
+  /products/{productId}:
+    get:
+      tags:
+        - products
+      summary: Find Product By ID
+      description: Returns a single product by ID
+      operationId: getProductById
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductResponse'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - products.read
+    delete:
+      tags:
+        - products
+      summary: Deletes a Product by ID
+      description: Deletes a product from menu
+      operationId: deleteProduct
+      parameters:
+        - name: productId
+          in: path
+          description: Product id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: OK
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - products.read
+            - products.write
+  /customers:
+    post:
+      tags:
+        - customers
+      summary: Create Customer
+      description: Create new customer
+      operationId: createCustomer
+      requestBody:
+        $ref: '#/components/requestBodies/CustomerRequest'
+      responses:
+        '204':
+          description: Ok
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - customers.write
+  /customers/{govId}:
+    get:
+      tags:
+        - customers
+      summary: Find Customer By GovId
+      description: Returns a single customer by govId
+      operationId: getCustomerById
+      parameters:
+        - name: govId
+          in: path
+          description: govId of customer to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/CustomerResponse'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - orders.read
+
+components:
+  schemas:
+    Address:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+    OrderStatus:
+      type: string
+      enum:
+        - created
+        - preparation
+        - packaging
+        - pickup
+        - delivery
+        - completed
+    ProductCategory:
+      type: string
+      enum:
+        - burger
+        - accompaniment
+        - dessert
+        - drink
+
+  requestBodies:
+    OrderItemReference:
+      description: Order item reference
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              productId:
+                type: string
+              extras:
+                type: array
+                items:
+                  $ref: '#/components/requestBodies/IngredientReference'
+              quantity:
+                type: number
+    IngredientReference:
+      description: Ingredient reference
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ingredientId:
+                type: string
+              quantity:
+                type: number
+    CustomerReference:
+      description: Customer reference
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              cpf:
+                type: string
+    OrderRequest:
+      description: Order object
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              customer:
+                type: object
+                item:
+                  $ref: '#/components/requestBodies/CustomerReference'
+              shippingAddress:
+                type: object
+                item:
+                  $ref: '#/components/schemas/Address'
+              notification:
+                type: string
+              items:
+                type: array
+                items:
+                  $ref: '#/components/requestBodies/OrderItemReference'
+          example:
+            customer:
+              govId: "03857341157"
+            shippingAddress:
+              street: Vila Olivo
+              city: Valinhos
+              state: SP
+              zip: 130111300
+            notification: "+5519996553790"
+            items:
+              - productId: 12345678-prdc-10092008
+                extras:
+                  - ingredientId: 12345678-ingr-10092008
+                    quantity: 2
+                quantity: 2
+    ProductRequest:
+      description: Product request object
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              category:
+                type: string
+                item:
+                  $ref: '#/components/schemas/ProductCategory'
+              price:
+                type: number
+              ingredients:
+                type: array
+                item:
+                  $ref: '#/components/requestBodies/IngredientReference'
+          example:
+            name: "X-Burguer"
+            description: "Carro chefe da casa"
+            category: "burger"
+            price: 10.90
+            ingredients:
+              - ingredientId: "12345678-ingr-10092008"
+                quantity: 2
+    IngredientRequest:
+      description: Ingredient request object
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              category:
+                type: string
+                item:
+                  $ref: '#/components/schemas/ProductCategory'
+              price:
+                type: number
+          example:
+            name: "Costela Meat"
+            category: "burger"
+            price: 2.90
+    CustomerRequest:
+      description: Customer object
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              govId:
+                type: string
+              name:
+                type: string
+              email:
+                type: string
+          example:
+            govId: "03857341157"
+            name: "Gabriel"
+            email: "gabrielmirandatt@gmail.com"
+  responses:
+    OrderCreated:
+      description: Order created response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ticketId:
+                type: string
+                example: "12345678"
+    ProductCreated:
+      description: Product created response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              productId:
+                type: string
+                example: "12345678-prdc-10092008"
+    IngredientCreated:
+      description: Ingredient created response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ingredientId:
+                type: string
+                example: "12345678-ingr-10092008"
+    ErrorResponse:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              type:
+                type: string
+              message:
+                type: string
+          example:
+            code: "ERR-CODE"
+            type: "422"
+            message: "Precondition Failed"
+    OrderExtraBody:
+      description: Extras item search response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ingredient:
+                type: object
+                item:
+                  $ref: '#/components/responses/IngredientResponse'
+              quantity:
+                type: number
+    OrderItemBody:
+      description: Order item search response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              itemId:
+                type: string
+              product:
+                type: object
+                item:
+                  $ref: '#/components/responses/ProductResponse'
+              extras:
+                type: array
+                item:
+                  $ref: '#/components/responses/OrderExtraBody'
+              quantity:
+                type: number
+    CustomerResponse:
+      description: Customer search response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              govId:
+                type: string
+              name:
+                type: string
+              email:
+                type: string
+          example:
+            govId: "03857341157"
+            name: "Gabriel"
+            email: "gabrielmirandatt@gmail.com"
+    OrderResponse:
+      description: Order search response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              ticketId:
+                type: string
+              status:
+                type: string
+                item:
+                  $ref: '#/components/schemas/OrderStatus'
+              price:
+                type: number
+              customer:
+                type: object
+                item:
+                  $ref: '#/components/responses/CustomerResponse'
+              shippingAddress:
+                type: object
+                item:
+                  $ref: '#/components/schemas/Address'
+              notification:
+                type: string
+              items:
+                type: array
+                items:
+                  $ref: '#/components/responses/OrderItemBody'
+          example:
+            id: "12345678-ordr-10092008"
+            ticketId: "12345678"
+            status: "created"
+            price: 20.50
+            customer:
+              govId: "03857341157"
+              name: "Gabriel"
+              email: "gabrielmirandatt@gmail.com"
+            shippingAddress:
+              street: "Vila Olivo"
+              city: "Valinhos"
+              state: "SP"
+              zip: "130111300"
+            notification: "+5519996553790"
+            items:
+              - itemId: "12345678-item-10092008"
+                product:
+                  id: "12345678-prdc-10092008"
+                  name: "X-Burger"
+                  description: "Carro chefe"
+                  category: "burger"
+                  price: 10.90
+                  ingredients:
+                    - id: "12345678-ingr-10092008"
+                      name: "Costela meat"
+                      category: "burger"
+                      price: 2.90
+                  extras:
+                    - ingredient:
+                        id: "12345678-ingr-10092008"
+                        name: "Costela meat"
+                        category: "burger"
+                        price: 2.90
+                      quantity: 1
+                quantity: 2
+    ProductResponse:
+      description: Product search response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              description:
+                type: string
+              ingredients:
+                type: array
+                item:
+                  $ref: '#/components/responses/IngredientResponse'
+              category:
+                type: string
+                item:
+                  $ref: '#/components/schemas/ProductCategory'
+              price:
+                type: number
+          example:
+            id: "12345678-prdc-10092008"
+            name: "X-Burger"
+            description: "Carro chefe"
+            category: "burger"
+            price: 10.90
+            ingredients:
+              - id: "12345678-ingr-10092008"
+                name: "Costela meat"
+                category: "burger"
+                price: 2.90
+    IngredientResponse:
+      description: Ingredient search response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              category:
+                type: string
+                item:
+                  $ref: '#/components/schemas/ProductCategory'
+              price:
+                type: number
+          example:
+            id: "12345678-ingr-10092008"
+            name: "Costela Meat"
+            category: "burger"
+            price: 2.90
+  securitySchemes:
+    hydra:
+      type: openIdConnect
+      openIdConnectUrl: 'https://competent-cori-vgu1750x6j.projects.oryapis.com/.well-known/openid-configuration'
+security:
+  - hydra:
+      - orders.write
+      - orders.read
+      - products.write
+      - products.read
+      - customers.write
+      - customers.read

@@ -1,0 +1,38 @@
+services:
+  mongodb:
+    container_name: orders-mongodb
+    image: 'mongo:latest'
+    environment:
+      - 'MONGO_INITDB_DATABASE=ordersdb'
+      - 'MONGO_INITDB_ROOT_PASSWORD=secret'
+      - 'MONGO_INITDB_ROOT_USERNAME=root'
+    ports:
+      - '27017'
+  postgres:
+    container_name: orders-postgres
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=ordersdb'
+      - 'POSTGRES_PASSWORD=secret'
+      - 'POSTGRES_USER=myuser'
+    ports:
+      - '5432'
+  localstack:
+    container_name: orders-localstack
+    image: 'localstack/localstack:latest'
+    environment:
+      - 'DEBUG=1'
+      - 'AWS_DEFAULT_REGION=sa-east-1'
+      - 'LOCALSTACK_HOSTNAME=localhost.localstack.cloud'
+      - 'LS_LOG=trace'
+    ports:
+      - '4510-4559'
+      - '4566'
+    volumes:
+      - 'localstack:/tmp/localstack'
+    networks:
+      default:
+        aliases:
+          - 'localhost.localstack.cloud'
+volumes:
+  localstack:
