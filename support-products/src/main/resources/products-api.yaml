@@ -1,0 +1,327 @@
+openapi: 3.1.0
+
+info:
+  title: Products Support API
+  version: 1.0.0
+  description: Enable products platform
+  contact:
+    name: Gabriel M. Miranda
+    email: gabrielmirandatt@gmail.com
+    url: gabrielmirandatt@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+
+tags:
+  - name: products
+    description: Handling products
+
+paths:
+  /products:
+    get:
+      tags:
+        - products
+      summary: Find Products by Query
+      description: Filter products by parameters
+      operationId: findProductsByQuery
+      parameters:
+        - name: category
+          in: query
+          description: Category values that need to be considered for filter
+          required: false
+          explode: true
+          schema:
+            type: string
+            item:
+              $ref: '#/components/schemas/ProductCategory'
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductResponse'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - products.read
+    post:
+      tags:
+        - products
+      summary: Add Product in Menu
+      description: Add new product in the restaurant
+      operationId: addProduct
+      requestBody:
+        $ref: '#/components/requestBodies/ProductRequest'
+      responses:
+        '201':
+          $ref: '#/components/responses/ProductCreated'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - products.write
+  /products/{productId}:
+    get:
+      tags:
+        - products
+      summary: Find Product By ID
+      description: Returns a single product by ID
+      operationId: getProductById
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/ProductResponse'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - products.read
+    delete:
+      tags:
+        - products
+      summary: Deletes a Product by ID
+      description: Deletes a product from menu
+      operationId: deleteProduct
+      parameters:
+        - name: productId
+          in: path
+          description: Product id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: OK
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - products.read
+            - products.write
+
+components:
+  schemas:
+    Address:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+    OrderStatus:
+      type: string
+      enum:
+        - created
+        - preparation
+        - packaging
+        - pickup
+        - delivery
+        - completed
+    ProductCategory:
+      type: string
+      enum:
+        - burger
+        - accompaniment
+        - dessert
+        - drink
+
+  requestBodies:
+    IngredientReference:
+      description: Ingredient reference
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ingredientId:
+                type: string
+              quantity:
+                type: number
+    ProductRequest:
+      description: Product request object
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              category:
+                type: string
+                item:
+                  $ref: '#/components/schemas/ProductCategory'
+              price:
+                type: number
+              ingredients:
+                type: array
+                item:
+                  $ref: '#/components/requestBodies/IngredientReference'
+          example:
+            name: "X-Burguer"
+            description: "Carro chefe da casa"
+            category: "burger"
+            price: 10.90
+            ingredients:
+              - ingredientId: "12345678-ingr-10092008"
+                quantity: 2
+    IngredientRequest:
+      description: Ingredient request object
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              category:
+                type: string
+                item:
+                  $ref: '#/components/schemas/ProductCategory'
+              price:
+                type: number
+          example:
+            name: "Costela Meat"
+            category: "burger"
+            price: 2.90
+
+  responses:
+    ProductCreated:
+      description: Product created response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              productId:
+                type: string
+                example: "12345678-prdc-10092008"
+    IngredientCreated:
+      description: Ingredient created response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              ingredientId:
+                type: string
+                example: "12345678-ingr-10092008"
+    ErrorResponse:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              type:
+                type: string
+              message:
+                type: string
+          example:
+            code: "ERR-CODE"
+            type: "422"
+            message: "Precondition Failed"
+    ProductResponse:
+      description: Product search response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              description:
+                type: string
+              ingredients:
+                type: array
+                item:
+                  $ref: '#/components/responses/IngredientResponse'
+              category:
+                type: string
+                item:
+                  $ref: '#/components/schemas/ProductCategory'
+              price:
+                type: number
+          example:
+            id: "12345678-prdc-10092008"
+            name: "X-Burger"
+            description: "Carro chefe"
+            category: "burger"
+            price: 10.90
+            ingredients:
+              - id: "12345678-ingr-10092008"
+                name: "Costela meat"
+                category: "burger"
+                price: 2.90
+    IngredientResponse:
+      description: Ingredient search response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              category:
+                type: string
+                item:
+                  $ref: '#/components/schemas/ProductCategory'
+              price:
+                type: number
+          example:
+            id: "12345678-ingr-10092008"
+            name: "Costela Meat"
+            category: "burger"
+            price: 2.90
+
+  securitySchemes:
+    hydra:
+      type: openIdConnect
+      openIdConnectUrl: 'https://competent-cori-vgu1750x6j.projects.oryapis.com/.well-known/openid-configuration'
+
+security:
+  - hydra:
+      - products.write
+      - products.read

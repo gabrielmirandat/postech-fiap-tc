@@ -1,0 +1,178 @@
+openapi: 3.1.0
+
+info:
+  title: Customers Support API
+  version: 1.0.0
+  description: Enable customers platform
+  contact:
+    name: Gabriel M. Miranda
+    email: gabrielmirandatt@gmail.com
+    url: gabrielmirandatt@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+
+tags:
+  - name: customers
+    description: Handling customers
+
+paths:
+  /customers:
+    post:
+      tags:
+        - customers
+      summary: Create Customer
+      description: Create new customer
+      operationId: createCustomer
+      requestBody:
+        $ref: '#/components/requestBodies/CustomerRequest'
+      responses:
+        '204':
+          description: Ok
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - customers.write
+  /customers/{govId}:
+    get:
+      tags:
+        - customers
+      summary: Find Customer By GovId
+      description: Returns a single customer by govId
+      operationId: getCustomerById
+      parameters:
+        - name: govId
+          in: path
+          description: govId of customer to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          $ref: '#/components/responses/CustomerResponse'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - orders.read
+
+components:
+  schemas:
+    AddressApiRef:
+      type: object
+      properties:
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zip:
+          type: string
+    OrderStatus:
+      type: string
+      enum:
+        - created
+        - preparation
+        - packaging
+        - pickup
+        - delivery
+        - completed
+    ProductCategory:
+      type: string
+      enum:
+        - burger
+        - accompaniment
+        - dessert
+        - drink
+
+  requestBodies:
+    CustomerReference:
+      description: Customer reference
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              cpf:
+                type: string
+    CustomerRequest:
+      description: Customer object
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              govId:
+                type: string
+              name:
+                type: string
+              email:
+                type: string
+          example:
+            govId: "03857341157"
+            name: "Gabriel"
+            email: "gabrielmirandatt@gmail.com"
+
+  responses:
+    ErrorResponse:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              type:
+                type: string
+              message:
+                type: string
+          example:
+            code: "ERR-CODE"
+            type: "422"
+            message: "Precondition Failed"
+    CustomerResponse:
+      description: Customer search response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              govId:
+                type: string
+              name:
+                type: string
+              email:
+                type: string
+          example:
+            govId: "03857341157"
+            name: "Gabriel"
+            email: "gabrielmirandatt@gmail.com"
+
+  securitySchemes:
+    hydra:
+      type: openIdConnect
+      openIdConnectUrl: 'https://competent-cori-vgu1750x6j.projects.oryapis.com/.well-known/openid-configuration'
+
+security:
+  - hydra:
+      - customers.write
+      - customers.read
