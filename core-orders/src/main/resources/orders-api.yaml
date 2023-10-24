@@ -124,8 +124,16 @@ paths:
       responses:
         '204':
           description: Ok
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
         '412':
           description: Invalid initial state
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
           $ref: '#/components/responses/ErrorResponse'
       security:
         - hydra:
@@ -161,7 +169,21 @@ components:
         - accompaniment
         - dessert
         - drink
-    OrderRequestItem:
+    OrderExtraRequest:
+      type: object
+      required:
+        - ingredientId
+        - quantity
+      properties:
+        ingredientId:
+          type: string
+          description: IngredientId of the extra
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 2
+          description: Quantity of extras of same ingredient
+    OrderItemRequest:
       type: object
       required:
         - productId
@@ -176,27 +198,13 @@ components:
           maximum: 3
           description: Extras ingredients of the product
           items:
-            $ref: '#/components/schemas/OrderRequestExtra'
+            $ref: '#/components/schemas/OrderExtraRequest'
         quantity:
           type: integer
           minimum: 1
           maximum: 10
           description: Quantity of same product with same extras
-    OrderRequestExtra:
-      type: object
-      required:
-        - ingredientId
-        - quantity
-      properties:
-        ingredientId:
-          type: string
-          description: IngredientId of the extra
-        quantity:
-          type: integer
-          minimum: 1
-          maximum: 2
-          description: Quantity of extras of same ingredient
-    OrderRequestCustomer:
+    OrderCustomerRequest:
       type: object
       required:
         - cpf
@@ -213,7 +221,7 @@ components:
           type: object
           description: Identified Customer in Order
           item:
-            $ref: '#/components/schemas/OrderRequestCustomer'
+            $ref: '#/components/schemas/OrderCustomerRequest'
         shippingAddress:
           type: object
           description: Address in case of delivery
@@ -226,7 +234,7 @@ components:
           type: array
           description: Items of the Order
           items:
-            $ref: '#/components/schemas/OrderRequestItem'
+            $ref: '#/components/schemas/OrderItemRequest'
     OrderCreated:
       type: object
       required:
@@ -235,6 +243,154 @@ components:
         ticketId:
           type: string
           description: Generated ticketId for the Order
+    IngredientResponse:
+      type: object
+      required:
+        - id
+        - name
+        - category
+        - price
+      properties:
+        id:
+          type: string
+          description: ID of the Ingredient
+        name:
+          type: string
+          description: Name of the Ingredient
+        category:
+          type: string
+          description: Category of the Ingredient
+          item:
+            $ref: '#/components/schemas/ProductCategoryDTO'
+        price:
+          type: number
+          format: double
+          description: Price of the ingredient
+          minimum: 0.1
+    ProductResponse:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - ingredients
+        - category
+        - price
+      properties:
+        id:
+          type: string
+          description: ID of the Product
+        name:
+          type: string
+          description: Name of the Product
+        description:
+          type: string
+          description: Description of the Product in menu
+        ingredients:
+          type: array
+          description: Ingredients of the Product
+          item:
+            $ref: '#/components/schemas/IngredientResponse'
+        category:
+          type: string
+          description: Category of the Product
+          item:
+            $ref: '#/components/schemas/ProductCategoryDTO'
+        price:
+          type: number
+          format: double
+          description: Price of the product
+          minimum: 0.1
+    CustomerResponse:
+      type: object
+      required:
+        - govId
+        - name
+        - email
+      properties:
+        govId:
+          type: string
+          description: GovId of the customer
+        name:
+          type: string
+          description: Name of the customer
+        email:
+          type: string
+          description: Email of the customer
+    OrderExtraResponse:
+      type: object
+      required:
+        - ingredient
+        - quantity
+      properties:
+        ingredient:
+          type: object
+          description: Extra ingredient of the product
+          item:
+            $ref: '#/components/schemas/IngredientResponse'
+        quantity:
+          type: number
+          description: Extra ingredient of the product
+    OrderItemResponse:
+      type: object
+      required:
+        - itemId
+        - product
+      properties:
+        itemId:
+          type: string
+          description: ID of the item
+        product:
+          type: object
+          description: Product of the item
+          item:
+            $ref: '#/components/schemas/ProductResponse'
+        extras:
+          type: array
+          description: Extras of the Product
+          item:
+            $ref: '#/components/schemas/OrderExtraResponse'
+    OrderResponse:
+      type: object
+      required:
+        - id
+        - ticketId
+        - status
+        - price
+        - items
+      properties:
+        id:
+          type: string
+          description: ID of the Order
+        ticketId:
+          type: string
+          description: ticketId of the item, sent to customer
+        status:
+          type: string
+          description: Status of the order
+          item:
+            $ref: '#/components/schemas/OrderStatusDTO'
+        price:
+          type: number
+          description: Price of the order
+        customer:
+          type: object
+          description: Identified customer of the order
+          item:
+            $ref: '#/components/schemas/CustomerResponse'
+        shippingAddress:
+          type: object
+          description: Delivery address of the customer
+          item:
+            $ref: '#/components/schemas/AddressDTO'
+        notification:
+          type: string
+          description: Mobile phone for additional notification
+        items:
+          type: array
+          description: Items of the Order
+          items:
+            $ref: '#/components/schemas/OrderItemResponse'
     ErrorResponse:
       type: object
       required:
@@ -295,87 +451,12 @@ components:
             code: "ERR-CODE"
             type: "422"
             message: "Precondition Failed"
-    # HERE - NEED TO REFERENCE OTHER FILES
-    OrderExtraBody:
-      description: Extras item search response
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              ingredient:
-                type: object
-                item:
-                  $ref: '#/components/responses/IngredientResponse'
-              quantity:
-                type: number
-    OrderItemBody:
-      description: Order item search response
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              itemId:
-                type: string
-              product:
-                type: object
-                item:
-                  $ref: '#/components/responses/ProductResponse'
-              extras:
-                type: array
-                item:
-                  $ref: '#/components/responses/OrderExtraBody'
-              quantity:
-                type: number
-    CustomerResponse:
-      description: Customer search response
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              govId:
-                type: string
-              name:
-                type: string
-              email:
-                type: string
-          example:
-            govId: "03857341157"
-            name: "Gabriel"
-            email: "gabrielmirandatt@gmail.com"
     OrderResponse:
       description: Order search response
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              id:
-                type: string
-              ticketId:
-                type: string
-              status:
-                type: string
-                item:
-                  $ref: '#/components/schemas/OrderStatusDTO'
-              price:
-                type: number
-              customer:
-                type: object
-                item:
-                  $ref: '#/components/responses/CustomerResponse'
-              shippingAddress:
-                type: object
-                item:
-                  $ref: '#/components/schemas/AddressDTO'
-              notification:
-                type: string
-              items:
-                type: array
-                items:
-                  $ref: '#/components/responses/OrderItemBody'
+            $ref: '#/components/schemas/OrderResponse'
           example:
             id: "12345678-ordr-10092008"
             ticketId: "12345678"
@@ -404,70 +485,13 @@ components:
                       name: "Costela meat"
                       category: "burger"
                       price: 2.90
-                  extras:
-                    - ingredient:
-                        id: "12345678-ingr-10092008"
-                        name: "Costela meat"
-                        category: "burger"
-                        price: 2.90
-                      quantity: 1
-                quantity: 2
-    ProductResponse:
-      description: Product search response
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              description:
-                type: string
-              ingredients:
-                type: array
-                item:
-                  $ref: '#/components/responses/IngredientResponse'
-              category:
-                type: string
-                item:
-                  $ref: '#/components/schemas/ProductCategoryDTO'
-              price:
-                type: number
-          example:
-            id: "12345678-prdc-10092008"
-            name: "X-Burger"
-            description: "Carro chefe"
-            category: "burger"
-            price: 10.90
-            ingredients:
-              - id: "12345678-ingr-10092008"
-                name: "Costela meat"
-                category: "burger"
-                price: 2.90
-    IngredientResponse:
-      description: Ingredient search response
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              category:
-                type: string
-                item:
-                  $ref: '#/components/schemas/ProductCategoryDTO'
-              price:
-                type: number
-          example:
-            id: "12345678-ingr-10092008"
-            name: "Costela Meat"
-            category: "burger"
-            price: 2.90
+                extras:
+                  - ingredient:
+                      id: "12345678-ingr-10092008"
+                      name: "Costela meat"
+                      category: "burger"
+                      price: 2.90
+                    quantity: 1
 
   securitySchemes:
     hydra:
@@ -478,7 +502,3 @@ security:
   - hydra:
       - orders.write
       - orders.read
-      - products.write
-      - products.read
-      - customers.write
-      - customers.read

@@ -41,7 +41,7 @@ paths:
         - hydra:
             - customers.write
   /customers/{govId}:
-    get:
+    head:
       tags:
         - customers
       summary: Find Customer By GovId
@@ -70,102 +70,77 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
       security:
         - hydra:
-            - orders.read
+            - customers.read
 
 components:
   schemas:
-    AddressApiRef:
+    CustomerDTO:
       type: object
+      required:
+        - govId
+        - name
+        - email
       properties:
-        street:
+        govId:
           type: string
-        city:
+          description: GovId of the customer
+        name:
           type: string
-        state:
+          description: Name of the customer
+        email:
           type: string
-        zip:
+          description: Email of the customer
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - type
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: Code of the error
+        type:
           type: string
-    OrderStatus:
-      type: string
-      enum:
-        - created
-        - preparation
-        - packaging
-        - pickup
-        - delivery
-        - completed
-    ProductCategory:
-      type: string
-      enum:
-        - burger
-        - accompaniment
-        - dessert
-        - drink
+          description: Type of the error
+        message:
+          type: string
+          description: Message of the error
 
   requestBodies:
-    CustomerReference:
-      description: Customer reference
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              cpf:
-                type: string
     CustomerRequest:
       description: Customer object
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              govId:
-                type: string
-              name:
-                type: string
-              email:
-                type: string
+            $ref: '#/components/schemas/CustomerDTO'
           example:
             govId: "03857341157"
             name: "Gabriel"
             email: "gabrielmirandatt@gmail.com"
 
   responses:
-    ErrorResponse:
-      description: Error response
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              type:
-                type: string
-              message:
-                type: string
-          example:
-            code: "ERR-CODE"
-            type: "422"
-            message: "Precondition Failed"
     CustomerResponse:
       description: Customer search response
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              govId:
-                type: string
-              name:
-                type: string
-              email:
-                type: string
+            $ref: '#/components/schemas/CustomerDTO'
           example:
             govId: "03857341157"
             name: "Gabriel"
             email: "gabrielmirandatt@gmail.com"
+    ErrorResponse:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "ERR-CODE"
+            type: "422"
+            message: "Precondition Failed"
 
   securitySchemes:
     hydra:
