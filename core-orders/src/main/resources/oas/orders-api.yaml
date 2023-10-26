@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.2
 
 info:
   title: Orders Core API
@@ -7,7 +7,7 @@ info:
   contact:
     name: Gabriel M. Miranda
     email: gabrielmirandatt@gmail.com
-    url: gabrielmirandatt@gmail.com
+    url: https://gabrielmirandatt.com
   license:
     name: Apache 2.0
     url: 'https://www.apache.org/licenses/LICENSE-2.0'
@@ -31,12 +31,14 @@ paths:
           required: false
           explode: true
           schema:
-            type: string
-            item:
-              $ref: '#/components/schemas/OrderStatusDTO'
+            $ref: '#/components/schemas/OrderStatusDTO'
       responses:
         '200':
-          $ref: '#/components/responses/OrderResponse'
+          description: Order search response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
         '401':
           $ref: '#/components/responses/ErrorResponse'
         '403':
@@ -55,10 +57,17 @@ paths:
       description: Add a new order in the restaurant
       operationId: addOrder
       requestBody:
-        $ref: '#/components/requestBodies/OrderRequest'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
       responses:
         '201':
-          $ref: '#/components/responses/OrderCreated'
+          description: Order created response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCreated'
         '401':
           $ref: '#/components/responses/ErrorResponse'
         '403':
@@ -83,11 +92,14 @@ paths:
           description: ID of order to return
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '200':
-          $ref: '#/components/responses/OrderResponse'
+          description: Order search response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
         '401':
           $ref: '#/components/responses/ErrorResponse'
         '403':
@@ -131,7 +143,6 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse'
         '412':
-          description: Invalid initial state
           $ref: '#/components/responses/ErrorResponse'
         '500':
           $ref: '#/components/responses/ErrorResponse'
@@ -220,13 +231,11 @@ components:
         customer:
           type: object
           description: Identified Customer in Order
-          item:
-            $ref: '#/components/schemas/OrderCustomerRequest'
+          $ref: '#/components/schemas/OrderCustomerRequest'
         shippingAddress:
           type: object
           description: Address in case of delivery
-          item:
-            $ref: '#/components/schemas/AddressDTO'
+          $ref: '#/components/schemas/AddressDTO'
         notification:
           type: string
           description: Cellphone for additional notification when ready
@@ -258,10 +267,8 @@ components:
           type: string
           description: Name of the Ingredient
         category:
-          type: string
+          $ref: '#/components/schemas/ProductCategoryDTO'
           description: Category of the Ingredient
-          item:
-            $ref: '#/components/schemas/ProductCategoryDTO'
         price:
           type: number
           format: double
@@ -289,13 +296,11 @@ components:
         ingredients:
           type: array
           description: Ingredients of the Product
-          item:
+          items:
             $ref: '#/components/schemas/IngredientResponse'
         category:
-          type: string
+          $ref: '#/components/schemas/ProductCategoryDTO'
           description: Category of the Product
-          item:
-            $ref: '#/components/schemas/ProductCategoryDTO'
         price:
           type: number
           format: double
@@ -326,8 +331,7 @@ components:
         ingredient:
           type: object
           description: Extra ingredient of the product
-          item:
-            $ref: '#/components/schemas/IngredientResponse'
+          $ref: '#/components/schemas/IngredientResponse'
         quantity:
           type: number
           description: Extra ingredient of the product
@@ -343,13 +347,11 @@ components:
         product:
           type: object
           description: Product of the item
-          item:
-            $ref: '#/components/schemas/ProductResponse'
+          $ref: '#/components/schemas/ProductResponse'
         extras:
           type: array
           description: Extras of the Product
-          item:
-            $ref: '#/components/schemas/OrderExtraResponse'
+          $ref: '#/components/schemas/OrderExtraResponse'
     OrderResponse:
       type: object
       required:
@@ -366,23 +368,17 @@ components:
           type: string
           description: ticketId of the item, sent to customer
         status:
-          type: string
+          $ref: '#/components/schemas/OrderStatusDTO'
           description: Status of the order
-          item:
-            $ref: '#/components/schemas/OrderStatusDTO'
         price:
           type: number
           description: Price of the order
         customer:
-          type: object
+          $ref: '#/components/schemas/CustomerResponse'
           description: Identified customer of the order
-          item:
-            $ref: '#/components/schemas/CustomerResponse'
         shippingAddress:
-          type: object
+          $ref: '#/components/schemas/AddressDTO'
           description: Delivery address of the customer
-          item:
-            $ref: '#/components/schemas/AddressDTO'
         notification:
           type: string
           description: Mobile phone for additional notification

@@ -33,16 +33,13 @@
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 		<swagger.version>2.2.17</swagger.version>
-		<swagger.generator.version>3.0.47</swagger.generator.version>
+		<openapi.generator.version>7.0.1</openapi.generator.version>
+		<mapper.version>2.4.4</mapper.version>
 	</properties>
 
 	<dependencies>
 
 		<!-- SPRING BOOT -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -71,20 +68,16 @@
 			<artifactId>swagger-annotations</artifactId>
 			<version>${swagger.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>io.swagger.core.v3</groupId>
-			<artifactId>swagger-models</artifactId>
-			<version>${swagger.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.swagger.codegen.v3</groupId>
-			<artifactId>swagger-codegen-maven-plugin</artifactId>
-			<version>${swagger.generator.version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>${mapper.version}</version>
 		</dependency>
 
 		<!-- TEST -->

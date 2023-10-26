@@ -21,30 +21,37 @@
         <plugins>
 
             <!-- OPENAPI -->
+            <!-- https://openapi-generator.tech/docs/generators/spring/ -->
             <plugin>
-                <groupId>io.swagger.codegen.v3</groupId>
-                <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>${swagger.generator.version}</version>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi.generator.version}</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/customers-api.yaml</inputSpec>
-                            <language>spring</language>
-                            <output>${project.build.directory}/generated-sources/</output>
-                            <generateSupportingFiles>false</generateSupportingFiles>
-                            <apiPackage>com.gabriel.customers.adapter.driver.api.controllers</apiPackage>
-                            <modelPackage>com.gabriel.customers.adapter.driver.api.controllers.models</modelPackage>
+                            <skipValidateSpec>false</skipValidateSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/oas/customers-api.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
                             <configOptions>
+                                <openApiNullable>false</openApiNullable>
                                 <interfaceOnly>true</interfaceOnly>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <unhandledException>true</unhandledException>>
+                                <useBeanValidation>true</useBeanValidation>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useOptional>true</useOptional>
+                                <useSwaggerUI>true</useSwaggerUI>
+                                <documentationProvider>springdoc</documentationProvider>
+                                <apiPackage>com.gabriel.customers.adapter.driver.api.controllers</apiPackage>
+                                <modelPackage>com.gabriel.customers.adapter.driver.api.controllers.models</modelPackage>
                             </configOptions>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
 
         <resources>
