@@ -2,7 +2,7 @@ package com.gabriel.orders.core.domain.services;
 
 import com.gabriel.orders.core.domain.entities.Order;
 
-public class OrderPricingService {
+public class OrderDiscountService {
     // This service might have methods to calculate prices, discounts, etc.
 
     public double calculateOrderTotal(Order order) {

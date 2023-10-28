@@ -23,6 +23,8 @@ public class CreateOrderUseCaseImpl implements CreateOrderUseCase {
         this.eventPublisher = eventPublisher;
     }
 
+    // validar
+
     @Override
     @Transactional
     public Order createOrder(CreateOrderCommand command) {

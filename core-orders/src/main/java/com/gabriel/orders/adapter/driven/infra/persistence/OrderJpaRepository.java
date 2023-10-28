@@ -1,4 +1,4 @@
-package com.gabriel.orders.adapter.driven.infra.repositories;
+package com.gabriel.orders.adapter.driven.infra.persistence;
 
 import com.gabriel.orders.core.domain.entities.Order;
 import com.gabriel.orders.core.domain.repositories.OrderRepository;

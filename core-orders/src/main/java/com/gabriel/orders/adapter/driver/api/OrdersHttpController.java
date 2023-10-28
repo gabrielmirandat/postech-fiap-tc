@@ -1,29 +1,26 @@
-package com.gabriel.orders.adapter.driver.api.controllers;
+package com.gabriel.orders.adapter.driver.api;
 
+import com.gabriel.orders.adapter.driver.api.controllers.OrdersApi;
 import com.gabriel.orders.adapter.driver.api.controllers.models.OrderCreated;
 import com.gabriel.orders.adapter.driver.api.controllers.models.OrderRequest;
 import com.gabriel.orders.adapter.driver.api.controllers.models.OrderResponse;
 import com.gabriel.orders.adapter.driver.api.controllers.models.OrderStatusDTO;
 import com.gabriel.orders.adapter.driver.api.mappers.OrderMapper;
 import com.gabriel.orders.core.application.usecases.CreateOrderUseCase;
-import com.gabriel.orders.core.domain.entities.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
 
 @RestController
-public class OrdersController implements OrdersApi {
+public class OrdersHttpController implements OrdersApi {
 
     private final CreateOrderUseCase createOrderUseCase;
 
     private final OrderMapper orderMapper;
 
-    public OrdersController(CreateOrderUseCase createOrderUseCase, OrderMapper orderMapper) {
+    public OrdersHttpController(CreateOrderUseCase createOrderUseCase, OrderMapper orderMapper) {
         this.createOrderUseCase = createOrderUseCase;
         this.orderMapper = orderMapper;
     }
