@@ -7,10 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 public class Price extends ValueObject {
 
     @NotNull(message = "Price cannot be null")
     @Positive(message = "Price must be positive")
-    private Double value;
+    private final Double value;
+
+    public Price(Double value) {
+        this.value = value;
+        validateSelf();
+    }
 }
