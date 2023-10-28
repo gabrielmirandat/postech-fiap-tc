@@ -5,10 +5,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum EntityType {
-    CUSTOMER("cust"),
-    ORDER("ordr"),
-    PRODUCT("prdc"),
-    INGREDIENT("ingr");
+    CUSTOMER("CUST"),
+    ORDER("ORDR"),
+    PRODUCT("PRDC"),
+    INGREDIENT("INGR");
 
     private final String value;
 

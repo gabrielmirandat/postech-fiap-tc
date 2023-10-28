@@ -1,5 +1,7 @@
 package com.gabriel.orders.core.application.usecases.impl;
 
+import com.gabriel.orders.core.application.commands.CreateOrderCommand;
+import com.gabriel.orders.core.application.services.MenuCheckService;
 import com.gabriel.orders.core.application.usecases.CreateOrderUseCase;
 import com.gabriel.orders.core.domain.entities.Order;
 import com.gabriel.orders.core.domain.events.OrderEvent;
@@ -14,6 +16,7 @@ public class CreateOrderUseCaseImpl implements CreateOrderUseCase {
 
     private final OrderRepository orderRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private MenuCheckService menuCheckService;
 
     public CreateOrderUseCaseImpl(OrderRepository orderRepository, ApplicationEventPublisher eventPublisher) {
         this.orderRepository = orderRepository;
@@ -22,11 +25,7 @@ public class CreateOrderUseCaseImpl implements CreateOrderUseCase {
 
     @Override
     @Transactional
-    public Order createOrder(Order order) {
-        Order newOrder = orderRepository.save(order);
-        // After saving the order, publish the OrderCreatedEvent
-        eventPublisher.publishEvent(new OrderEvent(Operation.CREATE, order));
-
-        return newOrder;
+    public Order createOrder(CreateOrderCommand command) {
+        return null;
     }
 }

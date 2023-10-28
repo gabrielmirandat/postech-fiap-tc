@@ -1,12 +1,16 @@
 package com.gabriel.orders.core.domain.valueobjects;
 
-public record Price(float value) {
+import com.gabriel.orders.core.domain.base.ValueObject;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    public Price {
-        this.validate(value);
-    }
+@Getter
+@AllArgsConstructor
+public class Price extends ValueObject {
 
-    private void validate(float value) {
-        assert value > 0.0;
-    }
+    @NotNull(message = "Price cannot be null")
+    @Positive(message = "Price must be positive")
+    private Double value;
 }

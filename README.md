@@ -25,7 +25,7 @@ TIMESTAMP DE UPDATE.
 ### APIs
 - API Versioning, with content negotiation
 - Accept: application/vbd.example.api+json;version=2
-- API generated with Swagger [https://www.youtube.com/watch?v=YmQyzNF5iKg, https://github.com/swagger-api/swagger-codegen],
+x- API generated with Swagger [https://www.youtube.com/watch?v=YmQyzNF5iKg, https://github.com/swagger-api/swagger-codegen],
 - DDD automatic doc generation, Redoc
 - OpenTelemetry (logs, metrics & traces), Grafana
 
@@ -34,6 +34,9 @@ TIMESTAMP DE UPDATE.
 
 ### Tests
 - Integration (serialize, deserialize data), contract (between apis), acceptance (user)
+
+### Security
+- Add Spring automatic security
 
 ## TECH CHALLENGE
 

@@ -7,13 +7,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class OrderID extends EntityID {
+public class ProductID extends EntityID {
 
-    @Pattern(regexp = "[0-9a-f]{8}-ORDR-\\d{4}-\\d{2}-\\d{2}",
-            message = "Invalid Order ID format")
+    @Pattern(regexp = "[0-9a-f]{8}-PRDC-\\d{4}-\\d{2}-\\d{2}",
+            message = "Invalid Product ID format")
     private String id;
 
-    public OrderID() {
-        this.id = generate(EntityType.ORDER);
+    public ProductID() {
+        this.id = generate(EntityType.PRODUCT);
     }
 }
