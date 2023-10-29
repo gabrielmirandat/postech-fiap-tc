@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 public enum EntityType {
     CUSTOMER("CUST"),
     ORDER("ORDR"),
+    ORDER_ITEM("ORDI"),
     PRODUCT("PRDC"),
     INGREDIENT("INGR");
 

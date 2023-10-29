@@ -9,10 +9,14 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
 public class Extra extends Entity {
 
     private final IngredientID ingredientID;
 
     private final Price price;
+
+    public Extra(IngredientID ingredientID, Double value) {
+        this.ingredientID = ingredientID;
+        this.price = new Price(value);
+    }
 }

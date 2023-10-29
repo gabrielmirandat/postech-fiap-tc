@@ -39,6 +39,22 @@ public class Order extends AggregateRoot {
         this.status = OrderStatus.CREATED;
     }
 
+    public Order(List<OrderItem> items, Address shippingAddress) {
+        this.items = items;
+        this.shippingAddress = shippingAddress;
+
+        this.orderId = new OrderID();
+        this.status = OrderStatus.CREATED;
+    }
+
+    public Order(List<OrderItem> items, Notification additionalNotification) {
+        this.items = items;
+        this.notification = additionalNotification;
+
+        this.orderId = new OrderID();
+        this.status = OrderStatus.CREATED;
+    }
+
     public Order(List<OrderItem> items, Address shippingAddress, Notification additionalNotification) {
         this.items = items;
         this.shippingAddress = shippingAddress;
@@ -125,6 +141,10 @@ public class Order extends AggregateRoot {
     public void deliver_order() {
         if (status != OrderStatus.PICKUP) {
             throw new DomainException("Order must be in balcony to be delivered");
+        }
+
+        if (shippingAddress == null) {
+            throw new DomainException("Order must have an shipping address to be delivered");
         }
 
         promote();

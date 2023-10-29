@@ -3,113 +3,136 @@ package com.gabriel.orders.core.domain.entities;
 import com.gabriel.orders.core.domain.entities.enums.OrderStatus;
 import com.gabriel.orders.core.domain.valueobjects.Address;
 import com.gabriel.orders.core.domain.valueobjects.Notification;
+import com.gabriel.orders.core.domain.valueobjects.enums.NotificationType;
+import com.gabriel.orders.core.domain.valueobjects.ids.IngredientID;
+import com.gabriel.orders.core.domain.valueobjects.ids.ProductID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrderTest {
 
-    private List<OrderItem> items;
-    private Address shippingAddress;
-    private Notification notification;
+    private Order basicOrder;
+
+    private Order fullOrder;
 
     @BeforeEach
     void setUp() {
-        // Inicializar objetos de teste e mockar dependências se necessário
-        items = new ArrayList<>();
-        // Adicione OrderItems ao 'items' conforme necessário
+        basicOrder = generateOrder();
+        fullOrder = generateFullOrder();
+    }
 
-        // Mocking ou criação de objetos reais
-        shippingAddress = Mockito.mock(Address.class);
-        notification = Mockito.mock(Notification.class);
+    Extra generateExtra() {
+        IngredientID ingredientID = new IngredientID();
+        return new Extra(ingredientID, 2.0);
+    }
+
+    Product generateProduct() {
+        ProductID productID = new ProductID();
+        return new Product(productID, 10.0);
+    }
+
+    OrderItem generateOrderItem(boolean withExtra) {
+        Product product = generateProduct();
+
+        if (withExtra) {
+            Extra extra = generateExtra();
+            return new OrderItem(product, Collections.singletonList(extra));
+        }
+
+        return new OrderItem(product);
+    }
+
+    Order generateOrder() {
+        OrderItem item1 = generateOrderItem(false);
+        OrderItem item2 = generateOrderItem(true);
+        return new Order(Arrays.asList(item1, item2));
+    }
+
+    Order generateFullOrder() {
+        OrderItem item1 = generateOrderItem(false);
+        OrderItem item2 = generateOrderItem(true);
+
+        Address shippingAddress = new Address("Street", "City", "SP", "13011-300");
+        Notification notification = new Notification(NotificationType.CUSTOM, "firebase|uuid");
+        return new Order(Arrays.asList(item1, item2), shippingAddress, notification);
     }
 
     @Test
     void testOrderCreationWithoutAdditionalInfo() {
-        Order order = new Order(items);
-        assertNotNull(order);
-        assertEquals(OrderStatus.CREATED, order.getStatus());
-        assertNotNull(order.getOrderId());
+        assertNotNull(basicOrder);
+        assertEquals(OrderStatus.CREATED, basicOrder.getStatus());
+        assertNotNull(basicOrder.getOrderId());
     }
 
     @Test
     void testOrderCreationWithShippingAddressAndNotification() {
-        Order order = new Order(items, shippingAddress, notification);
-        assertNotNull(order);
-        assertEquals(OrderStatus.CREATED, order.getStatus());
-        assertNotNull(order.getOrderId());
-        assertNotNull(order.getShippingAddress());
-        assertNotNull(order.getNotification());
+        assertNotNull(fullOrder);
+        assertEquals(OrderStatus.CREATED, fullOrder.getStatus());
+        assertNotNull(fullOrder.getOrderId());
+        assertNotNull(fullOrder.getShippingAddress());
+        assertNotNull(fullOrder.getNotification());
     }
 
     @Test
     void testGenerateTicket() {
-        Order order = new Order(items);
-        order.generateTicket();
-        String expectedTicketId = order.getOrderId().getId().split("-")[0];
-        assertEquals(expectedTicketId, order.getTicketId());
+        // TODO: fix time here and check manual
+        basicOrder.generateTicket();
+        String expectedTicketId = basicOrder.getOrderId().getId().split("-")[0];
+        assertEquals(expectedTicketId, basicOrder.getTicketId());
     }
 
     @Test
     @Disabled
     void testCalculatePrice() {
-        // Adicione os itens e os extras necessários ao 'items' para calcular o preço
-        Order order = new Order(items);
-        order.calculatePrice();
-        assertNotNull(order.getPrice());
+        basicOrder.calculatePrice();
+        assertNotNull(basicOrder.getPrice());
+        assertEquals(22.0, basicOrder.getPrice().getValue());
     }
 
     @Test
     void testPrepareOrder() {
-        Order order = new Order(items);
-        order.prepare_order();
-        assertEquals(OrderStatus.PREPARATION, order.getStatus());
+        basicOrder.prepare_order();
+        assertEquals(OrderStatus.PREPARATION, basicOrder.getStatus());
     }
 
     @Test
     void testPackageOrder() {
-        Order order = new Order(items);
-        order.prepare_order();
-        order.package_order();
-        assertEquals(OrderStatus.PACKAGING, order.getStatus());
+        basicOrder.prepare_order();
+        basicOrder.package_order();
+        assertEquals(OrderStatus.PACKAGING, basicOrder.getStatus());
     }
 
     @Test
     void testPickupOrder() {
-        Order order = new Order(items);
-        order.prepare_order();
-        order.package_order();
-        order.pickup_order();
-        assertEquals(OrderStatus.PICKUP, order.getStatus());
+        basicOrder.prepare_order();
+        basicOrder.package_order();
+        basicOrder.pickup_order();
+        assertEquals(OrderStatus.PICKUP, basicOrder.getStatus());
     }
 
     @Test
     void testDeliverOrder() {
-        Order order = new Order(items, shippingAddress, notification);
-        order.prepare_order();
-        order.package_order();
-        order.pickup_order();
-        order.deliver_order();
-        assertEquals(OrderStatus.DELIVERY, order.getStatus());
+        basicOrder.prepare_order();
+        basicOrder.package_order();
+        basicOrder.pickup_order();
+        basicOrder.deliver_order();
+        assertEquals(OrderStatus.DELIVERY, basicOrder.getStatus());
     }
 
     @Test
     void testFinishOrder() {
-        Order order = new Order(items, shippingAddress, notification);
-        order.prepare_order();
-        order.package_order();
-        order.pickup_order();
-        order.deliver_order();
-        order.finish_order();
-        assertEquals(OrderStatus.COMPLETED, order.getStatus());
+        basicOrder.prepare_order();
+        basicOrder.package_order();
+        basicOrder.pickup_order();
+        basicOrder.deliver_order();
+        basicOrder.finish_order();
+        assertEquals(OrderStatus.COMPLETED, basicOrder.getStatus());
     }
-
-    // Adicione mais testes conforme necessário
 }
 
