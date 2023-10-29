@@ -1,6 +1,7 @@
 package com.gabriel.orders.core.domain.valueobjects;
 
 import com.gabriel.orders.core.domain.base.DomainException;
+import com.gabriel.orders.core.domain.valueobjects.ids.OrderID;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThatCode;

@@ -1,8 +1,7 @@
-package com.gabriel.orders.core.domain.valueobjects;
+package com.gabriel.orders.core.domain.valueobjects.ids;
 
 import com.gabriel.orders.core.domain.entities.enums.EntityType;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter

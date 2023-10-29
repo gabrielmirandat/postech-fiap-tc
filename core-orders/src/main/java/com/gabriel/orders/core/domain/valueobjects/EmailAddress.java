@@ -7,14 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-public class EmailAddress extends ValueObject {
+public class EmailAddress extends ValueObject implements Notifiable {
 
     @NotBlank(message = "Email address cannot be blank")
     @Email(message = "Invalid email address format")
-    private final String address;
+    private final String email;
 
-    public EmailAddress(String address) {
-        this.address = address;
+    public EmailAddress(String email) {
+        this.email = email;
         validateSelf();
     }
 }

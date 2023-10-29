@@ -1,8 +1,8 @@
 package com.gabriel.orders.core.domain.entities;
 
 import com.gabriel.orders.core.domain.base.Entity;
-import com.gabriel.orders.core.domain.valueobjects.*;
-import com.gabriel.orders.core.domain.valueobjects.ids.ProductID;
+import com.gabriel.orders.core.domain.valueobjects.Price;
+import com.gabriel.orders.core.domain.valueobjects.ids.IngredientID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,9 +10,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
-public class Product extends Entity {
+public class Extra extends Entity {
 
-    private final ProductID productID;
+    private final IngredientID ingredientID;
 
     private final Price price;
 }
