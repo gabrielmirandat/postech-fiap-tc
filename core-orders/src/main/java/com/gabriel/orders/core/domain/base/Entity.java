@@ -1,3 +1,3 @@
 package com.gabriel.orders.core.domain.base;
 
-public abstract class Entity extends DomainValid {}
+public abstract class Entity implements DomainValid {}

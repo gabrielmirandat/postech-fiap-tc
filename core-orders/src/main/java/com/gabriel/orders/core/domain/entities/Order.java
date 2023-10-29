@@ -6,46 +6,63 @@ import com.gabriel.orders.core.domain.entities.enums.OrderStatus;
 import com.gabriel.orders.core.domain.valueobjects.*;
 import com.gabriel.orders.core.domain.valueobjects.ids.OrderID;
 import jakarta.validation.Valid;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 public class Order extends AggregateRoot {
 
     @Valid
     private final OrderID orderId;
 
+    @Valid
     private final List<OrderItem> items;
 
     @Valid
-    private final Address shippingAddress;
+    private Address shippingAddress;
 
     @Valid
-    private final Notification additionalNotification;
+    private Notification notification;
 
     @Valid
-    private Price price = null;
+    private Price price;
 
-    @Valid
-    private String ticketId = null;
+    private String ticketId;
 
     private OrderStatus status;
+
+    public Order(List<OrderItem> items) {
+        this.items = items;
+
+        this.orderId = new OrderID();
+        this.status = OrderStatus.CREATED;
+    }
 
     public Order(List<OrderItem> items, Address shippingAddress, Notification additionalNotification) {
         this.items = items;
         this.shippingAddress = shippingAddress;
-        this.additionalNotification = additionalNotification;
+        this.notification = additionalNotification;
 
         this.orderId = new OrderID();
         this.status = OrderStatus.CREATED;
     }
 
     public void generateTicket() {
-        this.ticketId = orderId.getId().split("-")[0];
+        ticketId = orderId.getId().split("-")[0];
     }
 
     public void calculatePrice() {
-        // somar precos dos produtos com precos
-        // reduce
+        Double productsTotalPrice = items.parallelStream()
+                .map(item -> item.getProduct().getPrice().getValue())
+                .reduce(0.0, Double::sum);
+
+        Double extrasTotalPrice = items.stream()
+                .flatMap(item -> item.getExtras().stream())
+                .map(extra -> extra.getPrice().getValue())
+                .reduce(0.0, Double::sum);
+
+        price = new Price(productsTotalPrice + extrasTotalPrice);
     }
 
     private void promote() {
@@ -121,6 +138,3 @@ public class Order extends AggregateRoot {
         promote();
     }
 }
-
-// o dominio nao se valida, quem valida eh de fora!!!!!
-// quem valida regra de negocio eh a aplicacao

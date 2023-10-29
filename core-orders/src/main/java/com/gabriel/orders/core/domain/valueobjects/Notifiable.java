@@ -1,5 +1,5 @@
 package com.gabriel.orders.core.domain.valueobjects;
 
-import com.gabriel.orders.core.domain.base.ValueObject;
+import com.gabriel.orders.core.domain.base.DomainValid;
 
-public interface Notifiable extends ValueObject {}
+public interface Notifiable extends DomainValid {}

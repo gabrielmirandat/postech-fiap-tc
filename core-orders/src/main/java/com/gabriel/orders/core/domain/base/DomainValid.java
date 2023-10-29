@@ -5,9 +5,9 @@ import jakarta.validation.Validator;
 
 import java.util.stream.Collectors;
 
-public abstract class DomainValid {
+public interface DomainValid {
 
-    protected void validateSelf() {
+    default void validateSelf() {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         var violations = validator.validate(this);
         if (!violations.isEmpty()) {

@@ -10,45 +10,33 @@ class NotificationTest {
 
     @Test
     void shouldCreateNotificationSuccessfullyWhenTypeAndValueAreValid() {
-        // Criando objetos notificáveis válidos
-        Notifiable cellphone = new Cellphone("(11) 98765-4321");
-        Notifiable emailAddress = new EmailAddress("example@example.com");
-        Notifiable customNotificationType = new CustomNotificationType("vendor|value");
-
-        // Testando a criação da notificação com os tipos e valores válidos
-        assertThatCode(() -> new Notification(NotificationType.CELLPHONE, cellphone)).doesNotThrowAnyException();
-        assertThatCode(() -> new Notification(NotificationType.EMAIL, emailAddress)).doesNotThrowAnyException();
-        assertThatCode(() -> new Notification(NotificationType.CUSTOM, customNotificationType)).doesNotThrowAnyException();
+        assertThatCode(() -> new Notification(NotificationType.CELLPHONE, "(11) 98765-4321")).doesNotThrowAnyException();
+        assertThatCode(() -> new Notification(NotificationType.EMAIL, "example@example.com")).doesNotThrowAnyException();
+        assertThatCode(() -> new Notification(NotificationType.CUSTOM, "vendor|value")).doesNotThrowAnyException();
     }
 
     @Test
     void shouldThrowExceptionWhenTypeIsNull() {
-        Notifiable cellphone = new Cellphone("(11) 98765-4321");
-        assertThatThrownBy(() -> new Notification(null, cellphone))
+        assertThatThrownBy(() -> new Notification(null, "(11) 98765-4321"))
                 .isInstanceOf(DomainException.class)
                 .hasMessageContaining("Notification type cannot be null");
     }
 
     @Test
     void shouldThrowExceptionWhenValueIsInvalid() {
-        // Criando objetos notificáveis inválidos
-        Notifiable invalidCellphone = new Cellphone("invalid");
-        Notifiable invalidEmailAddress = new EmailAddress("invalid");
-        Notifiable invalidCustomNotificationType = new CustomNotificationType("invalid");
-
-        // Testando a criação da notificação com valores inválidos
-        assertThatThrownBy(() -> new Notification(NotificationType.CELLPHONE, invalidCellphone))
+        assertThatThrownBy(() -> new Notification(NotificationType.CELLPHONE, "invalid"))
                 .isInstanceOf(DomainException.class)
-                .hasMessageContaining("Invalid cellphone format");
+                .hasMessage("Domain validation failed: number Cellphone number must follow the pattern (XX) XXXX-XXXX or (XX) XXXXX-XXXX");
 
-        assertThatThrownBy(() -> new Notification(NotificationType.EMAIL, invalidEmailAddress))
+        assertThatThrownBy(() -> new Notification(NotificationType.EMAIL, "invalid"))
                 .isInstanceOf(DomainException.class)
-                .hasMessageContaining("Invalid email format");
+                .hasMessage("Domain validation failed: email Invalid email address format");
 
-        assertThatThrownBy(() -> new Notification(NotificationType.CUSTOM, invalidCustomNotificationType))
+        assertThatThrownBy(() -> new Notification(NotificationType.CUSTOM, "invalid"))
                 .isInstanceOf(DomainException.class)
-                .hasMessageContaining("Custom notification must follow the pattern <vendor>|<value>");
+                .hasMessage("Domain validation failed: notification Custom notification must follow the pattern <vendor>|<value>");
     }
 }
+
 
 
