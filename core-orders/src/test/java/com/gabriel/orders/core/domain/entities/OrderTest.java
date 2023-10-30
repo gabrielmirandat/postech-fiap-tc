@@ -1,5 +1,6 @@
 package com.gabriel.orders.core.domain.entities;
 
+import com.gabriel.orders.core.domain.base.DomainException;
 import com.gabriel.orders.core.domain.entities.enums.OrderStatus;
 import com.gabriel.orders.core.domain.valueobjects.Address;
 import com.gabriel.orders.core.domain.valueobjects.Notification;
@@ -7,11 +8,11 @@ import com.gabriel.orders.core.domain.valueobjects.enums.NotificationType;
 import com.gabriel.orders.core.domain.valueobjects.ids.IngredientID;
 import com.gabriel.orders.core.domain.valueobjects.ids.ProductID;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,14 +28,22 @@ class OrderTest {
         fullOrder = generateFullOrder();
     }
 
+    String generateRandomString() {
+        return new Random().ints(48, 123)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(10)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+    }
+
     Extra generateExtra() {
         IngredientID ingredientID = new IngredientID();
-        return new Extra(ingredientID, 2.0);
+        return new Extra(ingredientID, generateRandomString(), 2.0);
     }
 
     Product generateProduct() {
         ProductID productID = new ProductID();
-        return new Product(productID, 10.0);
+        return new Product(productID, generateRandomString(), 10.0);
     }
 
     OrderItem generateOrderItem(boolean withExtra) {
@@ -81,14 +90,12 @@ class OrderTest {
 
     @Test
     void testGenerateTicket() {
-        // TODO: fix time here and check manual
         basicOrder.generateTicket();
         String expectedTicketId = basicOrder.getOrderId().getId().split("-")[0];
         assertEquals(expectedTicketId, basicOrder.getTicketId());
     }
 
     @Test
-    @Disabled
     void testCalculatePrice() {
         basicOrder.calculatePrice();
         assertNotNull(basicOrder.getPrice());
@@ -117,22 +124,46 @@ class OrderTest {
     }
 
     @Test
-    void testDeliverOrder() {
-        basicOrder.prepare_order();
-        basicOrder.package_order();
-        basicOrder.pickup_order();
-        basicOrder.deliver_order();
-        assertEquals(OrderStatus.DELIVERY, basicOrder.getStatus());
+    void testDeliverShippableOrder() {
+        fullOrder.prepare_order();
+        fullOrder.package_order();
+        fullOrder.pickup_order();
+        fullOrder.deliver_order();
+        assertEquals(OrderStatus.DELIVERY, fullOrder.getStatus());
     }
 
     @Test
-    void testFinishOrder() {
+    void testDeliverUnshippableOrder() {
         basicOrder.prepare_order();
         basicOrder.package_order();
         basicOrder.pickup_order();
-        basicOrder.deliver_order();
+        assertThrows(DomainException.class, () -> fullOrder.deliver_order());
+    }
+
+    @Test
+    void testFinishShippableOrder() {
+        fullOrder.prepare_order();
+        fullOrder.package_order();
+        fullOrder.pickup_order();
+        fullOrder.deliver_order();
+        fullOrder.finish_order();
+        assertEquals(OrderStatus.COMPLETED, fullOrder.getStatus());
+    }
+
+    @Test
+    void testFinishUnshippableOrder() {
+        basicOrder.prepare_order();
+        basicOrder.package_order();
+        basicOrder.pickup_order();
         basicOrder.finish_order();
         assertEquals(OrderStatus.COMPLETED, basicOrder.getStatus());
+    }
+
+    @Test
+    void testFinishOrderBeforeReady() {
+        basicOrder.prepare_order();
+        basicOrder.package_order();
+        assertThrows(DomainException.class, () -> basicOrder.finish_order());
     }
 }
 

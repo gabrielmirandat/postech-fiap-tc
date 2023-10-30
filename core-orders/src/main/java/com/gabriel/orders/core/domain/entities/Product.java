@@ -15,10 +15,13 @@ public class Product extends Entity {
 
     private final ProductID productID;
 
+    private final Name name;
+
     private final Price price;
 
-    public Product(ProductID productID, Double value) {
+    public Product(ProductID productID, String name, Double value) {
         this.productID = productID;
+        this.name = new Name(name);
         this.price = new Price(value);
     }
 }

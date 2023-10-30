@@ -2,35 +2,37 @@ package com.gabriel.orders.core.domain.valueobjects;
 
 import com.gabriel.orders.core.domain.base.DomainException;
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.assertThatCode;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class PriceTest {
 
     @Test
-    void shouldThrowExceptionWhenPriceIsNull() {
-        assertThatThrownBy(() -> new Price(null))
-                .isInstanceOf(DomainException.class)
-                .hasMessageContaining("Price cannot be null");
+    void shouldCreatePriceSuccessfully() {
+        assertDoesNotThrow(() -> new Price(5.0));
     }
 
     @Test
-    void shouldThrowExceptionWhenPriceIsNegative() {
-        assertThatThrownBy(() -> new Price(-10.0))
-                .isInstanceOf(DomainException.class)
-                .hasMessageContaining("Price must be positive");
+    void shouldNotCreatePriceWithNegativeValue() {
+        Exception exception = assertThrows(DomainException.class, () -> new Price(-1.0));
+        assertTrue(exception.getMessage().contains("Price must be at least 0.1"));
     }
 
     @Test
-    void shouldThrowExceptionWhenPriceIsZero() {
-        assertThatThrownBy(() -> new Price(0.0))
-                .isInstanceOf(DomainException.class)
-                .hasMessageContaining("Price must be positive");
+    void shouldNotCreatePriceWithZeroValue() {
+        Exception exception = assertThrows(DomainException.class, () -> new Price(0.0));
+        assertTrue(exception.getMessage().contains("Price must be at least 0.1"));
     }
 
     @Test
-    void shouldCreatePriceWhenValueIsPositive() {
-        assertThatCode(() -> new Price(10.0)).doesNotThrowAnyException();
+    void shouldNotCreatePriceWithTooLowValue() {
+        Exception exception = assertThrows(DomainException.class, () -> new Price(0.05));
+        assertTrue(exception.getMessage().contains("Price must be at least 0.1"));
+    }
+
+    @Test
+    void shouldNotCreatePriceWithTooHighValue() {
+        Exception exception = assertThrows(DomainException.class, () -> new Price(10000.1));
+        assertTrue(exception.getMessage().contains("Price must be less than 10000.0"));
     }
 }
-

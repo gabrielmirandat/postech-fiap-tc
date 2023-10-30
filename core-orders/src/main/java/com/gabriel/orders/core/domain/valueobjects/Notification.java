@@ -25,8 +25,8 @@ public class Notification extends ValueObject {
     private Notifiable createNotifiable(NotificationType type, String value) {
         return switch (type) {
             case CELLPHONE -> new Cellphone(value);
-            case EMAIL -> new EmailAddress(value);
-            case CUSTOM -> new CustomNotificationType(value);
+            case EMAIL -> new EmailData(value);
+            case CUSTOM -> new CustomNotification(value);
         };
     }
 }
