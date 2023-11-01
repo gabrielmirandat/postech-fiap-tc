@@ -2,7 +2,9 @@ package com.gabriel.orders.core.domain.entities;
 
 import com.gabriel.orders.core.domain.valueobjects.CPF;
 import com.gabriel.orders.core.domain.valueobjects.EmailData;
+import lombok.Getter;
 
+@Getter
 public class Customer {
 
     private final CPF cpf;

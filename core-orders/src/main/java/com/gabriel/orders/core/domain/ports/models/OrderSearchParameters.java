@@ -1,4 +1,4 @@
-package com.gabriel.orders.core.domain.repositories.models;
+package com.gabriel.orders.core.domain.ports.models;
 
 import com.gabriel.orders.core.domain.entities.enums.OrderStatus;
 

@@ -1,16 +1,12 @@
 package com.gabriel.orders.core.domain.entities;
 
 import com.gabriel.orders.core.domain.base.Entity;
-import com.gabriel.orders.core.domain.valueobjects.*;
-import com.gabriel.orders.core.domain.valueobjects.ids.IngredientID;
+import com.gabriel.orders.core.domain.valueobjects.Name;
+import com.gabriel.orders.core.domain.valueobjects.Price;
 import com.gabriel.orders.core.domain.valueobjects.ids.ProductID;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
+@Getter
 public class Product extends Entity {
 
     private final ProductID productID;

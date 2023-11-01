@@ -1,8 +1,8 @@
-package com.gabriel.orders.adapter.driven.infra.persistence;
+package com.gabriel.orders.adapter.driven.persistence;
 
 import com.gabriel.orders.core.domain.entities.Order;
-import com.gabriel.orders.core.domain.repositories.OrderRepository;
-import com.gabriel.orders.core.domain.repositories.models.OrderSearchParameters;
+import com.gabriel.orders.core.domain.ports.OrderRepository;
+import com.gabriel.orders.core.domain.ports.models.OrderSearchParameters;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

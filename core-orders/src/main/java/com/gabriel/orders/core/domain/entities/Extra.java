@@ -4,11 +4,9 @@ import com.gabriel.orders.core.domain.base.Entity;
 import com.gabriel.orders.core.domain.valueobjects.Name;
 import com.gabriel.orders.core.domain.valueobjects.Price;
 import com.gabriel.orders.core.domain.valueobjects.ids.IngredientID;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
 public class Extra extends Entity {
 
     private final IngredientID ingredientID;
