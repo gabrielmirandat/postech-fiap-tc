@@ -7,6 +7,7 @@ import com.gabriel.orders.adapter.driver.api.controllers.models.OrderResponse;
 import com.gabriel.orders.adapter.driver.api.controllers.models.OrderStatusDTO;
 import com.gabriel.orders.adapter.driver.api.mappers.OrderMapper;
 import com.gabriel.orders.core.application.usecases.CreateOrderUseCase;
+import com.gabriel.orders.core.domain.ports.OrderPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,9 +21,12 @@ public class OrdersHttpController implements OrdersApi {
 
     private final OrderMapper orderMapper;
 
-    public OrdersHttpController(CreateOrderUseCase createOrderUseCase, OrderMapper orderMapper) {
+    private final OrderPublisher orderPublisher;
+
+    public OrdersHttpController(CreateOrderUseCase createOrderUseCase, OrderMapper orderMapper, OrderPublisher orderPublisher) {
         this.createOrderUseCase = createOrderUseCase;
         this.orderMapper = orderMapper;
+        this.orderPublisher = orderPublisher;
     }
 
     @Override
@@ -42,6 +46,7 @@ public class OrdersHttpController implements OrdersApi {
 
     @Override
     public ResponseEntity<OrderResponse> getOrderById(String orderId) throws Exception {
+        orderPublisher.productCreated(null);
         return null;
     }
 }
