@@ -1,23 +1,29 @@
 package com.gabriel.orders.adapter.driven.messaging;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.orders.core.domain.events.MenuAddedEvent;
 import com.gabriel.orders.core.domain.events.OrderCreatedEvent;
+import com.gabriel.orders.core.domain.events.enums.CExtensions;
 import com.gabriel.orders.core.domain.ports.OrderPublisher;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
+import io.cloudevents.core.data.PojoCloudEventData;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 @Service
 public class OrderKafkaPublisher implements OrderPublisher {
 
     private final KafkaTemplate<String, CloudEvent> kafkaTemplate;
 
-    public OrderKafkaPublisher(KafkaTemplate<String, CloudEvent> kafkaTemplate) {
+    private final ObjectMapper mapper;
+
+    public OrderKafkaPublisher(KafkaTemplate<String, CloudEvent> kafkaTemplate, ObjectMapper mapper) {
         this.kafkaTemplate = kafkaTemplate;
+        this.mapper = mapper;
     }
 
     @Override
@@ -27,15 +33,18 @@ public class OrderKafkaPublisher implements OrderPublisher {
 
     @Override
     public void productCreated(MenuAddedEvent event) {
-
+        
         // Criar um evento CloudEvent
         CloudEvent data = CloudEventBuilder.v1()
-                .withId("123")
-                .withType("menu.product.added")
-                .withSource(URI.create("your-source"))
-                .withData("{\"productID\":\"123\",\"name\":\"Pizza\",\"value\":\"10.99\"}".getBytes(StandardCharsets.UTF_8))
+                .withId(UUID.randomUUID().toString())
+                .withSource(URI.create(event.source()))
+                .withSubject(event.subject())
+                .withType(event.type())
+                .withData(PojoCloudEventData.wrap(event, mapper::writeValueAsBytes))
+                .withExtension(CExtensions.AUDIENCE.extensionName(), CExtensions.Audience.EXTERNAL_BOUNDED_CONTEXT.audienceName())
+                .withExtension(CExtensions.EVENT_CONTEXT.extensionName(), CExtensions.EventContext.DOMAIN.eventContextName())
                 .build();
 
-        kafkaTemplate.send("menub", data);
+        kafkaTemplate.send(CExtensions.TopicNames.MENU.topicName(), data);
     }
 }

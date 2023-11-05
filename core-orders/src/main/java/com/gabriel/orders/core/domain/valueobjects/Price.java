@@ -1,5 +1,6 @@
 package com.gabriel.orders.core.domain.valueobjects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.gabriel.orders.core.domain.base.ValueObject;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -14,6 +15,7 @@ public class Price extends ValueObject {
     @NotNull(message = "Price cannot be null")
     private final double value;
 
+    @JsonCreator
     public Price(double value) {
         this.value = value;
         validateSelf();

@@ -7,7 +7,10 @@ import com.gabriel.orders.adapter.driver.api.controllers.models.OrderResponse;
 import com.gabriel.orders.adapter.driver.api.controllers.models.OrderStatusDTO;
 import com.gabriel.orders.adapter.driver.api.mappers.OrderMapper;
 import com.gabriel.orders.core.application.usecases.CreateOrderUseCase;
+import com.gabriel.orders.core.domain.entities.Product;
+import com.gabriel.orders.core.domain.events.MenuAddedEvent;
 import com.gabriel.orders.core.domain.ports.OrderPublisher;
+import com.gabriel.orders.core.domain.valueobjects.ids.ProductID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,7 +49,9 @@ public class OrdersHttpController implements OrdersApi {
 
     @Override
     public ResponseEntity<OrderResponse> getOrderById(String orderId) throws Exception {
-        orderPublisher.productCreated(null);
+        ProductID id = new ProductID();
+
+        orderPublisher.productCreated(new MenuAddedEvent(new Product(id, "bla", 10.20)));
         return null;
     }
 }
