@@ -14,8 +14,6 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class MenuKafkaSubscriber implements MenuSubscriber {
 
@@ -25,24 +23,19 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
         this.mapper = mapper;
     }
 
-    @KafkaListener(topics = "menub", groupId = "orders-group-id")
+    @KafkaListener(topics = "menub", groupId = "orders-group-id",
+            filter = "menuProductCreatedFilterStrategy")
     public void listen(@Payload CloudEvent cloudEvent,
-                       @Header(name = KafkaHeaders.RECEIVED_KEY, required = false) Optional<String> key,
-                       @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
-                       @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                        @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long ts) {
 
-        System.out.println(cloudEvent);
-
         try {
-            // Deserialize the data payload from the CloudEvent
-            var deserializedData = CloudEventUtils
-                    .mapData(cloudEvent, PojoCloudEventDataMapper.from(mapper, MenuAddedEvent.class));
-            MenuAddedEvent menuAddedEvent = deserializedData.getValue();
+            MenuAddedEvent menuAddedEvent = CloudEventUtils
+                    .mapData(cloudEvent, PojoCloudEventDataMapper
+                            .from(mapper, MenuAddedEvent.class)).getValue();
+            addProduct(menuAddedEvent);
         } catch (Exception ex) {
-            System.out.println(ex);
+            // deadletters
         }
-
     }
 
     @Override

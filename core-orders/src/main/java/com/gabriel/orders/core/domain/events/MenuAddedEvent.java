@@ -1,24 +1,20 @@
 package com.gabriel.orders.core.domain.events;
 
 import com.gabriel.orders.core.domain.entities.Product;
+import com.gabriel.orders.core.domain.events.enums.MenuEvent;
 
 public record MenuAddedEvent(Product productAdded) {
 
-    private static final String EVENT_TYPE = "postech.menu.gateway.v1.product.created";
-
-    private static final String SOURCE_PATTERN = "/products/%s";
-
-    private static final String SUBJECT = "new-menu-product";
-
     public String type() {
-        return EVENT_TYPE;
+        return MenuEvent.Type.CREATED.eventType();
     }
 
     public String source() {
-        return String.format(SOURCE_PATTERN, productAdded.getProductID().toString());
+        return MenuEvent.Source.CREATED.eventSource();
     }
 
     public String subject() {
-        return SUBJECT;
+        return String.format(MenuEvent.Subject.ID.eventSubject(),
+                productAdded.getProductID().toString());
     }
 }

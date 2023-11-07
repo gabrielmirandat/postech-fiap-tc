@@ -1,5 +1,6 @@
 package com.gabriel.orders.infra.kafka;
 
+import com.gabriel.orders.core.domain.events.enums.MenuEvent;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.kafka.CloudEventDeserializer;
 import io.cloudevents.kafka.CloudEventSerializer;
@@ -12,13 +13,29 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
+import org.springframework.kafka.listener.adapter.RecordFilterStrategy;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.gabriel.orders.core.domain.events.enums.Event.HEADER_TYPE;
 
 @Configuration
 @EnableKafka
 public class KafkaConfig {
+
+    @Bean
+    public RecordFilterStrategy<String, String> menuProductCreatedFilterStrategy() {
+        return consumerRecord -> {
+            if (consumerRecord.headers().lastHeader(HEADER_TYPE.info()) == null) {
+                return true;
+            }
+            String eventType = new String(consumerRecord.headers()
+                    .lastHeader(HEADER_TYPE.info()).value());
+            return !eventType.equals(MenuEvent.Type.CREATED.eventType());
+        };
+    }
 
     @Bean
     public ConsumerFactory<String, CloudEvent> consumerFactory() {
@@ -47,6 +64,8 @@ public class KafkaConfig {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, CloudEventSerializer.class);
+        configProps.put(ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,
+                List.of(KafkaProducerInterceptor.class));
 
         return new DefaultKafkaProducerFactory<>(configProps);
     }
