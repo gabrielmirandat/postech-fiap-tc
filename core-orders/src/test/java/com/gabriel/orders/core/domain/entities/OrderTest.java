@@ -30,10 +30,10 @@ class OrderTest {
 
     String generateRandomString() {
         return new Random().ints(48, 123)
-                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
-                .limit(10)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString();
+            .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+            .limit(10)
+            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+            .toString();
     }
 
     Extra generateExtra() {
@@ -90,14 +90,12 @@ class OrderTest {
 
     @Test
     void testGenerateTicket() {
-        basicOrder.generateTicket();
         String expectedTicketId = basicOrder.getOrderId().getId().split("-")[0];
         assertEquals(expectedTicketId, basicOrder.getTicketId());
     }
 
     @Test
     void testCalculatePrice() {
-        basicOrder.calculatePrice();
         assertNotNull(basicOrder.getPrice());
         assertEquals(22.0, basicOrder.getPrice().getValue());
     }

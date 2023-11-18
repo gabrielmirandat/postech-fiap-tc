@@ -34,7 +34,7 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
                             .from(mapper, MenuAddedEvent.class)).getValue();
             addProduct(menuAddedEvent);
         } catch (Exception ex) {
-            // deadletters
+            // TODO: deadletters
         }
     }
 

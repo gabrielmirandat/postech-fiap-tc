@@ -7,7 +7,9 @@ import java.util.List;
 
 public interface OrderRepository {
 
-    Order save(Order order);
+    Order saveOrder(Order order);
 
-    List<Order> search(OrderSearchParameters parameters);
+    Order getByTicket(String ticket);
+
+    List<Order> searchBy(OrderSearchParameters parameters);
 }

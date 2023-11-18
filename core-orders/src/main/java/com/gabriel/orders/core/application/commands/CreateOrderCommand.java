@@ -1,16 +1,12 @@
 package com.gabriel.orders.core.application.commands;
 
-import lombok.Builder;
-import lombok.Data;
+import com.gabriel.orders.core.domain.valueobjects.Address;
+import com.gabriel.orders.core.domain.valueobjects.CPF;
+import com.gabriel.orders.core.domain.valueobjects.Notification;
+import com.gabriel.orders.core.domain.valueobjects.OrderItemRef;
 
 import java.util.List;
 
-@Data
-@Builder
-public class CreateOrderCommand {
-    private final List<String> products;
-    private final List<List<String>> extras;
-    private final String customer;
-    private final List<String> address;
-    private final String notification;
+public record CreateOrderCommand(CPF customer, Address shippingAddress, Notification notification,
+                                 List<OrderItemRef> items) {
 }

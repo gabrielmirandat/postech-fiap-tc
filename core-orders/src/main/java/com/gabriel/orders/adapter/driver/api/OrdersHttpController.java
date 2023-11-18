@@ -6,7 +6,9 @@ import com.gabriel.orders.adapter.driver.api.controllers.models.OrderRequest;
 import com.gabriel.orders.adapter.driver.api.controllers.models.OrderResponse;
 import com.gabriel.orders.adapter.driver.api.controllers.models.OrderStatusDTO;
 import com.gabriel.orders.adapter.driver.api.mappers.OrderMapper;
+import com.gabriel.orders.core.application.commands.CreateOrderCommand;
 import com.gabriel.orders.core.application.usecases.CreateOrderUseCase;
+import com.gabriel.orders.core.domain.entities.Order;
 import com.gabriel.orders.core.domain.entities.Product;
 import com.gabriel.orders.core.domain.events.MenuAddedEvent;
 import com.gabriel.orders.core.domain.ports.OrderPublisher;
@@ -34,7 +36,9 @@ public class OrdersHttpController implements OrdersApi {
 
     @Override
     public ResponseEntity<OrderCreated> addOrder(OrderRequest orderRequest) throws Exception {
-        return null;
+        CreateOrderCommand command = orderMapper.toCommand(orderRequest);
+        Order newOrder = createOrderUseCase.createOrder(command);
+        return ResponseEntity.ok(new OrderCreated(newOrder.getTicketId()));
     }
 
     @Override

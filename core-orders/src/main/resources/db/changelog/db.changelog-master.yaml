@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: gabriel
+      changes:
+        - createCollection:
+            collectionName: orders
+        - addFields:
+            collectionName: orders
+            fields:
+              - name: orderId
+                type: string
+              - name: items
+                type: array
+                arrayType: object
+              - name: shippingAddress
+                type: object
+              - name: notification
+                type: object
+              - name: price
+                type: double
+              - name: ticketId
+                type: string
+              - name: status
+                type: string

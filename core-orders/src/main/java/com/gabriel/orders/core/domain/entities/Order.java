@@ -3,7 +3,9 @@ package com.gabriel.orders.core.domain.entities;
 import com.gabriel.orders.core.domain.base.AggregateRoot;
 import com.gabriel.orders.core.domain.base.DomainException;
 import com.gabriel.orders.core.domain.entities.enums.OrderStatus;
-import com.gabriel.orders.core.domain.valueobjects.*;
+import com.gabriel.orders.core.domain.valueobjects.Address;
+import com.gabriel.orders.core.domain.valueobjects.Notification;
+import com.gabriel.orders.core.domain.valueobjects.Price;
 import com.gabriel.orders.core.domain.valueobjects.ids.OrderID;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -33,56 +35,58 @@ public class Order extends AggregateRoot {
     private OrderStatus status;
 
     public Order(List<OrderItem> items) {
-        this.items = items;
-
         this.orderId = new OrderID();
-        this.status = OrderStatus.CREATED;
+        this.items = items;
+        initialize();
     }
 
     public Order(List<OrderItem> items, Address shippingAddress) {
+        this.orderId = new OrderID();
         this.items = items;
         this.shippingAddress = shippingAddress;
-
-        this.orderId = new OrderID();
-        this.status = OrderStatus.CREATED;
+        initialize();
     }
 
     public Order(List<OrderItem> items, Notification additionalNotification) {
+        this.orderId = new OrderID();
         this.items = items;
         this.notification = additionalNotification;
-
-        this.orderId = new OrderID();
-        this.status = OrderStatus.CREATED;
+        initialize();
     }
 
     public Order(List<OrderItem> items, Address shippingAddress, Notification additionalNotification) {
+        this.orderId = new OrderID();
         this.items = items;
         this.shippingAddress = shippingAddress;
         this.notification = additionalNotification;
-
-        this.orderId = new OrderID();
-        this.status = OrderStatus.CREATED;
+        initialize();
     }
 
-    public void generateTicket() {
+    private void initialize() {
+        this.status = OrderStatus.CREATED;
+        this.generateTicket();
+        this.calculatePrice();
+    }
+
+    private void generateTicket() {
         ticketId = orderId.getId().split("-")[0];
     }
 
-    public void calculatePrice() {
+    private void calculatePrice() {
         Double productsTotalPrice = items.parallelStream()
-                .map(item -> item.getProduct().getPrice().getValue())
-                .reduce(0.0, Double::sum);
+            .map(item -> item.getProduct().getPrice().getValue())
+            .reduce(0.0, Double::sum);
 
         Double extrasTotalPrice = items.stream()
-                .flatMap(item -> item.getExtras().stream())
-                .map(extra -> extra.getPrice().getValue())
-                .reduce(0.0, Double::sum);
+            .flatMap(item -> item.getExtras().stream())
+            .map(extra -> extra.getPrice().getValue())
+            .reduce(0.0, Double::sum);
 
         price = new Price(productsTotalPrice + extrasTotalPrice);
     }
 
     private void promote() {
-        if (status ==  OrderStatus.COMPLETED) {
+        if (status == OrderStatus.COMPLETED) {
             throw new DomainException("Order is already finished and cant be promoted");
         }
 
@@ -103,7 +107,7 @@ public class Order extends AggregateRoot {
 
     // TODO: add methods for redoing order
     private void rollback() {
-        if (status ==  OrderStatus.COMPLETED) {
+        if (status == OrderStatus.COMPLETED) {
             throw new DomainException("Order is already finished and cant be back");
         }
 
