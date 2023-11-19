@@ -30,6 +30,18 @@ public class OrderKafkaPublisher implements OrderPublisher {
     @Override
     public void orderCreated(OrderCreatedEvent event) {
 
+        // Criar um evento CloudEvent
+        CloudEvent data = CloudEventBuilder.v1()
+            .withId(UUID.randomUUID().toString())
+            .withSource(URI.create(event.source()))
+            .withSubject(event.subject())
+            .withType(event.type())
+            .withData(PojoCloudEventData.wrap(event, mapper::writeValueAsBytes))
+            .withExtension(Event.AUDIENCE.info(), Event.Audience.INTERNAL_BOUNDED_CONTEXT.audienceName())
+            .withExtension(Event.CONTEXT.info(), Event.Context.DOMAIN.eventContextName())
+            .build();
+
+        kafkaTemplate.send(Topic.ORDERS.topicName(), data);
     }
 
     @Override
@@ -37,14 +49,14 @@ public class OrderKafkaPublisher implements OrderPublisher {
 
         // Criar um evento CloudEvent
         CloudEvent data = CloudEventBuilder.v1()
-                .withId(UUID.randomUUID().toString())
-                .withSource(URI.create(event.source()))
-                .withSubject(event.subject())
-                .withType(event.type())
-                .withData(PojoCloudEventData.wrap(event, mapper::writeValueAsBytes))
-                .withExtension(Event.AUDIENCE.info(), Event.Audience.EXTERNAL_BOUNDED_CONTEXT.audienceName())
-                .withExtension(Event.CONTEXT.info(), Event.Context.DOMAIN.eventContextName())
-                .build();
+            .withId(UUID.randomUUID().toString())
+            .withSource(URI.create(event.source()))
+            .withSubject(event.subject())
+            .withType(event.type())
+            .withData(PojoCloudEventData.wrap(event, mapper::writeValueAsBytes))
+            .withExtension(Event.AUDIENCE.info(), Event.Audience.EXTERNAL_BOUNDED_CONTEXT.audienceName())
+            .withExtension(Event.CONTEXT.info(), Event.Context.DOMAIN.eventContextName())
+            .build();
 
         kafkaTemplate.send(Topic.MENU.topicName(), data);
     }

@@ -1,8 +1,10 @@
 package com.gabriel.orders.adapter.driver.api.mappers;
 
+import com.gabriel.orders.adapter.driver.api.controllers.models.OrderItemResponse;
 import com.gabriel.orders.adapter.driver.api.controllers.models.OrderRequest;
 import com.gabriel.orders.adapter.driver.api.controllers.models.OrderResponse;
 import com.gabriel.orders.core.application.commands.CreateOrderCommand;
+import com.gabriel.orders.core.application.queries.GetByTicketOrderQuery;
 import com.gabriel.orders.core.domain.entities.Order;
 import com.gabriel.orders.core.domain.valueobjects.Address;
 import com.gabriel.orders.core.domain.valueobjects.CPF;
@@ -50,7 +52,19 @@ public class OrderMapper {
         return new CreateOrderCommand(customer, shippingAddress, notification, items);
     }
 
+    public GetByTicketOrderQuery toQuery(String orderId) {
+        return new GetByTicketOrderQuery(orderId);
+    }
+
     public OrderResponse toResponse(Order order) {
-        return null;
+        List<OrderItemResponse> items = new ArrayList<>();
+
+        for (var item : order.getItems()) {
+            var extras = item.getExtras();
+
+        }
+
+        return new OrderResponse();
+
     }
 }

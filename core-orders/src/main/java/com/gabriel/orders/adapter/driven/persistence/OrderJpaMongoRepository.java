@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public class OrderJpaMongoRepository implements OrderRepository {
 
-    private MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
     public OrderJpaMongoRepository(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
