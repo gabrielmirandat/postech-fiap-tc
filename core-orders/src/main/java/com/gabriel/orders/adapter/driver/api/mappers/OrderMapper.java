@@ -1,8 +1,6 @@
 package com.gabriel.orders.adapter.driver.api.mappers;
 
-import com.gabriel.orders.adapter.driver.api.controllers.models.OrderItemResponse;
-import com.gabriel.orders.adapter.driver.api.controllers.models.OrderRequest;
-import com.gabriel.orders.adapter.driver.api.controllers.models.OrderResponse;
+import com.gabriel.orders.adapter.driver.api.controllers.models.*;
 import com.gabriel.orders.core.application.commands.CreateOrderCommand;
 import com.gabriel.orders.core.application.queries.GetByTicketOrderQuery;
 import com.gabriel.orders.core.domain.entities.Order;
@@ -13,6 +11,7 @@ import com.gabriel.orders.core.domain.valueobjects.OrderItemRef;
 import com.gabriel.orders.core.domain.valueobjects.enums.NotificationType;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,15 +55,31 @@ public class OrderMapper {
         return new GetByTicketOrderQuery(orderId);
     }
 
+    // String id, String ticketId, OrderStatusDTO status, BigDecimal price,
+    // List<@Valid OrderItemResponse> items
     public OrderResponse toResponse(Order order) {
-        List<OrderItemResponse> items = new ArrayList<>();
 
+        List<OrderItemResponse> orderItems = new ArrayList<>();
         for (var item : order.getItems()) {
             var extras = item.getExtras();
 
+            ProductResponse productResponse = new ProductResponse();
+            OrderItemResponse orderItem =
+                new OrderItemResponse(item.getItemID().toString(), productResponse);
+
+            orderItems.add(orderItem);
         }
 
-        return new OrderResponse();
+        OrderResponse response = new OrderResponse();
+        response.setId(order.getOrderId().toString());
+        response.setTicketId(order.getTicketId());
+        response.setCustomer(null);
+        response.setShippingAddress(null);
+        response.setPrice(BigDecimal.valueOf(order.getPrice().getValue()));
+        response.setNotification(order.getNotification().getValue().toString());
+        response.setStatus(OrderStatusDTO.valueOf(order.getStatus().toString()));
+        response.setItems(orderItems);
 
+        return response;
     }
 }

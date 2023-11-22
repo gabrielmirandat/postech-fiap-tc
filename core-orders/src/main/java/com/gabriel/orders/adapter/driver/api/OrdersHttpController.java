@@ -47,7 +47,7 @@ public class OrdersHttpController implements OrdersApi {
     public ResponseEntity<OrderResponse> getOrderById(String orderId) throws Exception {
         GetByTicketOrderQuery query = orderMapper.toQuery(orderId);
         Order existentOrder = retrieveOrderUseCase.getByTicketOrder(query);
-        return ResponseEntity.ok(new OrderResponse(existentOrder));
+        return ResponseEntity.ok(orderMapper.toResponse(existentOrder));
     }
 
     @Override

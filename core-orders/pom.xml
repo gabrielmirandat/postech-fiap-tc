@@ -14,9 +14,12 @@
         <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <newrelic.version>8.7.0</newrelic.version>
     </properties>
 
     <dependencies>
+
+        <!-- MONGODB -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -30,6 +33,15 @@
             <artifactId>mongodb</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- NEW RELIC -->
+        <dependency>
+            <groupId>com.newrelic.agent.java</groupId>
+            <artifactId>newrelic-agent</artifactId>
+            <version>${newrelic.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -67,6 +79,16 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>
+                        -javaagent:${settings.localRepository}/com/newrelic/agent/java/newrelic-agent/${newrelic.version}/newrelic-agent-${newrelic.version}.jar
+                    </jvmArguments>
+                </configuration>
             </plugin>
         </plugins>
 
