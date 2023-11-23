@@ -15,6 +15,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <newrelic.version>8.7.0</newrelic.version>
+        <maven.deps.plugin.version>3.6.1</maven.deps.plugin.version>
     </properties>
 
     <dependencies>
@@ -37,11 +38,11 @@
         <!-- NEW RELIC -->
         <dependency>
             <groupId>com.newrelic.agent.java</groupId>
-            <artifactId>newrelic-agent</artifactId>
+            <artifactId>newrelic-java</artifactId>
             <version>${newrelic.version}</version>
             <scope>provided</scope>
+            <type>zip</type>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -82,13 +83,38 @@
             </plugin>
 
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <jvmArguments>
-                        -javaagent:${settings.localRepository}/com/newrelic/agent/java/newrelic-agent/${newrelic.version}/newrelic-agent-${newrelic.version}.jar
-                    </jvmArguments>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven.deps.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>unpack-newrelic</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeGroupIds>com.newrelic.agent.java</includeGroupIds>
+                            <includeArtifactIds>newrelic-java</includeArtifactIds>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>test</includeScope>
+                            <includeTypes>so,dll,dylib</includeTypes>
+                            <outputDirectory>${project.basedir}/native-libs</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 

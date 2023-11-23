@@ -1,5 +1,18 @@
 version: '3.8'
 services:
+
+  core-orders:
+    container_name: postech_core_orders
+    build: ./core-orders
+    depends_on:
+      - mongo
+      - postgres
+      - kafka
+    ports:
+      - "8080:8080"
+    networks:
+      - postech_network
+
   mongo:
     container_name: postech_mongo
     image: mongo:latest

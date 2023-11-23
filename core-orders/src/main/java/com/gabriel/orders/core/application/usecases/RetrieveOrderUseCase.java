@@ -3,8 +3,10 @@ package com.gabriel.orders.core.application.usecases;
 import com.gabriel.orders.core.application.queries.GetByTicketOrderQuery;
 import com.gabriel.orders.core.domain.entities.Order;
 import com.gabriel.orders.core.domain.ports.OrderRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class RetrieveOrderUseCase {
 
     private final OrderRepository orderRepository;

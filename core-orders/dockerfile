@@ -1,0 +1,7 @@
+FROM amazoncorretto:17
+WORKDIR /app
+EXPOSE 8080
+ADD target/core-orders*.jar core-orders.jar
+ADD target/newrelic/newrelic.jar newrelic.jar
+ADD src/main/resources/newrelic/newrelic.yml newrelic.yml
+ENTRYPOINT ["java", "-javaagent:newrelic.jar", "-jar", "core-orders.jar"]
