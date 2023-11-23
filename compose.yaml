@@ -6,12 +6,20 @@ services:
     build: ./core-orders
     depends_on:
       - mongo
-      - postgres
       - kafka
     ports:
       - "8080:8080"
     networks:
       - postech_network
+    environment:
+      mongodb.conn.string: mongodb://dummy:dummy@mongo:27017
+      mongodb.conn.db: postech_db
+      kafka.server.url: kafka:9092
+      kafka.group.id: orders-group-id
+      liquibase.change-log: classpath:/db/changelog/db.changelog-master.yaml
+      newrelic.otlp.url: https://otlp.nr-data.net:4317
+      newrelic.app.name: core-orders-app
+      newrelic.service.key: 0656b2287b6f1b1dd90aa0bdd71ff312FFFFNRAL
 
   mongo:
     container_name: postech_mongo
@@ -42,17 +50,17 @@ services:
       ME_CONFIG_MONGODB_AUTH_DATABASE: admin
       ME_CONFIG_MONGODB_PORT: 27017
 
-  postgres:
-    container_name: postech_postgres
-    image: postgres:latest
-    ports:
-      - "5432:5432"
-    networks:
-      - postech_network
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: postech_db
+  #  postgres:
+  #    container_name: postech_postgres
+  #    image: postgres:latest
+  #    ports:
+  #      - "5432:5432"
+  #    networks:
+  #      - postech_network
+  #    environment:
+  #      POSTGRES_USER: user
+  #      POSTGRES_PASSWORD: password
+  #      POSTGRES_DB: postech_db
 
   zookeeper:
     container_name: postech_zookeeper
@@ -75,31 +83,31 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  kafdrop:
-    container_name: postech_kafdrop
-    image: obsidiandynamics/kafdrop:latest
-    depends_on:
-      - kafka
-    ports:
-      - "19000:9000"
-    networks:
-      - postech_network
-    environment:
-      KAFKA_BROKERCONNECT: kafka:29092
+#  kafdrop:
+#    container_name: postech_kafdrop
+#    image: obsidiandynamics/kafdrop:latest
+#    depends_on:
+#      - kafka
+#    ports:
+#      - "19000:9000"
+#    networks:
+#      - postech_network
+#    environment:
+#      KAFKA_BROKERCONNECT: kafka:29092
 
-  rabbitmq:
-    container_name: postech_rabbitmq
-    image: rabbitmq:management
-    ports:
-      - "15672:15672"
-      - "5672:5672"
-    networks:
-      - postech_network
+#  rabbitmq:
+#    container_name: postech_rabbitmq
+#    image: rabbitmq:management
+#    ports:
+#      - "15672:15672"
+#      - "5672:5672"
+#    networks:
+#      - postech_network
 
 networks:
   postech_network:
