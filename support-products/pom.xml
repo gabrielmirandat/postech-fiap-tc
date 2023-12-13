@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -15,10 +15,55 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <quarkus.version>3.6.3</quarkus.version>
+        <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy</artifactId>
+        </dependency>
+        <!-- Adicione outras dependências aqui -->
+    </dependencies>
 
     <build>
         <plugins>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+                <configuration>
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <version>${quarkus.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <!-- OPENAPI -->
             <!-- https://openapi-generator.tech/docs/generators/spring/ -->
@@ -34,31 +79,25 @@
                         <configuration>
                             <skipValidateSpec>false</skipValidateSpec>
                             <inputSpec>${project.basedir}/src/main/resources/oas/products-api.yaml</inputSpec>
-                            <generatorName>spring</generatorName>
+                            <generatorName>jaxrs-spec</generatorName>
                             <configOptions>
                                 <openApiNullable>false</openApiNullable>
                                 <interfaceOnly>true</interfaceOnly>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                                <unhandledException>true</unhandledException>>
                                 <useBeanValidation>true</useBeanValidation>
-                                <useSpringBoot3>true</useSpringBoot3>
                                 <useOptional>true</useOptional>
-                                <useSwaggerUI>true</useSwaggerUI>
-                                <documentationProvider>springdoc</documentationProvider>
                                 <apiPackage>com.gabriel.products.adapter.driver.api.controllers</apiPackage>
                                 <modelPackage>com.gabriel.products.adapter.driver.api.controllers.models</modelPackage>
+                                <library>quarkus</library>
+                                <useJakartaEe>true</useJakartaEe> <!-- Esta linha é a chave para usar Jakarta -->
+                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
                             </configOptions>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
 
-        <resources>
-            <resource>
-                <directory>target/generated-sources</directory>
-            </resource>
-        </resources>
+
+        </plugins>
     </build>
 
 </project>
