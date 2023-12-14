@@ -1,7 +1,12 @@
 package com.gabriel.products;
 
+import io.quarkus.runtime.Quarkus;
+import io.quarkus.runtime.annotations.QuarkusMain;
+
+@QuarkusMain
 public class ProductsApplication {
-    public static void main(String[] args) {
-        System.out.println("Hello world!");
+    public static void main(String... args) {
+        System.out.println("Running main method");
+        Quarkus.run(args);
     }
 }

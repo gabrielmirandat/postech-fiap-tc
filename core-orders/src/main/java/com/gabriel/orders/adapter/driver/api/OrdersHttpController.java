@@ -1,11 +1,10 @@
 package com.gabriel.orders.adapter.driver.api;
 
-import com.gabriel.orders.adapter.driver.api.controllers.OrdersApi;
-import com.gabriel.orders.adapter.driver.api.controllers.models.OrderCreated;
-import com.gabriel.orders.adapter.driver.api.controllers.models.OrderRequest;
-import com.gabriel.orders.adapter.driver.api.controllers.models.OrderResponse;
-import com.gabriel.orders.adapter.driver.api.controllers.models.OrderStatusDTO;
 import com.gabriel.orders.adapter.driver.api.mappers.OrderMapper;
+import com.gabriel.orders.adapter.driver.api.models.OrderCreated;
+import com.gabriel.orders.adapter.driver.api.models.OrderRequest;
+import com.gabriel.orders.adapter.driver.api.models.OrderResponse;
+import com.gabriel.orders.adapter.driver.api.models.OrderStatusDTO;
 import com.gabriel.orders.core.application.commands.CreateOrderCommand;
 import com.gabriel.orders.core.application.queries.GetByTicketOrderQuery;
 import com.gabriel.orders.core.application.usecases.CreateOrderUseCase;

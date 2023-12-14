@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.gabriel</groupId>
@@ -12,6 +12,7 @@
     <artifactId>support-products</artifactId>
 
     <properties>
+        <java.version>17</java.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -44,6 +45,57 @@
     <build>
         <plugins>
 
+            <!-- OPENAPI -->
+            <!-- https://openapi-generator.tech/docs/generators/spring/ -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi.generator.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <skipValidateSpec>false</skipValidateSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/oas/products-api.yaml</inputSpec>
+                            <generatorName>jaxrs-spec</generatorName>
+                            <configOptions>
+                                <openApiNullable>false</openApiNullable>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useBeanValidation>true</useBeanValidation>
+                                <useOptional>true</useOptional>
+                                <apiPackage>com.gabriel.products.adapter.driver.api</apiPackage>
+                                <modelPackage>com.gabriel.products.adapter.driver.api.models</modelPackage>
+                                <library>quarkus</library>
+                                <useJakartaEe>true</useJakartaEe> <!-- Esta linha é a chave para usar Jakarta -->
+                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>target/generated-sources</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${compiler-plugin.version}</version>
@@ -65,39 +117,13 @@
                 </executions>
             </plugin>
 
-            <!-- OPENAPI -->
-            <!-- https://openapi-generator.tech/docs/generators/spring/ -->
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>${openapi.generator.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <skipValidateSpec>false</skipValidateSpec>
-                            <inputSpec>${project.basedir}/src/main/resources/oas/products-api.yaml</inputSpec>
-                            <generatorName>jaxrs-spec</generatorName>
-                            <configOptions>
-                                <openApiNullable>false</openApiNullable>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useBeanValidation>true</useBeanValidation>
-                                <useOptional>true</useOptional>
-                                <apiPackage>com.gabriel.products.adapter.driver.api.controllers</apiPackage>
-                                <modelPackage>com.gabriel.products.adapter.driver.api.controllers.models</modelPackage>
-                                <library>quarkus</library>
-                                <useJakartaEe>true</useJakartaEe> <!-- Esta linha é a chave para usar Jakarta -->
-                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>target/generated-sources</directory>
+            </resource>
+        </resources>
     </build>
 
 </project>
