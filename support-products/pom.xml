@@ -12,11 +12,6 @@
     <artifactId>support-products</artifactId>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <quarkus.version>3.6.3</quarkus.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
@@ -39,7 +34,11 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy</artifactId>
         </dependency>
-        <!-- Adicione outras dependências aqui -->
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-jackson</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -65,7 +64,7 @@
                                 <interfaceOnly>true</interfaceOnly>
                                 <useBeanValidation>true</useBeanValidation>
                                 <useOptional>true</useOptional>
-                                <apiPackage>com.gabriel.products.adapter.driver.api</apiPackage>
+                                <apiPackage>com.gabriel.products.adapter.driver.api.controller</apiPackage>
                                 <modelPackage>com.gabriel.products.adapter.driver.api.models</modelPackage>
                                 <library>quarkus</library>
                                 <useJakartaEe>true</useJakartaEe> <!-- Esta linha é a chave para usar Jakarta -->

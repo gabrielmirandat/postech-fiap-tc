@@ -12,14 +12,27 @@
     <artifactId>core-orders</artifactId>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
         <newrelic.version>8.7.0</newrelic.version>
         <maven.deps.plugin.version>3.6.1</maven.deps.plugin.version>
     </properties>
 
     <dependencies>
+
+        <!-- SPRING BOOT -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
 
         <!-- MONGODB -->
         <dependency>
@@ -36,6 +49,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- KAFKA -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
         <!-- NEW RELIC -->
         <dependency>
             <groupId>com.newrelic.agent.java</groupId>
@@ -44,10 +63,36 @@
             <scope>provided</scope>
             <type>zip</type>
         </dependency>
+
+        <!-- TEST -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+
+            <!-- LOMBOK -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
 
             <!-- OPENAPI -->
             <!-- https://openapi-generator.tech/docs/generators/spring/ -->
@@ -75,7 +120,7 @@
                                 <useOptional>true</useOptional>
                                 <useSwaggerUI>true</useSwaggerUI>
                                 <documentationProvider>springdoc</documentationProvider>
-                                <apiPackage>com.gabriel.orders.adapter.driver.api</apiPackage>
+                                <apiPackage>com.gabriel.orders.adapter.driver.api.controller</apiPackage>
                                 <modelPackage>com.gabriel.orders.adapter.driver.api.models</modelPackage>
                             </configOptions>
                         </configuration>
@@ -117,7 +162,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
         </plugins>
 
         <resources>

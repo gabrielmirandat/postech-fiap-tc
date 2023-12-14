@@ -1,5 +1,6 @@
 package com.gabriel.products.adapter.driver.api;
 
+import com.gabriel.products.adapter.driver.api.controller.ProductsApi;
 import com.gabriel.products.adapter.driver.api.models.ProductCategoryDTO;
 import com.gabriel.products.adapter.driver.api.models.ProductCreated;
 import com.gabriel.products.adapter.driver.api.models.ProductRequest;
@@ -27,6 +28,9 @@ public class ProductsHttpController implements ProductsApi {
 
     @Override
     public ProductResponse getProductById(String productId) {
-        return null;
+        System.out.println("productId = " + productId);
+        ProductResponse resp = new ProductResponse();
+        resp.setId("123");
+        return resp;
     }
 }

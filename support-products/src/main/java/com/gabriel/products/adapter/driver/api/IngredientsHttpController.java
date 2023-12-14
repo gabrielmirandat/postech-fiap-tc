@@ -1,5 +1,6 @@
 package com.gabriel.products.adapter.driver.api;
 
+import com.gabriel.products.adapter.driver.api.controller.IngredientsApi;
 import com.gabriel.products.adapter.driver.api.models.IngredientCreated;
 import com.gabriel.products.adapter.driver.api.models.IngredientRequest;
 import com.gabriel.products.adapter.driver.api.models.IngredientResponse;

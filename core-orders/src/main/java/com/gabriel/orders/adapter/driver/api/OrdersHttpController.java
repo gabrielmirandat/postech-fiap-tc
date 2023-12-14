@@ -1,5 +1,6 @@
 package com.gabriel.orders.adapter.driver.api;
 
+import com.gabriel.orders.adapter.driver.api.controller.OrdersApi;
 import com.gabriel.orders.adapter.driver.api.mappers.OrderMapper;
 import com.gabriel.orders.adapter.driver.api.models.OrderCreated;
 import com.gabriel.orders.adapter.driver.api.models.OrderRequest;
