@@ -10,8 +10,8 @@ import java.util.List;
 @Getter
 public class OrderItem extends Entity {
 
-    private final Product product;
     private final OrderItemID itemID;
+    private final Product product;
     private final List<Extra> extras;
 
     public OrderItem(Product product) {
