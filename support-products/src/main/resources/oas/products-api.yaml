@@ -16,6 +16,9 @@ tags:
   - name: products
     description: Handling products
 
+servers:
+  - url: http://localhost:8080
+
 paths:
   /products:
     get:
