@@ -1,25 +1,24 @@
 version: '3.8'
 services:
 
-  #  core-orders:
-  #    container_name: postech_core_orders
-  #    build: ./core-orders
-  #    depends_on:
-  #      - mongo
-  #      - kafka
-  #    ports:
-  #      - "8080:8080"
-  #    networks:
-  #      - postech_network
-  #    environment:
-  #      mongodb.conn.string: mongodb://dummy:dummy@mongo:27017
-  #      mongodb.conn.db: postech_db
-  #      kafka.server.url: kafka:9092
-  #      kafka.group.id: orders-group-id
-  #      liquibase.change-log: classpath:/db/changelog/db.changelog-master.yaml
-  #      newrelic.otlp.url: https://otlp.nr-data.net:4317
-  #      newrelic.app.name: core-orders-app
-  #      newrelic.service.key: 0656b2287b6f1b1dd90aa0bdd71ff312FFFFNRAL
+  core-orders:
+    container_name: postech_core_orders
+    build: ./core-orders
+    depends_on:
+      - mongo
+      - kafka
+    ports:
+      - "8080:8080"
+    networks:
+      - postech_network
+    environment:
+      MONGODB_CONN_STRING: mongodb://dummy:dummy@mongo:27017
+      MONGODB_CONN_DB: postech_db
+      KAFKA_SERVER_URL: kafka:9092
+      KAFKA_GROUP_ID: orders-group-id
+      NEWRELIC_OTLP_URL: https://otlp.nr-data.net:4317
+      NEWRELIC_APP_NAME: core-orders-app
+      NEWRELIC_SERVICE_KEY: 0656b2287b6f1b1dd90aa0bdd71ff312FFFFNRAL
 
   mongo:
     container_name: postech_mongo

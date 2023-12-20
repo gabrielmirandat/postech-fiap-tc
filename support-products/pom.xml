@@ -37,6 +37,13 @@
             <artifactId>quarkus-resteasy</artifactId>
         </dependency>
 
+        <!-- necessary package for jakarta validations -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-hibernate-validator</artifactId>
+        </dependency>
+
+
         <!-- MONGODB -->
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -134,6 +141,9 @@
         <resources>
             <resource>
                 <directory>target/generated-sources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
             </resource>
         </resources>
     </build>

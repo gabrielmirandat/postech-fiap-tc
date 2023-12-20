@@ -26,7 +26,7 @@ public class ProductMapper {
         return new CreateProductCommand(
             request.getName(),
             request.getPrice().doubleValue(),
-            Category.valueOf(request.getCategory().toString()),
+            Category.valueOf(request.getCategory().toString().toUpperCase()),
             request.getDescription(),
             ingredients
         );

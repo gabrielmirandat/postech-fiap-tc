@@ -65,6 +65,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProductRequest'
+            example:
+              name: "X-Burguer"
+              description: "Carro chefe da casa"
+              category: "burger"
+              price: 10.90
+              ingredients:
+                - ingredientId: "12345678-INGR-2022-08-22"
+                  quantity: 2
       responses:
         '201':
           description: Product created response
@@ -188,6 +196,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IngredientRequest'
+            example:
+              name: "Costela Meat"
+              category: "burger"
+              price: 2.90
       responses:
         '201':
           description: Ingredient created response
@@ -363,32 +375,6 @@ components:
         message:
           type: string
           description: Message of the error
-
-  requestBodies:
-    ProductRequest:
-      description: Product request object
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ProductRequest'
-          example:
-            name: "X-Burguer"
-            description: "Carro chefe da casa"
-            category: "burger"
-            price: 10.90
-            ingredients:
-              - ingredientId: "12345678-ingr-10092008"
-                quantity: 2
-    IngredientRequest:
-      description: Ingredient request object
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/IngredientRequest'
-          example:
-            name: "Costela Meat"
-            category: "burger"
-            price: 2.90
 
   responses:
     ProductCreated:
