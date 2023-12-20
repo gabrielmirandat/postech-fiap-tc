@@ -5,19 +5,19 @@ databaseChangeLog:
       changes:
         - createCollection:
             collectionName: products
-        - addFields:
-            collectionName: products
-            fields:
-              - name: productID
-                type: string
-              - name: ingredients
-                type: array
-                arrayType: string
-              - name: name
-                type: string
-              - name: price
-                type: double
-              - name: category
-                type: string
-              - name: description
-                type: string
+#        - addFields:
+#            collectionName: products
+#            fields:
+#              - name: productID
+#                type: string
+#              - name: ingredients
+#                type: array
+#                arrayType: string
+#              - name: name
+#                type: string
+#              - name: price
+#                type: double
+#              - name: category
+#                type: string
+#              - name: description
+#                type: string
