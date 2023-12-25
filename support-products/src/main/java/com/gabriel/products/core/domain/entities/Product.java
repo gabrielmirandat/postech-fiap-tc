@@ -8,13 +8,11 @@ import com.gabriel.products.core.domain.valueobjects.Name;
 import com.gabriel.products.core.domain.valueobjects.Price;
 import com.gabriel.products.core.domain.valueobjects.ids.IngredientID;
 import com.gabriel.products.core.domain.valueobjects.ids.ProductID;
-import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-@MongoEntity(collection = "products")
 public class Product extends AggregateRoot {
 
     private final ProductID productID;

@@ -13,6 +13,8 @@
 
     <properties>
         <quarkus.version>3.4.3</quarkus.version>
+        <mongodb.version>4.10.2</mongodb.version>
+        <postgresql.version>42.6.0</postgresql.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
     </properties>
@@ -43,22 +45,25 @@
             <artifactId>quarkus-hibernate-validator</artifactId>
         </dependency>
 
-
-        <!-- MONGODB -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy-jackson</artifactId>
         </dependency>
 
+        <!-- MONGODB -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-mongodb-panache</artifactId>
+            <artifactId>quarkus-mongodb-client</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-liquibase-mongodb</artifactId>
-        </dependency>
+
+        <!-- POSTGRESQL -->
+        <!--        <dependency>-->
+        <!--            <groupId>org.postgresql</groupId>-->
+        <!--            <artifactId>postgresql</artifactId>-->
+        <!--            <version>${postgresql.version}</version>-->
+        <!--        </dependency>-->
+
     </dependencies>
 
     <build>
