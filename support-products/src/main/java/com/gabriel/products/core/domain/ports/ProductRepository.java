@@ -12,4 +12,6 @@ public interface ProductRepository {
     Product getById(String id);
 
     List<Product> searchBy(ProductSearchParameters parameters);
+
+    void deleteProduct(String id);
 }

@@ -21,4 +21,8 @@ public class ProductJpaPostgreSQLRepository implements ProductRepository {
     public List<Product> searchBy(ProductSearchParameters parameters) {
         return null;
     }
+
+    @Override
+    public void deleteProduct(String id) {
+    }
 }

@@ -11,6 +11,7 @@ import com.gabriel.products.core.domain.valueobjects.ids.IngredientID;
 import com.gabriel.products.core.domain.valueobjects.ids.ProductID;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.DeleteResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.Document;
@@ -40,11 +41,19 @@ public class ProductClientMongoRepository implements ProductRepository {
     @Override
     public List<Product> searchBy(ProductSearchParameters parameters) {
         List<Product> products = new ArrayList<>();
-        if (parameters.category != null) {
-            productCollection.find(Filters.eq("category", parameters.category))
+        if (parameters.category() != null) {
+            productCollection.find(Filters.eq("category", parameters.category().toString()))
                 .forEach(doc -> products.add(ProductConverter.documentToProduct((Document) doc)));
         }
         return products;
+    }
+
+    @Override
+    public void deleteProduct(String id) {
+        DeleteResult result = productCollection.deleteOne(Filters.eq("productID", id));
+        if (result.getDeletedCount() < 1) {
+            throw new RuntimeException("Product not found");
+        }
     }
 
     private class ProductConverter {

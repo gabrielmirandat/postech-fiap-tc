@@ -7,14 +7,31 @@ import com.gabriel.products.adapter.driver.api.models.ProductCreated;
 import com.gabriel.products.adapter.driver.api.models.ProductRequest;
 import com.gabriel.products.adapter.driver.api.models.ProductResponse;
 import com.gabriel.products.core.application.commands.CreateProductCommand;
+import com.gabriel.products.core.application.commands.DeleteProductCommand;
+import com.gabriel.products.core.application.queries.GetByProductIdQuery;
+import com.gabriel.products.core.application.queries.SearchProductQuery;
 import com.gabriel.products.core.application.usecases.CreateProductUseCase;
+import com.gabriel.products.core.application.usecases.DeleteProductUseCase;
+import com.gabriel.products.core.application.usecases.RetrieveProductUseCase;
+import com.gabriel.products.core.application.usecases.SearchProductUseCase;
 import com.gabriel.products.core.domain.entities.Product;
 import jakarta.inject.Inject;
+
+import java.util.List;
 
 public class ProductsHttpController implements ProductsApi {
 
     @Inject
     private CreateProductUseCase createProductUseCase;
+
+    @Inject
+    private DeleteProductUseCase deleteProductUseCase;
+
+    @Inject
+    private RetrieveProductUseCase retrieveProductUseCase;
+
+    @Inject
+    private SearchProductUseCase searchProductUseCase;
 
     @Inject
     private ProductMapper productMapper;
@@ -28,18 +45,21 @@ public class ProductsHttpController implements ProductsApi {
 
     @Override
     public void deleteProduct(String productId) {
-    }
-
-    @Override
-    public ProductResponse findProductsByQuery(ProductCategoryDTO category) {
-        return null;
+        DeleteProductCommand command = new DeleteProductCommand(productId);
+        deleteProductUseCase.deleteProduct(command);
     }
 
     @Override
     public ProductResponse getProductById(String productId) {
-        System.out.println("productId = " + productId);
-        ProductResponse resp = new ProductResponse();
-        resp.setId("123");
-        return resp;
+        GetByProductIdQuery query = new GetByProductIdQuery(productId);
+        Product product = retrieveProductUseCase.getProductById(query);
+        return productMapper.toResponse(product);
+    }
+
+    @Override
+    public ProductResponse findProductsByQuery(ProductCategoryDTO category) {
+        SearchProductQuery query = new SearchProductQuery(category.toString());
+        List<Product> products = searchProductUseCase.searchProduct(query);
+        return productMapper.toResponse(products.get(0));
     }
 }
