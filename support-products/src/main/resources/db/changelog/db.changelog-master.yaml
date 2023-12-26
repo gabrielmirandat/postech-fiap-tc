@@ -2,7 +2,6 @@ databaseChangeLog:
   - changeSet:
       id: 1
       author: gabriel
-      runAlways: true # Add this line to disable checksum validation
       changes:
         - createCollection:
             collectionName: products

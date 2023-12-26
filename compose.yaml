@@ -49,17 +49,17 @@ services:
       ME_CONFIG_MONGODB_AUTH_DATABASE: admin
       ME_CONFIG_MONGODB_PORT: 27017
 
-  postgres:
-    container_name: postech_postgres
-    image: postgres:latest
-    ports:
-      - "5432:5432"
-    networks:
-      - postech_network
-    environment:
-      POSTGRES_USER: dummy
-      POSTGRES_PASSWORD: dummy
-      POSTGRES_DB: postech_db
+#  postgres:
+#    container_name: postech_postgres
+#    image: postgres:latest
+#    ports:
+#      - "5432:5432"
+#    networks:
+#      - postech_network
+#    environment:
+#      POSTGRES_USER: dummy
+#      POSTGRES_PASSWORD: dummy
+#      POSTGRES_DB: postech_db
 
   zookeeper:
     container_name: postech_zookeeper
