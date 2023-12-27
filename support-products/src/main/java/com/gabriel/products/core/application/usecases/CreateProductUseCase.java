@@ -10,7 +10,7 @@ import jakarta.inject.Inject;
 public class CreateProductUseCase {
 
     @Inject
-    private ProductRepository productRepository;
+    ProductRepository productRepository;
 
     // it may not work with quarkus
     public Product createProduct(CreateProductCommand command) {

@@ -22,25 +22,25 @@ import java.util.List;
 public class ProductsHttpController implements ProductsApi {
 
     @Inject
-    private CreateProductUseCase createProductUseCase;
+    CreateProductUseCase createProductUseCase;
 
     @Inject
-    private DeleteProductUseCase deleteProductUseCase;
+    DeleteProductUseCase deleteProductUseCase;
 
     @Inject
-    private RetrieveProductUseCase retrieveProductUseCase;
+    RetrieveProductUseCase retrieveProductUseCase;
 
     @Inject
-    private SearchProductUseCase searchProductUseCase;
+    SearchProductUseCase searchProductUseCase;
 
     @Inject
-    private ProductMapper productMapper;
+    ProductMapper productMapper;
 
     @Override
     public ProductCreated addProduct(ProductRequest productRequest) {
         CreateProductCommand command = productMapper.toCommand(productRequest);
         Product newProduct = createProductUseCase.createProduct(command);
-        return new ProductCreated().productId(newProduct.getProductID().toString());
+        return new ProductCreated().productId(newProduct.getProductID().getId());
     }
 
     @Override

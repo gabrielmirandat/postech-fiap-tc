@@ -12,16 +12,16 @@
     <artifactId>support-products</artifactId>
 
     <properties>
-        <quarkus.version>3.4.3</quarkus.version>
+        <quarkus.version>3.6.4</quarkus.version>
         <mongodb.version>4.10.2</mongodb.version>
-        <compiler-plugin.version>3.8.1</compiler-plugin.version>
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
+        <compiler-plugin.version>3.11.0</compiler-plugin.version>
+        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.quarkus</groupId>
+                <groupId>io.quarkus.platform</groupId>
                 <artifactId>quarkus-bom</artifactId>
                 <version>${quarkus.version}</version>
                 <type>pom</type>
@@ -54,9 +54,16 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-mongodb-client</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.quarkus</groupId>-->
+<!--            <artifactId>quarkus-liquibase-mongodb</artifactId>-->
+<!--        </dependency>-->
+
+        <!-- TEST -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-liquibase-mongodb</artifactId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -126,6 +133,7 @@
                 <groupId>io.quarkus</groupId>
                 <artifactId>quarkus-maven-plugin</artifactId>
                 <version>${quarkus.version}</version>
+                <extensions>true</extensions>
                 <executions>
                     <execution>
                         <goals>

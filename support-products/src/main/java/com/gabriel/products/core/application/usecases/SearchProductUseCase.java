@@ -14,11 +14,10 @@ import java.util.List;
 public class SearchProductUseCase {
 
     @Inject
-    private ProductRepository productRepository;
+    ProductRepository productRepository;
 
     public List<Product> searchProduct(SearchProductQuery query) {
         ProductSearchParameters parameters = new ProductSearchParameters(Category.valueOf(query.category().toUpperCase()));
-        List<Product> products = productRepository.searchBy(parameters);
-        return products;
+        return productRepository.searchBy(parameters);
     }
 }

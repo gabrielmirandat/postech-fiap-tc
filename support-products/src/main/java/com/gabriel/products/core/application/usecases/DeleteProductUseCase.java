@@ -9,7 +9,7 @@ import jakarta.inject.Inject;
 public class DeleteProductUseCase {
 
     @Inject
-    private ProductRepository productRepository;
+    ProductRepository productRepository;
 
     // it may not work with quarkus
     public void deleteProduct(DeleteProductCommand command) {

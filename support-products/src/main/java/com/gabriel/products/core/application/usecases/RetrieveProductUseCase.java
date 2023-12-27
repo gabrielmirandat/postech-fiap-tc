@@ -10,10 +10,9 @@ import jakarta.inject.Inject;
 public class RetrieveProductUseCase {
 
     @Inject
-    private ProductRepository productRepository;
+    ProductRepository productRepository;
 
     public Product getProductById(GetByProductIdQuery query) {
-        Product product = productRepository.getById(query.id());
-        return product;
+        return productRepository.getById(query.id());
     }
 }
