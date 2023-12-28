@@ -11,11 +11,17 @@ import jakarta.inject.Inject;
 public class MongoDBConfig {
 
     @Inject
-    private MongoClient mongoClient;
+    MongoClient mongoClient;
 
     @Produces
-    public MongoCollection createCollection() {
+    public MongoCollection getProductCollection() {
         MongoDatabase database = mongoClient.getDatabase("postech_db");
         return database.getCollection("products");
+    }
+
+    @Produces
+    public MongoCollection getIngredientCollection() {
+        MongoDatabase database = mongoClient.getDatabase("postech_db");
+        return database.getCollection("ingredients");
     }
 }

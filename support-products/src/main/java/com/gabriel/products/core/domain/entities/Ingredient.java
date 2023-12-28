@@ -18,6 +18,13 @@ public class Ingredient extends AggregateRoot {
 
     private final Category category;
 
+    public Ingredient(IngredientID ingredientID, Name name, Price price, Category category) {
+        this.ingredientID = ingredientID;
+        this.name = name;
+        this.price = price;
+        this.category = category;
+    }
+
     public Ingredient(IngredientID ingredientID, String name, Double price, Category category) {
         this.ingredientID = ingredientID;
         this.name = new Name(name);

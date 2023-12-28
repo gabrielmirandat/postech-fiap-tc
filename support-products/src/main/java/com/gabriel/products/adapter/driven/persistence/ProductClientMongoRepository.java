@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class ProductClientMongoRepository implements ProductRepository {
     @Inject
-    private MongoCollection productCollection;
+    MongoCollection productCollection;
 
     @Override
     public Product saveProduct(Product product) {
-        Document productDoc = ProductConverter.productToDocument(product);
-        productCollection.insertOne(productDoc);
+        Document document = ProductConverter.productToDocument(product);
+        productCollection.insertOne(document);
         return product;
     }
 
