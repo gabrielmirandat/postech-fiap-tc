@@ -14,6 +14,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class ProductClientMongoRepository implements ProductRepository {
     @Inject
+    @Named("productCollection")
     MongoCollection productCollection;
 
     @Override

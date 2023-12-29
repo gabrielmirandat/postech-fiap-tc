@@ -16,7 +16,6 @@ import java.util.stream.IntStream;
 @ApplicationScoped
 public class ProductMapper {
 
-    // write a function to map from ProductRequest to CreateProductCommand
     public CreateProductCommand toCommand(ProductRequest request) {
         // convert from ProductIngredientRequest to List<IngredientID> considering
         // that quantity attribute defines the number of times ingredientId should be added to the list

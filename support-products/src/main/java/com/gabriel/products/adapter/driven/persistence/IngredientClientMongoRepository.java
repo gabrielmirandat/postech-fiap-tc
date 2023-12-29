@@ -11,6 +11,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.bson.Document;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.List;
 public class IngredientClientMongoRepository implements IngredientRepository {
 
     @Inject
+    @Named("ingredientCollection")
     MongoCollection ingredientCollection;
 
     @Override
