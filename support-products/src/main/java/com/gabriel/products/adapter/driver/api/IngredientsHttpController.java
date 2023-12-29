@@ -7,8 +7,10 @@ import com.gabriel.products.adapter.driver.api.models.IngredientRequest;
 import com.gabriel.products.adapter.driver.api.models.IngredientResponse;
 import com.gabriel.products.adapter.driver.api.models.ProductCategoryDTO;
 import com.gabriel.products.core.application.commands.CreateIngredientCommand;
+import com.gabriel.products.core.application.queries.GetByIngredientIdQuery;
 import com.gabriel.products.core.application.queries.SearchIngredientQuery;
 import com.gabriel.products.core.application.usecases.CreateIngredientUseCase;
+import com.gabriel.products.core.application.usecases.RetrieveIngredientUseCase;
 import com.gabriel.products.core.application.usecases.SearchIngredientUseCase;
 import com.gabriel.products.core.domain.entities.Ingredient;
 import jakarta.inject.Inject;
@@ -19,6 +21,9 @@ public class IngredientsHttpController implements IngredientsApi {
 
     @Inject
     CreateIngredientUseCase createIngredientUseCase;
+
+    @Inject
+    RetrieveIngredientUseCase retrieveIngredientUseCase;
 
     @Inject
     SearchIngredientUseCase searchIngredientUseCase;
@@ -35,9 +40,16 @@ public class IngredientsHttpController implements IngredientsApi {
     }
 
     @Override
-    public IngredientResponse findIngredientsByQuery(ProductCategoryDTO category) {
+    public IngredientResponse getIngredientById(String ingredientId) {
+        GetByIngredientIdQuery query = new GetByIngredientIdQuery(ingredientId);
+        Ingredient ingredient = retrieveIngredientUseCase.getIngredientById(query);
+        return ingredientMapper.toResponse(ingredient);
+    }
+
+    @Override
+    public List<IngredientResponse> findIngredientsByQuery(ProductCategoryDTO category) {
         SearchIngredientQuery query = new SearchIngredientQuery(category.toString());
         List<Ingredient> ingredients = searchIngredientUseCase.searchIngredient(query);
-        return ingredientMapper.toResponse(ingredients.get(0));
+        return ingredientMapper.toResponse(ingredients);
     }
 }

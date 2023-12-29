@@ -50,6 +50,12 @@ public class ProductMapper {
             .category(ProductCategoryDTO.valueOf(product.getCategory().toString().toUpperCase()))
             .price(product.getPrice().getValue());
     }
+
+    public List<ProductResponse> toResponse(List<Product> products) {
+        return products.stream()
+            .map(this::toResponse)
+            .toList();
+    }
 }
 
 

@@ -57,9 +57,9 @@ public class ProductsHttpController implements ProductsApi {
     }
 
     @Override
-    public ProductResponse findProductsByQuery(ProductCategoryDTO category) {
+    public List<ProductResponse> findProductsByQuery(ProductCategoryDTO category) {
         SearchProductQuery query = new SearchProductQuery(category.toString());
         List<Product> products = searchProductUseCase.searchProduct(query);
-        return productMapper.toResponse(products.get(0));
+        return productMapper.toResponse(products);
     }
 }

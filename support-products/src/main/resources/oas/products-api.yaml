@@ -34,7 +34,6 @@ paths:
           required: false
           explode: true
           schema:
-            type: string
             $ref: '#/components/schemas/ProductCategoryDTO'
       responses:
         '200':
@@ -42,7 +41,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductResponse'
+                $ref: '#/components/schemas/ProductListResponse'
         '401':
           $ref: '#/components/responses/ErrorResponse'
         '403':
@@ -165,7 +164,6 @@ paths:
           required: false
           explode: true
           schema:
-            type: string
             $ref: '#/components/schemas/ProductCategoryDTO'
       responses:
         '200':
@@ -173,7 +171,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IngredientResponse'
+                $ref: '#/components/schemas/IngredientListResponse'
         '401':
           $ref: '#/components/responses/ErrorResponse'
         '403':
@@ -218,10 +216,45 @@ paths:
       security:
         - hydra:
             - products.write
+  /ingredients/{ingredientId}:
+    get:
+      tags:
+        - products
+      summary: Find Ingredient By ID
+      description: Returns a single ingredient by ID
+      operationId: getIngredientById
+      parameters:
+        - name: ingredientId
+          in: path
+          description: ID of ingredient to return
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ingredient search response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngredientResponse'
+        '401':
+          $ref: '#/components/responses/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      security:
+        - hydra:
+            - ingredients.read
 
 components:
   schemas:
     ProductCategoryDTO:
+      description: Category of the Product or Ingredient
       type: string
       enum:
         - burger
@@ -259,7 +292,6 @@ components:
           description: Product description for menu
         category:
           $ref: '#/components/schemas/ProductCategoryDTO'
-          description: Product category
         price:
           type: number
           description: Price of the product
@@ -282,7 +314,6 @@ components:
           description: Name of the ingredient
         category:
           $ref: '#/components/schemas/ProductCategoryDTO'
-          description: Category of the ingredient
         price:
           type: number
           format: double
@@ -320,12 +351,15 @@ components:
           description: Name of the Ingredient
         category:
           $ref: '#/components/schemas/ProductCategoryDTO'
-          description: Category of the Ingredient
         price:
           type: number
           format: double
           description: Price of the ingredient
           minimum: 0.1
+    IngredientListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/IngredientResponse'
     ProductResponse:
       type: object
       required:
@@ -352,12 +386,15 @@ components:
             $ref: '#/components/schemas/IngredientResponse'
         category:
           $ref: '#/components/schemas/ProductCategoryDTO'
-          description: Category of the Product
         price:
           type: number
           format: double
           description: Price of the product
           minimum: 0.1
+    ProductListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/ProductResponse'
     ErrorResponse:
       type: object
       required:
@@ -404,6 +441,21 @@ components:
             name: "Costela Meat"
             category: "burger"
             price: 2.90
+    IngredientListResponse:
+      description: Ingredient search response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/IngredientListResponse'
+          example:
+            - id: "12345678-INGR-10092008"
+              name: "Costela Meat"
+              category: "burger"
+              price: 2.90
+            - id: "12345678-INGR-10092008"
+              name: "Costela Meat"
+              category: "burger"
+              price: 2.90
     ProductResponse:
       description: Product search response
       content:
@@ -421,6 +473,33 @@ components:
                 name: "Costela meat"
                 category: "burger"
                 price: 2.90
+    ProductListResponse:
+      description: Product search response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProductListResponse'
+          example:
+            - id: "12345678-prdc-10092008"
+              name: "X-Burger"
+              description: "Carro chefe"
+              category: "burger"
+              price: 10.90
+              ingredients:
+                - id: "12345678-ingr-10092008"
+                  name: "Costela meat"
+                  category: "burger"
+                  price: 2.90
+            - id: "12345678-prdc-10092008"
+              name: "X-Burger"
+              description: "Carro chefe"
+              category: "burger"
+              price: 10.90
+              ingredients:
+                - id: "12345678-ingr-10092008"
+                  name: "Costela meat"
+                  category: "burger"
+                  price: 2.90
     ErrorResponse:
       description: Error response
       content:
