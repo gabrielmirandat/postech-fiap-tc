@@ -5,6 +5,7 @@ import com.gabriel.products.core.domain.entities.enums.Category;
 import com.gabriel.products.core.domain.ports.ProductRepository;
 import com.gabriel.products.core.domain.ports.models.ProductSearchParameters;
 import com.gabriel.products.core.domain.valueobjects.Description;
+import com.gabriel.products.core.domain.valueobjects.Image;
 import com.gabriel.products.core.domain.valueobjects.Name;
 import com.gabriel.products.core.domain.valueobjects.Price;
 import com.gabriel.products.core.domain.valueobjects.ids.IngredientID;
@@ -23,9 +24,10 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ProductClientMongoRepository implements ProductRepository {
+
     @Inject
     @Named("productCollection")
-    MongoCollection productCollection;
+    MongoCollection<Document> productCollection;
 
     @Override
     public Product saveProduct(Product product) {
@@ -36,7 +38,7 @@ public class ProductClientMongoRepository implements ProductRepository {
 
     @Override
     public Product getById(String id) {
-        Document doc = (Document) productCollection.find(Filters.eq("productID", id)).first();
+        Document doc = productCollection.find(Filters.eq("productID", id)).first();
         return doc != null ? ProductConverter.documentToProduct(doc) : null;
     }
 
@@ -45,7 +47,7 @@ public class ProductClientMongoRepository implements ProductRepository {
         List<Product> products = new ArrayList<>();
         if (parameters.category() != null) {
             productCollection.find(Filters.eq("category", parameters.category().toString()))
-                .forEach(doc -> products.add(ProductConverter.documentToProduct((Document) doc)));
+                .forEach(doc -> products.add(ProductConverter.documentToProduct(doc)));
         }
         return products;
     }
@@ -58,7 +60,7 @@ public class ProductClientMongoRepository implements ProductRepository {
         }
     }
 
-    private class ProductConverter {
+    private static class ProductConverter {
 
         public static Document productToDocument(Product product) {
             Document doc = new Document();
@@ -66,7 +68,8 @@ public class ProductClientMongoRepository implements ProductRepository {
                 .append("name", product.getName().getValue())
                 .append("price", product.getPrice().getValue())
                 .append("category", product.getCategory().toString())
-                .append("description", product.getDescription().getValue());
+                .append("description", product.getDescription().getValue())
+                .append("image", product.getImage().getUrl());
             List<String> ingredientIds = product.getIngredients().stream()
                 .map(IngredientID::getId)
                 .collect(Collectors.toList());
@@ -80,10 +83,11 @@ public class ProductClientMongoRepository implements ProductRepository {
             Price price = new Price(doc.getDouble("price"));
             Category category = Category.valueOf(doc.getString("category").toUpperCase());
             Description description = new Description(doc.getString("description"));
+            Image image = new Image(doc.getString("image"));
             List<IngredientID> ingredients = ((List<String>) doc.get("ingredients")).stream()
                 .map(IngredientID::new)
                 .collect(Collectors.toList());
-            return new Product(productID, name, price, category, description, ingredients);
+            return new Product(productID, name, price, category, description, image, ingredients);
         }
     }
 }

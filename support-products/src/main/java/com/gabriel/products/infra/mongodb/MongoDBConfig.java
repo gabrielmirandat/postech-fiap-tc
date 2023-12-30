@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import org.bson.Document;
 
 @ApplicationScoped
 public class MongoDBConfig {
@@ -16,14 +17,14 @@ public class MongoDBConfig {
 
     @Produces
     @Named("productCollection")
-    public MongoCollection getProductCollection() {
+    public MongoCollection<Document> getProductCollection() {
         MongoDatabase database = mongoClient.getDatabase("postech_db");
         return database.getCollection("products");
     }
 
     @Produces
     @Named("ingredientCollection")
-    public MongoCollection getIngredientCollection() {
+    public MongoCollection<Document> getIngredientCollection() {
         MongoDatabase database = mongoClient.getDatabase("postech_db");
         return database.getCollection("ingredients");
     }

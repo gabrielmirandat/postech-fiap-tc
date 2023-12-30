@@ -6,5 +6,5 @@ import com.gabriel.products.core.domain.valueobjects.ids.IngredientID;
 import java.util.List;
 
 public record CreateProductCommand(String name, Double price, Category category,
-                                   String description, List<IngredientID> ingredients) {
+                                   String description, String image, List<IngredientID> ingredients) {
 }

@@ -23,7 +23,7 @@ public class IngredientClientMongoRepository implements IngredientRepository {
 
     @Inject
     @Named("ingredientCollection")
-    MongoCollection ingredientCollection;
+    MongoCollection<Document> ingredientCollection;
 
     @Override
     public Ingredient saveIngredient(Ingredient ingredient) {
@@ -34,7 +34,7 @@ public class IngredientClientMongoRepository implements IngredientRepository {
 
     @Override
     public Ingredient getById(String id) {
-        Document doc = (Document) ingredientCollection.find(Filters.eq("ingredientID", id)).first();
+        Document doc = ingredientCollection.find(Filters.eq("ingredientID", id)).first();
         return doc != null ? IngredientConverter.documentToIngredient(doc) : null;
     }
 
@@ -56,7 +56,7 @@ public class IngredientClientMongoRepository implements IngredientRepository {
         }
     }
 
-    private class IngredientConverter {
+    private static class IngredientConverter {
 
         public static Document ingredientToDocument(Ingredient ingredient) {
             Document doc = new Document();

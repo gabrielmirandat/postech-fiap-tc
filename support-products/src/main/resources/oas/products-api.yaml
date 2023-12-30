@@ -69,6 +69,7 @@ paths:
               description: "Carro chefe da casa"
               category: "burger"
               price: 10.90
+              image: "burguer.png"
               ingredients:
                 - ingredientId: "12345678-INGR-2022-08-22"
                   quantity: 2
@@ -198,6 +199,8 @@ paths:
               name: "Costela Meat"
               category: "burger"
               price: 2.90
+              weight: 100
+              isExtra: true
       responses:
         '201':
           description: Ingredient created response
@@ -282,6 +285,7 @@ components:
         - description
         - category
         - price
+        - image
         - ingredients
       properties:
         name:
@@ -295,6 +299,9 @@ components:
         price:
           type: number
           description: Price of the product
+        image:
+          type: string
+          description: Image of the product
         ingredients:
           type: array
           description: Ingredients that compose this product
@@ -308,6 +315,8 @@ components:
         - name
         - category
         - price
+        - weight
+        - isExtra
       properties:
         name:
           type: string
@@ -319,6 +328,14 @@ components:
           format: double
           description: Price of the ingredient
           minimum: 0.1
+        weight:
+          type: number
+          format: double
+          description: Weight of the ingredient
+          minimum: 0.1
+        isExtra:
+          type: boolean
+          description: If the ingredient is extra
     ProductCreated:
       type: object
       required:
@@ -342,6 +359,8 @@ components:
         - name
         - category
         - price
+        - weight
+        - isExtra
       properties:
         id:
           type: string
@@ -356,6 +375,14 @@ components:
           format: double
           description: Price of the ingredient
           minimum: 0.1
+        weight:
+          type: number
+          format: double
+          description: Weight of the ingredient
+          minimum: 0.1
+        isExtra:
+          type: boolean
+          description: If the ingredient is extra
     IngredientListResponse:
       type: array
       items:
@@ -366,9 +393,10 @@ components:
         - id
         - name
         - description
-        - ingredients
         - category
         - price
+        - image
+        - ingredients
       properties:
         id:
           type: string
@@ -379,11 +407,6 @@ components:
         description:
           type: string
           description: Description of the Product in menu
-        ingredients:
-          type: array
-          description: Ingredients of the Product
-          items:
-            $ref: '#/components/schemas/IngredientResponse'
         category:
           $ref: '#/components/schemas/ProductCategoryDTO'
         price:
@@ -391,6 +414,14 @@ components:
           format: double
           description: Price of the product
           minimum: 0.1
+        image:
+          type: string
+          description: Image of the product
+        ingredients:
+          type: array
+          description: Ingredients of the Product
+          items:
+            $ref: '#/components/schemas/IngredientResponse'
     ProductListResponse:
       type: array
       items:
@@ -441,6 +472,8 @@ components:
             name: "Costela Meat"
             category: "burger"
             price: 2.90
+            weight: 100
+            isExtra: true
     IngredientListResponse:
       description: Ingredient search response
       content:
@@ -452,10 +485,14 @@ components:
               name: "Costela Meat"
               category: "burger"
               price: 2.90
+              weight: 100
+              isExtra: true
             - id: "12345678-INGR-10092008"
               name: "Costela Meat"
               category: "burger"
               price: 2.90
+              weight: 100
+              isExtra: true
     ProductResponse:
       description: Product search response
       content:
@@ -468,6 +505,7 @@ components:
             description: "Carro chefe"
             category: "burger"
             price: 10.90
+            image: "burguer.png"
             ingredients:
               - id: "12345678-ingr-10092008"
                 name: "Costela meat"
@@ -485,6 +523,7 @@ components:
               description: "Carro chefe"
               category: "burger"
               price: 10.90
+              image: "burguer.png"
               ingredients:
                 - id: "12345678-ingr-10092008"
                   name: "Costela meat"
@@ -495,6 +534,7 @@ components:
               description: "Carro chefe"
               category: "burger"
               price: 10.90
+              image: "burguer.png"
               ingredients:
                 - id: "12345678-ingr-10092008"
                   name: "Costela meat"

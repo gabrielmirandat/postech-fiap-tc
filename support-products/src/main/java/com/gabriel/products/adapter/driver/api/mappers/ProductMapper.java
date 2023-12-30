@@ -31,6 +31,7 @@ public class ProductMapper {
             request.getPrice().doubleValue(),
             Category.valueOf(request.getCategory().toString().toUpperCase()),
             request.getDescription(),
+            request.getImage(),
             ingredients
         );
     }
@@ -39,16 +40,18 @@ public class ProductMapper {
         return new ProductResponse()
             .id(product.getProductID().getId())
             .name(product.getName().getValue())
+            .category(ProductCategoryDTO.valueOf(product.getCategory().toString().toUpperCase()))
+            .price(product.getPrice().getValue())
             .description(product.getDescription().getValue())
+            .image(product.getImage().getUrl())
             .ingredients(product.getIngredients().stream()
                 .map(ingredient -> new IngredientResponse()
                     .id(ingredient.getId())
                     .name(ingredient.getId())
                     .category(ProductCategoryDTO.BURGER)
                     .price(10.0))
-                .toList())
-            .category(ProductCategoryDTO.valueOf(product.getCategory().toString().toUpperCase()))
-            .price(product.getPrice().getValue());
+                .toList());
+
     }
 
     public List<ProductResponse> toResponse(List<Product> products) {
