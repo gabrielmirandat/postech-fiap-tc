@@ -6,6 +6,7 @@ import com.gabriel.products.core.domain.ports.IngredientRepository;
 import com.gabriel.products.core.domain.ports.models.ProductSearchParameters;
 import com.gabriel.products.core.domain.valueobjects.Name;
 import com.gabriel.products.core.domain.valueobjects.Price;
+import com.gabriel.products.core.domain.valueobjects.Weight;
 import com.gabriel.products.core.domain.valueobjects.ids.IngredientID;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -62,17 +63,22 @@ public class IngredientClientMongoRepository implements IngredientRepository {
             Document doc = new Document();
             doc.append("ingredientID", ingredient.getIngredientID().getId())
                 .append("name", ingredient.getName().getValue())
+                .append("category", ingredient.getCategory().toString())
                 .append("price", ingredient.getPrice().getValue())
-                .append("category", ingredient.getCategory().toString());
+                .append("weight", ingredient.getWeight().getValue())
+                .append("isExtra", ingredient.isExtra());
             return doc;
         }
 
         public static Ingredient documentToIngredient(Document doc) {
             IngredientID ingredientID = new IngredientID(doc.getString("ingredientID"));
             Name name = new Name(doc.getString("name"));
-            Price price = new Price(doc.getDouble("price"));
             Category category = Category.valueOf(doc.getString("category").toUpperCase());
-            return new Ingredient(ingredientID, name, price, category);
+            Price price = new Price(doc.getDouble("price"));
+            Weight weight = new Weight(doc.getDouble("weight"));
+            boolean isExtra = doc.getBoolean("isExtra");
+
+            return new Ingredient(ingredientID, name, category, price, weight, isExtra);
         }
     }
 }

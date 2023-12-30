@@ -14,7 +14,7 @@ public class CreateProductUseCase {
 
     // it may not work with quarkus
     public Product createProduct(CreateProductCommand command) {
-        Product product = new Product(command.name(), command.price(), command.category(), command.description(), command.ingredients());
+        Product product = new Product(command.name(), command.price(), command.category(), command.description(), command.image(), command.ingredients());
         productRepository.saveProduct(product);
         return product;
     }

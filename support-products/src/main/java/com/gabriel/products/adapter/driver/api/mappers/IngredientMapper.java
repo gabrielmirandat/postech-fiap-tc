@@ -17,16 +17,20 @@ public class IngredientMapper {
     public CreateIngredientCommand toCommand(IngredientRequest ingredientRequest) {
         return new CreateIngredientCommand(
             ingredientRequest.getName(),
+            Category.valueOf(ingredientRequest.getCategory().name().toUpperCase()),
             ingredientRequest.getPrice(),
-            Category.valueOf(ingredientRequest.getCategory().name().toUpperCase()));
+            ingredientRequest.getWeight(),
+            ingredientRequest.getIsExtra());
     }
 
     public IngredientResponse toResponse(Ingredient ingredient) {
         return new IngredientResponse()
             .id(ingredient.getIngredientID().getId())
             .name(ingredient.getName().getValue())
+            .price(ingredient.getPrice().getValue())
             .category(ProductCategoryDTO.valueOf(ingredient.getCategory().toString().toUpperCase()))
-            .price(ingredient.getPrice().getValue());
+            .weight(ingredient.getWeight().getValue())
+            .isExtra(ingredient.isExtra());
     }
 
     public List<IngredientResponse> toResponse(List<Ingredient> ingredients) {
