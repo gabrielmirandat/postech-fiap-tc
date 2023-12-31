@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class Image extends ValueObject {
 
-    @Pattern(regexp = ".*\\.png$", message = "Image must wnd with .png")
+    @Pattern(regexp = ".*\\.png$", message = "Image must end with .png")
     private final String url;
 
     @JsonCreator
