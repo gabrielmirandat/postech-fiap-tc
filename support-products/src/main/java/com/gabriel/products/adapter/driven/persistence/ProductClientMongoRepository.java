@@ -38,7 +38,7 @@ public class ProductClientMongoRepository implements ProductRepository {
 
     @Override
     public Product getById(String id) {
-        Document doc = productCollection.find(Filters.eq("productID", id)).first();
+        Document doc = productCollection.find(Filters.eq("_id", id)).first();
         return doc != null ? ProductConverter.documentToProduct(doc) : null;
     }
 
@@ -64,7 +64,7 @@ public class ProductClientMongoRepository implements ProductRepository {
 
         public static Document productToDocument(Product product) {
             Document doc = new Document();
-            doc.append("productID", product.getProductID().getId())
+            doc.append("_id", product.getProductID().getId())
                 .append("name", product.getName().getValue())
                 .append("price", product.getPrice().getValue())
                 .append("category", product.getCategory().toString())
@@ -78,7 +78,7 @@ public class ProductClientMongoRepository implements ProductRepository {
         }
 
         public static Product documentToProduct(Document doc) {
-            ProductID productID = new ProductID(doc.getString("productID"));
+            ProductID productID = new ProductID(doc.getString("_id"));
             Name name = new Name(doc.getString("name"));
             Price price = new Price(doc.getDouble("price"));
             Category category = Category.valueOf(doc.getString("category").toUpperCase());

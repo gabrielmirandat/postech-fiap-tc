@@ -12,8 +12,12 @@ public class CreateProductUseCase {
     @Inject
     ProductRepository productRepository;
 
+    @Inject
+    VerifyIngredientsConsistencyUseCase verifyIngredientsConsistencyUseCase;
+
     // it may not work with quarkus
     public Product createProduct(CreateProductCommand command) {
+        verifyIngredientsConsistencyUseCase.verifyIngredientsConsistency(command.ingredients());
         Product product = new Product(command.name(), command.price(), command.category(), command.description(), command.image(), command.ingredients());
         productRepository.saveProduct(product);
         return product;

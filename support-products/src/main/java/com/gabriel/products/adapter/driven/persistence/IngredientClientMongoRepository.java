@@ -35,7 +35,7 @@ public class IngredientClientMongoRepository implements IngredientRepository {
 
     @Override
     public Ingredient getById(String id) {
-        Document doc = ingredientCollection.find(Filters.eq("ingredientID", id)).first();
+        Document doc = ingredientCollection.find(Filters.eq("_id", id)).first();
         return doc != null ? IngredientConverter.documentToIngredient(doc) : null;
     }
 
@@ -61,7 +61,7 @@ public class IngredientClientMongoRepository implements IngredientRepository {
 
         public static Document ingredientToDocument(Ingredient ingredient) {
             Document doc = new Document();
-            doc.append("ingredientID", ingredient.getIngredientID().getId())
+            doc.append("_id", ingredient.getIngredientID().getId())
                 .append("name", ingredient.getName().getValue())
                 .append("category", ingredient.getCategory().toString())
                 .append("price", ingredient.getPrice().getValue())
@@ -71,7 +71,7 @@ public class IngredientClientMongoRepository implements IngredientRepository {
         }
 
         public static Ingredient documentToIngredient(Document doc) {
-            IngredientID ingredientID = new IngredientID(doc.getString("ingredientID"));
+            IngredientID ingredientID = new IngredientID(doc.getString("_id"));
             Name name = new Name(doc.getString("name"));
             Category category = Category.valueOf(doc.getString("category").toUpperCase());
             Price price = new Price(doc.getDouble("price"));
