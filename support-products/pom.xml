@@ -38,7 +38,7 @@
             <artifactId>quarkus-resteasy</artifactId>
         </dependency>
 
-        <!-- necessary package for jakarta validations -->
+        <!-- VALIDATIONS -->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-validator</artifactId>
@@ -54,10 +54,12 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-mongodb-client</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.quarkus</groupId>-->
-<!--            <artifactId>quarkus-liquibase-mongodb</artifactId>-->
-<!--        </dependency>-->
+
+        <!-- KAFKA -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
+        </dependency>
 
         <!-- TEST -->
         <dependency>
