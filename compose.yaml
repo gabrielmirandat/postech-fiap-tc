@@ -1,24 +1,24 @@
 version: '3.8'
 services:
 
-  core-orders:
-    container_name: postech_core_orders
-    build: ./core-orders
-    depends_on:
-      - mongo
-      - kafka
-    ports:
-      - "8080:8080"
-    networks:
-      - postech_network
-    environment:
-      MONGODB_CONN_STRING: mongodb://dummy:dummy@mongo:27017
-      MONGODB_CONN_DB: postech_db
-      KAFKA_SERVER_URL: kafka:9092
-      KAFKA_GROUP_ID: orders-group-id
-      NEWRELIC_OTLP_URL: https://otlp.nr-data.net:4317
-      NEWRELIC_APP_NAME: core-orders-app
-      NEWRELIC_SERVICE_KEY: 0656b2287b6f1b1dd90aa0bdd71ff312FFFFNRAL
+  #  core-orders:
+  #    container_name: postech_core_orders
+  #    build: ./core-orders
+  #    depends_on:
+  #      - mongo
+  #      - kafka
+  #    ports:
+  #      - "8001:8001"
+  #    networks:
+  #      - postech_network
+  #    environment:
+  #      MONGODB_CONN_STRING: mongodb://dummy:dummy@mongo:27017
+  #      MONGODB_CONN_DB: postech_db
+  #      KAFKA_SERVER_URL: kafka:9092
+  #      KAFKA_GROUP_ID: orders-group-id
+  #      NEWRELIC_OTLP_URL: https://otlp.nr-data.net:4317
+  #      NEWRELIC_APP_NAME: core-orders-app
+  #      NEWRELIC_SERVICE_KEY: 0656b2287b6f1b1dd90aa0bdd71ff312FFFFNRAL
 
   mongo:
     container_name: postech_mongo
@@ -49,17 +49,17 @@ services:
       ME_CONFIG_MONGODB_AUTH_DATABASE: admin
       ME_CONFIG_MONGODB_PORT: 27017
 
-#  postgres:
-#    container_name: postech_postgres
-#    image: postgres:latest
-#    ports:
-#      - "5432:5432"
-#    networks:
-#      - postech_network
-#    environment:
-#      POSTGRES_USER: dummy
-#      POSTGRES_PASSWORD: dummy
-#      POSTGRES_DB: postech_db
+  #  postgres:
+  #    container_name: postech_postgres
+  #    image: postgres:latest
+  #    ports:
+  #      - "5432:5432"
+  #    networks:
+  #      - postech_network
+  #    environment:
+  #      POSTGRES_USER: dummy
+  #      POSTGRES_PASSWORD: dummy
+  #      POSTGRES_DB: postech_db
 
   zookeeper:
     container_name: postech_zookeeper
@@ -76,15 +76,16 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092"
+      - "9092:9092" # Map the external port to the internal port
     networks:
       - postech_network
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
 #  kafdrop:

@@ -1,20 +1,30 @@
 package com.gabriel.orders.core.domain.events;
 
+import com.gabriel.orders.core.domain.base.DomainEvent;
 import com.gabriel.orders.core.domain.entities.Order;
-import com.gabriel.orders.core.domain.events.enums.OrderEvent;
+import lombok.Getter;
 
-public record OrderCreatedEvent(Order orderCreated) {
+@Getter
+public class OrderCreatedEvent implements DomainEvent {
 
-    public String type() {
-        return OrderEvent.Type.CREATED.eventType();
+    Order orderCreated;
+
+    public OrderCreatedEvent(Order orderCreated) {
+        this.orderCreated = orderCreated;
     }
 
+    @Override
     public String source() {
-        return OrderEvent.Source.CREATED.eventSource();
+        return "post/orders";
     }
 
+    @Override
     public String subject() {
-        return String.format(OrderEvent.Subject.ID.eventSubject(),
-            orderCreated.getTicketId());
+        return String.format("id/%s", orderCreated.getOrderId().getId());
+    }
+
+    @Override
+    public String type() {
+        return "postech.orders.v1.order.created";
     }
 }

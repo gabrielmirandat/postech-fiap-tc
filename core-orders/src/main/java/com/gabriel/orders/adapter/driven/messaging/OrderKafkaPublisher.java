@@ -1,19 +1,13 @@
 package com.gabriel.orders.adapter.driven.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.orders.core.domain.events.MenuAddedEvent;
+import com.gabriel.orders.core.application.events.CloudEventMapper;
 import com.gabriel.orders.core.domain.events.OrderCreatedEvent;
-import com.gabriel.orders.core.domain.events.enums.Event;
-import com.gabriel.orders.core.domain.events.enums.Topic;
 import com.gabriel.orders.core.domain.ports.OrderPublisher;
 import io.cloudevents.CloudEvent;
-import io.cloudevents.core.builder.CloudEventBuilder;
-import io.cloudevents.core.data.PojoCloudEventData;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.UUID;
 
 @Service
 public class OrderKafkaPublisher implements OrderPublisher {
@@ -22,42 +16,18 @@ public class OrderKafkaPublisher implements OrderPublisher {
 
     private final ObjectMapper mapper;
 
-    public OrderKafkaPublisher(KafkaTemplate<String, CloudEvent> kafkaTemplate, ObjectMapper mapper) {
+    private final String topicName;
+
+    public OrderKafkaPublisher(KafkaTemplate<String, CloudEvent> kafkaTemplate,
+                               ObjectMapper mapper,
+                               @Value("${kafka.domain.topic}") String topicName) {
         this.kafkaTemplate = kafkaTemplate;
         this.mapper = mapper;
+        this.topicName = topicName;
     }
 
     @Override
     public void orderCreated(OrderCreatedEvent event) {
-
-        // Criar um evento CloudEvent
-        CloudEvent data = CloudEventBuilder.v1()
-            .withId(UUID.randomUUID().toString())
-            .withSource(URI.create(event.source()))
-            .withSubject(event.subject())
-            .withType(event.type())
-            .withData(PojoCloudEventData.wrap(event, mapper::writeValueAsBytes))
-            .withExtension(Event.AUDIENCE.info(), Event.Audience.INTERNAL_BOUNDED_CONTEXT.audienceName())
-            .withExtension(Event.CONTEXT.info(), Event.Context.DOMAIN.eventContextName())
-            .build();
-
-        kafkaTemplate.send(Topic.ORDERS.topicName(), data);
-    }
-
-    @Override
-    public void productCreated(MenuAddedEvent event) {
-
-        // Criar um evento CloudEvent
-        CloudEvent data = CloudEventBuilder.v1()
-            .withId(UUID.randomUUID().toString())
-            .withSource(URI.create(event.source()))
-            .withSubject(event.subject())
-            .withType(event.type())
-            .withData(PojoCloudEventData.wrap(event, mapper::writeValueAsBytes))
-            .withExtension(Event.AUDIENCE.info(), Event.Audience.EXTERNAL_BOUNDED_CONTEXT.audienceName())
-            .withExtension(Event.CONTEXT.info(), Event.Context.DOMAIN.eventContextName())
-            .build();
-
-        kafkaTemplate.send(Topic.MENU.topicName(), data);
+        kafkaTemplate.send(topicName, CloudEventMapper.ceFrom(event, mapper));
     }
 }

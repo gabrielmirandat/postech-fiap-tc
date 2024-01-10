@@ -1,16 +1,10 @@
 package com.gabriel.orders.adapter.driver.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.orders.core.domain.events.MenuAddedEvent;
-import com.gabriel.orders.core.domain.events.MenuDeletedEvent;
-import com.gabriel.orders.core.domain.events.MenuUpdatedEvent;
+import com.gabriel.orders.core.application.events.*;
 import com.gabriel.orders.core.domain.ports.MenuSubscriber;
 import io.cloudevents.CloudEvent;
-import io.cloudevents.core.CloudEventUtils;
-import io.cloudevents.jackson.PojoCloudEventDataMapper;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
@@ -23,36 +17,53 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
         this.mapper = mapper;
     }
 
-    @KafkaListener(topics = "menub", groupId = "orders-group-id",
-            filter = "menuProductCreatedFilterStrategy")
-    public void listen(@Payload CloudEvent cloudEvent,
-                       @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long ts) {
+    @KafkaListener(topics = "menu", groupId = "orders-group-id")
+    public void listenMenuEvents(@Payload CloudEvent cloudEvent) {
 
         try {
-            MenuAddedEvent menuAddedEvent = CloudEventUtils
-                    .mapData(cloudEvent, PojoCloudEventDataMapper
-                            .from(mapper, MenuAddedEvent.class)).getValue();
-            addProduct(menuAddedEvent);
+            switch (cloudEvent.getType()) {
+                case "postech.menu.v1.product.created":
+                    addProduct(new MenuProductAddedEvent(
+                        CloudEventMapper.productFrom(cloudEvent, mapper)));
+                    break;
+                case "postech.menu.v1.product.deleted":
+                    deleteProduct(new MenuProductDeletedEvent(
+                        CloudEventMapper.productFrom(cloudEvent, mapper)));
+                    break;
+                case "postech.menu.v1.ingredient.created":
+                    addIngredient(new MenuIngredientAddedEvent(
+                        CloudEventMapper.ingredientFrom(cloudEvent, mapper)));
+                    break;
+                case "postech.menu.v1.ingredient.deleted":
+                    deleteIngredient(new MenuIngredientDeletedEvent(
+                        CloudEventMapper.ingredientFrom(cloudEvent, mapper)));
+                    break;
+                default:
+                    break;
+            }
         } catch (Exception ex) {
             // TODO: deadletters
+            System.out.println("Erro ao processar evento: " + ex.getMessage());
         }
     }
 
     @Override
-    public void addProduct(MenuAddedEvent event) {
-        // Implementação para adicionar produto
+    public void addProduct(MenuProductAddedEvent event) {
         System.out.println("Produto adicionado: " + event);
     }
 
     @Override
-    public void updateProduct(MenuUpdatedEvent event) {
-        // Implementação para atualizar produto
-        System.out.println("Produto atualizado: " + event);
+    public void deleteProduct(MenuProductDeletedEvent event) {
+        System.out.println("Produto deletado: " + event);
     }
 
     @Override
-    public void deleteProduct(MenuDeletedEvent event) {
-        // Implementação para deletar produto
-        System.out.println("Produto deletado: " + event);
+    public void addIngredient(MenuIngredientAddedEvent event) {
+        System.out.println("Ingrediente adicionado: " + event);
+    }
+
+    @Override
+    public void deleteIngredient(MenuIngredientDeletedEvent event) {
+        System.out.println("Ingrediente deletado: " + event);
     }
 }
