@@ -1,14 +1,12 @@
-package com.gabriel.orders.core.domain.entities;
+package com.gabriel.orders.core.domain.valueobjects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.gabriel.orders.core.domain.base.Entity;
-import com.gabriel.orders.core.domain.valueobjects.Name;
-import com.gabriel.orders.core.domain.valueobjects.Price;
+import com.gabriel.orders.core.domain.base.ValueObject;
 import com.gabriel.orders.core.domain.valueobjects.ids.ProductID;
 import lombok.Getter;
 
 @Getter
-public class Product extends Entity {
+public class Product extends ValueObject {
 
     private final ProductID productID;
 

@@ -49,6 +49,14 @@ services:
       ME_CONFIG_MONGODB_AUTH_DATABASE: admin
       ME_CONFIG_MONGODB_PORT: 27017
 
+  redis:
+    container_name: postech_redis
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - postech_network
+
   #  postgres:
   #    container_name: postech_postgres
   #    image: postgres:latest

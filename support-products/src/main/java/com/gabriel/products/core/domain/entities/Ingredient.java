@@ -15,9 +15,9 @@ public class Ingredient extends AggregateRoot {
 
     private final Name name;
 
-    private final Category category;
-
     private final Price price;
+
+    private final Category category;
 
     private final Weight weight;
 

@@ -2,6 +2,7 @@ package com.gabriel.orders.adapter.driver.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.orders.core.application.events.*;
+import com.gabriel.orders.core.domain.ports.MenuRepository;
 import com.gabriel.orders.core.domain.ports.MenuSubscriber;
 import io.cloudevents.CloudEvent;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -13,8 +14,11 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
 
     private final ObjectMapper mapper;
 
-    public MenuKafkaSubscriber(ObjectMapper mapper) {
+    private final MenuRepository menuRepository;
+
+    public MenuKafkaSubscriber(ObjectMapper mapper, MenuRepository menuRepository) {
         this.mapper = mapper;
+        this.menuRepository = menuRepository;
     }
 
     @KafkaListener(topics = "menu", groupId = "orders-group-id")
@@ -31,12 +35,12 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
                         CloudEventMapper.productFrom(cloudEvent, mapper)));
                     break;
                 case "postech.menu.v1.ingredient.created":
-                    addIngredient(new MenuIngredientAddedEvent(
-                        CloudEventMapper.ingredientFrom(cloudEvent, mapper)));
+                    addExtra(new MenuExtraAddedEvent(
+                        CloudEventMapper.extraFrom(cloudEvent, mapper)));
                     break;
                 case "postech.menu.v1.ingredient.deleted":
-                    deleteIngredient(new MenuIngredientDeletedEvent(
-                        CloudEventMapper.ingredientFrom(cloudEvent, mapper)));
+                    deleteExtra(new MenuExtraDeletedEvent(
+                        CloudEventMapper.extraFrom(cloudEvent, mapper)));
                     break;
                 default:
                     break;
@@ -50,20 +54,24 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
     @Override
     public void addProduct(MenuProductAddedEvent event) {
         System.out.println("Produto adicionado: " + event);
+        menuRepository.addProduct(event.productAdded());
     }
 
     @Override
     public void deleteProduct(MenuProductDeletedEvent event) {
         System.out.println("Produto deletado: " + event);
+        menuRepository.deleteProduct(event.productDeleted().getProductID());
     }
 
     @Override
-    public void addIngredient(MenuIngredientAddedEvent event) {
+    public void addExtra(MenuExtraAddedEvent event) {
         System.out.println("Ingrediente adicionado: " + event);
+        menuRepository.addExtra(event.extraAdded());
     }
 
     @Override
-    public void deleteIngredient(MenuIngredientDeletedEvent event) {
+    public void deleteExtra(MenuExtraDeletedEvent event) {
         System.out.println("Ingrediente deletado: " + event);
+        menuRepository.deleteExtra(event.extraDeleted().getIngredientID());
     }
 }

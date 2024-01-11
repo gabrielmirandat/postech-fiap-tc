@@ -1,6 +1,6 @@
 package com.gabriel.orders.core.application.events;
 
-import com.gabriel.orders.core.domain.valueobjects.ids.ProductID;
+import com.gabriel.orders.core.domain.valueobjects.Product;
 
-public record MenuProductDeletedEvent(ProductID productDeleted) {
+public record MenuProductDeletedEvent(Product productDeleted) {
 }

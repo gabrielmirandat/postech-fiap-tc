@@ -1,6 +1,8 @@
 package com.gabriel.orders.core.domain.entities;
 
 import com.gabriel.orders.core.domain.base.Entity;
+import com.gabriel.orders.core.domain.valueobjects.Extra;
+import com.gabriel.orders.core.domain.valueobjects.Product;
 import com.gabriel.orders.core.domain.valueobjects.ids.OrderItemID;
 import lombok.Getter;
 

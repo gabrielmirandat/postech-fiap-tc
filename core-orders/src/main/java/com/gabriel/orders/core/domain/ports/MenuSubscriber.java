@@ -1,7 +1,7 @@
 package com.gabriel.orders.core.domain.ports;
 
-import com.gabriel.orders.core.application.events.MenuIngredientAddedEvent;
-import com.gabriel.orders.core.application.events.MenuIngredientDeletedEvent;
+import com.gabriel.orders.core.application.events.MenuExtraAddedEvent;
+import com.gabriel.orders.core.application.events.MenuExtraDeletedEvent;
 import com.gabriel.orders.core.application.events.MenuProductAddedEvent;
 import com.gabriel.orders.core.application.events.MenuProductDeletedEvent;
 
@@ -11,7 +11,7 @@ public interface MenuSubscriber {
 
     void deleteProduct(MenuProductDeletedEvent event);
 
-    void addIngredient(MenuIngredientAddedEvent event);
+    void addExtra(MenuExtraAddedEvent event);
 
-    void deleteIngredient(MenuIngredientDeletedEvent event);
+    void deleteExtra(MenuExtraDeletedEvent event);
 }

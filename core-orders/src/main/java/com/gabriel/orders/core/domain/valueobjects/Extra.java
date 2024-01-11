@@ -1,13 +1,11 @@
-package com.gabriel.orders.core.domain.entities;
+package com.gabriel.orders.core.domain.valueobjects;
 
-import com.gabriel.orders.core.domain.base.Entity;
-import com.gabriel.orders.core.domain.valueobjects.Name;
-import com.gabriel.orders.core.domain.valueobjects.Price;
+import com.gabriel.orders.core.domain.base.ValueObject;
 import com.gabriel.orders.core.domain.valueobjects.ids.IngredientID;
 import lombok.Getter;
 
 @Getter
-public class Extra extends Entity {
+public class Extra extends ValueObject {
 
     private final IngredientID ingredientID;
 

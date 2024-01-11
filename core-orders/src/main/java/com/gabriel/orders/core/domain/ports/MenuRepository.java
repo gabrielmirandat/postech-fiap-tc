@@ -1,13 +1,25 @@
 package com.gabriel.orders.core.domain.ports;
 
-import com.gabriel.orders.core.domain.entities.Product;
+import com.gabriel.orders.core.domain.valueobjects.Extra;
+import com.gabriel.orders.core.domain.valueobjects.Product;
+import com.gabriel.orders.core.domain.valueobjects.ids.IngredientID;
 import com.gabriel.orders.core.domain.valueobjects.ids.ProductID;
 
 public interface MenuRepository {
 
-    void add(Product product);
+    boolean existsProduct(ProductID productID);
 
-    void update(Product product);
+    void addProduct(Product product);
 
-    void delete(ProductID productID);
+    void updateProduct(Product product);
+
+    void deleteProduct(ProductID productID);
+
+    boolean existsExtra(IngredientID ingredientID);
+
+    void addExtra(Extra extra);
+
+    void updateExtra(Extra extra);
+
+    void deleteExtra(IngredientID ingredientID);
 }

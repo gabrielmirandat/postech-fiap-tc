@@ -2,8 +2,8 @@ package com.gabriel.orders.core.application.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.orders.core.domain.base.DomainEvent;
-import com.gabriel.orders.core.domain.valueobjects.ids.IngredientID;
-import com.gabriel.orders.core.domain.valueobjects.ids.ProductID;
+import com.gabriel.orders.core.domain.valueobjects.Extra;
+import com.gabriel.orders.core.domain.valueobjects.Product;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.CloudEventUtils;
 import io.cloudevents.core.builder.CloudEventBuilder;
@@ -27,13 +27,13 @@ public class CloudEventMapper {
             .build();
     }
 
-    public static ProductID productFrom(CloudEvent event, ObjectMapper mapper) {
+    public static Product productFrom(CloudEvent event, ObjectMapper mapper) {
         return CloudEventUtils.mapData(event, PojoCloudEventDataMapper
-            .from(mapper, ProductID.class)).getValue();
+            .from(mapper, Product.class)).getValue();
     }
 
-    public static IngredientID ingredientFrom(CloudEvent event, ObjectMapper mapper) {
+    public static Extra extraFrom(CloudEvent event, ObjectMapper mapper) {
         return CloudEventUtils.mapData(event, PojoCloudEventDataMapper
-            .from(mapper, IngredientID.class)).getValue();
+            .from(mapper, Extra.class)).getValue();
     }
 }
