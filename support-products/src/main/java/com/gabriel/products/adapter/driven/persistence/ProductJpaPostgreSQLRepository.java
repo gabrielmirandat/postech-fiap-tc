@@ -1,8 +1,8 @@
 package com.gabriel.products.adapter.driven.persistence;
 
-import com.gabriel.products.core.domain.entities.Product;
-import com.gabriel.products.core.domain.ports.ProductRepository;
-import com.gabriel.products.core.domain.ports.models.ProductSearchParameters;
+import com.gabriel.products.core.domain.model.Product;
+import com.gabriel.products.core.domain.port.ProductRepository;
+import com.gabriel.products.core.domain.port.ProductSearchParameters;
 
 import java.util.List;
 

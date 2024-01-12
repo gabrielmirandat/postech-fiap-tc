@@ -1,8 +1,8 @@
 package com.gabriel.products.adapter.driven.messaging;
 
-import com.gabriel.products.adapter.driven.messaging.mappers.CloudEventMapper;
-import com.gabriel.products.core.domain.events.ProductCreatedEvent;
-import com.gabriel.products.core.domain.ports.ProductPublisher;
+import com.gabriel.products.adapter.driven.messaging.mapper.CloudEventMapper;
+import com.gabriel.products.core.domain.event.ProductCreatedEvent;
+import com.gabriel.products.core.domain.port.ProductPublisher;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.reactive.messaging.Channel;

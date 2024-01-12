@@ -27,6 +27,7 @@
         <module>generic-payments</module>
         <module>generic-notifications</module>
         <module>generic-permissions</module>
+        <module>common-domain</module>
     </modules>
 
     <properties>

@@ -1,10 +1,10 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
-import com.gabriel.orders.core.domain.ports.MenuRepository;
-import com.gabriel.orders.core.domain.valueobjects.Extra;
-import com.gabriel.orders.core.domain.valueobjects.Product;
-import com.gabriel.orders.core.domain.valueobjects.ids.IngredientID;
-import com.gabriel.orders.core.domain.valueobjects.ids.ProductID;
+import com.gabriel.common.core.domain.model.id.IngredientID;
+import com.gabriel.common.core.domain.model.id.ProductID;
+import com.gabriel.orders.core.domain.model.Extra;
+import com.gabriel.orders.core.domain.model.Product;
+import com.gabriel.orders.core.domain.port.MenuRepository;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;

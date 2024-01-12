@@ -1,13 +1,13 @@
 package com.gabriel.products.adapter.driven.persistence;
 
-import com.gabriel.products.core.domain.entities.Ingredient;
-import com.gabriel.products.core.domain.entities.enums.Category;
-import com.gabriel.products.core.domain.ports.IngredientRepository;
-import com.gabriel.products.core.domain.ports.models.ProductSearchParameters;
-import com.gabriel.products.core.domain.valueobjects.Name;
-import com.gabriel.products.core.domain.valueobjects.Price;
-import com.gabriel.products.core.domain.valueobjects.Weight;
-import com.gabriel.products.core.domain.valueobjects.ids.IngredientID;
+import com.gabriel.common.core.domain.model.Name;
+import com.gabriel.common.core.domain.model.Price;
+import com.gabriel.common.core.domain.model.id.IngredientID;
+import com.gabriel.products.core.domain.model.Category;
+import com.gabriel.products.core.domain.model.Ingredient;
+import com.gabriel.products.core.domain.model.Weight;
+import com.gabriel.products.core.domain.port.IngredientRepository;
+import com.gabriel.products.core.domain.port.ProductSearchParameters;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;

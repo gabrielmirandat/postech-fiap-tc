@@ -1,20 +1,20 @@
 package com.gabriel.products.adapter.driver.api;
 
 import com.gabriel.products.adapter.driver.api.controller.ProductsApi;
-import com.gabriel.products.adapter.driver.api.mappers.ProductMapper;
+import com.gabriel.products.adapter.driver.api.mapper.ProductMapper;
 import com.gabriel.products.adapter.driver.api.models.ProductCategoryDTO;
 import com.gabriel.products.adapter.driver.api.models.ProductCreated;
 import com.gabriel.products.adapter.driver.api.models.ProductRequest;
 import com.gabriel.products.adapter.driver.api.models.ProductResponse;
-import com.gabriel.products.core.application.commands.CreateProductCommand;
-import com.gabriel.products.core.application.commands.DeleteProductCommand;
-import com.gabriel.products.core.application.queries.GetByProductIdQuery;
-import com.gabriel.products.core.application.queries.SearchProductQuery;
-import com.gabriel.products.core.application.usecases.CreateProductUseCase;
-import com.gabriel.products.core.application.usecases.DeleteProductUseCase;
-import com.gabriel.products.core.application.usecases.RetrieveProductUseCase;
-import com.gabriel.products.core.application.usecases.SearchProductUseCase;
-import com.gabriel.products.core.domain.entities.Product;
+import com.gabriel.products.core.application.command.CreateProductCommand;
+import com.gabriel.products.core.application.command.DeleteProductCommand;
+import com.gabriel.products.core.application.query.GetByProductIdQuery;
+import com.gabriel.products.core.application.query.SearchProductQuery;
+import com.gabriel.products.core.application.usecase.CreateProductUseCase;
+import com.gabriel.products.core.application.usecase.DeleteProductUseCase;
+import com.gabriel.products.core.application.usecase.RetrieveProductUseCase;
+import com.gabriel.products.core.application.usecase.SearchProductUseCase;
+import com.gabriel.products.core.domain.model.Product;
 import jakarta.inject.Inject;
 
 import java.util.List;

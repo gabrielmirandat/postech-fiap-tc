@@ -1,9 +1,9 @@
 package com.gabriel.orders.adapter.driver.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.orders.core.application.events.*;
-import com.gabriel.orders.core.domain.ports.MenuRepository;
-import com.gabriel.orders.core.domain.ports.MenuSubscriber;
+import com.gabriel.orders.core.application.event.*;
+import com.gabriel.orders.core.domain.port.MenuRepository;
+import com.gabriel.orders.core.domain.port.MenuSubscriber;
 import io.cloudevents.CloudEvent;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;

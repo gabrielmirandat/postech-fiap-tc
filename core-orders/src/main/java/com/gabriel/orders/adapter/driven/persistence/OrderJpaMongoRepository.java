@@ -1,8 +1,8 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
-import com.gabriel.orders.core.domain.entities.Order;
-import com.gabriel.orders.core.domain.ports.OrderRepository;
-import com.gabriel.orders.core.domain.ports.models.OrderSearchParameters;
+import com.gabriel.orders.core.domain.model.Order;
+import com.gabriel.orders.core.domain.port.OrderRepository;
+import com.gabriel.orders.core.domain.port.OrderSearchParameters;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

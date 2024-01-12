@@ -1,18 +1,18 @@
 package com.gabriel.products.adapter.driver.api;
 
 import com.gabriel.products.adapter.driver.api.controller.IngredientsApi;
-import com.gabriel.products.adapter.driver.api.mappers.IngredientMapper;
+import com.gabriel.products.adapter.driver.api.mapper.IngredientMapper;
 import com.gabriel.products.adapter.driver.api.models.IngredientCreated;
 import com.gabriel.products.adapter.driver.api.models.IngredientRequest;
 import com.gabriel.products.adapter.driver.api.models.IngredientResponse;
 import com.gabriel.products.adapter.driver.api.models.ProductCategoryDTO;
-import com.gabriel.products.core.application.commands.CreateIngredientCommand;
-import com.gabriel.products.core.application.queries.GetByIngredientIdQuery;
-import com.gabriel.products.core.application.queries.SearchIngredientQuery;
-import com.gabriel.products.core.application.usecases.CreateIngredientUseCase;
-import com.gabriel.products.core.application.usecases.RetrieveIngredientUseCase;
-import com.gabriel.products.core.application.usecases.SearchIngredientUseCase;
-import com.gabriel.products.core.domain.entities.Ingredient;
+import com.gabriel.products.core.application.command.CreateIngredientCommand;
+import com.gabriel.products.core.application.query.GetByIngredientIdQuery;
+import com.gabriel.products.core.application.query.SearchIngredientQuery;
+import com.gabriel.products.core.application.usecase.CreateIngredientUseCase;
+import com.gabriel.products.core.application.usecase.RetrieveIngredientUseCase;
+import com.gabriel.products.core.application.usecase.SearchIngredientUseCase;
+import com.gabriel.products.core.domain.model.Ingredient;
 import jakarta.inject.Inject;
 
 import java.util.List;
