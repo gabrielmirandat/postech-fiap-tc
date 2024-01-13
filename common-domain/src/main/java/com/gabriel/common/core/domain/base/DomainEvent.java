@@ -1,5 +1,7 @@
 package com.gabriel.common.core.domain.base;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.util.UUID;
 
 public interface DomainEvent {
@@ -21,4 +23,7 @@ public interface DomainEvent {
     public String subject();
 
     public String type();
+
+    // serialized bytes of data
+    public byte[] payload() throws JsonProcessingException;
 }

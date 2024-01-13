@@ -11,7 +11,9 @@ import java.util.List;
 public class OrderItem extends Entity {
 
     private final OrderItemID itemID;
+
     private final Product product;
+    
     private final List<Extra> extras;
 
     public OrderItem(Product product) {

@@ -1,5 +1,6 @@
 package com.gabriel.orders.core.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.gabriel.common.core.domain.base.ValueObject;
 import com.gabriel.common.core.domain.model.CPF;
 import com.gabriel.common.core.domain.model.EmailData;
@@ -15,6 +16,7 @@ public class Customer extends ValueObject {
 
     private final EmailData email;
 
+    @JsonCreator
     public Customer(CPF cpf, Name name, EmailData email) {
         this.cpf = cpf;
         this.name = name;

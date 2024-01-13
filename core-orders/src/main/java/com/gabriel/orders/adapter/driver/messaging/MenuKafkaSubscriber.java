@@ -1,5 +1,6 @@
 package com.gabriel.orders.adapter.driver.messaging;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.orders.core.application.event.*;
 import com.gabriel.orders.core.domain.port.MenuRepository;
@@ -19,6 +20,8 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
     public MenuKafkaSubscriber(ObjectMapper mapper, MenuRepository menuRepository) {
         this.mapper = mapper;
         this.menuRepository = menuRepository;
+
+        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @KafkaListener(topics = "menu", groupId = "orders-group-id")

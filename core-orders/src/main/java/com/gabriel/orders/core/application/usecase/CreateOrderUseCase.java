@@ -27,12 +27,16 @@ public class CreateOrderUseCase {
 
     @Transactional
     public Order createOrder(CreateOrderCommand command) {
-        Product sampleProduct = new Product(new ProductID(), "Teu cu", 10.20);
-        OrderItem sampleOrder = new OrderItem(sampleProduct);
-        Order newOrder = new Order(List.of(sampleOrder));
+        try {
+            Product sampleProduct = new Product(new ProductID(), "Teu cu", 10.20);
+            OrderItem sampleOrder = new OrderItem(sampleProduct);
+            Order newOrder = new Order(List.of(sampleOrder));
 
-        orderRepository.saveOrder(newOrder);
-        orderPublisher.orderCreated(new OrderCreatedEvent(newOrder));
-        return newOrder;
+            orderRepository.saveOrder(newOrder);
+            orderPublisher.orderCreated(new OrderCreatedEvent(newOrder));
+            return newOrder;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

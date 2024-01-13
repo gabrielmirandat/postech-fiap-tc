@@ -17,7 +17,9 @@ public class Extra extends ValueObject {
     private final Price price;
 
     @JsonCreator
-    public Extra(IngredientID ingredientID, Name name, Price value) {
+    public Extra(IngredientID ingredientID,
+                 Name name,
+                 Price value) {
         this.ingredientID = ingredientID;
         this.name = name;
         this.price = value;

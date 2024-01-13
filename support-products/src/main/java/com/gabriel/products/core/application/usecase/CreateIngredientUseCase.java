@@ -19,10 +19,14 @@ public class CreateIngredientUseCase {
 
     // it may not work with quarkus
     public Ingredient createIngredient(CreateIngredientCommand command) {
-        Ingredient ingredient = new Ingredient(command.name(), command.category(),
-            command.price(), command.weight(), command.isExtra());
-        ingredientRepository.saveIngredient(ingredient);
-        ingredientPublisher.ingredientCreated(new IngredientCreatedEvent(ingredient));
-        return ingredient;
+        try {
+            Ingredient ingredient = new Ingredient(command.name(), command.category(),
+                command.price(), command.weight(), command.isExtra());
+            ingredientRepository.saveIngredient(ingredient);
+            ingredientPublisher.ingredientCreated(new IngredientCreatedEvent(ingredient));
+            return ingredient;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

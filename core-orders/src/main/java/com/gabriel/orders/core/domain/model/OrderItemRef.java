@@ -1,12 +1,13 @@
 package com.gabriel.orders.core.domain.model;
 
+import com.gabriel.common.core.domain.base.ValueObject;
 import com.gabriel.common.core.domain.model.id.IngredientID;
 import com.gabriel.common.core.domain.model.id.ProductID;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderItemRef {
+public class OrderItemRef extends ValueObject {
     private final ProductID product;
     private final List<IngredientID> extras;
 

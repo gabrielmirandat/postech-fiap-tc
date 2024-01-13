@@ -1,5 +1,7 @@
 package com.gabriel.orders.core.domain.event;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.common.core.domain.base.DomainEvent;
 import com.gabriel.orders.core.domain.model.Order;
 import lombok.Getter;
@@ -26,5 +28,13 @@ public class OrderCreatedEvent implements DomainEvent {
     @Override
     public String type() {
         return "postech.orders.v1.order.created";
+    }
+
+    @Override
+    public byte[] payload() throws JsonProcessingException {
+        if (orderCreated == null) {
+            throw new IllegalStateException("Order is null");
+        }
+        return new ObjectMapper().writeValueAsBytes(orderCreated);
     }
 }

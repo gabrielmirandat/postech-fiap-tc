@@ -22,10 +22,14 @@ public class CreateProductUseCase {
 
     // it may not work with quarkus
     public Product createProduct(CreateProductCommand command) {
-        verifyIngredientUseCase.verifyIngredientsConsistency(command.ingredients());
-        Product product = new Product(command.name(), command.price(), command.category(), command.description(), command.image(), command.ingredients());
-        productRepository.saveProduct(product);
-        productPublisher.productCreated(new ProductCreatedEvent(product));
-        return product;
+        try {
+            verifyIngredientUseCase.verifyIngredientsConsistency(command.ingredients());
+            Product product = new Product(command.name(), command.price(), command.category(), command.description(), command.image(), command.ingredients());
+            productRepository.saveProduct(product);
+            productPublisher.productCreated(new ProductCreatedEvent(product));
+            return product;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
