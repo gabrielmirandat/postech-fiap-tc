@@ -11,7 +11,6 @@ import com.gabriel.orders.core.application.query.GetByTicketOrderQuery;
 import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
 import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
-import com.gabriel.orders.core.domain.port.OrderPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,13 +26,10 @@ public class OrdersHttpController implements OrdersApi {
 
     private final OrderMapper orderMapper;
 
-    private final OrderPublisher orderPublisher;
-
-    public OrdersHttpController(CreateOrderUseCase createOrderUseCase, RetrieveOrderUseCase retrieveOrderUseCase, OrderMapper orderMapper, OrderPublisher orderPublisher) {
+    public OrdersHttpController(CreateOrderUseCase createOrderUseCase, RetrieveOrderUseCase retrieveOrderUseCase, OrderMapper orderMapper) {
         this.createOrderUseCase = createOrderUseCase;
         this.retrieveOrderUseCase = retrieveOrderUseCase;
         this.orderMapper = orderMapper;
-        this.orderPublisher = orderPublisher;
     }
 
     @Override

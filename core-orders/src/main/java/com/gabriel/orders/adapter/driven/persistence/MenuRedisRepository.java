@@ -33,7 +33,7 @@ public class MenuRedisRepository implements MenuRepository {
     @Override
     public void addProduct(Product product) {
         Objects.requireNonNull(cacheManager.getCache("menu"))
-            .put(product.getProductID().getId(), product);
+            .put(product.getProductID().getId(), product.serialized());
     }
 
     @Override
@@ -59,7 +59,7 @@ public class MenuRedisRepository implements MenuRepository {
     @Override
     public void addExtra(Extra extra) {
         Objects.requireNonNull(cacheManager.getCache("menu"))
-            .put(extra.getIngredientID().getId(), extra);
+            .put(extra.getIngredientID().getId(), extra.serialized());
     }
 
     @Override

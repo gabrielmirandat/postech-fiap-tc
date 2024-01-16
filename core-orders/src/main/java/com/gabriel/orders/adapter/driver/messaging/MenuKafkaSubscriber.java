@@ -50,7 +50,8 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
             }
         } catch (Exception ex) {
             // TODO: deadletters
-            System.out.println("Erro ao processar evento: " + ex.getMessage());
+            System.out.println("Erro ao  " +
+                "processar evento: " + ex.getMessage());
         }
     }
 

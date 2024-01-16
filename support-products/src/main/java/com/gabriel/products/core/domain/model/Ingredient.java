@@ -1,5 +1,7 @@
 package com.gabriel.products.core.domain.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.common.core.domain.base.AggregateRoot;
 import com.gabriel.common.core.domain.model.Name;
 import com.gabriel.common.core.domain.model.Price;
@@ -49,5 +51,13 @@ public class Ingredient extends AggregateRoot {
         this.price = new Price(price);
         this.weight = new Weight(weight);
         this.isExtra = isExtra;
+    }
+
+    public byte[] serialized() {
+        try {
+            return new ObjectMapper().writeValueAsBytes(this);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Error serializing ingredient");
+        }
     }
 }
