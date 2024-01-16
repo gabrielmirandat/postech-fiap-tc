@@ -19,10 +19,14 @@ public class CreateOrderUseCase {
     private final OrderRepository orderRepository;
     private final OrderPublisher orderPublisher;
 
+    private final MenuCheckUseCase menuCheckUseCase;
+
     public CreateOrderUseCase(OrderRepository orderRepository,
-                              OrderPublisher orderPublisher) {
+                              OrderPublisher orderPublisher,
+                              MenuCheckUseCase menuCheckUseCase) {
         this.orderRepository = orderRepository;
         this.orderPublisher = orderPublisher;
+        this.menuCheckUseCase = menuCheckUseCase;
     }
 
     @Transactional
@@ -31,6 +35,9 @@ public class CreateOrderUseCase {
             Product sampleProduct = new Product(new ProductID(), "Teu cu", 10.20);
             OrderItem sampleOrder = new OrderItem(sampleProduct);
             Order newOrder = new Order(List.of(sampleOrder));
+
+            menuCheckUseCase.verifyMenu(newOrder);
+
 
             orderRepository.saveOrder(newOrder);
             orderPublisher.orderCreated(new OrderCreatedEvent(newOrder));

@@ -8,6 +8,8 @@ import com.gabriel.common.core.domain.model.Price;
 import com.gabriel.common.core.domain.model.id.IngredientID;
 import lombok.Getter;
 
+import java.io.IOException;
+
 @Getter
 public class Ingredient extends AggregateRoot {
 
@@ -51,6 +53,14 @@ public class Ingredient extends AggregateRoot {
         this.price = new Price(price);
         this.weight = new Weight(weight);
         this.isExtra = isExtra;
+    }
+
+    public static Ingredient deserialize(byte[] bytes) {
+        try {
+            return new ObjectMapper().readValue(bytes, Ingredient.class);
+        } catch (IOException e) {
+            throw new IllegalStateException("Error deserializing ingredient");
+        }
     }
 
     public byte[] serialized() {

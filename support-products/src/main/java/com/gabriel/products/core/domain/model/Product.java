@@ -10,6 +10,7 @@ import com.gabriel.common.core.domain.model.id.IngredientID;
 import com.gabriel.common.core.domain.model.id.ProductID;
 import lombok.Getter;
 
+import java.io.IOException;
 import java.util.List;
 
 @Getter
@@ -61,6 +62,14 @@ public class Product extends AggregateRoot {
         this.description = new Description(description);
         this.image = new Image(image);
         this.ingredients = ingredients;
+    }
+
+    public static Product deserialize(byte[] bytes) {
+        try {
+            return new ObjectMapper().readValue(bytes, Product.class);
+        } catch (IOException e) {
+            throw new IllegalStateException("Error deserializing product");
+        }
     }
 
     public byte[] serialized() {

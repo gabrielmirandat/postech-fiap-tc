@@ -1,5 +1,7 @@
 package com.gabriel.orders.core.domain.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.common.core.domain.base.AggregateRoot;
 import com.gabriel.common.core.domain.base.DomainException;
 import com.gabriel.common.core.domain.model.Address;
@@ -9,6 +11,7 @@ import com.gabriel.common.core.domain.model.id.OrderID;
 import jakarta.validation.Valid;
 import lombok.Getter;
 
+import java.io.IOException;
 import java.util.List;
 
 @Getter
@@ -59,6 +62,14 @@ public class Order extends AggregateRoot {
         this.shippingAddress = shippingAddress;
         this.notification = additionalNotification;
         initialize();
+    }
+
+    public static Order deserialize(byte[] bytes) {
+        try {
+            return new ObjectMapper().readValue(bytes, Order.class);
+        } catch (IOException e) {
+            throw new IllegalStateException("Error deserializing order");
+        }
     }
 
     private void initialize() {
@@ -159,5 +170,13 @@ public class Order extends AggregateRoot {
         }
 
         promote();
+    }
+
+    public byte[] serialized() {
+        try {
+            return new ObjectMapper().writeValueAsBytes(this);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Error serializing order");
+        }
     }
 }

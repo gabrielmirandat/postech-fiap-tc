@@ -9,6 +9,8 @@ import com.gabriel.common.core.domain.model.Price;
 import com.gabriel.common.core.domain.model.id.IngredientID;
 import lombok.Getter;
 
+import java.io.IOException;
+
 @Getter
 public class Extra extends ValueObject {
 
@@ -31,6 +33,14 @@ public class Extra extends ValueObject {
         this.ingredientID = ingredientID;
         this.name = new Name(name);
         this.price = new Price(value);
+    }
+
+    public static Extra deserialize(byte[] bytes) {
+        try {
+            return new ObjectMapper().readValue(bytes, Extra.class);
+        } catch (IOException e) {
+            throw new IllegalStateException("Error deserializing extra");
+        }
     }
 
     public byte[] serialized() {
