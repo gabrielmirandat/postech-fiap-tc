@@ -10,7 +10,7 @@ import org.eclipse.microprofile.health.Readiness;
 
 @Readiness
 @ApplicationScoped
-public class MongoHealthCheck implements HealthCheck {
+public class MongoDBHealthCheck implements HealthCheck {
 
     @Inject
     MongoClient mongoClient;
