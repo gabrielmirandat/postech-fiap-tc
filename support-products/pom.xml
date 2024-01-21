@@ -12,6 +12,7 @@
     <artifactId>support-products</artifactId>
 
     <properties>
+        <openapi.generator.skip>true</openapi.generator.skip>
         <quarkus.version>3.6.4</quarkus.version>
         <mongodb.version>4.10.2</mongodb.version>
         <mongock.version>5.0.17.RC</mongock.version>
@@ -121,6 +122,7 @@
                                 <useJakartaEe>true</useJakartaEe> <!-- Esta linha é a chave para usar Jakarta -->
                                 <useSwaggerAnnotations>false</useSwaggerAnnotations>
                             </configOptions>
+                            <skip>${openapi.generator.skip}</skip>
                         </configuration>
                     </execution>
                 </executions>

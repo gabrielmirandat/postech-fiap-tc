@@ -12,6 +12,7 @@
     <artifactId>core-orders</artifactId>
 
     <properties>
+        <openapi.generator.skip>true</openapi.generator.skip>
         <newrelic.version>8.7.0</newrelic.version>
         <maven.deps.plugin.version>3.6.1</maven.deps.plugin.version>
     </properties>
@@ -24,7 +25,7 @@
             <artifactId>common-domain</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <!-- SPRING BOOT -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -140,6 +141,7 @@
                                 <apiPackage>com.gabriel.orders.adapter.driver.api.controller</apiPackage>
                                 <modelPackage>com.gabriel.orders.adapter.driver.api.models</modelPackage>
                             </configOptions>
+                            <skip>${openapi.generator.skip}</skip>
                         </configuration>
                     </execution>
                 </executions>

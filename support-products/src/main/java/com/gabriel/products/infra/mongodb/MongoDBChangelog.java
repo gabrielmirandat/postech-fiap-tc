@@ -1,21 +1,37 @@
 package com.gabriel.products.infra.mongodb;
 
-import com.github.cloudyrock.mongock.ChangeLog;
-import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
+import io.mongock.api.annotations.ChangeUnit;
+import io.mongock.api.annotations.Execution;
+import io.mongock.runner.core.event.MigrationFailureEvent;
+import io.mongock.runner.core.event.MigrationStartedEvent;
+import io.mongock.runner.core.event.MigrationSuccessEvent;
 import org.bson.Document;
 
-@ChangeLog(order = "001")
+@ChangeUnit(id = "createInitialCollections", order = "001", author = "mongock")
 public class MongoDBChangelog {
 
-    @ChangeSet(order = "001", id = "createInitialCollections", author = "com.gabriel")
+    public static void onStart(MigrationStartedEvent event) {
+        System.out.println("[EVENT LISTENER] - Mongock STARTED successfully");
+    }
+
+    public static void onSuccess(MigrationSuccessEvent event) {
+        System.out.println("[EVENT LISTENER] - Mongock finished successfully");
+    }
+
+    public static void onFail(MigrationFailureEvent event) {
+        System.out.println("[EVENT LISTENER] - Mongock finished with failures: "
+            + event.getMigrationResult().getException().getMessage());
+    }
+
+    @Execution
     public void createCollections(MongoDatabase db) {
         createIngredientCollection(db);
         createProductCollection(db);
     }
 
-    private void createIngredientCollection(MongoDatabase db) {
+    protected void createIngredientCollection(MongoDatabase db) {
         // Create collection if it doesn't exist
         db.createCollection("ingredients");
 
@@ -24,7 +40,7 @@ public class MongoDBChangelog {
             .createIndex(new Document("name", 1), new IndexOptions().unique(true));
     }
 
-    private void createProductCollection(MongoDatabase db) {
+    protected void createProductCollection(MongoDatabase db) {
         // Create collection if it doesn't exist
         db.createCollection("products");
 

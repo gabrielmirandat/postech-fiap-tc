@@ -44,6 +44,9 @@ public class MongoDBConfig {
         MongockStandalone.builder()
             .setDriver(driver)
             .addMigrationScanPackage("com.gabriel.products.infra.mongodb")
+            .setMigrationStartedListener(MongoDBChangelog::onStart)
+            .setMigrationSuccessListener(MongoDBChangelog::onSuccess)
+            .setMigrationFailureListener(MongoDBChangelog::onFail)
             .buildRunner().execute();
     }
 }
