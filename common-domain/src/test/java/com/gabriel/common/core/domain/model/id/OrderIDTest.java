@@ -31,5 +31,14 @@ class OrderIDTest {
         assertThat(parts[3]).matches("\\d{2}");
         assertThat(parts[4]).matches("\\d{2}");
     }
+
+    @Test
+    void shouldCompareOrderIDsBasedOnId() {
+        OrderID orderID1 = new OrderID("12345678-ORDR-2023-04-18");
+        OrderID orderID2 = new OrderID("12345678-ORDR-2023-04-18");
+        OrderID orderID3 = new OrderID("87654321-ORDR-2023-04-18");
+        assertThat(orderID1).isEqualTo(orderID2);
+        assertThat(orderID1).isNotEqualTo(orderID3);
+    }
 }
 

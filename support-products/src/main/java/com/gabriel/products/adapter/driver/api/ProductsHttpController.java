@@ -52,14 +52,12 @@ public class ProductsHttpController implements ProductsApi {
     @Override
     public ProductResponse getProductById(String productId) {
         GetByProductIdQuery query = new GetByProductIdQuery(productId);
-        Product product = retrieveProductUseCase.getProductById(query);
-        return productMapper.toResponse(product);
+        return retrieveProductUseCase.getResponseById(query);
     }
 
     @Override
     public List<ProductResponse> findProductsByQuery(ProductCategoryDTO category) {
         SearchProductQuery query = new SearchProductQuery(category.toString());
-        List<Product> products = searchProductUseCase.searchProduct(query);
-        return productMapper.toResponse(products);
+        return searchProductUseCase.searchProductResponse(query);
     }
 }

@@ -7,6 +7,7 @@ import com.gabriel.products.adapter.driver.api.models.ProductRequest;
 import com.gabriel.products.adapter.driver.api.models.ProductResponse;
 import com.gabriel.products.core.application.command.CreateProductCommand;
 import com.gabriel.products.core.domain.model.Category;
+import com.gabriel.products.core.domain.model.Ingredient;
 import com.gabriel.products.core.domain.model.Product;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -36,7 +37,7 @@ public class ProductMapper {
         );
     }
 
-    public ProductResponse toResponse(Product product) {
+    public ProductResponse toResponse(Product product, List<Ingredient> ingredientList) {
         return new ProductResponse()
             .id(product.getProductID().getId())
             .name(product.getName().getValue())
@@ -44,20 +45,16 @@ public class ProductMapper {
             .price(product.getPrice().getValue())
             .description(product.getDescription().getValue())
             .image(product.getImage().getUrl())
-            .ingredients(product.getIngredients().stream()
+            .ingredients(ingredientList.stream()
                 .map(ingredient -> new IngredientResponse()
-                    .id(ingredient.getId())
-                    .name(ingredient.getId())
-                    .category(ProductCategoryDTO.BURGER)
-                    .price(10.0))
+                    .id(ingredient.getIngredientID().getId())
+                    .name(ingredient.getName().getValue())
+                    .category(ProductCategoryDTO.valueOf(ingredient.getCategory().toString().toUpperCase()))
+                    .price(ingredient.getPrice().getValue())
+                    .weight(ingredient.getWeight().getValue())
+                    .isExtra(ingredient.isExtra()))
                 .toList());
 
-    }
-
-    public List<ProductResponse> toResponse(List<Product> products) {
-        return products.stream()
-            .map(this::toResponse)
-            .toList();
     }
 }
 

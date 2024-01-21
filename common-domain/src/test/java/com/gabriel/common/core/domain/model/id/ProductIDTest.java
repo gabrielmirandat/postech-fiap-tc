@@ -31,5 +31,14 @@ class ProductIDTest {
         assertThat(parts[3]).matches("\\d{2}");
         assertThat(parts[4]).matches("\\d{2}");
     }
+
+    @Test
+    void shouldCompareProductIDsBasedOnId() {
+        ProductID productID1 = new ProductID("12345678-PRDC-2023-04-18");
+        ProductID productID2 = new ProductID("12345678-PRDC-2023-04-18");
+        ProductID productID3 = new ProductID("87654321-PRDC-2023-04-18");
+        assertThat(productID1).isEqualTo(productID2);
+        assertThat(productID1).isNotEqualTo(productID3);
+    }
 }
 
