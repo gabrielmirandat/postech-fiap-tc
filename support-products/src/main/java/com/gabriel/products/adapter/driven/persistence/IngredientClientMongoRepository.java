@@ -10,7 +10,6 @@ import com.gabriel.products.core.domain.port.IngredientRepository;
 import com.gabriel.products.core.domain.port.ProductSearchParameters;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.result.DeleteResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -44,17 +43,14 @@ public class IngredientClientMongoRepository implements IngredientRepository {
         List<Ingredient> ingredients = new ArrayList<>();
         if (parameters.category() != null) {
             ingredientCollection.find(Filters.eq("category", parameters.category().toString()))
-                .forEach(doc -> ingredients.add(IngredientConverter.documentToIngredient((Document) doc)));
+                .forEach(doc -> ingredients.add(IngredientConverter.documentToIngredient(doc)));
         }
         return ingredients;
     }
 
     @Override
     public void deleteIngredient(String id) {
-        DeleteResult result = ingredientCollection.deleteOne(Filters.eq("ingredientID", id));
-        if (result.getDeletedCount() < 1) {
-            throw new RuntimeException("Ingredient not found");
-        }
+        ingredientCollection.deleteOne(Filters.eq("_id", id));
     }
 
     private static class IngredientConverter {

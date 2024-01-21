@@ -12,7 +12,6 @@ import com.gabriel.products.core.domain.port.ProductRepository;
 import com.gabriel.products.core.domain.port.ProductSearchParameters;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.result.DeleteResult;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -54,10 +53,7 @@ public class ProductClientMongoRepository implements ProductRepository {
 
     @Override
     public void deleteProduct(String id) {
-        DeleteResult result = productCollection.deleteOne(Filters.eq("productID", id));
-        if (result.getDeletedCount() < 1) {
-            throw new RuntimeException("Product not found");
-        }
+        productCollection.deleteOne(Filters.eq("_id", id));
     }
 
     private static class ProductConverter {
