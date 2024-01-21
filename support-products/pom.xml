@@ -15,7 +15,7 @@
         <openapi.generator.skip>true</openapi.generator.skip>
         <quarkus.version>3.6.4</quarkus.version>
         <mongodb.version>4.10.2</mongodb.version>
-        <mongock.version>5.0.17.RC</mongock.version>
+        <mongock.version>5.0.28</mongock.version>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
         <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
     </properties>

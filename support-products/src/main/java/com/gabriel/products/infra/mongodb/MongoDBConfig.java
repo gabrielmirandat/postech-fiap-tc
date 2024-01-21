@@ -5,8 +5,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import io.mongock.driver.mongodb.sync.v4.driver.MongoSync4Driver;
 import io.mongock.runner.standalone.MongockStandalone;
-import jakarta.annotation.PostConstruct;
+import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -37,16 +38,14 @@ public class MongoDBConfig {
         return database.getCollection("ingredients");
     }
 
-    @PostConstruct
-    public void onStartup() {
+    public void initMongock(@Observes StartupEvent ev) {
         MongoSync4Driver driver = MongoSync4Driver.withDefaultLock(mongoClient, mongodbDatabase);
 
         MongockStandalone.builder()
             .setDriver(driver)
-            .addMigrationScanPackage("com.gabriel.products.infra.mongodb")
-            .setMigrationStartedListener(MongoDBChangelog::onStart)
-            .setMigrationSuccessListener(MongoDBChangelog::onSuccess)
-            .setMigrationFailureListener(MongoDBChangelog::onFail)
-            .buildRunner().execute();
+            .setTransactionEnabled(false)
+            .addMigrationScanPackage("com.gabriel.products.infra.mongodb") // package where your changelogs are
+            .buildRunner()
+            .execute();
     }
 }
