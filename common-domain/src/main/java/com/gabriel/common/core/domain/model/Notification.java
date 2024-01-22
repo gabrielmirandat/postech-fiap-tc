@@ -12,20 +12,20 @@ public class Notification extends ValueObject {
     private final NotificationType type;
 
     @Valid
-    private final Notifiable value;
+    private final Notifiable repr;
 
-    public Notification(NotificationType type, String value) {
+    public Notification(NotificationType type, String repr) {
         this.type = type;
         validateSelf();
-        this.value = createNotifiable(type, value);
+        this.repr = createNotifiable(type, repr);
         validateSelf();
     }
 
-    private Notifiable createNotifiable(NotificationType type, String value) {
+    private Notifiable createNotifiable(NotificationType type, String repr) {
         return switch (type) {
-            case CELLPHONE -> new Cellphone(value);
-            case EMAIL -> new EmailData(value);
-            case CUSTOM -> new CustomNotification(value);
+            case CELLPHONE -> new Cellphone(repr);
+            case EMAIL -> new EmailData(repr);
+            case CUSTOM -> new CustomNotification(repr);
         };
     }
 }

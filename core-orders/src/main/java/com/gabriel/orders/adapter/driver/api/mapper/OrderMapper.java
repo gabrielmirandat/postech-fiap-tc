@@ -1,19 +1,19 @@
 package com.gabriel.orders.adapter.driver.api.mapper;
 
-import com.gabriel.common.core.domain.model.Address;
-import com.gabriel.common.core.domain.model.CPF;
-import com.gabriel.common.core.domain.model.Notification;
-import com.gabriel.common.core.domain.model.NotificationType;
+import com.gabriel.common.core.domain.model.*;
 import com.gabriel.orders.adapter.driver.api.models.*;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
-import com.gabriel.orders.core.application.query.GetByTicketOrderQuery;
+import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Order;
+import com.gabriel.orders.core.domain.model.OrderItem;
 import com.gabriel.orders.core.domain.model.OrderItemRef;
+import com.gabriel.orders.core.domain.port.MenuRepository;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -51,34 +51,78 @@ public class OrderMapper {
         return new CreateOrderCommand(customer, shippingAddress, notification, items);
     }
 
-    public GetByTicketOrderQuery toQuery(String orderId) {
-        return new GetByTicketOrderQuery(orderId);
-    }
+    public Order toOrder(CreateOrderCommand command, MenuRepository menuRepository) {
+        List<OrderItem> orderItems = new ArrayList<>();
 
-    // String id, String ticketId, OrderStatusDTO status, BigDecimal price,
-    // List<@Valid OrderItemResponse> items
-    public OrderResponse toResponse(Order order) {
-
-        List<OrderItemResponse> orderItems = new ArrayList<>();
-        for (var item : order.getItems()) {
-            var extras = item.getExtras();
-
-            ProductResponse productResponse = new ProductResponse();
-            OrderItemResponse orderItem =
-                new OrderItemResponse(item.getItemID().toString(), productResponse);
-
+        for (var item : command.items()) {
+            OrderItem orderItem = new OrderItem(
+                menuRepository.getProduct(item.getProductId()),
+                item.getExtrasIds().stream().map(
+                        menuRepository::getExtra)
+                    .collect(Collectors.toList()));
             orderItems.add(orderItem);
         }
 
-        OrderResponse response = new OrderResponse();
-        response.setId(order.getOrderId().toString());
-        response.setTicketId(order.getTicketId());
-        response.setCustomer(null);
-        response.setShippingAddress(null);
-        response.setPrice(BigDecimal.valueOf(order.getPrice().getValue()));
-        response.setNotification(order.getNotification().getValue().toString());
-        response.setStatus(OrderStatusDTO.valueOf(order.getStatus().toString()));
-        response.setItems(orderItems);
+        return new Order(orderItems, command.shippingAddress(),
+            command.notification(), command.customer());
+    }
+
+    public OrderResponse toResponse(Order order) {
+        List<OrderItemResponse> responseOrderItems = new ArrayList<>();
+
+        for (var item : order.getItems()) {
+
+            ProductResponse responseProduct = new ProductResponse(
+                item.getProduct().getProductID().getId(),
+                item.getProduct().getName().getValue(),
+                item.getProduct().getPrice().getValue());
+
+            OrderItemResponse responseOrderItem =
+                new OrderItemResponse(item.getItemID().toString(), responseProduct);
+
+            if (item.getExtras() != null) {
+                List<OrderExtraResponse> responseExtras;
+
+                Map<String, Extra> ingredientMap = item.getExtras().stream()
+                    .collect(Collectors.toMap(
+                        extra -> extra.getIngredientID().getId(), // Key Mapper
+                        extra -> extra,         // Value Mapper
+                        (existing, latest) -> latest)); // Merge function, in case of key collision
+
+                Map<String, Integer> ingredientCount = item.getExtras().stream()
+                    .collect(Collectors.groupingBy(extra -> extra.getIngredientID().getId(),
+                        Collectors.summingInt(e -> 1)));
+
+                responseExtras = ingredientCount.entrySet().stream()
+                    .map(entry -> new OrderExtraResponse(
+                        new IngredientResponse(entry.getKey(),
+                            ingredientMap.get(entry.getKey()).getName().getValue(),
+                            ingredientMap.get(entry.getKey()).getPrice().getValue()),
+                        BigDecimal.valueOf(entry.getValue()))
+                    ).toList();
+
+                responseOrderItem.setExtras(responseExtras);
+            }
+            responseOrderItems.add(responseOrderItem);
+        }
+
+        OrderResponse response = new OrderResponse(order.getOrderId().getId(), order.getTicketId(),
+            OrderStatusDTO.fromValue(order.getStatus().toString().toUpperCase()),
+            BigDecimal.valueOf(order.getPrice().getValue()), responseOrderItems);
+
+        if (order.getCustomer() != null) {
+            response.setCustomer(new CustomerDTO(order.getCustomer().getId()));
+        }
+
+        if (order.getShippingAddress() != null) {
+            response.setShippingAddress(new AddressDTO().street(order.getShippingAddress().getStreet()).city(order.getShippingAddress().getCity())
+                .state(order.getShippingAddress().getState()).zip(order.getShippingAddress().getZip()));
+        }
+
+        if (order.getNotification() != null) {
+            Cellphone phone = (Cellphone) order.getNotification().getRepr();
+            response.setNotification(phone.getNumber());
+        }
 
         return response;
     }

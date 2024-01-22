@@ -1,26 +1,26 @@
 package com.gabriel.orders.core.application.usecase;
 
-import com.gabriel.orders.core.domain.model.Order;
+import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.domain.port.MenuRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MenuCheckUseCase {
+public class VerifyMenuUseCase {
 
     private final MenuRepository menuRepository;
 
-    public MenuCheckUseCase(MenuRepository menuRepository) {
+    public VerifyMenuUseCase(MenuRepository menuRepository) {
         this.menuRepository = menuRepository;
     }
 
-    public void verifyMenu(Order order) {
-        order.getItems().forEach(item -> {
-            if (!menuRepository.existsProduct(item.getProduct().getProductID())) {
+    public void validate(CreateOrderCommand command) {
+        command.items().forEach(item -> {
+            if (!menuRepository.existsProduct(item.getProductId())) {
                 throw new RuntimeException("Product not found");
             }
 
-            item.getExtras().forEach(extra -> {
-                if (!menuRepository.existsExtra(extra.getIngredientID())) {
+            item.getExtrasIds().forEach(extraId -> {
+                if (!menuRepository.existsExtra(extraId)) {
                     throw new RuntimeException("Extra not found");
                 }
             });

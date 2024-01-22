@@ -13,7 +13,7 @@ public class OrderItem extends Entity {
     private final OrderItemID itemID;
 
     private final Product product;
-    
+
     private final List<Extra> extras;
 
     public OrderItem(Product product) {
@@ -28,5 +28,15 @@ public class OrderItem extends Entity {
         this.extras = extras;
 
         this.itemID = new OrderItemID();
+    }
+
+    private OrderItem(OrderItemID itemID, Product product, List<Extra> extras) {
+        this.itemID = itemID;
+        this.product = product;
+        this.extras = extras;
+    }
+
+    public static OrderItem copy(OrderItemID itemID, Product product, List<Extra> extras) {
+        return new OrderItem(itemID, product, extras);
     }
 }

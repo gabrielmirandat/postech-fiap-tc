@@ -2,6 +2,7 @@ package com.gabriel.orders.core.domain.model;
 
 import com.gabriel.common.core.domain.base.DomainException;
 import com.gabriel.common.core.domain.model.Address;
+import com.gabriel.common.core.domain.model.CPF;
 import com.gabriel.common.core.domain.model.Notification;
 import com.gabriel.common.core.domain.model.NotificationType;
 import com.gabriel.common.core.domain.model.id.IngredientID;
@@ -68,7 +69,8 @@ class OrderTest {
 
         Address shippingAddress = new Address("Street", "City", "SP", "13011-300");
         Notification notification = new Notification(NotificationType.CUSTOM, "firebase|uuid");
-        return new Order(Arrays.asList(item1, item2), shippingAddress, notification);
+        CPF customer = new CPF("123.456.789-00");
+        return new Order(Arrays.asList(item1, item2), shippingAddress, notification, customer);
     }
 
     @Test

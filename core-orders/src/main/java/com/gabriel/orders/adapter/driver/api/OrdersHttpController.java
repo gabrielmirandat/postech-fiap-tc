@@ -33,26 +33,25 @@ public class OrdersHttpController implements OrdersApi {
     }
 
     @Override
-    public ResponseEntity<OrderCreated> addOrder(OrderRequest orderRequest) throws Exception {
+    public ResponseEntity<OrderCreated> addOrder(OrderRequest orderRequest) {
         CreateOrderCommand command = orderMapper.toCommand(orderRequest);
         Order newOrder = createOrderUseCase.createOrder(command);
         return ResponseEntity.ok(new OrderCreated(newOrder.getTicketId()));
     }
 
     @Override
-    public ResponseEntity<OrderResponse> getOrderById(String orderId) throws Exception {
-        GetByTicketOrderQuery query = orderMapper.toQuery(orderId);
-        Order existentOrder = retrieveOrderUseCase.getByTicketOrder(query);
-        return ResponseEntity.ok(orderMapper.toResponse(existentOrder));
+    public ResponseEntity<OrderResponse> getOrderById(String orderId) {
+        Order currentOrder = retrieveOrderUseCase.getByTicketId(new GetByTicketOrderQuery(orderId));
+        return ResponseEntity.ok(orderMapper.toResponse(currentOrder));
     }
 
     @Override
-    public ResponseEntity<Void> changeOrderStatus(String orderId, String status) throws Exception {
+    public ResponseEntity<Void> changeOrderStatus(String orderId, String status) {
         return null;
     }
 
     @Override
-    public ResponseEntity<OrderResponse> findOrdersByQuery(Optional<OrderStatusDTO> status) throws Exception {
+    public ResponseEntity<OrderResponse> findOrdersByQuery(Optional<OrderStatusDTO> status) {
         return null;
     }
 }

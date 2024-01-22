@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.common.core.domain.base.AggregateRoot;
 import com.gabriel.common.core.domain.base.DomainException;
 import com.gabriel.common.core.domain.model.Address;
+import com.gabriel.common.core.domain.model.CPF;
 import com.gabriel.common.core.domain.model.Notification;
 import com.gabriel.common.core.domain.model.Price;
 import com.gabriel.common.core.domain.model.id.OrderID;
@@ -24,17 +25,21 @@ public class Order extends AggregateRoot {
     private final List<OrderItem> items;
 
     @Valid
+    private Price price;
+
+    private String ticketId;
+
+    private OrderStatus status;
+
+    @Valid
     private Address shippingAddress;
 
     @Valid
     private Notification notification;
 
     @Valid
-    private Price price;
+    private CPF customer;
 
-    private String ticketId;
-
-    private OrderStatus status;
 
     public Order(List<OrderItem> items) {
         this.orderId = new OrderID();
@@ -42,26 +47,30 @@ public class Order extends AggregateRoot {
         initialize();
     }
 
-    public Order(List<OrderItem> items, Address shippingAddress) {
-        this.orderId = new OrderID();
-        this.items = items;
-        this.shippingAddress = shippingAddress;
-        initialize();
-    }
-
-    public Order(List<OrderItem> items, Notification additionalNotification) {
-        this.orderId = new OrderID();
-        this.items = items;
-        this.notification = additionalNotification;
-        initialize();
-    }
-
-    public Order(List<OrderItem> items, Address shippingAddress, Notification additionalNotification) {
+    public Order(List<OrderItem> items, Address shippingAddress, Notification additionalNotification,
+                 CPF customer) {
         this.orderId = new OrderID();
         this.items = items;
         this.shippingAddress = shippingAddress;
         this.notification = additionalNotification;
+        this.customer = customer;
         initialize();
+    }
+
+    private Order(OrderID orderId, List<OrderItem> items, Address shippingAddress, Notification additionalNotification,
+                  Price price, String ticketId, OrderStatus status) {
+        this.orderId = orderId;
+        this.items = items;
+        this.shippingAddress = shippingAddress;
+        this.notification = additionalNotification;
+        this.price = price;
+        this.ticketId = ticketId;
+        this.status = status;
+    }
+
+    public static Order copy(OrderID orderId, List<OrderItem> items, Address shippingAddress,
+                             Notification additionalNotification, Price price, String ticketId, OrderStatus status) {
+        return new Order(orderId, items, shippingAddress, additionalNotification, price, ticketId, status);
     }
 
     public static Order deserialize(byte[] bytes) {

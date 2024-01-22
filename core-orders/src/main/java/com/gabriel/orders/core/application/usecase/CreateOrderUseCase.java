@@ -1,43 +1,41 @@
 package com.gabriel.orders.core.application.usecase;
 
-import com.gabriel.common.core.domain.model.id.ProductID;
+import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.domain.event.OrderCreatedEvent;
 import com.gabriel.orders.core.domain.model.Order;
-import com.gabriel.orders.core.domain.model.OrderItem;
-import com.gabriel.orders.core.domain.model.Product;
+import com.gabriel.orders.core.domain.port.MenuRepository;
 import com.gabriel.orders.core.domain.port.OrderPublisher;
 import com.gabriel.orders.core.domain.port.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class CreateOrderUseCase {
 
     private final OrderRepository orderRepository;
     private final OrderPublisher orderPublisher;
-
-    private final MenuCheckUseCase menuCheckUseCase;
+    private final VerifyMenuUseCase verifyMenuUseCase;
+    private final MenuRepository menuRepository;
+    private final OrderMapper orderMapper;
 
     public CreateOrderUseCase(OrderRepository orderRepository,
                               OrderPublisher orderPublisher,
-                              MenuCheckUseCase menuCheckUseCase) {
+                              VerifyMenuUseCase verifyMenuUseCase,
+                              MenuRepository menuRepository,
+                              OrderMapper orderMapper) {
         this.orderRepository = orderRepository;
         this.orderPublisher = orderPublisher;
-        this.menuCheckUseCase = menuCheckUseCase;
+        this.verifyMenuUseCase = verifyMenuUseCase;
+        this.menuRepository = menuRepository;
+        this.orderMapper = orderMapper;
     }
 
     @Transactional
     public Order createOrder(CreateOrderCommand command) {
         try {
-            Product sampleProduct = new Product(new ProductID(), "Teu cu", 10.20);
-            OrderItem sampleOrder = new OrderItem(sampleProduct);
-            Order newOrder = new Order(List.of(sampleOrder));
-
-            menuCheckUseCase.verifyMenu(newOrder);
-
+            verifyMenuUseCase.validate(command);
+            Order newOrder = orderMapper.toOrder(command, menuRepository);
 
             orderRepository.saveOrder(newOrder);
             orderPublisher.orderCreated(new OrderCreatedEvent(newOrder));

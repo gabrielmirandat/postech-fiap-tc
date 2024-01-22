@@ -13,6 +13,8 @@
 
     <properties>
         <openapi.generator.skip>true</openapi.generator.skip>
+        <liquibase.version>4.24.0</liquibase.version>
+        <mongodb.version>4.11.0</mongodb.version>
         <newrelic.version>8.7.0</newrelic.version>
         <maven.deps.plugin.version>3.6.1</maven.deps.plugin.version>
     </properties>
@@ -44,12 +46,19 @@
 
         <!-- MONGODB -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>${mongodb.version}</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase.ext</groupId>
+            <artifactId>liquibase-mongodb</artifactId>
+            <version>${liquibase.version}</version>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>

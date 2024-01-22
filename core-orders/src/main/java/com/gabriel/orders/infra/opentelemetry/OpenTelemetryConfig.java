@@ -30,13 +30,14 @@ public class OpenTelemetryConfig {
             .build();
 
         // Configure the SDK with the exporter
-        OpenTelemetrySdk openTelemetrySdk = OpenTelemetrySdk.builder()
+        try (OpenTelemetrySdk openTelemetrySdk = OpenTelemetrySdk.builder()
             .setTracerProvider(
                 SdkTracerProvider.builder()
                     .addSpanProcessor(SimpleSpanProcessor.create(spanExporter))
                     .build()
-            ).build();
+            ).build()) {
 
-        return openTelemetrySdk.getTracer(newRelicAppName); // Replace with your application's name
+            return openTelemetrySdk.getTracer(newRelicAppName); // Replace with your application's name
+        }
     }
 }

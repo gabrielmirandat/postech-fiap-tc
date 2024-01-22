@@ -4,14 +4,14 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
-@EnableMongoRepositories
 public class MongoDbConfig {
 
     @Value("${mongodb.conn.string}")
@@ -21,8 +21,8 @@ public class MongoDbConfig {
     private String mongodbConnDatabase;
 
     @Bean
-    public MongoClient mongo() {
-        ConnectionString connectionString = new ConnectionString(String.format("%s/admin", mongodbConnString));
+    public MongoClient mongoClient() {
+        ConnectionString connectionString = new ConnectionString(mongodbConnString);
         MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
             .applyConnectionString(connectionString)
             .build();
@@ -31,7 +31,8 @@ public class MongoDbConfig {
     }
 
     @Bean
-    public MongoTemplate mongoTemplate() throws Exception {
-        return new MongoTemplate(mongo(), mongodbConnDatabase);
+    public MongoCollection<Document> orderCollection() {
+        MongoDatabase database = mongoClient().getDatabase(mongodbConnDatabase);
+        return database.getCollection("orders");
     }
 }

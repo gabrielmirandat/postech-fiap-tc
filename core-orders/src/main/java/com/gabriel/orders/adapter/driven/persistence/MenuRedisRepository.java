@@ -31,6 +31,16 @@ public class MenuRedisRepository implements MenuRepository {
     }
 
     @Override
+    public Product getProduct(ProductID productID) {
+        Cache cache = cacheManager.getCache("menu");
+        if (cache != null) {
+            return Product.deserialize(
+                (byte[]) Objects.requireNonNull(cache.get(productID.getId())).get());
+        }
+        return null;
+    }
+
+    @Override
     public void addProduct(Product product) {
         Objects.requireNonNull(cacheManager.getCache("menu"))
             .put(product.getProductID().getId(), product.serialized());
@@ -54,6 +64,16 @@ public class MenuRedisRepository implements MenuRepository {
             return cache.get(ingredientID.getId()) != null;
         }
         return false;
+    }
+
+    @Override
+    public Extra getExtra(IngredientID ingredientID) {
+        Cache cache = cacheManager.getCache("menu");
+        if (cache != null) {
+            return Extra.deserialize(
+                (byte[]) Objects.requireNonNull(cache.get(ingredientID.getId())).get());
+        }
+        return null;
     }
 
     @Override
