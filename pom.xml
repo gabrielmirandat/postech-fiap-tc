@@ -18,16 +18,16 @@
     <name>tech-challenge</name>
     <description>Tech Challenge</description>
     <modules>
-        <module>core-orders</module>
-        <module>core-promotional-campaigns</module>
-        <module>support-customers</module>
-        <module>support-products</module>
-        <module>support-deliveries</module>
-        <module>support-supplies</module>
-        <module>generic-payments</module>
-        <module>generic-notifications</module>
-        <module>generic-permissions</module>
-        <module>common-domain</module>
+        <module>orders</module>
+        <module>promotional-campaigns</module>
+        <module>customers</module>
+        <module>menu</module>
+        <module>deliveries</module>
+        <module>supplies</module>
+        <module>payments</module>
+        <module>notifications</module>
+        <module>permissions</module>
+        <module>core</module>
     </modules>
 
     <properties>
