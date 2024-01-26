@@ -12,7 +12,7 @@
     <artifactId>menu</artifactId>
 
     <properties>
-        <openapi.generator.skip>false</openapi.generator.skip>
+        <openapi.generator.skip>true</openapi.generator.skip>
         <quarkus.version>3.6.4</quarkus.version>
         <mongodb.version>4.10.2</mongodb.version>
         <mongock.version>5.0.28</mongock.version>
@@ -103,28 +103,7 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>${openapi.generator.version}</version>
                 <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <skipValidateSpec>false</skipValidateSpec>
-                            <inputSpec>${project.basedir}/src/main/resources/oas/products-api.yaml</inputSpec>
-                            <generatorName>jaxrs-spec</generatorName>
-                            <configOptions>
-                                <openApiNullable>false</openApiNullable>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useBeanValidation>true</useBeanValidation>
-                                <useOptional>true</useOptional>
-                                <apiPackage>com.gabriel.menu.adapter.driver.api.controller</apiPackage>
-                                <modelPackage>com.gabriel.menu.adapter.driver.api.models</modelPackage>
-                                <library>quarkus</library>
-                                <useJakartaEe>true</useJakartaEe> <!-- Esta linha é a chave para usar Jakarta -->
-                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
-                            </configOptions>
-                            <skip>${openapi.generator.skip}</skip>
-                        </configuration>
-                    </execution>
+
                 </executions>
             </plugin>
 

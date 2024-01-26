@@ -1,8 +1,8 @@
 package com.gabriel.menu.adapter.driven.persistence;
 
-import com.gabriel.core.domain.model.Name;
-import com.gabriel.core.domain.model.Price;
-import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.domain.model.Name;
+import com.gabriel.domain.model.Price;
+import com.gabriel.domain.model.id.IngredientID;
 import com.gabriel.menu.core.domain.model.Category;
 import com.gabriel.menu.core.domain.model.Ingredient;
 import com.gabriel.menu.core.domain.model.Weight;

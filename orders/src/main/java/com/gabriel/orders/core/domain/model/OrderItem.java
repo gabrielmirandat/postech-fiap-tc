@@ -1,7 +1,7 @@
 package com.gabriel.orders.core.domain.model;
 
-import com.gabriel.core.domain.Entity;
-import com.gabriel.core.domain.model.id.OrderItemID;
+import com.gabriel.domain.Entity;
+import com.gabriel.domain.model.id.OrderItemID;
 import lombok.Getter;
 
 import java.util.Collections;

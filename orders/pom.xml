@@ -12,11 +12,8 @@
     <artifactId>orders</artifactId>
 
     <properties>
-        <openapi.generator.skip>false</openapi.generator.skip>
         <liquibase.version>4.24.0</liquibase.version>
         <mongodb.version>4.11.0</mongodb.version>
-        <grpc.version>1.61.0</grpc.version>
-        <protobuf.version>3.25.2</protobuf.version>
         <newrelic.version>8.7.0</newrelic.version>
         <maven.deps.plugin.version>3.6.1</maven.deps.plugin.version>
     </properties>
@@ -73,34 +70,6 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
-        <!-- gRPC -->
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version> <!-- Verifique se há uma versão mais recente -->
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-protobuf</artifactId>
-            <version>${grpc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-stub</artifactId>
-            <version>${grpc.version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>${protobuf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java-util</artifactId>
-            <version>${protobuf.version}</version>
-        </dependency>
-
         <!-- NEW RELIC -->
         <dependency>
             <groupId>com.newrelic.agent.java</groupId>
@@ -124,13 +93,6 @@
     </dependencies>
 
     <build>
-        <extensions>
-            <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>1.6.1</version>
-            </extension>
-        </extensions>
         <plugins>
 
             <!-- LOMBOK -->
@@ -145,41 +107,6 @@
                         </exclude>
                     </excludes>
                 </configuration>
-            </plugin>
-
-            <!-- OPENAPI -->
-            <!-- https://openapi-generator.tech/docs/generators/spring/ -->
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>${openapi.generator.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <skipValidateSpec>false</skipValidateSpec>
-                            <inputSpec>${project.basedir}/src/main/resources/oas/orders-api.yaml</inputSpec>
-                            <generatorName>spring</generatorName>
-                            <generateAliasAsModel>true</generateAliasAsModel>
-                            <configOptions>
-                                <openApiNullable>false</openApiNullable>
-                                <interfaceOnly>true</interfaceOnly>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                                <unhandledException>true</unhandledException>>
-                                <useBeanValidation>true</useBeanValidation>
-                                <useSpringBoot3>true</useSpringBoot3>
-                                <useOptional>true</useOptional>
-                                <useSwaggerUI>true</useSwaggerUI>
-                                <documentationProvider>springdoc</documentationProvider>
-                                <apiPackage>com.gabriel.orders.adapter.driver.api.controller</apiPackage>
-                                <modelPackage>com.gabriel.orders.adapter.driver.api.models</modelPackage>
-                            </configOptions>
-                            <skip>${openapi.generator.skip}</skip>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- NEW RELIC -->
@@ -217,33 +144,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- gRPC -->
-            <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
-                <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.6.1</version>
-                <configuration>
-                    <protocArtifact>
-                        com.google.protobuf:protoc:3.3.0:exe:${os.detected.classifier}
-                    </protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>
-                        io.grpc:protoc-gen-grpc-java:1.4.0:exe:${os.detected.classifier}
-                    </pluginArtifact>
-                    <protocExecutable>protoc</protocExecutable>
-                    <protoSourceRoot>${project.basedir}/src/main/resources</protoSourceRoot>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>compile-custom</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
 
         <resources>

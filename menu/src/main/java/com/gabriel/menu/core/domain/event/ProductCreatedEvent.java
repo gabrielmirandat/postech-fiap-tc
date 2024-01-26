@@ -1,7 +1,7 @@
 package com.gabriel.menu.core.domain.event;
 
 
-import com.gabriel.core.domain.DomainEvent;
+import com.gabriel.domain.DomainEvent;
 import com.gabriel.menu.core.domain.model.Product;
 import lombok.Getter;
 
