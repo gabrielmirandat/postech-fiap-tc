@@ -1,14 +1,14 @@
 package com.gabriel.menu.adapter.driver.api.mapper;
 
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.menu.adapter.driver.api.models.IngredientResponse;
-import com.gabriel.menu.adapter.driver.api.models.ProductCategoryDTO;
-import com.gabriel.menu.adapter.driver.api.models.ProductRequest;
-import com.gabriel.menu.adapter.driver.api.models.ProductResponse;
+import com.gabriel.domain.model.id.IngredientID;
 import com.gabriel.menu.core.application.command.CreateProductCommand;
 import com.gabriel.menu.core.domain.model.Category;
 import com.gabriel.menu.core.domain.model.Ingredient;
 import com.gabriel.menu.core.domain.model.Product;
+import com.gabriel.specs.menu.models.IngredientResponse;
+import com.gabriel.specs.menu.models.ProductCategoryDTO;
+import com.gabriel.specs.menu.models.ProductRequest;
+import com.gabriel.specs.menu.models.ProductResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;

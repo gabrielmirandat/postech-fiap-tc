@@ -2,13 +2,13 @@ package com.gabriel.orders.core.domain.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.AggregateRoot;
-import com.gabriel.core.domain.DomainException;
-import com.gabriel.core.domain.model.Address;
-import com.gabriel.core.domain.model.CPF;
-import com.gabriel.core.domain.model.Notification;
-import com.gabriel.core.domain.model.Price;
-import com.gabriel.core.domain.model.id.OrderID;
+import com.gabriel.domain.AggregateRoot;
+import com.gabriel.domain.DomainException;
+import com.gabriel.domain.model.Address;
+import com.gabriel.domain.model.CPF;
+import com.gabriel.domain.model.Notification;
+import com.gabriel.domain.model.Price;
+import com.gabriel.domain.model.id.OrderID;
 import jakarta.validation.Valid;
 import lombok.Getter;
 

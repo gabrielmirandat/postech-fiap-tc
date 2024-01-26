@@ -1,6 +1,6 @@
 package com.gabriel.menu.core.application.usecase;
 
-import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.domain.model.id.IngredientID;
 import com.gabriel.menu.core.application.exception.IngredientInvalidException;
 import com.gabriel.menu.core.application.query.SearchIngredientQuery;
 import com.gabriel.menu.core.domain.model.Category;

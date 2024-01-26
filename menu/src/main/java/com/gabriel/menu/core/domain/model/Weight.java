@@ -2,7 +2,7 @@ package com.gabriel.menu.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.gabriel.core.domain.ValueObject;
+import com.gabriel.domain.ValueObject;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;

@@ -1,12 +1,12 @@
 package com.gabriel.orders.core.domain.model;
 
-import com.gabriel.core.domain.DomainException;
-import com.gabriel.core.domain.model.Address;
-import com.gabriel.core.domain.model.CPF;
-import com.gabriel.core.domain.model.Notification;
-import com.gabriel.core.domain.model.NotificationType;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.domain.DomainException;
+import com.gabriel.domain.model.Address;
+import com.gabriel.domain.model.CPF;
+import com.gabriel.domain.model.Notification;
+import com.gabriel.domain.model.NotificationType;
+import com.gabriel.domain.model.id.IngredientID;
+import com.gabriel.domain.model.id.ProductID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

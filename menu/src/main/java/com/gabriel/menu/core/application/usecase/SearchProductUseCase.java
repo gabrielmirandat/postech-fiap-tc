@@ -1,12 +1,12 @@
 package com.gabriel.menu.core.application.usecase;
 
-import com.gabriel.menu.adapter.driver.api.models.ProductResponse;
 import com.gabriel.menu.core.application.query.GetByProductQuery;
 import com.gabriel.menu.core.application.query.SearchProductQuery;
 import com.gabriel.menu.core.domain.model.Category;
 import com.gabriel.menu.core.domain.model.Product;
 import com.gabriel.menu.core.domain.port.ProductRepository;
 import com.gabriel.menu.core.domain.port.ProductSearchParameters;
+import com.gabriel.specs.menu.models.ProductResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 

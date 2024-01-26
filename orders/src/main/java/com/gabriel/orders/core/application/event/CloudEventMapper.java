@@ -2,7 +2,7 @@ package com.gabriel.orders.core.application.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.DomainEvent;
+import com.gabriel.domain.DomainEvent;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import io.cloudevents.CloudEvent;

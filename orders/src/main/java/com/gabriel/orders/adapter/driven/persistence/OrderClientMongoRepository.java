@@ -1,10 +1,10 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
-import com.gabriel.core.domain.model.*;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.OrderID;
-import com.gabriel.core.domain.model.id.OrderItemID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.domain.model.*;
+import com.gabriel.domain.model.id.IngredientID;
+import com.gabriel.domain.model.id.OrderID;
+import com.gabriel.domain.model.id.OrderItemID;
+import com.gabriel.domain.model.id.ProductID;
 import com.gabriel.orders.core.domain.model.*;
 import com.gabriel.orders.core.domain.port.OrderRepository;
 import com.gabriel.orders.core.domain.port.OrderSearchParameters;

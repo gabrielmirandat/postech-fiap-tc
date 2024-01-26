@@ -1,7 +1,7 @@
 package com.gabriel.menu.adapter.driven.messaging.mapper;
 
 
-import com.gabriel.core.domain.DomainEvent;
+import com.gabriel.domain.DomainEvent;
 import io.smallrye.reactive.messaging.ce.OutgoingCloudEventMetadata;
 
 import java.net.URI;

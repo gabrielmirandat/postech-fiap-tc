@@ -1,11 +1,6 @@
 package com.gabriel.menu.adapter.driver.api;
 
-import com.gabriel.menu.adapter.driver.api.controller.IngredientsApi;
 import com.gabriel.menu.adapter.driver.api.mapper.IngredientMapper;
-import com.gabriel.menu.adapter.driver.api.models.IngredientCreated;
-import com.gabriel.menu.adapter.driver.api.models.IngredientRequest;
-import com.gabriel.menu.adapter.driver.api.models.IngredientResponse;
-import com.gabriel.menu.adapter.driver.api.models.ProductCategoryDTO;
 import com.gabriel.menu.core.application.command.CreateIngredientCommand;
 import com.gabriel.menu.core.application.query.GetByIngredientIdQuery;
 import com.gabriel.menu.core.application.query.SearchIngredientQuery;
@@ -13,6 +8,11 @@ import com.gabriel.menu.core.application.usecase.CreateIngredientUseCase;
 import com.gabriel.menu.core.application.usecase.RetrieveIngredientUseCase;
 import com.gabriel.menu.core.application.usecase.SearchIngredientUseCase;
 import com.gabriel.menu.core.domain.model.Ingredient;
+import com.gabriel.specs.menu.IngredientsApi;
+import com.gabriel.specs.menu.models.IngredientCreated;
+import com.gabriel.specs.menu.models.IngredientRequest;
+import com.gabriel.specs.menu.models.IngredientResponse;
+import com.gabriel.specs.menu.models.ProductCategoryDTO;
 import jakarta.inject.Inject;
 
 import java.util.List;

@@ -1,13 +1,13 @@
 package com.gabriel.orders.adapter.driver.api.mapper;
 
-import com.gabriel.core.domain.model.*;
-import com.gabriel.orders.adapter.driver.api.models.*;
+import com.gabriel.domain.model.*;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderItem;
 import com.gabriel.orders.core.domain.model.OrderItemRef;
 import com.gabriel.orders.core.domain.port.MenuRepository;
+import com.gabriel.specs.orders.models.*;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

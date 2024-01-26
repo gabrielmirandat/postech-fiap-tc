@@ -1,16 +1,16 @@
 package com.gabriel.orders.adapter.driver.api;
 
-import com.gabriel.orders.adapter.driver.api.controller.OrdersApi;
 import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
-import com.gabriel.orders.adapter.driver.api.models.OrderCreated;
-import com.gabriel.orders.adapter.driver.api.models.OrderRequest;
-import com.gabriel.orders.adapter.driver.api.models.OrderResponse;
-import com.gabriel.orders.adapter.driver.api.models.OrderStatusDTO;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.application.query.GetByTicketOrderQuery;
 import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
 import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
+import com.gabriel.specs.orders.OrdersApi;
+import com.gabriel.specs.orders.models.OrderCreated;
+import com.gabriel.specs.orders.models.OrderRequest;
+import com.gabriel.specs.orders.models.OrderResponse;
+import com.gabriel.specs.orders.models.OrderStatusDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 

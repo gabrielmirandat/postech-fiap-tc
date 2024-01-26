@@ -1,8 +1,8 @@
 package com.gabriel.orders.core.domain.model;
 
-import com.gabriel.core.domain.ValueObject;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.domain.ValueObject;
+import com.gabriel.domain.model.id.IngredientID;
+import com.gabriel.domain.model.id.ProductID;
 import lombok.Getter;
 
 import java.util.List;
