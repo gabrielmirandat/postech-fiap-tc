@@ -15,6 +15,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.bson.Document;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +63,9 @@ public class IngredientClientMongoRepository implements IngredientRepository {
                 .append("category", ingredient.getCategory().toString())
                 .append("price", ingredient.getPrice().getValue())
                 .append("weight", ingredient.getWeight().getValue())
-                .append("isExtra", ingredient.isExtra());
+                .append("isExtra", ingredient.isExtra())
+                .append("creationTimestamp", ingredient.getCreationTimestamp().toString())
+                .append("updateTimestamp", ingredient.getUpdateTimestamp().toString());
             return doc;
         }
 
@@ -73,8 +76,11 @@ public class IngredientClientMongoRepository implements IngredientRepository {
             Price price = new Price(doc.getDouble("price"));
             Weight weight = new Weight(doc.getDouble("weight"));
             boolean isExtra = doc.getBoolean("isExtra");
+            Instant createdAt = Instant.parse(doc.getString("creationTimestamp"));
+            Instant updatedAt = Instant.parse(doc.getString("updateTimestamp"));
 
-            return new Ingredient(ingredientID, name, category, price, weight, isExtra);
+            return Ingredient.copy(ingredientID, name, category, price, weight,
+                isExtra, createdAt, updatedAt);
         }
     }
 }

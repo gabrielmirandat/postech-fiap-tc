@@ -85,6 +85,12 @@
             <artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
         </dependency>
 
+        <!-- GRPC -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-grpc</artifactId>
+        </dependency>
+
         <!-- TEST -->
         <dependency>
             <groupId>io.quarkus</groupId>

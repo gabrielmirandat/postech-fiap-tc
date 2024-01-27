@@ -17,6 +17,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.bson.Document;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,6 +71,8 @@ public class ProductClientMongoRepository implements ProductRepository {
                 .map(IngredientID::getId)
                 .collect(Collectors.toList());
             doc.append("ingredients", ingredientIds);
+            doc.append("creationTimestamp", product.getCreationTimestamp());
+            doc.append("updateTimestamp", product.getUpdateTimestamp());
             return doc;
         }
 
@@ -83,7 +86,10 @@ public class ProductClientMongoRepository implements ProductRepository {
             List<IngredientID> ingredients = ((List<String>) doc.get("ingredients")).stream()
                 .map(IngredientID::new)
                 .collect(Collectors.toList());
-            return new Product(productID, name, price, category, description, image, ingredients);
+            Instant createdAt = Instant.parse(doc.getString("creationTimestamp"));
+            Instant updatedAt = Instant.parse(doc.getString("updateTimestamp"));
+            return Product.copy(productID, name, price, category, description, image, ingredients,
+                createdAt, updatedAt);
         }
     }
 }

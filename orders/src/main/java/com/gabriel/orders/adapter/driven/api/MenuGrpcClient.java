@@ -1,6 +1,6 @@
 package com.gabriel.orders.adapter.driven.api;
 
-import com.gabriel.orders.core.domain.port.MenuRepository;
+import com.gabriel.orders.core.application.usecase.SetupMenuUseCase;
 import com.gabriel.specs.menu.MenuGrpc;
 import com.gabriel.specs.menu.MenuRequest;
 import com.gabriel.specs.menu.MenuResponse;
@@ -10,15 +10,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class MenuGrpcClient {
 
-    private final MenuRepository menuRepository;
+    private final SetupMenuUseCase setupMenuUseCase;
     private ManagedChannel managedMenuChannel;
 
-    public MenuGrpcClient(ManagedChannel managedMenuChannel, MenuRepository menuRepository) {
+    public MenuGrpcClient(ManagedChannel managedMenuChannel, SetupMenuUseCase setupMenuUseCase) {
         this.managedMenuChannel = managedMenuChannel;
-        this.menuRepository = menuRepository;
+        this.setupMenuUseCase = setupMenuUseCase;
     }
 
-    public void bootMenuData() {
+    public void dumpMenuData() {
         MenuGrpc.MenuBlockingStub stub = MenuGrpc.newBlockingStub(managedMenuChannel);
         MenuRequest request = MenuRequest.newBuilder().build();
         MenuResponse response = stub.retrieveMenu(request);
