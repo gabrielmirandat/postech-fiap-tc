@@ -3,6 +3,8 @@ option java_multiple_files = true;
 option java_outer_classname = "MenuProtoClient";
 package com.gabriel.specs.menu;
 
+import "google/protobuf/timestamp.proto";
+
 // O serviço gRPC
 service Menu {
   rpc RetrieveMenu (MenuRequest) returns (MenuResponse);
@@ -10,18 +12,19 @@ service Menu {
 
 // Mensagem de requisição com opção de filtro por categoria
 message MenuRequest {
-  string categoria = 1; // Campo para especificar a categoria desejada
+  string category = 1;
 }
 
 // Definindo um item de menu individual
 message MenuItem {
   string id = 1;
   string name = 2;
-  int64 price = 3; // long em Java é mapeado para int64 em protobuf
-  string category = 4; // Categoria do item do menu
+  double price = 3;
+  string category = 4;
+  google.protobuf.Timestamp lastUpdated = 5;
 }
 
 // Mensagem de resposta
 message MenuResponse {
-  repeated MenuItem items = 1; // Lista de itens de menu filtrados por categoria, se especificado
+  repeated MenuItem items = 1;
 }

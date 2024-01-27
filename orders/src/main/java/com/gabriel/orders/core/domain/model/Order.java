@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 
 @Getter
@@ -58,7 +59,7 @@ public class Order extends AggregateRoot {
     }
 
     private Order(OrderID orderId, List<OrderItem> items, Address shippingAddress, Notification additionalNotification,
-                  Price price, String ticketId, OrderStatus status) {
+                  Price price, String ticketId, OrderStatus status, Instant createdAt, Instant updatedAt) {
         this.orderId = orderId;
         this.items = items;
         this.shippingAddress = shippingAddress;
@@ -66,11 +67,15 @@ public class Order extends AggregateRoot {
         this.price = price;
         this.ticketId = ticketId;
         this.status = status;
+        this.creationTimestamp = createdAt;
+        this.updateTimestamp = updatedAt;
     }
 
     public static Order copy(OrderID orderId, List<OrderItem> items, Address shippingAddress,
-                             Notification additionalNotification, Price price, String ticketId, OrderStatus status) {
-        return new Order(orderId, items, shippingAddress, additionalNotification, price, ticketId, status);
+                             Notification additionalNotification, Price price, String ticketId,
+                             OrderStatus status, Instant createdAt, Instant updatedAt) {
+        return new Order(orderId, items, shippingAddress, additionalNotification, price,
+            ticketId, status, createdAt, updatedAt);
     }
 
     public static Order deserialize(byte[] bytes) {

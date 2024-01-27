@@ -13,6 +13,7 @@ import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,7 +62,9 @@ public class OrderClientMongoRepository implements OrderRepository {
                 .append("notification", notificationToDocument(order.getNotification()))
                 .append("price", order.getPrice().getValue())
                 .append("ticketId", order.getTicketId())
-                .append("status", order.getStatus().toString());
+                .append("status", order.getStatus().toString())
+                .append("creationTimestamp", order.getCreationTimestamp().toString())
+                .append("updateTimestamp", order.getUpdateTimestamp().toString());
             return doc;
         }
 
@@ -75,8 +78,11 @@ public class OrderClientMongoRepository implements OrderRepository {
             Price price = new Price(doc.getDouble("price"));
             String ticketId = doc.getString("ticketId");
             OrderStatus status = OrderStatus.valueOf(doc.getString("status").toUpperCase());
+            Instant createdAt = Instant.parse(doc.getString("creationTimestamp"));
+            Instant updatedAt = Instant.parse(doc.getString("updateTimestamp"));
 
-            return Order.copy(orderId, items, shippingAddress, notification, price, ticketId, status);
+            return Order.copy(orderId, items, shippingAddress, notification, price,
+                ticketId, status, createdAt, updatedAt);
         }
 
         private static Document orderItemToDocument(OrderItem orderItem) {

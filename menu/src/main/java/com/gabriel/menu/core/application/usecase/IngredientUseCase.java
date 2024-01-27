@@ -1,15 +1,23 @@
 package com.gabriel.menu.core.application.usecase;
 
 import com.gabriel.menu.core.application.command.CreateIngredientCommand;
+import com.gabriel.menu.core.application.query.GetByIngredientIdQuery;
+import com.gabriel.menu.core.application.query.GetByIngredientIdsQuery;
+import com.gabriel.menu.core.application.query.SearchIngredientQuery;
 import com.gabriel.menu.core.domain.event.IngredientCreatedEvent;
+import com.gabriel.menu.core.domain.model.Category;
 import com.gabriel.menu.core.domain.model.Ingredient;
 import com.gabriel.menu.core.domain.port.IngredientPublisher;
 import com.gabriel.menu.core.domain.port.IngredientRepository;
+import com.gabriel.menu.core.domain.port.ProductSearchParameters;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @ApplicationScoped
-public class CreateIngredientUseCase {
+public class IngredientUseCase {
 
     @Inject
     IngredientRepository ingredientRepository;
@@ -17,7 +25,7 @@ public class CreateIngredientUseCase {
     @Inject
     IngredientPublisher ingredientPublisher;
 
-    // it may not work with quarkus
+
     public Ingredient createIngredient(CreateIngredientCommand command) {
         try {
             Ingredient ingredient = new Ingredient(command.name(), command.category(),
@@ -28,5 +36,20 @@ public class CreateIngredientUseCase {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Ingredient getIngredientById(GetByIngredientIdQuery query) {
+        return ingredientRepository.getById(query.id());
+    }
+
+    public List<Ingredient> getIngredientsById(GetByIngredientIdsQuery query) {
+        return query.ids().stream()
+            .map(id -> getIngredientById(new GetByIngredientIdQuery(id)))
+            .collect(Collectors.toList());
+    }
+
+    public List<Ingredient> searchIngredient(SearchIngredientQuery query) {
+        ProductSearchParameters parameters = new ProductSearchParameters(Category.valueOf(query.category().toUpperCase()));
+        return ingredientRepository.searchBy(parameters);
     }
 }
