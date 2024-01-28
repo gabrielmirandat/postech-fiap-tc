@@ -15,27 +15,27 @@ import java.util.UUID;
 
 public class CloudEventMapper {
 
-    public static CloudEvent ceFrom(DomainEvent event) throws JsonProcessingException {
+    public static CloudEvent ceFrom(ObjectMapper serializer, DomainEvent event) throws JsonProcessingException {
         return CloudEventBuilder.v1()
             .withId(UUID.randomUUID().toString())
             .withSource(URI.create(event.source()))
             .withSubject(event.subject())
             .withType(event.type())
-            .withData(event.payload())
+            .withData(event.payload(serializer))
             .withExtension("audience", event.audience())
             .withExtension("context", event.context())
             .build();
     }
 
-    public static Product productFrom(CloudEvent event, ObjectMapper mapper) throws JsonProcessingException {
+    public static Product productFrom(ObjectMapper deserializer, CloudEvent event) throws JsonProcessingException {
         byte[] data = Objects.requireNonNull(event.getData()).toBytes();
         String json = new String(data, StandardCharsets.UTF_8);
-        return mapper.readValue(json, Product.class);
+        return deserializer.readValue(json, Product.class);
     }
 
-    public static Extra extraFrom(CloudEvent event, ObjectMapper mapper) throws JsonProcessingException {
+    public static Extra extraFrom(ObjectMapper deserializer, CloudEvent event) throws JsonProcessingException {
         byte[] data = Objects.requireNonNull(event.getData()).toBytes();
         String json = new String(data, StandardCharsets.UTF_8);
-        return mapper.readValue(json, Extra.class);
+        return deserializer.readValue(json, Extra.class);
     }
 }

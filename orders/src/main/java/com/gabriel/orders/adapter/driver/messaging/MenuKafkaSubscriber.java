@@ -34,21 +34,21 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
             switch (cloudEvent.getType()) {
                 case "postech.menu.v1.product.created":
                     addProduct(new MenuProductAddedEvent(
-                        CloudEventMapper.productFrom(cloudEvent, mapper),
+                        CloudEventMapper.productFrom(mapper, cloudEvent),
                         timestamp));
                     break;
                 case "postech.menu.v1.product.deleted":
                     deleteProduct(new MenuProductDeletedEvent(
-                        CloudEventMapper.productFrom(cloudEvent, mapper)));
+                        CloudEventMapper.productFrom(mapper, cloudEvent)));
                     break;
                 case "postech.menu.v1.ingredient.created":
                     addExtra(new MenuExtraAddedEvent(
-                        CloudEventMapper.extraFrom(cloudEvent, mapper),
+                        CloudEventMapper.extraFrom(mapper, cloudEvent),
                         timestamp));
                     break;
                 case "postech.menu.v1.ingredient.deleted":
                     deleteExtra(new MenuExtraDeletedEvent(
-                        CloudEventMapper.extraFrom(cloudEvent, mapper)));
+                        CloudEventMapper.extraFrom(mapper, cloudEvent)));
                     break;
                 default:
                     break;

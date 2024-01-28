@@ -13,7 +13,7 @@ public class MenuGrpcClient {
 
     private final SetupMenuUseCase setupMenuUseCase;
 
-    private ManagedChannel managedMenuChannel;
+    private final ManagedChannel managedMenuChannel;
 
     public MenuGrpcClient(ManagedChannel managedMenuChannel, SetupMenuUseCase setupMenuUseCase) {
         this.managedMenuChannel = managedMenuChannel;

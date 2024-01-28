@@ -23,23 +23,9 @@
         <glassfish.jakarta.el>5.0.0</glassfish.jakarta.el>
         <grpc.version>1.61.0</grpc.version>
         <protobuf.version>3.25.2</protobuf.version>
-        <quarkus.version>3.6.4</quarkus.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.quarkus.platform</groupId>
-                <artifactId>quarkus-bom</artifactId>
-                <version>${quarkus.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -123,17 +109,6 @@
             <artifactId>protobuf-java-util</artifactId>
             <version>${protobuf.version}</version>
         </dependency>
-
-        <!-- Quarkus       -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy-jackson</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -145,93 +120,6 @@
             </extension>
         </extensions>
         <plugins>
-
-            <!-- OPEN API -->
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>${openapi.generator.version}</version>
-                <executions>
-                    <execution>
-                        <id>orders-gen</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <skipValidateSpec>false</skipValidateSpec>
-                            <inputSpec>${project.basedir}/src/main/java/com/gabriel/specs/orders/orders-api.yaml
-                            </inputSpec>
-                            <generatorName>spring</generatorName>
-                            <generateAliasAsModel>true</generateAliasAsModel>
-                            <configOptions>
-                                <openApiNullable>false</openApiNullable>
-                                <interfaceOnly>true</interfaceOnly>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                                <unhandledException>true</unhandledException>>
-                                <useBeanValidation>true</useBeanValidation>
-                                <useSpringBoot3>true</useSpringBoot3>
-                                <useOptional>true</useOptional>
-                                <useSwaggerUI>true</useSwaggerUI>
-                                <documentationProvider>springdoc</documentationProvider>
-                                <apiPackage>com.gabriel.specs.orders</apiPackage>
-                                <modelPackage>com.gabriel.specs.orders.models</modelPackage>
-                            </configOptions>
-                            <skip>${openapi.generator.skip}</skip>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <skipValidateSpec>false</skipValidateSpec>
-                            <inputSpec>${project.basedir}/src/main/java/com/gabriel/specs/menu/menu-api.yaml</inputSpec>
-                            <generatorName>jaxrs-spec</generatorName>
-                            <configOptions>
-                                <sourceFolder>src/main/java</sourceFolder>
-                                <openApiNullable>false</openApiNullable>
-                                <interfaceOnly>true</interfaceOnly>
-                                <useBeanValidation>true</useBeanValidation>
-                                <useOptional>true</useOptional>
-                                <apiPackage>com.gabriel.specs.menu</apiPackage>
-                                <modelPackage>com.gabriel.specs.menu.models</modelPackage>
-                                <library>quarkus</library>
-                                <useJakartaEe>true</useJakartaEe> <!-- Esta linha é a chave para usar Jakarta -->
-                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
-                            </configOptions>
-                            <skip>${openapi.generator.skip}</skip>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>customers-gen</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <skipValidateSpec>false</skipValidateSpec>
-                            <inputSpec>${project.basedir}/src/main/java/com/gabriel/specs/customers/customers-api.yaml
-                            </inputSpec>
-                            <generatorName>spring</generatorName>
-                            <configOptions>
-                                <openApiNullable>false</openApiNullable>
-                                <interfaceOnly>true</interfaceOnly>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                                <unhandledException>true</unhandledException>>
-                                <useBeanValidation>true</useBeanValidation>
-                                <useSpringBoot3>true</useSpringBoot3>
-                                <useOptional>true</useOptional>
-                                <useSwaggerUI>true</useSwaggerUI>
-                                <documentationProvider>springdoc</documentationProvider>
-                                <apiPackage>com.gabriel.specs.customers</apiPackage>
-                                <modelPackage>com.gabriel.specs.customers.models</modelPackage>
-                            </configOptions>
-                            <skip>${openapi.generator.skip}</skip>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
             <!-- gRPC -->
             <plugin>
@@ -259,13 +147,6 @@
                 </executions>
             </plugin>
         </plugins>
-
-        <resources>
-            <resource>
-                <directory>target/generated-sources/openapi/src/gen</directory>
-            </resource>
-        </resources>
-
     </build>
 
 </project>
