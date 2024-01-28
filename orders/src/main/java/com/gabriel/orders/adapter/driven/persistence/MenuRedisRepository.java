@@ -1,5 +1,6 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.domain.model.id.IngredientID;
 import com.gabriel.domain.model.id.ProductID;
 import com.gabriel.orders.core.domain.model.Extra;
@@ -14,9 +15,13 @@ import java.util.Objects;
 @Service
 public class MenuRedisRepository implements MenuRepository {
 
+    private final ObjectMapper objectMapper;
+
     private final CacheManager cacheManager;
 
-    public MenuRedisRepository(CacheManager cacheManager) {
+    public MenuRedisRepository(ObjectMapper objectMapper,
+                               CacheManager cacheManager) {
+        this.objectMapper = objectMapper;
         this.cacheManager = cacheManager;
     }
 
@@ -34,6 +39,7 @@ public class MenuRedisRepository implements MenuRepository {
         Cache cache = cacheManager.getCache("menu");
         if (cache != null) {
             return Product.deserialize(
+                objectMapper,
                 (byte[]) Objects.requireNonNull(cache.get(productID.getId())).get());
         }
         return null;
@@ -48,7 +54,7 @@ public class MenuRedisRepository implements MenuRepository {
             }
         }
         Objects.requireNonNull(cacheManager.getCache("menu"))
-            .put(product.getProductID().getId(), product.serialized());
+            .put(product.getProductID().getId(), product.serialized(objectMapper));
     }
 
     @Override
@@ -71,6 +77,7 @@ public class MenuRedisRepository implements MenuRepository {
         Cache cache = cacheManager.getCache("menu");
         if (cache != null) {
             return Extra.deserialize(
+                objectMapper,
                 (byte[]) Objects.requireNonNull(cache.get(ingredientID.getId())).get());
         }
         return null;
@@ -85,7 +92,7 @@ public class MenuRedisRepository implements MenuRepository {
             }
         }
         Objects.requireNonNull(cacheManager.getCache("menu"))
-            .put(extra.getIngredientID().getId(), extra.serialized());
+            .put(extra.getIngredientID().getId(), extra.serialized(objectMapper));
     }
 
     @Override

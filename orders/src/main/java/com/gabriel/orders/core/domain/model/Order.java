@@ -78,9 +78,9 @@ public class Order extends AggregateRoot {
             ticketId, status, createdAt, updatedAt);
     }
 
-    public static Order deserialize(byte[] bytes) {
+    public static Order deserialize(ObjectMapper deserializer, byte[] bytes) {
         try {
-            return new ObjectMapper().readValue(bytes, Order.class);
+            return deserializer.readValue(bytes, Order.class);
         } catch (IOException e) {
             throw new IllegalStateException("Error deserializing order");
         }
@@ -186,9 +186,9 @@ public class Order extends AggregateRoot {
         promote();
     }
 
-    public byte[] serialized() {
+    public byte[] serialized(ObjectMapper serializer) {
         try {
-            return new ObjectMapper().writeValueAsBytes(this);
+            return serializer.writeValueAsBytes(this);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Error serializing order");
         }

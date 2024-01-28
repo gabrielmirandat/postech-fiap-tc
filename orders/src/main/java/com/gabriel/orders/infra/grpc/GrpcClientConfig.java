@@ -16,16 +16,19 @@ public class GrpcClientConfig {
     @Value("${grpc.menu.server.port}")
     private int grpcMenuServerPort;
 
+    private ManagedChannel managedMenuChannel;
+
     @Bean
     public ManagedChannel managedMenuChannel() {
-        return ManagedChannelBuilder.forAddress(grpcMenuServerHost, grpcMenuServerPort)
+        managedMenuChannel = ManagedChannelBuilder.forAddress(grpcMenuServerHost, grpcMenuServerPort)
             .usePlaintext()
             .build();
+        return managedMenuChannel;
     }
 
     @PreDestroy
-    public void destroyMenuChannel(ManagedChannel managedMenuChannel) {
-        if (managedMenuChannel != null) {
+    public void destroyMenuChannel() {
+        if (managedMenuChannel != null && !managedMenuChannel.isShutdown()) {
             managedMenuChannel.shutdown();
         }
     }

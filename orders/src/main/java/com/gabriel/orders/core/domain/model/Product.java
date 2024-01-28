@@ -46,17 +46,17 @@ public class Product extends ValueObject {
         this.price = new Price(value);
     }
 
-    public static Product deserialize(byte[] bytes) {
+    public static Product deserialize(ObjectMapper deserializer, byte[] bytes) {
         try {
-            return new ObjectMapper().readValue(bytes, Product.class);
+            return deserializer.readValue(bytes, Product.class);
         } catch (IOException e) {
             throw new IllegalStateException("Error deserializing product");
         }
     }
 
-    public byte[] serialized() {
+    public byte[] serialized(ObjectMapper serializer) {
         try {
-            return new ObjectMapper().writeValueAsBytes(this);
+            return serializer.writeValueAsBytes(this);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Error serializing product");
         }

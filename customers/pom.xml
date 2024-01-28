@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>customers</artifactId>
-
+    
     <dependencies>
 
         <!-- COMMON -->
@@ -59,6 +59,42 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+
+            <!-- OPENAPI -->
+            <!-- https://openapi-generator.tech/docs/generators/spring/ -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi.generator.version}</version>
+                <executions>
+                    <execution>
+                        <id>customers-gen</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <skipValidateSpec>false</skipValidateSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/oas/customers-api.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <generateAliasAsModel>true</generateAliasAsModel>
+                            <configOptions>
+                                <openApiNullable>false</openApiNullable>
+                                <interfaceOnly>true</interfaceOnly>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <unhandledException>true</unhandledException>>
+                                <useBeanValidation>true</useBeanValidation>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useOptional>true</useOptional>
+                                <useSwaggerUI>true</useSwaggerUI>
+                                <documentationProvider>springdoc</documentationProvider>
+                                <apiPackage>com.gabriel.specs.customers</apiPackage>
+                                <modelPackage>com.gabriel.specs.customers.models</modelPackage>
+                            </configOptions>
+                            <skip>${openapi.generator.skip}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 

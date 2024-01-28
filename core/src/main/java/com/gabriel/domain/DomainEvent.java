@@ -1,6 +1,7 @@
 package com.gabriel.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.UUID;
 
@@ -25,5 +26,5 @@ public interface DomainEvent {
     public String type();
 
     // serialized bytes of data
-    public byte[] payload() throws JsonProcessingException;
+    public byte[] payload(ObjectMapper serializer) throws JsonProcessingException;
 }

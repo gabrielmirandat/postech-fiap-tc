@@ -50,17 +50,17 @@ public class Extra extends ValueObject {
         this.price = new Price(value);
     }
 
-    public static Extra deserialize(byte[] bytes) {
+    public static Extra deserialize(ObjectMapper deserializer, byte[] bytes) {
         try {
-            return new ObjectMapper().readValue(bytes, Extra.class);
+            return deserializer.readValue(bytes, Extra.class);
         } catch (IOException e) {
             throw new IllegalStateException("Error deserializing extra");
         }
     }
 
-    public byte[] serialized() {
+    public byte[] serialized(ObjectMapper serializer) {
         try {
-            return new ObjectMapper().writeValueAsBytes(this);
+            return serializer.writeValueAsBytes(this);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Error serializing extra");
         }

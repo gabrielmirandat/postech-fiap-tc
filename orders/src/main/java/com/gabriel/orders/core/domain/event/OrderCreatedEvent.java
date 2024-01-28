@@ -31,10 +31,10 @@ public class OrderCreatedEvent implements DomainEvent {
     }
 
     @Override
-    public byte[] payload() throws JsonProcessingException {
+    public byte[] payload(ObjectMapper serializer) throws JsonProcessingException {
         if (orderCreated == null) {
             throw new IllegalStateException("Order is null");
         }
-        return new ObjectMapper().writeValueAsBytes(orderCreated);
+        return serializer.writeValueAsBytes(orderCreated);
     }
 }
