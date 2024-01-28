@@ -1,15 +1,13 @@
 package com.gabriel.menu.infra.mongodb;
 
 import com.mongodb.client.MongoClient;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
-import org.eclipse.microprofile.health.Readiness;
+import org.eclipse.microprofile.health.Liveness;
 
 
-@Readiness
-@ApplicationScoped
+@Liveness
 public class MongoDBHealthCheck implements HealthCheck {
 
     @Inject
