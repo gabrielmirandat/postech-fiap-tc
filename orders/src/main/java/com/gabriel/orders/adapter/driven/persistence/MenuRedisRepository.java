@@ -20,7 +20,6 @@ public class MenuRedisRepository implements MenuRepository {
         this.cacheManager = cacheManager;
     }
 
-
     @Override
     public boolean existsProduct(ProductID productID) {
         Cache cache = cacheManager.getCache("menu");
@@ -42,13 +41,14 @@ public class MenuRedisRepository implements MenuRepository {
 
     @Override
     public void addProduct(Product product) {
+        if (existsProduct(product.getProductID())) {
+            Product currentProduct = getProduct(product.getProductID());
+            if (currentProduct.getTimestamp().isAfter(product.getTimestamp())) {
+                return;
+            }
+        }
         Objects.requireNonNull(cacheManager.getCache("menu"))
             .put(product.getProductID().getId(), product.serialized());
-    }
-
-    @Override
-    public void updateProduct(Product product) {
-        // TODO: implement
     }
 
     @Override
@@ -78,13 +78,14 @@ public class MenuRedisRepository implements MenuRepository {
 
     @Override
     public void addExtra(Extra extra) {
+        if (existsExtra(extra.getIngredientID())) {
+            Extra currentExtra = getExtra(extra.getIngredientID());
+            if (currentExtra.getTimestamp().isAfter(extra.getTimestamp())) {
+                return;
+            }
+        }
         Objects.requireNonNull(cacheManager.getCache("menu"))
             .put(extra.getIngredientID().getId(), extra.serialized());
-    }
-
-    @Override
-    public void updateExtra(Extra extra) {
-        // TODO: implement
     }
 
     @Override

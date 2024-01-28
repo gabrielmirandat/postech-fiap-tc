@@ -7,6 +7,8 @@ import com.gabriel.orders.core.domain.port.MenuRepository;
 import com.gabriel.orders.core.domain.port.MenuSubscriber;
 import io.cloudevents.CloudEvent;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +27,15 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
     }
 
     @KafkaListener(topics = "menu", groupId = "orders-group-id")
-    public void listenMenuEvents(@Payload CloudEvent cloudEvent) {
+    public void listenMenuEvents(@Payload CloudEvent cloudEvent,
+                                 @Header(KafkaHeaders.RECEIVED_TIMESTAMP) long timestamp) {
 
         try {
             switch (cloudEvent.getType()) {
                 case "postech.menu.v1.product.created":
                     addProduct(new MenuProductAddedEvent(
-                        CloudEventMapper.productFrom(cloudEvent, mapper)));
+                        CloudEventMapper.productFrom(cloudEvent, mapper),
+                        timestamp));
                     break;
                 case "postech.menu.v1.product.deleted":
                     deleteProduct(new MenuProductDeletedEvent(
@@ -39,7 +43,8 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
                     break;
                 case "postech.menu.v1.ingredient.created":
                     addExtra(new MenuExtraAddedEvent(
-                        CloudEventMapper.extraFrom(cloudEvent, mapper)));
+                        CloudEventMapper.extraFrom(cloudEvent, mapper),
+                        timestamp));
                     break;
                 case "postech.menu.v1.ingredient.deleted":
                     deleteExtra(new MenuExtraDeletedEvent(

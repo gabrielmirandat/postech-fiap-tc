@@ -1,6 +1,7 @@
 package com.gabriel.orders.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.domain.ValueObject;
@@ -10,6 +11,7 @@ import com.gabriel.domain.model.id.IngredientID;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.time.Instant;
 
 @Getter
 public class Extra extends ValueObject {
@@ -20,6 +22,8 @@ public class Extra extends ValueObject {
 
     private final Price price;
 
+    private Instant timestamp;
+
     @JsonCreator
     public Extra(IngredientID ingredientID,
                  Name name,
@@ -27,6 +31,17 @@ public class Extra extends ValueObject {
         this.ingredientID = ingredientID;
         this.name = name;
         this.price = value;
+    }
+
+    @JsonCreator
+    public Extra(IngredientID ingredientID,
+                 Name name,
+                 Price value,
+                 @JsonProperty("updateTimestamp") Instant timestamp) {
+        this.ingredientID = ingredientID;
+        this.name = name;
+        this.price = value;
+        this.timestamp = timestamp;
     }
 
     public Extra(IngredientID ingredientID, String name, Double value) {
