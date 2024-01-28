@@ -71,8 +71,8 @@ public class ProductClientMongoRepository implements ProductRepository {
                 .map(IngredientID::getId)
                 .collect(Collectors.toList());
             doc.append("ingredients", ingredientIds);
-            doc.append("creationTimestamp", product.getCreationTimestamp());
-            doc.append("updateTimestamp", product.getUpdateTimestamp());
+            doc.append("creationTimestamp", product.getCreationTimestamp().toString());
+            doc.append("updateTimestamp", product.getUpdateTimestamp().toString());
             return doc;
         }
 

@@ -1,6 +1,7 @@
 package com.gabriel.menu.adapter.driven.messaging;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.menu.adapter.driven.messaging.mapper.CloudEventMapper;
 import com.gabriel.menu.core.domain.event.ProductCreatedEvent;
 import com.gabriel.menu.core.domain.port.ProductPublisher;
@@ -19,9 +20,12 @@ public class ProductKafkaPublisher implements ProductPublisher {
     @Channel("product-created")
     Emitter<String> emitter;
 
+    @Inject
+    ObjectMapper objectMapper;
+
     @Override
     public void productCreated(ProductCreatedEvent event) throws JsonProcessingException {
-        this.emitter.send(Message.of(new String(event.payload(), StandardCharsets.UTF_8))
+        this.emitter.send(Message.of(new String(event.payload(objectMapper), StandardCharsets.UTF_8))
             .addMetadata(CloudEventMapper.fromEvent(event)));
     }
 }

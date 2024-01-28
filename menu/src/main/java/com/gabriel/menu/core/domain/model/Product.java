@@ -54,7 +54,8 @@ public class Product extends Menu {
     }
 
     private Product(ProductID productID, Name name, Price price, Category category,
-                    Description description, Image image, List<IngredientID> ingredients, Instant createdAt, Instant updatedAt) {
+                    Description description, Image image, List<IngredientID> ingredients,
+                    Instant createdAt, Instant updatedAt) {
         this.productID = productID;
         this.name = name;
         this.price = price;
@@ -73,17 +74,17 @@ public class Product extends Menu {
             createdAt, updatedAt);
     }
 
-    public static Product deserialize(byte[] bytes) {
+    public static Product deserialize(ObjectMapper deserializer, byte[] bytes) {
         try {
-            return new ObjectMapper().readValue(bytes, Product.class);
+            return deserializer.readValue(bytes, Product.class);
         } catch (IOException e) {
             throw new IllegalStateException("Error deserializing product");
         }
     }
 
-    public byte[] serialized() {
+    public byte[] serialized(ObjectMapper serializer) {
         try {
-            return new ObjectMapper().writeValueAsBytes(this);
+            return serializer.writeValueAsBytes(this);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Error serializing product");
         }

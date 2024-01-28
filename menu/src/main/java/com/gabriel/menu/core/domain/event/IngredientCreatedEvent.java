@@ -1,6 +1,7 @@
 package com.gabriel.menu.core.domain.event;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.domain.DomainEvent;
 import com.gabriel.menu.core.domain.model.Ingredient;
 import lombok.Getter;
@@ -30,7 +31,7 @@ public class IngredientCreatedEvent implements DomainEvent {
     }
 
     @Override
-    public byte[] payload() {
-        return ingredientAdded.serialized();
+    public byte[] payload(ObjectMapper serializer) {
+        return ingredientAdded.serialized(serializer);
     }
 }

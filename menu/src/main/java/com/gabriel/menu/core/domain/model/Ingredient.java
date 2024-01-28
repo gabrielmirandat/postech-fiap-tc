@@ -60,17 +60,17 @@ public class Ingredient extends Menu {
         return new Ingredient(ingredientID, name, category, price, weight, isExtra, createdAt, updatedAt);
     }
 
-    public static Ingredient deserialize(byte[] bytes) {
+    public static Ingredient deserialize(ObjectMapper deserializer, byte[] bytes) {
         try {
-            return new ObjectMapper().readValue(bytes, Ingredient.class);
+            return deserializer.readValue(bytes, Ingredient.class);
         } catch (IOException e) {
             throw new IllegalStateException("Error deserializing ingredient");
         }
     }
 
-    public byte[] serialized() {
+    public byte[] serialized(ObjectMapper serializer) {
         try {
-            return new ObjectMapper().writeValueAsBytes(this);
+            return serializer.writeValueAsBytes(this);
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Error serializing ingredient");
         }
