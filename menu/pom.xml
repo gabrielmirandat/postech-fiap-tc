@@ -12,7 +12,7 @@
     <artifactId>menu</artifactId>
 
     <properties>
-        <openapi.generator.skip>true</openapi.generator.skip>
+        <jackson.datetime>2.16.1</jackson.datetime>
         <quarkus.version>3.6.4</quarkus.version>
         <mongodb.version>4.10.2</mongodb.version>
         <mongock.version>5.0.28</mongock.version>
@@ -65,6 +65,13 @@
             <artifactId>quarkus-resteasy-jackson</artifactId>
         </dependency>
 
+        <!-- JACKSON SERIALIZE -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.datetime}</version>
+        </dependency>
+
         <!-- MONGODB -->
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -97,10 +104,6 @@
             <artifactId>quarkus-junit5</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -113,7 +116,30 @@
                 <artifactId>openapi-generator-maven-plugin</artifactId>
                 <version>${openapi.generator.version}</version>
                 <executions>
-
+                    <execution>
+                        <id>menu-gen</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <skipValidateSpec>false</skipValidateSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/oas/menu-api.yaml</inputSpec>
+                            <generatorName>jaxrs-spec</generatorName>
+                            <configOptions>
+                                <sourceFolder>src/main/java</sourceFolder>
+                                <openApiNullable>false</openApiNullable>
+                                <interfaceOnly>true</interfaceOnly>
+                                <useBeanValidation>true</useBeanValidation>
+                                <useOptional>true</useOptional>
+                                <apiPackage>com.gabriel.specs.menu</apiPackage>
+                                <modelPackage>com.gabriel.specs.menu.models</modelPackage>
+                                <library>quarkus</library>
+                                <useJakartaEe>true</useJakartaEe> <!-- Esta linha é a chave para usar Jakarta -->
+                                <useSwaggerAnnotations>false</useSwaggerAnnotations>
+                            </configOptions>
+                            <skip>${openapi.generator.skip}</skip>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 

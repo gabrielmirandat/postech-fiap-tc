@@ -23,6 +23,9 @@ public class MongoDBConfig {
     @ConfigProperty(name = "quarkus.mongodb.database")
     String mongodbDatabase;
 
+    @ConfigProperty(name = "mongock.migration.package")
+    String mongockMigrationPackage;
+
 
     @Produces
     @Named("productCollection")
@@ -44,7 +47,7 @@ public class MongoDBConfig {
         MongockStandalone.builder()
             .setDriver(driver)
             .setTransactionEnabled(false)
-            .addMigrationScanPackage("com.gabriel.products.infra.mongodb") // package where your changelogs are
+            .addMigrationScanPackage(mongockMigrationPackage) // package where your changelogs are
             .buildRunner()
             .execute();
     }

@@ -23,7 +23,6 @@ public class IngredientsHttpController implements IngredientsApi {
     @Inject
     IngredientMapper ingredientMapper;
 
-
     @Override
     public IngredientCreated addIngredient(IngredientRequest ingredientRequest) {
         CreateIngredientCommand command = ingredientMapper.toCommand(ingredientRequest);
