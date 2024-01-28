@@ -13,8 +13,6 @@ public interface MenuRepository {
 
     void addProduct(Product product);
 
-    void updateProduct(Product product);
-
     void deleteProduct(ProductID productID);
 
     boolean existsExtra(IngredientID ingredientID);
@@ -22,8 +20,6 @@ public interface MenuRepository {
     Extra getExtra(IngredientID ingredientID);
 
     void addExtra(Extra extra);
-
-    void updateExtra(Extra extra);
 
     void deleteExtra(IngredientID ingredientID);
 }

@@ -9,6 +9,10 @@ import java.util.UUID;
 
 public abstract class EntityID extends ValueObject implements Comparable<EntityID> {
 
+    public static EntityType identify(String id) {
+        return EntityType.valueOf(id.split("-")[1]);
+    }
+
     protected abstract String getId();
 
     @Override

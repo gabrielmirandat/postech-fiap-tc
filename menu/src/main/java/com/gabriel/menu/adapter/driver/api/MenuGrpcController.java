@@ -4,10 +4,12 @@ import com.gabriel.menu.core.application.query.SearchMenuQuery;
 import com.gabriel.menu.core.application.usecase.MenuUseCase;
 import com.gabriel.menu.core.domain.model.Menu;
 import com.gabriel.specs.menu.MenuGrpc;
+import com.google.protobuf.Timestamp;
 import io.quarkus.grpc.GrpcService;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.inject.Inject;
 
+import java.time.Instant;
 import java.util.List;
 
 @GrpcService
@@ -27,17 +29,27 @@ public class MenuGrpcController extends MenuGrpc.MenuImplBase {
 
         com.gabriel.specs.menu.MenuResponse.Builder response =
             com.gabriel.specs.menu.MenuResponse.newBuilder();
+
         menu.forEach(menuItem -> {
+            Instant instant = menuItem.getUpdateTimestamp();
+
+            Timestamp timestamp = Timestamp.newBuilder()
+                .setSeconds(instant.getEpochSecond())
+                .setNanos(instant.getNano())
+                .build();
+
             response.addItems(
                 com.gabriel.specs.menu.MenuItem.newBuilder()
                     .setId(menuItem.getMenuId())
                     .setName(menuItem.getName().getValue())
                     .setPrice(menuItem.getPrice().getValue())
                     .setCategory(menuItem.getCategory().toString())
-                    .setTimestamp(menuItem.getTimestamp().toString())
+                    .setLastUpdated(timestamp)
                     .build()
             );
         });
 
+        responseObserver.onNext(response.build());
+        responseObserver.onCompleted();
     }
 }
