@@ -1,5 +1,6 @@
 package com.gabriel.orders.core.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,23 +26,22 @@ public class Extra extends ValueObject {
     private Instant timestamp;
 
     @JsonCreator
+    public Extra(@JsonProperty("ingredientID") IngredientID ingredientID,
+                 @JsonProperty("name") Name name,
+                 @JsonProperty("value") Price value,
+                 @JsonProperty("timestamp") @JsonAlias("updateTimestamp") Instant timestamp) {
+        this.ingredientID = ingredientID;
+        this.name = name;
+        this.price = value;
+        this.timestamp = timestamp;
+    }
+
     public Extra(IngredientID ingredientID,
                  Name name,
                  Price value) {
         this.ingredientID = ingredientID;
         this.name = name;
         this.price = value;
-    }
-
-    @JsonCreator
-    public Extra(IngredientID ingredientID,
-                 Name name,
-                 Price value,
-                 @JsonProperty("updateTimestamp") Instant timestamp) {
-        this.ingredientID = ingredientID;
-        this.name = name;
-        this.price = value;
-        this.timestamp = timestamp;
     }
 
     public Extra(IngredientID ingredientID, String name, Double value) {

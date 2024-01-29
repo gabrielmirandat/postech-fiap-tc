@@ -33,14 +33,13 @@ public class Order extends AggregateRoot {
     private OrderStatus status;
 
     @Valid
+    private CPF customer;
+
+    @Valid
     private Address shippingAddress;
 
     @Valid
     private Notification notification;
-
-    @Valid
-    private CPF customer;
-
 
     public Order(List<OrderItem> items) {
         this.orderId = new OrderID();
@@ -48,20 +47,21 @@ public class Order extends AggregateRoot {
         initialize();
     }
 
-    public Order(List<OrderItem> items, Address shippingAddress, Notification additionalNotification,
-                 CPF customer) {
+    public Order(List<OrderItem> items, CPF customer, Address shippingAddress,
+                 Notification additionalNotification) {
         this.orderId = new OrderID();
         this.items = items;
+        this.customer = customer;
         this.shippingAddress = shippingAddress;
         this.notification = additionalNotification;
-        this.customer = customer;
         initialize();
     }
 
-    private Order(OrderID orderId, List<OrderItem> items, Address shippingAddress, Notification additionalNotification,
+    private Order(OrderID orderId, List<OrderItem> items, CPF customer, Address shippingAddress, Notification additionalNotification,
                   Price price, String ticketId, OrderStatus status, Instant createdAt, Instant updatedAt) {
         this.orderId = orderId;
         this.items = items;
+        this.customer = customer;
         this.shippingAddress = shippingAddress;
         this.notification = additionalNotification;
         this.price = price;
@@ -71,11 +71,12 @@ public class Order extends AggregateRoot {
         this.updateTimestamp = updatedAt;
     }
 
-    public static Order copy(OrderID orderId, List<OrderItem> items, Address shippingAddress,
-                             Notification additionalNotification, Price price, String ticketId,
-                             OrderStatus status, Instant createdAt, Instant updatedAt) {
-        return new Order(orderId, items, shippingAddress, additionalNotification, price,
-            ticketId, status, createdAt, updatedAt);
+    public static Order copy(OrderID orderId, List<OrderItem> items, CPF customer,
+                             Address shippingAddress, Notification additionalNotification,
+                             Price price, String ticketId, OrderStatus status,
+                             Instant createdAt, Instant updatedAt) {
+        return new Order(orderId, items, customer, shippingAddress, additionalNotification,
+            price, ticketId, status, createdAt, updatedAt);
     }
 
     public static Order deserialize(ObjectMapper deserializer, byte[] bytes) {

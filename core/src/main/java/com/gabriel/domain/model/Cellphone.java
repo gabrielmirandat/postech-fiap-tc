@@ -18,4 +18,10 @@ public class Cellphone extends ValueObject implements Notifiable {
         this.number = number;
         validateSelf();
     }
+
+
+    @Override
+    public String getValue() {
+        return number;
+    }
 }

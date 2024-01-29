@@ -22,7 +22,7 @@ public class SetupMenuUseCase {
     }
 
     public void setupData(MenuResponse inputDumpMenuData) {
-        System.out.println("Dumping menu data...");
+        System.out.println("Dumping menu data");
 
         List<Product> products = menuMapper.extractProducts(inputDumpMenuData);
         List<Extra> extras = menuMapper.extractExtras(inputDumpMenuData);

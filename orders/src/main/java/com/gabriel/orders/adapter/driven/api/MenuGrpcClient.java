@@ -22,7 +22,7 @@ public class MenuGrpcClient {
 
     @PostConstruct
     public void dumpMenuData() {
-        System.out.println("Dumping menu data");
+        System.out.println("Starting grpc client");
 
         MenuGrpc.MenuBlockingStub stub = MenuGrpc.newBlockingStub(managedMenuChannel);
         MenuRequest request = MenuRequest.newBuilder().build();
