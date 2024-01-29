@@ -63,8 +63,8 @@ public class OrderMapper {
             orderItems.add(orderItem);
         }
 
-        return new Order(orderItems, command.shippingAddress(),
-            command.notification(), command.customer());
+        return new Order(orderItems, command.customer(), command.shippingAddress(),
+            command.notification());
     }
 
     public OrderResponse toResponse(Order order) {
@@ -78,7 +78,7 @@ public class OrderMapper {
                 item.getProduct().getPrice().getValue());
 
             OrderItemResponse responseOrderItem =
-                new OrderItemResponse(item.getItemID().toString(), responseProduct);
+                new OrderItemResponse(item.getItemID().getId(), responseProduct);
 
             if (item.getExtras() != null) {
                 List<OrderExtraResponse> responseExtras;
@@ -107,7 +107,7 @@ public class OrderMapper {
         }
 
         OrderResponse response = new OrderResponse(order.getOrderId().getId(), order.getTicketId(),
-            OrderStatusDTO.fromValue(order.getStatus().toString().toUpperCase()),
+            OrderStatusDTO.fromValue(order.getStatus().toString().toLowerCase()),
             BigDecimal.valueOf(order.getPrice().getValue()), responseOrderItems);
 
         if (order.getCustomer() != null) {

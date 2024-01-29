@@ -18,4 +18,9 @@ public class CustomNotification extends ValueObject implements Notifiable {
         this.notification = notification;
         validateSelf();
     }
+
+    @Override
+    public String getValue() {
+        return notification;
+    }
 }

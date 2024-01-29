@@ -70,7 +70,7 @@ class OrderTest {
         Address shippingAddress = new Address("Street", "City", "SP", "13011-300");
         Notification notification = new Notification(NotificationType.CUSTOM, "firebase|uuid");
         CPF customer = new CPF("123.456.789-00");
-        return new Order(Arrays.asList(item1, item2), shippingAddress, notification, customer);
+        return new Order(Arrays.asList(item1, item2), customer, shippingAddress, notification);
     }
 
     @Test

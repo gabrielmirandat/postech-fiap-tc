@@ -6,98 +6,108 @@ import com.gabriel.domain.model.id.ProductID;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.MenuRepository;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Objects;
 
 @Service
 public class MenuRedisRepository implements MenuRepository {
 
     private final ObjectMapper objectMapper;
-
-    private final CacheManager cacheManager;
+    private final RedisTemplate<String, byte[]> redisTemplate;
 
     public MenuRedisRepository(ObjectMapper objectMapper,
-                               CacheManager cacheManager) {
+                               RedisTemplate<String, byte[]> redisTemplate) {
         this.objectMapper = objectMapper;
-        this.cacheManager = cacheManager;
+        this.redisTemplate = redisTemplate;
+    }
+
+    private void showCurrentKeys() {
+        System.out.println("Current keys:");
+        Objects.requireNonNull(redisTemplate.keys("*"))
+            .forEach(System.out::println);
     }
 
     @Override
     public boolean existsProduct(ProductID productID) {
-        Cache cache = cacheManager.getCache("menu");
-        if (cache != null) {
-            return cache.get(productID.getId()) != null;
-        }
-        return false;
+        return Boolean.TRUE.equals(redisTemplate.hasKey("prod:" + productID.getId()));
     }
 
     @Override
     public Product getProduct(ProductID productID) {
-        Cache cache = cacheManager.getCache("menu");
-        if (cache != null) {
-            return Product.deserialize(
-                objectMapper,
-                (byte[]) Objects.requireNonNull(cache.get(productID.getId())).get());
+        ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
+        byte[] data = valueOps.get("prod:" + productID.getId());
+        if (data != null) {
+            try {
+                return objectMapper.readValue(data, Product.class);
+            } catch (IOException e) {
+                throw new IllegalStateException("Error deserializing product", e);
+            }
         }
         return null;
     }
 
     @Override
     public void addProduct(Product product) {
-        if (existsProduct(product.getProductID())) {
-            Product currentProduct = getProduct(product.getProductID());
-            if (currentProduct.getTimestamp().isAfter(product.getTimestamp())) {
-                return;
+        String key = "prod:" + product.getProductID().getId();
+        Product existingProduct = getProduct(product.getProductID());
+        if (existingProduct == null || product.getTimestamp().isAfter(existingProduct.getTimestamp())) {
+            ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
+            try {
+                byte[] serializedProduct = objectMapper.writeValueAsBytes(product);
+                valueOps.set(key, serializedProduct);
+            } catch (IOException e) {
+                throw new IllegalStateException("Error serializing product", e);
             }
         }
-        Objects.requireNonNull(cacheManager.getCache("menu"))
-            .put(product.getProductID().getId(), product.serialized(objectMapper));
+        showCurrentKeys();
     }
 
     @Override
     public void deleteProduct(ProductID productID) {
-        Objects.requireNonNull(cacheManager.getCache("menu"))
-            .evict(productID.getId());
+        redisTemplate.delete("prod:" + productID.getId());
     }
 
     @Override
     public boolean existsExtra(IngredientID ingredientID) {
-        Cache cache = cacheManager.getCache("menu");
-        if (cache != null) {
-            return cache.get(ingredientID.getId()) != null;
-        }
-        return false;
+        return Boolean.TRUE.equals(redisTemplate.hasKey("extr:" + ingredientID.getId()));
     }
 
     @Override
     public Extra getExtra(IngredientID ingredientID) {
-        Cache cache = cacheManager.getCache("menu");
-        if (cache != null) {
-            return Extra.deserialize(
-                objectMapper,
-                (byte[]) Objects.requireNonNull(cache.get(ingredientID.getId())).get());
+        ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
+        byte[] data = valueOps.get("extr:" + ingredientID.getId());
+        if (data != null) {
+            try {
+                return objectMapper.readValue(data, Extra.class);
+            } catch (IOException e) {
+                throw new IllegalStateException("Error deserializing extra", e);
+            }
         }
         return null;
     }
 
     @Override
     public void addExtra(Extra extra) {
-        if (existsExtra(extra.getIngredientID())) {
-            Extra currentExtra = getExtra(extra.getIngredientID());
-            if (currentExtra.getTimestamp().isAfter(extra.getTimestamp())) {
-                return;
+        String key = "extr:" + extra.getIngredientID().getId();
+        Extra existingExtra = getExtra(extra.getIngredientID());
+        if (existingExtra == null || extra.getTimestamp().isAfter(existingExtra.getTimestamp())) {
+            ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
+            try {
+                byte[] serializedExtra = objectMapper.writeValueAsBytes(extra);
+                valueOps.set(key, serializedExtra);
+            } catch (IOException e) {
+                throw new IllegalStateException("Error serializing extra", e);
             }
         }
-        Objects.requireNonNull(cacheManager.getCache("menu"))
-            .put(extra.getIngredientID().getId(), extra.serialized(objectMapper));
+        showCurrentKeys();
     }
 
     @Override
     public void deleteExtra(IngredientID ingredientID) {
-        Objects.requireNonNull(cacheManager.getCache("menu"))
-            .evict(ingredientID.getId());
+        redisTemplate.delete("extr:" + ingredientID.getId());
     }
 }

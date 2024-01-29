@@ -63,6 +63,7 @@ public class OrderClientMongoRepository implements OrderRepository {
                 .append("price", order.getPrice().getValue())
                 .append("ticketId", order.getTicketId())
                 .append("status", order.getStatus().toString())
+                .append("customer", order.getCustomer().getId())
                 .append("creationTimestamp", order.getCreationTimestamp().toString())
                 .append("updateTimestamp", order.getUpdateTimestamp().toString());
             return doc;
@@ -73,6 +74,7 @@ public class OrderClientMongoRepository implements OrderRepository {
             List<OrderItem> items = ((List<Document>) doc.get("items")).stream()
                 .map(OrderConverter::documentToOrderItem)
                 .collect(Collectors.toList());
+            CPF customer = new CPF(doc.getString("customer"));
             Address shippingAddress = documentToAddress((Document) doc.get("shippingAddress"));
             Notification notification = documentToNotification((Document) doc.get("notification"));
             Price price = new Price(doc.getDouble("price"));
@@ -81,7 +83,7 @@ public class OrderClientMongoRepository implements OrderRepository {
             Instant createdAt = Instant.parse(doc.getString("creationTimestamp"));
             Instant updatedAt = Instant.parse(doc.getString("updateTimestamp"));
 
-            return Order.copy(orderId, items, shippingAddress, notification, price,
+            return Order.copy(orderId, items, customer, shippingAddress, notification, price,
                 ticketId, status, createdAt, updatedAt);
         }
 
@@ -133,7 +135,7 @@ public class OrderClientMongoRepository implements OrderRepository {
             }
             Document notifiableDoc = new Document();
             notifiableDoc.append("type", notification.getType().toString())
-                .append("value", notification.getRepr().toString()); // Assuming the toString method gives the required representation
+                .append("value", notification.getRepr().getValue()); // Assuming the toString method gives the required representation
 
             return notifiableDoc;
         }

@@ -18,4 +18,10 @@ public class EmailData extends ValueObject implements Notifiable {
         this.email = email;
         validateSelf();
     }
+
+
+    @Override
+    public String getValue() {
+        return email;
+    }
 }
