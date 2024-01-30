@@ -1,24 +1,27 @@
 version: '3.8'
 services:
 
-  #  core-orders:
-  #    container_name: postech_core_orders
-  #    build: ./core-orders
-  #    depends_on:
-  #      - mongo
-  #      - kafka
-  #    ports:
-  #      - "8001:8001"
-  #    networks:
-  #      - postech_network
-  #    environment:
-  #      MONGODB_CONN_STRING: mongodb://dummy:dummy@mongo:27017
-  #      MONGODB_CONN_DB: postech_db
-  #      KAFKA_SERVER_URL: kafka:9092
-  #      KAFKA_GROUP_ID: orders-group-id
-  #      NEWRELIC_OTLP_URL: https://otlp.nr-data.net:4317
-  #      NEWRELIC_APP_NAME: core-orders-app
-  #      NEWRELIC_SERVICE_KEY: 0656b2287b6f1b1dd90aa0bdd71ff312FFFFNRAL
+  orders-service:
+    container_name: postech_orders_service
+    build: ./orders
+    depends_on:
+      - mongo
+      - kafka
+    ports:
+      - "8001:8001"
+    networks:
+      - postech_network
+
+  menu-service:
+    container_name: postech_menu_service
+    build: ./menu
+    depends_on:
+      - mongo
+      - kafka
+    ports:
+      - "8002:8002"
+    networks:
+      - postech_network
 
   mongo:
     container_name: postech_mongo

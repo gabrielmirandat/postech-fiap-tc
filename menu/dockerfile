@@ -1,0 +1,5 @@
+FROM amazoncorretto:17
+WORKDIR /app
+EXPOSE 8082
+ADD target/menu*-runner.jar menu.jar
+ENTRYPOINT ["java", "-jar", "menu.jar"]

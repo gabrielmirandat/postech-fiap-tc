@@ -40,7 +40,7 @@
         <mapper.version>2.4.4</mapper.version>
         <cloudevents.version>2.5.0</cloudevents.version>
         <opentelemetry.version>1.32.0</opentelemetry.version>
-        <openapi.generator.skip>true</openapi.generator.skip>
+        <openapi.generator.skip>false</openapi.generator.skip>
     </properties>
 
     <dependencies>
