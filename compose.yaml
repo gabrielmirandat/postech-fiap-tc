@@ -7,6 +7,7 @@ services:
     depends_on:
       - mongo
       - kafka
+      - menu-service
     ports:
       - "8001:8001"
     networks:
@@ -20,8 +21,11 @@ services:
       - kafka
     ports:
       - "8002:8002"
+      - "50051:50051"
     networks:
       - postech_network
+    environment:
+      KAFKA_SERVER_URL: kafka:29092
 
   mongo:
     container_name: postech_mongo
