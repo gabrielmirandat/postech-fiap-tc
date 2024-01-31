@@ -5,7 +5,6 @@ import com.gabriel.specs.menu.MenuGrpc;
 import com.gabriel.specs.menu.MenuRequest;
 import com.gabriel.specs.menu.MenuResponse;
 import io.grpc.ManagedChannel;
-import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,7 +19,6 @@ public class MenuGrpcClient {
         this.setupMenuUseCase = setupMenuUseCase;
     }
 
-    @PostConstruct
     public void dumpMenuData() {
         System.out.println("Starting grpc client");
 
