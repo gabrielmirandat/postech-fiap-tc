@@ -24,8 +24,6 @@ services:
       - "50051:50051"
     networks:
       - postech_network
-    environment:
-      KAFKA_SERVER_URL: kafka:29092
 
   mongo:
     container_name: postech_mongo
@@ -65,18 +63,6 @@ services:
     networks:
       - postech_network
 
-  #  postgres:
-  #    container_name: postech_postgres
-  #    image: postgres:latest
-  #    ports:
-  #      - "5432:5432"
-  #    networks:
-  #      - postech_network
-  #    environment:
-  #      POSTGRES_USER: dummy
-  #      POSTGRES_PASSWORD: dummy
-  #      POSTGRES_DB: postech_db
-
   zookeeper:
     container_name: postech_zookeeper
     image: confluentinc/cp-zookeeper:latest
@@ -93,6 +79,7 @@ services:
       - zookeeper
     ports:
       - "9092:9092" # Map the external port to the internal port
+      - "29092:29092" # Map the external port to the internal port
     networks:
       - postech_network
     environment:
@@ -103,27 +90,6 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
-#  kafdrop:
-#    container_name: postech_kafdrop
-#    image: obsidiandynamics/kafdrop:latest
-#    depends_on:
-#      - kafka
-#    ports:
-#      - "19000:9000"
-#    networks:
-#      - postech_network
-#    environment:
-#      KAFKA_BROKERCONNECT: kafka:29092
-
-#  rabbitmq:
-#    container_name: postech_rabbitmq
-#    image: rabbitmq:management
-#    ports:
-#      - "15672:15672"
-#      - "5672:5672"
-#    networks:
-#      - postech_network
 
 networks:
   postech_network:

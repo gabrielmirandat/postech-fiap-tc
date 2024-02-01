@@ -31,11 +31,11 @@ public class StartManager {
 
     @PostConstruct
     public void exec() {
-        handleContextRefresh();
+        showProperties();
         menuGrpcClient.dumpMenuData();
     }
 
-    public void handleContextRefresh() {
+    public void showProperties() {
         LOGGER.info("\n\n====== Environment and configuration ======");
         LOGGER.info("Active profiles: {}", Arrays.toString(environment.getActiveProfiles()));
         final MutablePropertySources sources = ((AbstractEnvironment) environment).getPropertySources();
