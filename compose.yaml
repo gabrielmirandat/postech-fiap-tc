@@ -21,7 +21,6 @@ services:
       - kafka
     ports:
       - "8002:8002"
-      - "50051:50051"
     networks:
       - postech_network
 
@@ -30,12 +29,12 @@ services:
     image: mongo:latest
     ports:
       - "27017:27017"
-    networks:
-      - postech_network
     environment:
       MONGO_INITDB_ROOT_USERNAME: dummy
       MONGO_INITDB_ROOT_PASSWORD: dummy
       MONGO_INITDB_DATABASE: postech_db
+    networks:
+      - postech_network
 
   mongo-express:
     container_name: postech_mongo_express
@@ -44,8 +43,6 @@ services:
       - mongo
     ports:
       - "8081:8081"
-    networks:
-      - postech_network
     restart: on-failure
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: dummy
@@ -54,6 +51,8 @@ services:
       ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
       ME_CONFIG_MONGODB_AUTH_DATABASE: admin
       ME_CONFIG_MONGODB_PORT: 27017
+    networks:
+      - postech_network
 
   redis:
     container_name: postech_redis
@@ -66,11 +65,11 @@ services:
   zookeeper:
     container_name: postech_zookeeper
     image: confluentinc/cp-zookeeper:latest
-    networks:
-      - postech_network
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - postech_network
 
   kafka:
     container_name: postech_kafka
@@ -80,8 +79,6 @@ services:
     ports:
       - "9092:9092" # Map the external port to the internal port
       - "29092:29092" # Map the external port to the internal port
-    networks:
-      - postech_network
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -90,6 +87,8 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - postech_network
 
 networks:
   postech_network:

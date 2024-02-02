@@ -20,7 +20,8 @@ public class GrpcClientConfig {
 
     @Bean
     public ManagedChannel managedMenuChannel() {
-        managedMenuChannel = ManagedChannelBuilder.forAddress(grpcMenuServerHost, grpcMenuServerPort)
+        managedMenuChannel = ManagedChannelBuilder
+            .forAddress(grpcMenuServerHost, grpcMenuServerPort)
             .usePlaintext()
             .build();
         return managedMenuChannel;
