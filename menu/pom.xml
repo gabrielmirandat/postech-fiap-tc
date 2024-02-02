@@ -13,7 +13,7 @@
 
     <properties>
         <jackson.datetime>2.16.1</jackson.datetime>
-        <quarkus.version>3.6.4</quarkus.version>
+        <quarkus.version>3.7.1</quarkus.version>
         <mongodb.version>4.10.2</mongodb.version>
         <mongock.version>5.0.28</mongock.version>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
