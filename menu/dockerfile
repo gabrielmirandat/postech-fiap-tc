@@ -1,9 +1,4 @@
 FROM amazoncorretto:17
-RUN yum update -y && yum install -y wget tar gzip
-RUN wget https://github.com/fullstorydev/grpcurl/releases/download/v1.8.2/grpcurl_1.8.2_linux_x86_64.tar.gz \
-    && tar -xvzf grpcurl_1.8.2_linux_x86_64.tar.gz -C /usr/local/bin \
-    && chmod +x /usr/local/bin/grpcurl \
-    && rm grpcurl_1.8.2_linux_x86_64.tar.gz
 WORKDIR /app
 EXPOSE 8002
 COPY target/menu*-runner.jar menu.jar
