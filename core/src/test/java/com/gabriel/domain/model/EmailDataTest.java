@@ -1,6 +1,7 @@
 package com.gabriel.domain.model;
 
-import com.gabriel.domain.DomainException;
+import com.gabriel.core.domain.exception.DomainException;
+import com.gabriel.core.domain.model.EmailData;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -2,7 +2,7 @@ package com.gabriel.menu.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.gabriel.domain.ValueObject;
+import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
@@ -16,6 +16,6 @@ public class Image extends ValueObject {
     @JsonCreator
     public Image(String url) {
         this.url = url;
-        validateSelf();
+        validate();
     }
 }

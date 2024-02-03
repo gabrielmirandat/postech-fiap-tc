@@ -1,11 +1,11 @@
 package com.gabriel.orders.adapter.driven.api.mapper;
 
-import com.gabriel.domain.EntityType;
-import com.gabriel.domain.model.Name;
-import com.gabriel.domain.model.Price;
-import com.gabriel.domain.model.id.EntityID;
-import com.gabriel.domain.model.id.IngredientID;
-import com.gabriel.domain.model.id.ProductID;
+import com.gabriel.core.domain.EntityType;
+import com.gabriel.core.domain.model.Name;
+import com.gabriel.core.domain.model.Price;
+import com.gabriel.core.domain.model.id.EntityID;
+import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.specs.menu.MenuItem;

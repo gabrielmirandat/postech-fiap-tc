@@ -1,6 +1,7 @@
 package com.gabriel.orders.adapter.driver.api.mapper;
 
-import com.gabriel.domain.model.*;
+import com.gabriel.adapter.api.exceptions.BaseHttpException;
+import com.gabriel.core.domain.model.*;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Order;
@@ -125,5 +126,12 @@ public class OrderMapper {
         }
 
         return response;
+    }
+
+    public ErrorResponse toErrorResponse(BaseHttpException exception) {
+        return new ErrorResponse()
+            .status(exception.getStatus())
+            .message(exception.getMessage())
+            .code(exception.getCode());
     }
 }
