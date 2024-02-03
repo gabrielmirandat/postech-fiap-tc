@@ -27,15 +27,11 @@ public class IngredientUseCase {
 
 
     public Ingredient createIngredient(CreateIngredientCommand command) {
-        try {
-            Ingredient ingredient = new Ingredient(command.name(), command.category(),
-                command.price(), command.weight(), command.isExtra());
-            ingredientRepository.saveIngredient(ingredient);
-            ingredientPublisher.ingredientCreated(new IngredientCreatedEvent(ingredient));
-            return ingredient;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        Ingredient ingredient = new Ingredient(command.name(), command.category(),
+            command.price(), command.weight(), command.isExtra());
+        ingredientRepository.saveIngredient(ingredient);
+        ingredientPublisher.ingredientCreated(new IngredientCreatedEvent(ingredient));
+        return ingredient;
     }
 
     public Ingredient getIngredientById(GetByIngredientIdQuery query) {

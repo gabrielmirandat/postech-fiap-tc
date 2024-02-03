@@ -40,16 +40,12 @@ public class ProductUseCase {
     ProductMapper productMapper;
 
     public Product createProduct(CreateProductCommand command) {
-        try {
-            ingredientMenuUseCase.matchToMenuByCategory(command.category(),
-                command.ingredients());
-            Product product = new Product(command.name(), command.price(), command.category(), command.description(), command.image(), command.ingredients());
-            productRepository.saveProduct(product);
-            productPublisher.productCreated(new ProductCreatedEvent(product));
-            return product;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        ingredientMenuUseCase.matchToMenuByCategory(command.category(),
+            command.ingredients());
+        Product product = new Product(command.name(), command.price(), command.category(), command.description(), command.image(), command.ingredients());
+        productRepository.saveProduct(product);
+        productPublisher.productCreated(new ProductCreatedEvent(product));
+        return product;
     }
 
     public void deleteProduct(DeleteProductCommand command) {
