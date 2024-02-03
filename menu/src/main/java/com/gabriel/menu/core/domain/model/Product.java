@@ -3,10 +3,10 @@ package com.gabriel.menu.core.domain.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.domain.model.Name;
-import com.gabriel.domain.model.Price;
-import com.gabriel.domain.model.id.IngredientID;
-import com.gabriel.domain.model.id.ProductID;
+import com.gabriel.core.domain.model.Name;
+import com.gabriel.core.domain.model.Price;
+import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.core.domain.model.id.ProductID;
 import lombok.Getter;
 
 import java.io.IOException;

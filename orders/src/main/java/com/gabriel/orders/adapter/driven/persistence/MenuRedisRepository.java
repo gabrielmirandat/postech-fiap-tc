@@ -1,8 +1,8 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.domain.model.id.IngredientID;
-import com.gabriel.domain.model.id.ProductID;
+import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.MenuRepository;

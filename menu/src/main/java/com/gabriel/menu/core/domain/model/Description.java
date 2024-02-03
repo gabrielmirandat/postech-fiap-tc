@@ -2,7 +2,7 @@ package com.gabriel.menu.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.gabriel.domain.ValueObject;
+import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -18,6 +18,6 @@ public class Description extends ValueObject {
     @JsonCreator
     public Description(String value) {
         this.value = value;
-        validateSelf();
+        validate();
     }
 }

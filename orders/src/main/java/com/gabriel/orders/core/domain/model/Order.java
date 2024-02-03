@@ -2,13 +2,16 @@ package com.gabriel.orders.core.domain.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.domain.AggregateRoot;
-import com.gabriel.domain.DomainException;
-import com.gabriel.domain.model.Address;
-import com.gabriel.domain.model.CPF;
-import com.gabriel.domain.model.Notification;
-import com.gabriel.domain.model.Price;
-import com.gabriel.domain.model.id.OrderID;
+import com.gabriel.core.application.exception.ApplicationError;
+import com.gabriel.core.application.exception.ApplicationException;
+import com.gabriel.core.domain.AggregateRoot;
+import com.gabriel.core.domain.model.Address;
+import com.gabriel.core.domain.model.CPF;
+import com.gabriel.core.domain.model.Notification;
+import com.gabriel.core.domain.model.Price;
+import com.gabriel.core.domain.model.id.OrderID;
+import com.gabriel.orders.core.domain.exception.OrderDomainError;
+import com.gabriel.orders.core.domain.exception.OrderDomainException;
 import jakarta.validation.Valid;
 import lombok.Getter;
 
@@ -83,7 +86,9 @@ public class Order extends AggregateRoot {
         try {
             return deserializer.readValue(bytes, Order.class);
         } catch (IOException e) {
-            throw new IllegalStateException("Error deserializing order");
+            throw new ApplicationException(
+                "Error deserializing order",
+                ApplicationError.APP_OO3);
         }
     }
 
@@ -112,7 +117,9 @@ public class Order extends AggregateRoot {
 
     private void promote() {
         if (status == OrderStatus.COMPLETED) {
-            throw new DomainException("Order is already finished and cant be promoted");
+            throw new OrderDomainException(
+                "Order is already finished and cant be promoted",
+                OrderDomainError.ORD_001);
         }
 
         switch (status) {
@@ -133,7 +140,9 @@ public class Order extends AggregateRoot {
     // TODO: add methods for redoing order
     private void rollback() {
         if (status == OrderStatus.COMPLETED) {
-            throw new DomainException("Order is already finished and cant be back");
+            throw new OrderDomainException(
+                "Order is already finished and cant be back",
+                OrderDomainError.ORD_001);
         }
 
         switch (status) {
@@ -145,7 +154,9 @@ public class Order extends AggregateRoot {
 
     public void prepare_order() {
         if (status != OrderStatus.CREATED) {
-            throw new DomainException("Order must be initiated to be prepared");
+            throw new OrderDomainException(
+                "Order must be initiated to be prepared",
+                OrderDomainError.ORD_001);
         }
 
         promote();
@@ -153,7 +164,9 @@ public class Order extends AggregateRoot {
 
     public void package_order() {
         if (status != OrderStatus.PREPARATION) {
-            throw new DomainException("Order must be prepared to be package");
+            throw new OrderDomainException(
+                "Order must be prepared to be package",
+                OrderDomainError.ORD_001);
         }
 
         promote();
@@ -161,7 +174,9 @@ public class Order extends AggregateRoot {
 
     public void pickup_order() {
         if (status != OrderStatus.PACKAGING) {
-            throw new DomainException("Order must be packaged to be pickup");
+            throw new OrderDomainException(
+                "Order must be packaged to be pickup",
+                OrderDomainError.ORD_001);
         }
 
         promote();
@@ -169,11 +184,14 @@ public class Order extends AggregateRoot {
 
     public void deliver_order() {
         if (status != OrderStatus.PICKUP) {
-            throw new DomainException("Order must be in balcony to be delivered");
+            throw new OrderDomainException(
+                "Order must be in balcony to be delivered",
+                OrderDomainError.ORD_001);
         }
 
         if (shippingAddress == null) {
-            throw new DomainException("Order must have an shipping address to be delivered");
+            throw new OrderDomainException("Order must have an shipping address to be delivered",
+                OrderDomainError.ORD_002);
         }
 
         promote();
@@ -181,7 +199,9 @@ public class Order extends AggregateRoot {
 
     public void finish_order() {
         if (status != OrderStatus.PICKUP && status != OrderStatus.DELIVERY) {
-            throw new DomainException("Order must be in balcony or in delivery to be finished");
+            throw new OrderDomainException(
+                "Order must be in balcony or in delivery to be finished",
+                OrderDomainError.ORD_001);
         }
 
         promote();
@@ -191,7 +211,9 @@ public class Order extends AggregateRoot {
         try {
             return serializer.writeValueAsBytes(this);
         } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Error serializing order");
+            throw new ApplicationException(
+                "Error serializing order",
+                ApplicationError.APP_OO3);
         }
     }
 }

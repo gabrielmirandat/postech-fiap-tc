@@ -1,8 +1,8 @@
 package com.gabriel.orders.core.domain.model;
 
-import com.gabriel.domain.DomainException;
-import com.gabriel.domain.model.id.IngredientID;
-import com.gabriel.domain.model.id.ProductID;
+import com.gabriel.core.domain.exception.DomainException;
+import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.core.domain.model.id.ProductID;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

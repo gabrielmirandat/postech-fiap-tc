@@ -2,7 +2,7 @@ package com.gabriel.menu.core.domain.event;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.domain.DomainEvent;
+import com.gabriel.core.domain.DomainEvent;
 import com.gabriel.menu.core.domain.model.Ingredient;
 import lombok.Getter;
 

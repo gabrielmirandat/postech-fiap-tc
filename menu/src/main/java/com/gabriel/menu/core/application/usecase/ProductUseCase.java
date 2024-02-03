@@ -1,6 +1,6 @@
 package com.gabriel.menu.core.application.usecase;
 
-import com.gabriel.domain.model.id.IngredientID;
+import com.gabriel.core.domain.model.id.IngredientID;
 import com.gabriel.menu.adapter.driver.api.mapper.ProductMapper;
 import com.gabriel.menu.core.application.command.CreateProductCommand;
 import com.gabriel.menu.core.application.command.DeleteProductCommand;

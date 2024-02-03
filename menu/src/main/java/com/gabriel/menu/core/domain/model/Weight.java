@@ -2,7 +2,7 @@ package com.gabriel.menu.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.gabriel.domain.ValueObject;
+import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +20,6 @@ public class Weight extends ValueObject {
     @JsonCreator
     public Weight(double value) {
         this.value = value;
-        validateSelf();
+        validate();
     }
 }

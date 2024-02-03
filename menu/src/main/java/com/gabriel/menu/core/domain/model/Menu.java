@@ -1,8 +1,8 @@
 package com.gabriel.menu.core.domain.model;
 
-import com.gabriel.domain.AggregateRoot;
-import com.gabriel.domain.model.Name;
-import com.gabriel.domain.model.Price;
+import com.gabriel.core.domain.AggregateRoot;
+import com.gabriel.core.domain.model.Name;
+import com.gabriel.core.domain.model.Price;
 
 public abstract class Menu extends AggregateRoot {
     public abstract String getMenuId();
