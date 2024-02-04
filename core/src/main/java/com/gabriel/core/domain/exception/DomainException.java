@@ -12,8 +12,8 @@ public class DomainException extends RuntimeException {
         this.message = message;
         this.type = type;
     }
-    
+
     public String getType() {
-        return type.name();
+        return type.message;
     }
 }

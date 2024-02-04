@@ -1,20 +1,16 @@
 package com.gabriel.menu.core.application.usecase;
 
 import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.menu.adapter.driver.api.mapper.ProductMapper;
+import com.gabriel.menu.adapter.driver.api.mapper.MenuMapper;
 import com.gabriel.menu.core.application.command.CreateProductCommand;
 import com.gabriel.menu.core.application.command.DeleteProductCommand;
-import com.gabriel.menu.core.application.query.GetByIngredientIdsQuery;
-import com.gabriel.menu.core.application.query.GetByProductIdQuery;
-import com.gabriel.menu.core.application.query.GetByProductQuery;
-import com.gabriel.menu.core.application.query.SearchProductQuery;
+import com.gabriel.menu.core.application.query.*;
 import com.gabriel.menu.core.domain.event.ProductCreatedEvent;
-import com.gabriel.menu.core.domain.model.Category;
 import com.gabriel.menu.core.domain.model.Ingredient;
 import com.gabriel.menu.core.domain.model.Product;
 import com.gabriel.menu.core.domain.port.ProductPublisher;
 import com.gabriel.menu.core.domain.port.ProductRepository;
-import com.gabriel.menu.core.domain.port.ProductSearchParameters;
+import com.gabriel.menu.core.domain.port.SearchParameters;
 import com.gabriel.specs.menu.models.ProductResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -31,29 +27,30 @@ public class ProductUseCase {
     IngredientUseCase ingredientUseCase;
 
     @Inject
-    IngredientMenuUseCase ingredientMenuUseCase;
-
-    @Inject
     ProductPublisher productPublisher;
 
-    @Inject
-    ProductMapper productMapper;
+    private List<IngredientID> idsOf(List<Ingredient> ingredients) {
+        return ingredients.stream().map(Ingredient::getIngredientID).toList();
+    }
 
     public Product createProduct(CreateProductCommand command) {
-        ingredientMenuUseCase.matchToMenuByCategory(command.category(),
-            command.ingredients());
-        Product product = new Product(command.name(), command.price(), command.category(), command.description(), command.image(), command.ingredients());
+        List<IngredientID> categoryMenu =
+            idsOf(ingredientUseCase.searchIngredient(
+                new SearchIngredientQuery(command.category())));
+        Product product = new Product(command.name(), command.price(), command.category(),
+            command.description(), command.image(), command.ingredients(), categoryMenu);
         productRepository.saveProduct(product);
         productPublisher.productCreated(new ProductCreatedEvent(product));
         return product;
     }
 
     public void deleteProduct(DeleteProductCommand command) {
-        productRepository.deleteProduct(command.productId());
+
+        productRepository.deleteProduct(command.deleteId());
     }
 
     public Product getProductById(GetByProductIdQuery query) {
-        return productRepository.getById(query.id());
+        return productRepository.getById(query.searchId());
     }
 
     public ProductResponse getResponseById(GetByProductIdQuery query) {
@@ -63,16 +60,13 @@ public class ProductUseCase {
 
     public ProductResponse getResponseByProduct(GetByProductQuery query) {
         Product product = query.product();
-        List<Ingredient> ingredientList =
-            ingredientUseCase.getIngredientsById(
-                new GetByIngredientIdsQuery(
-                    product.getIngredients().stream()
-                        .map(IngredientID::getId).toList()));
-        return productMapper.toResponse(product, ingredientList);
+        List<Ingredient> ingredientList = ingredientUseCase.getIngredientsById(
+            new GetByIngredientIdsQuery(product.getIngredients()));
+        return MenuMapper.toResponse(product, ingredientList);
     }
 
     public List<Product> searchProduct(SearchProductQuery query) {
-        ProductSearchParameters parameters = new ProductSearchParameters(Category.valueOf(query.category().toUpperCase()));
+        SearchParameters parameters = new SearchParameters(query.category());
         return productRepository.searchBy(parameters);
     }
 

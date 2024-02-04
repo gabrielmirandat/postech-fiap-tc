@@ -2,6 +2,7 @@ package com.gabriel.menu.adapter.driver.api;
 
 import com.gabriel.menu.core.application.query.SearchMenuQuery;
 import com.gabriel.menu.core.application.usecase.MenuUseCase;
+import com.gabriel.menu.core.domain.model.Category;
 import com.gabriel.menu.core.domain.model.Menu;
 import com.gabriel.specs.menu.MenuGrpc;
 import com.google.protobuf.Timestamp;
@@ -24,7 +25,7 @@ public class MenuGrpcController extends MenuGrpc.MenuImplBase {
                              io.grpc.stub.StreamObserver<com.gabriel.specs.menu.MenuResponse> responseObserver) {
         List<Menu> menu = !request.getCategory().isEmpty()
             ? menuUseCase.searchMenuByCategory(
-            new SearchMenuQuery(request.getCategory()))
+            new SearchMenuQuery(Category.valueOf(request.getCategory().toUpperCase())))
             : menuUseCase.searchMenu();
 
         com.gabriel.specs.menu.MenuResponse.Builder response =

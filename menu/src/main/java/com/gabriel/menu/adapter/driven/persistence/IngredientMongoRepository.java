@@ -1,5 +1,6 @@
 package com.gabriel.menu.adapter.driven.persistence;
 
+import com.gabriel.adapter.api.exceptions.NotFound;
 import com.gabriel.core.application.exception.ApplicationError;
 import com.gabriel.core.application.exception.ApplicationException;
 import com.gabriel.core.domain.model.Name;
@@ -9,7 +10,7 @@ import com.gabriel.menu.core.domain.model.Category;
 import com.gabriel.menu.core.domain.model.Ingredient;
 import com.gabriel.menu.core.domain.model.Weight;
 import com.gabriel.menu.core.domain.port.IngredientRepository;
-import com.gabriel.menu.core.domain.port.ProductSearchParameters;
+import com.gabriel.menu.core.domain.port.SearchParameters;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -36,19 +37,22 @@ public class IngredientMongoRepository implements IngredientRepository {
         try {
             ingredientCollection.insertOne(document);
         } catch (MongoWriteException ex) {
-            throw new ApplicationException(ex.getMessage(), ApplicationError.APP_OO1);
+            throw new ApplicationException(ex.getError().getMessage(), ApplicationError.APP_OO1);
         }
         return ingredient;
     }
 
     @Override
-    public Ingredient getById(String id) {
-        Document doc = ingredientCollection.find(Filters.eq("_id", id)).first();
-        return doc != null ? IngredientConverter.documentToIngredient(doc) : null;
+    public Ingredient getById(IngredientID id) {
+        Document doc = ingredientCollection.find(Filters.eq("_id", id.getId())).first();
+        if (doc != null) {
+            return IngredientConverter.documentToIngredient(doc);
+        }
+        throw new NotFound("Ingredient not found");
     }
 
     @Override
-    public List<Ingredient> searchBy(ProductSearchParameters parameters) {
+    public List<Ingredient> searchBy(SearchParameters parameters) {
         List<Ingredient> ingredients = new ArrayList<>();
         if (parameters.category() != null) {
             ingredientCollection.find(Filters.eq("category", parameters.category().toString()))
@@ -58,8 +62,9 @@ public class IngredientMongoRepository implements IngredientRepository {
     }
 
     @Override
-    public void deleteIngredient(String id) {
-        ingredientCollection.deleteOne(Filters.eq("_id", id));
+    public void deleteIngredient(IngredientID id) {
+
+        ingredientCollection.deleteOne(Filters.eq("_id", id.getId()));
     }
 
     private static class IngredientConverter {

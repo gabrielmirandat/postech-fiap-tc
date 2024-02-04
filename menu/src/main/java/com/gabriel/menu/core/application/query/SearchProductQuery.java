@@ -1,4 +1,6 @@
 package com.gabriel.menu.core.application.query;
 
-public record SearchProductQuery(String category) {
+import com.gabriel.menu.core.domain.model.Category;
+
+public record SearchProductQuery(Category category) {
 }

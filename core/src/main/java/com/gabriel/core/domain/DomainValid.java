@@ -17,9 +17,7 @@ public interface DomainValid {
                 .map(v -> v.getPropertyPath() + " " + v.getMessage())
                 .sorted()
                 .collect(Collectors.joining(", "));
-            throw new DomainException(
-                "Domain validation failed: " + errorMsg,
-                DomainError.DOM_OO1);
+            throw new DomainException("Domain validation failed: " + errorMsg, DomainError.DOM_OO1);
         }
     }
 }

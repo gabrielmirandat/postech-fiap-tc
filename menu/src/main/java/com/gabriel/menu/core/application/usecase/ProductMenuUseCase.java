@@ -15,14 +15,13 @@ public class ProductMenuUseCase {
     @Inject
     ProductUseCase productUseCase;
 
-
     public List<Product> retrieveMenu() {
         List<Product> products = new ArrayList<>();
 
         for (Category category : Category.values()) {
             products.addAll(
                 productUseCase.searchProduct(
-                    new SearchProductQuery(category.name())));
+                    new SearchProductQuery(category)));
         }
         return products;
     }

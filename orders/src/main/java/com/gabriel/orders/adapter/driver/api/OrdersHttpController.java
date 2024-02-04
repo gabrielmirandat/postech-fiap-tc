@@ -24,17 +24,15 @@ public class OrdersHttpController implements OrdersApi {
 
     private final RetrieveOrderUseCase retrieveOrderUseCase;
 
-    private final OrderMapper orderMapper;
-
-    public OrdersHttpController(CreateOrderUseCase createOrderUseCase, RetrieveOrderUseCase retrieveOrderUseCase, OrderMapper orderMapper) {
+    public OrdersHttpController(CreateOrderUseCase createOrderUseCase,
+                                RetrieveOrderUseCase retrieveOrderUseCase) {
         this.createOrderUseCase = createOrderUseCase;
         this.retrieveOrderUseCase = retrieveOrderUseCase;
-        this.orderMapper = orderMapper;
     }
 
     @Override
     public ResponseEntity<OrderCreated> addOrder(OrderRequest orderRequest) {
-        CreateOrderCommand command = orderMapper.toCommand(orderRequest);
+        CreateOrderCommand command = OrderMapper.toCommand(orderRequest);
         Order newOrder = createOrderUseCase.createOrder(command);
         return ResponseEntity.ok(new OrderCreated(newOrder.getTicketId()));
     }
@@ -42,7 +40,7 @@ public class OrdersHttpController implements OrdersApi {
     @Override
     public ResponseEntity<OrderResponse> getOrderById(String orderId) {
         Order currentOrder = retrieveOrderUseCase.getByTicketId(new GetByTicketOrderQuery(orderId));
-        return ResponseEntity.ok(orderMapper.toResponse(currentOrder));
+        return ResponseEntity.ok(OrderMapper.toResponse(currentOrder));
     }
 
     @Override

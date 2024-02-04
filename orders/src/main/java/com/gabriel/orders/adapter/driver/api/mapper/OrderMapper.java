@@ -9,7 +9,6 @@ import com.gabriel.orders.core.domain.model.OrderItem;
 import com.gabriel.orders.core.domain.model.OrderItemRef;
 import com.gabriel.orders.core.domain.port.MenuRepository;
 import com.gabriel.specs.orders.models.*;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,10 +17,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@Component
 public class OrderMapper {
 
-    public CreateOrderCommand toCommand(OrderRequest request) {
+    public static CreateOrderCommand toCommand(OrderRequest request) {
         CPF customer = null;
         Address shippingAddress = null;
         Notification notification = null;
@@ -52,7 +50,7 @@ public class OrderMapper {
         return new CreateOrderCommand(customer, shippingAddress, notification, items);
     }
 
-    public Order toOrder(CreateOrderCommand command, MenuRepository menuRepository) {
+    public static Order toOrder(CreateOrderCommand command, MenuRepository menuRepository) {
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (var item : command.items()) {
@@ -68,7 +66,7 @@ public class OrderMapper {
             command.notification());
     }
 
-    public OrderResponse toResponse(Order order) {
+    public static OrderResponse toResponse(Order order) {
         List<OrderItemResponse> responseOrderItems = new ArrayList<>();
 
         for (var item : order.getItems()) {
@@ -128,7 +126,7 @@ public class OrderMapper {
         return response;
     }
 
-    public ErrorResponse toErrorResponse(BaseHttpException exception) {
+    public static ErrorResponse toErrorResponse(BaseHttpException exception) {
         return new ErrorResponse()
             .status(exception.getStatus())
             .message(exception.getMessage())

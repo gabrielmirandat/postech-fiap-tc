@@ -17,25 +17,22 @@ public class CreateOrderUseCase {
     private final OrderPublisher orderPublisher;
     private final VerifyMenuUseCase verifyMenuUseCase;
     private final MenuRepository menuRepository;
-    private final OrderMapper orderMapper;
 
     public CreateOrderUseCase(OrderRepository orderRepository,
                               OrderPublisher orderPublisher,
                               VerifyMenuUseCase verifyMenuUseCase,
-                              MenuRepository menuRepository,
-                              OrderMapper orderMapper) {
+                              MenuRepository menuRepository) {
         this.orderRepository = orderRepository;
         this.orderPublisher = orderPublisher;
         this.verifyMenuUseCase = verifyMenuUseCase;
         this.menuRepository = menuRepository;
-        this.orderMapper = orderMapper;
     }
 
     @Transactional
     public Order createOrder(CreateOrderCommand command) {
         try {
             verifyMenuUseCase.validate(command);
-            Order newOrder = orderMapper.toOrder(command, menuRepository);
+            Order newOrder = OrderMapper.toOrder(command, menuRepository);
 
             orderRepository.saveOrder(newOrder);
             orderPublisher.orderCreated(new OrderCreatedEvent(newOrder));
