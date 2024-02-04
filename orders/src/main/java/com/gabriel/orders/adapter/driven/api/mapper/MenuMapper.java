@@ -10,15 +10,13 @@ import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.specs.menu.MenuItem;
 import com.gabriel.specs.menu.MenuResponse;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
 
-@Component
 public class MenuMapper {
 
-    public Product toProduct(MenuItem menuItem) {
+    public static Product toProduct(MenuItem menuItem) {
         return new Product(
             new ProductID(menuItem.getId()),
             new Name(menuItem.getName()),
@@ -28,7 +26,7 @@ public class MenuMapper {
                 menuItem.getLastUpdated().getNanos())));
     }
 
-    public Extra toExtra(MenuItem menuItem) {
+    public static Extra toExtra(MenuItem menuItem) {
         return new Extra(
             new IngredientID(menuItem.getId()),
             new Name(menuItem.getName()),
@@ -39,17 +37,17 @@ public class MenuMapper {
         );
     }
 
-    public List<Product> extractProducts(MenuResponse response) {
+    public static List<Product> extractProducts(MenuResponse response) {
         return response.getItemsList().stream()
             .filter(item -> EntityID.identify(item.getId()) == EntityType.PRODUCT)
-            .map(this::toProduct)
+            .map(MenuMapper::toProduct)
             .toList();
     }
 
-    public List<Extra> extractExtras(com.gabriel.specs.menu.MenuResponse response) {
+    public static List<Extra> extractExtras(com.gabriel.specs.menu.MenuResponse response) {
         return response.getItemsList().stream()
             .filter(item -> EntityID.identify(item.getId()) == EntityType.INGREDIENT)
-            .map(this::toExtra)
+            .map(MenuMapper::toExtra)
             .toList();
     }
 }

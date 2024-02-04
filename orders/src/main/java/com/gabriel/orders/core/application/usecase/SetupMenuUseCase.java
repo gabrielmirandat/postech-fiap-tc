@@ -14,18 +14,15 @@ public class SetupMenuUseCase {
 
     private final MenuRepository menuRepository;
 
-    private final MenuMapper menuMapper;
-
-    public SetupMenuUseCase(MenuRepository menuRepository, MenuMapper menuMapper) {
+    public SetupMenuUseCase(MenuRepository menuRepository) {
         this.menuRepository = menuRepository;
-        this.menuMapper = menuMapper;
     }
 
     public void setupData(MenuResponse inputDumpMenuData) {
         System.out.println("Dumping menu data");
 
-        List<Product> products = menuMapper.extractProducts(inputDumpMenuData);
-        List<Extra> extras = menuMapper.extractExtras(inputDumpMenuData);
+        List<Product> products = MenuMapper.extractProducts(inputDumpMenuData);
+        List<Extra> extras = MenuMapper.extractExtras(inputDumpMenuData);
 
         products.forEach(menuRepository::addProduct);
         extras.forEach(menuRepository::addExtra);

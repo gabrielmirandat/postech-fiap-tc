@@ -429,20 +429,19 @@ components:
     ErrorResponse:
       type: object
       required:
-        - code
-        - type
+        - status
         - message
       properties:
-        code:
+        status:
           type: integer
           format: int32
-          description: Code of the error
-        type:
-          type: string
-          description: Type of the error
+          description: Status of the error
         message:
           type: string
           description: Message of the error
+        code:
+          type: string
+          description: Specific code of the error
 
   responses:
     ProductCreated:
@@ -547,9 +546,9 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
           example:
-            code: "ERR-CODE"
-            type: "422"
+            status: 422
             message: "Precondition Failed"
+            code: "ERR-001"
 
   securitySchemes:
     hydra:

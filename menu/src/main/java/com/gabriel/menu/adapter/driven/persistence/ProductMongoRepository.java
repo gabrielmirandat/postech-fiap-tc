@@ -1,5 +1,6 @@
 package com.gabriel.menu.adapter.driven.persistence;
 
+import com.gabriel.adapter.api.exceptions.NotFound;
 import com.gabriel.core.application.exception.ApplicationError;
 import com.gabriel.core.application.exception.ApplicationException;
 import com.gabriel.core.domain.model.Name;
@@ -11,7 +12,7 @@ import com.gabriel.menu.core.domain.model.Description;
 import com.gabriel.menu.core.domain.model.Image;
 import com.gabriel.menu.core.domain.model.Product;
 import com.gabriel.menu.core.domain.port.ProductRepository;
-import com.gabriel.menu.core.domain.port.ProductSearchParameters;
+import com.gabriel.menu.core.domain.port.SearchParameters;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
@@ -39,19 +40,23 @@ public class ProductMongoRepository implements ProductRepository {
         try {
             productCollection.insertOne(document);
         } catch (MongoWriteException ex) {
-            throw new ApplicationException(ex.getMessage(), ApplicationError.APP_OO1);
+            throw new ApplicationException(ex.getError().getMessage(), ApplicationError.APP_OO1);
         }
         return product;
     }
 
     @Override
-    public Product getById(String id) {
-        Document doc = productCollection.find(Filters.eq("_id", id)).first();
-        return doc != null ? ProductConverter.documentToProduct(doc) : null;
+    public Product getById(ProductID id) {
+        Document doc = productCollection.find(Filters.eq("_id", id.getId())).first();
+
+        if (doc != null) {
+            return ProductConverter.documentToProduct(doc);
+        }
+        throw new NotFound("Product not found");
     }
 
     @Override
-    public List<Product> searchBy(ProductSearchParameters parameters) {
+    public List<Product> searchBy(SearchParameters parameters) {
         List<Product> products = new ArrayList<>();
         if (parameters.category() != null) {
             productCollection.find(Filters.eq("category", parameters.category().toString()))
@@ -61,8 +66,8 @@ public class ProductMongoRepository implements ProductRepository {
     }
 
     @Override
-    public void deleteProduct(String id) {
-        productCollection.deleteOne(Filters.eq("_id", id));
+    public void deleteProduct(ProductID id) {
+        productCollection.deleteOne(Filters.eq("_id", id.getId()));
     }
 
     private static class ProductConverter {

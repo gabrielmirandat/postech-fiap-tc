@@ -13,6 +13,6 @@ public class OrderDomainException extends DomainException {
 
     @Override
     public String getType() {
-        return type.name();
+        return type.message;
     }
 }

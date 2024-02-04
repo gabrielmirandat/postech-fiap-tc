@@ -5,11 +5,10 @@ import com.gabriel.menu.core.application.query.GetByIngredientIdQuery;
 import com.gabriel.menu.core.application.query.GetByIngredientIdsQuery;
 import com.gabriel.menu.core.application.query.SearchIngredientQuery;
 import com.gabriel.menu.core.domain.event.IngredientCreatedEvent;
-import com.gabriel.menu.core.domain.model.Category;
 import com.gabriel.menu.core.domain.model.Ingredient;
 import com.gabriel.menu.core.domain.port.IngredientPublisher;
 import com.gabriel.menu.core.domain.port.IngredientRepository;
-import com.gabriel.menu.core.domain.port.ProductSearchParameters;
+import com.gabriel.menu.core.domain.port.SearchParameters;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -35,17 +34,17 @@ public class IngredientUseCase {
     }
 
     public Ingredient getIngredientById(GetByIngredientIdQuery query) {
-        return ingredientRepository.getById(query.id());
+        return ingredientRepository.getById(query.searchId());
     }
 
     public List<Ingredient> getIngredientsById(GetByIngredientIdsQuery query) {
-        return query.ids().stream()
+        return query.searchIds().stream()
             .map(id -> getIngredientById(new GetByIngredientIdQuery(id)))
             .collect(Collectors.toList());
     }
 
     public List<Ingredient> searchIngredient(SearchIngredientQuery query) {
-        ProductSearchParameters parameters = new ProductSearchParameters(Category.valueOf(query.category().toUpperCase()));
+        SearchParameters parameters = new SearchParameters(query.category());
         return ingredientRepository.searchBy(parameters);
     }
 }
