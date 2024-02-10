@@ -4,9 +4,11 @@
 K8S_RESOURCE_DIR="."
 
 # Start Minikube
-# minikube start --driver=docker
+minikube start --driver=docker
+minikube addons enable metrics-server
+
 # minikube status
-# kubectl config current-context
+kubectl config current-context
 
 # Apply the configurations
 echo "Starting all Kubernetes resources..."
