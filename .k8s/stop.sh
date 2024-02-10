@@ -5,10 +5,10 @@ K8S_RESOURCE_DIR="."
 
 # Delete the configurations for resources in reverse order of dependency
 echo "Stopping all Kubernetes resources..."
-#kubectl delete -f $K8S_RESOURCE_DIR/orders-service-service.yaml
-#kubectl delete -f $K8S_RESOURCE_DIR/orders-service-deployment.yaml
-#kubectl delete -f $K8S_RESOURCE_DIR/menu-service-service.yaml
-#kubectl delete -f $K8S_RESOURCE_DIR/menu-service-deployment.yaml
+kubectl delete -f $K8S_RESOURCE_DIR/orders-api-service.yaml
+kubectl delete -f $K8S_RESOURCE_DIR/orders-api-deployment.yaml
+kubectl delete -f $K8S_RESOURCE_DIR/menu-api-service.yaml
+kubectl delete -f $K8S_RESOURCE_DIR/menu-api-deployment.yaml
 kubectl delete -f $K8S_RESOURCE_DIR/kafka-service.yaml
 kubectl delete -f $K8S_RESOURCE_DIR/kafka-deployment.yaml
 kubectl delete -f $K8S_RESOURCE_DIR/zookeeper-service.yaml

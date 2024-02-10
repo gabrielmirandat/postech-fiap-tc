@@ -1,0 +1,8 @@
+FROM amazoncorretto:17
+WORKDIR /app
+EXPOSE 8001
+ADD target/orders*.jar orders.jar
+ADD target/newrelic/newrelic.jar newrelic.jar
+ADD src/main/resources/newrelic/newrelic.yml newrelic.yml
+ENV SPRING_PROFILES_ACTIVE=local
+ENTRYPOINT ["java", "-javaagent:newrelic.jar", "-Dspring.profiles.active=local", "-jar", "orders.jar"]

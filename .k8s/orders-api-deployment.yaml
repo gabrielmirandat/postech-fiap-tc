@@ -14,6 +14,7 @@ spec:
     spec:
       containers:
         - name: orders-service
-          image: <your-orders-service-image>
+          image: orders-service:1.0
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8001
