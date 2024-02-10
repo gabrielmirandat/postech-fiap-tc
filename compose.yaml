@@ -71,6 +71,7 @@ services:
     networks:
       - postech_network
 
+  # TODO: fix to work as like k8s - no need to expose 29092
   kafka:
     container_name: postech_kafka
     image: confluentinc/cp-kafka:latest

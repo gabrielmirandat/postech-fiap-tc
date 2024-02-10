@@ -1,0 +1,6 @@
+FROM amazoncorretto:17
+WORKDIR /app
+EXPOSE 8002
+COPY target/menu*-runner.jar menu.jar
+ENV QUARKUS_PROFILE=local
+ENTRYPOINT ["java", "-Dquarkus.profile=local", "-jar", "menu.jar"]
