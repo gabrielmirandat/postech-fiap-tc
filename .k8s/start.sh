@@ -1,35 +1,31 @@
 #!/bin/bash
 
-# Define the directory containing your Kubernetes YAML files
-K8S_RESOURCE_DIR="."
-
 # Start Minikube
-minikube start --driver=docker
-minikube addons enable metrics-server
+# minikube start --driver=docker
 
 # minikube status
 kubectl config current-context
 
 # Apply the configurations
 echo "Starting all Kubernetes resources..."
-kubectl apply -f $K8S_RESOURCE_DIR/mongodb-secrets.yaml
-kubectl apply -f $K8S_RESOURCE_DIR/mongodb-deployment.yaml
-kubectl apply -f $K8S_RESOURCE_DIR/mongodb-service.yaml
-kubectl apply -f $K8S_RESOURCE_DIR/redis-deployment.yaml
-kubectl apply -f $K8S_RESOURCE_DIR/redis-service.yaml
-kubectl apply -f $K8S_RESOURCE_DIR/zookeeper-deployment.yaml
-kubectl apply -f $K8S_RESOURCE_DIR/zookeeper-service.yaml
-kubectl apply -f $K8S_RESOURCE_DIR/kafka-deployment.yaml
-kubectl apply -f $K8S_RESOURCE_DIR/kafka-service.yaml
+kubectl apply -f mongodb-secrets.yaml
+kubectl apply -f mongodb-deployment.yaml
+kubectl apply -f mongodb-service.yaml
+kubectl apply -f redis-deployment.yaml
+kubectl apply -f redis-service.yaml
+kubectl apply -f zookeeper-deployment.yaml
+kubectl apply -f zookeeper-service.yaml
+kubectl apply -f kafka-deployment.yaml
+kubectl apply -f kafka-service.yaml
 
 # First, you need to deploy local images for services
 # eval $(minikube docker-env)
-# docker build -t menu-service:1.0 .
-# docker build -t orders-service:1.0 .
-kubectl apply -f $K8S_RESOURCE_DIR/menu-api-deployment.yaml
-kubectl apply -f $K8S_RESOURCE_DIR/menu-api-service.yaml
-kubectl apply -f $K8S_RESOURCE_DIR/orders-api-deployment.yaml
-kubectl apply -f $K8S_RESOURCE_DIR/orders-api-service.yaml
+# docker build -t menu-service:1.0-1 .
+# docker build -t orders-service:1.0-1 .
+kubectl apply -f menu-api-deployment.yaml
+kubectl apply -f menu-api-service.yaml
+kubectl apply -f orders-api-deployment.yaml
+kubectl apply -f orders-api-service.yaml
 
 # Start local servers
 # Second, you need to enable node port for services

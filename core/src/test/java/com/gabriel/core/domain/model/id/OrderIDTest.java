@@ -1,7 +1,6 @@
-package com.gabriel.domain.model.id;
+package com.gabriel.core.domain.model.id;
 
 import com.gabriel.core.domain.exception.DomainException;
-import com.gabriel.core.domain.model.id.OrderID;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
