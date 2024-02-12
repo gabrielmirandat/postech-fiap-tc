@@ -4,7 +4,7 @@
 # minikube start --driver=docker
 
 # minikube status
-kubectl config current-context
+# kubectl config current-context
 
 # Apply the configurations
 echo "Starting all Kubernetes resources..."
@@ -36,8 +36,7 @@ kubectl apply -f orders-api-service.yaml
 # echo ORDERS_SERVICE_URL
 
 echo "All resources have been started."
-# List all resources
 kubectl get all
 
 # Open the Kubernetes dashboard
-minikube dashboard
+# minikube dashboard

@@ -20,4 +20,4 @@ kubectl delete -f mongodb-secrets.yaml
 echo "All resources have been stopped and deleted."
 
 # Stop Minikube
-minikube stop
+# minikube stop
