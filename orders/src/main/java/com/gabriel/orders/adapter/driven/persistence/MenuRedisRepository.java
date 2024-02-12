@@ -11,7 +11,10 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class MenuRedisRepository implements MenuRepository {
@@ -72,6 +75,16 @@ public class MenuRedisRepository implements MenuRepository {
     }
 
     @Override
+    public List<ProductID> allProducts() {
+        Set<String> keys = redisTemplate.keys("prod:*");
+        if (keys == null)
+            return new ArrayList<>();
+        return new ArrayList<>(keys).stream()
+            .map(key -> new ProductID(key.substring(5)))
+            .toList();
+    }
+
+    @Override
     public boolean existsExtra(IngredientID ingredientID) {
         return Boolean.TRUE.equals(redisTemplate.hasKey("extr:" + ingredientID.getId()));
     }
@@ -109,5 +122,15 @@ public class MenuRedisRepository implements MenuRepository {
     @Override
     public void deleteExtra(IngredientID ingredientID) {
         redisTemplate.delete("extr:" + ingredientID.getId());
+    }
+
+    @Override
+    public List<IngredientID> allExtras() {
+        Set<String> keys = redisTemplate.keys("extr:*");
+        if (keys == null)
+            return new ArrayList<>();
+        return new ArrayList<>(keys).stream()
+            .map(key -> new IngredientID(key.substring(5)))
+            .toList();
     }
 }

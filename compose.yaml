@@ -1,28 +1,28 @@
 version: '3.8'
 services:
 
-  orders-service:
-    container_name: postech_orders_service
-    build: ./orders
-    depends_on:
-      - mongo
-      - kafka
-      - menu-service
-    ports:
-      - "8001:8001"
-    networks:
-      - postech_network
+  #  orders-service:
+  #    container_name: postech_orders_service
+  #    build: ./orders
+  #    depends_on:
+  #      - mongo
+  #      - kafka
+  #      - menu-service
+  #    ports:
+  #      - "8001:8001"
+  #    networks:
+  #      - postech_network
 
-  menu-service:
-    container_name: postech_menu_service
-    build: ./menu
-    depends_on:
-      - mongo
-      - kafka
-    ports:
-      - "8002:8002"
-    networks:
-      - postech_network
+  #  menu-service:
+  #    container_name: postech_menu_service
+  #    build: ./menu
+  #    depends_on:
+  #      - mongo
+  #      - kafka
+  #    ports:
+  #      - "8002:8002"
+  #    networks:
+  #      - postech_network
 
   mongo:
     container_name: postech_mongo

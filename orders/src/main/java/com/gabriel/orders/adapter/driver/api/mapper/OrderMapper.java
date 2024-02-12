@@ -126,6 +126,10 @@ public class OrderMapper {
         return response;
     }
 
+    public static List<OrderResponse> toResponseList(List<Order> orders) {
+        return orders.stream().map(OrderMapper::toResponse).collect(Collectors.toList());
+    }
+
     public static ErrorResponse toErrorResponse(BaseHttpException exception) {
         return new ErrorResponse()
             .status(exception.getStatus())

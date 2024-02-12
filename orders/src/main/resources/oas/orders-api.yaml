@@ -41,7 +41,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrderResponse'
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponse'
         '401':
           $ref: '#/components/responses/ErrorResponse'
         '403':
@@ -147,10 +149,11 @@ paths:
             type: string
         - name: status
           in: path
-          description: status to change
+          description: Status to change
           required: true
+          explode: true
           schema:
-            type: string
+            $ref: '#/components/schemas/OrderStatusDTO'
       responses:
         '204':
           description: Ok
