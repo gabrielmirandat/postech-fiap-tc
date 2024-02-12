@@ -1,5 +1,6 @@
 package com.gabriel.orders.core.application.usecase;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.domain.event.OrderCreatedEvent;
@@ -29,16 +30,12 @@ public class CreateOrderUseCase {
     }
 
     @Transactional
-    public Order createOrder(CreateOrderCommand command) {
-        try {
-            verifyMenuUseCase.validate(command);
-            Order newOrder = OrderMapper.toOrder(command, menuRepository);
+    public Order createOrder(CreateOrderCommand command) throws JsonProcessingException {
+        verifyMenuUseCase.validate(command);
+        Order newOrder = OrderMapper.toOrder(command, menuRepository);
 
-            orderRepository.saveOrder(newOrder);
-            orderPublisher.orderCreated(new OrderCreatedEvent(newOrder));
-            return newOrder;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        orderRepository.saveOrder(newOrder);
+        orderPublisher.orderCreated(new OrderCreatedEvent(newOrder));
+        return newOrder;
     }
 }

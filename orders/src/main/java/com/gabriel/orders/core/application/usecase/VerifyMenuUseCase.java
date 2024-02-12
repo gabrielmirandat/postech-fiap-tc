@@ -1,6 +1,8 @@
 package com.gabriel.orders.core.application.usecase;
 
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
+import com.gabriel.orders.core.application.exception.OrderApplicationError;
+import com.gabriel.orders.core.application.exception.OrderApplicationException;
 import com.gabriel.orders.core.domain.port.MenuRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +18,12 @@ public class VerifyMenuUseCase {
     public void validate(CreateOrderCommand command) {
         command.items().forEach(item -> {
             if (!menuRepository.existsProduct(item.getProductId())) {
-                throw new RuntimeException("Product not found");
+                throw new OrderApplicationException("Product not found", OrderApplicationError.ORD_100);
             }
 
             item.getExtrasIds().forEach(extraId -> {
                 if (!menuRepository.existsExtra(extraId)) {
-                    throw new RuntimeException("Extra not found");
+                    throw new OrderApplicationException("Extra not found", OrderApplicationError.ORD_101);
                 }
             });
         });

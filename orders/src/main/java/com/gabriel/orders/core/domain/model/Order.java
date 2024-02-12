@@ -113,30 +113,32 @@ public class Order extends AggregateRoot {
         price = new Price(productsTotalPrice + extrasTotalPrice);
     }
 
-    private void promote() {
+    public void promote(OrderStatus toStatus) {
         if (status == OrderStatus.COMPLETED) {
             throw new OrderDomainException("Order is already finished and cant be promoted", OrderDomainError.ORD_001);
         }
 
-        switch (status) {
-            case CREATED -> this.status = OrderStatus.PREPARATION;
-            case PREPARATION -> this.status = OrderStatus.PACKAGING;
-            case PACKAGING -> this.status = OrderStatus.PICKUP;
-            case PICKUP -> {
-                if (shippingAddress != null) {
-                    this.status = OrderStatus.DELIVERY;
-                } else {
-                    this.status = OrderStatus.COMPLETED;
-                }
-            }
-            case DELIVERY -> this.status = OrderStatus.COMPLETED;
+        if (toStatus == OrderStatus.CREATED) {
+            throw new OrderDomainException("Order can't be promoted to created status", OrderDomainError.ORD_001);
+        }
+
+        switch (toStatus) {
+            case PREPARATION -> prepare_order();
+            case PACKAGING -> package_order();
+            case PICKUP -> pickup_order();
+            case DELIVERY -> deliver_order();
+            case COMPLETED -> finish_order();
         }
     }
 
     // TODO: add methods for redoing order
-    private void rollback() {
+    public void rollback() {
         if (status == OrderStatus.COMPLETED) {
-            throw new OrderDomainException("Order is already finished and cant be back", OrderDomainError.ORD_001);
+            throw new OrderDomainException("Order is already finished and cant be rolled back", OrderDomainError.ORD_001);
+        }
+
+        if (status == OrderStatus.CREATED) {
+            throw new OrderDomainException("Order did not started preparation so cant be rolled back", OrderDomainError.ORD_001);
         }
 
         switch (status) {
@@ -146,31 +148,31 @@ public class Order extends AggregateRoot {
         }
     }
 
-    public void prepare_order() {
+    private void prepare_order() {
         if (status != OrderStatus.CREATED) {
             throw new OrderDomainException("Order must be initiated to be prepared", OrderDomainError.ORD_001);
         }
 
-        promote();
+        this.status = OrderStatus.PREPARATION;
     }
 
-    public void package_order() {
+    private void package_order() {
         if (status != OrderStatus.PREPARATION) {
             throw new OrderDomainException("Order must be prepared to be package", OrderDomainError.ORD_001);
         }
 
-        promote();
+        this.status = OrderStatus.PACKAGING;
     }
 
-    public void pickup_order() {
+    private void pickup_order() {
         if (status != OrderStatus.PACKAGING) {
             throw new OrderDomainException("Order must be packaged to be pickup", OrderDomainError.ORD_001);
         }
 
-        promote();
+        this.status = OrderStatus.PICKUP;
     }
 
-    public void deliver_order() {
+    private void deliver_order() {
         if (status != OrderStatus.PICKUP) {
             throw new OrderDomainException("Order must be in balcony to be delivered", OrderDomainError.ORD_001);
         }
@@ -179,15 +181,15 @@ public class Order extends AggregateRoot {
             throw new OrderDomainException("Order must have an shipping address to be delivered", OrderDomainError.ORD_002);
         }
 
-        promote();
+        this.status = OrderStatus.DELIVERY;
     }
 
-    public void finish_order() {
+    private void finish_order() {
         if (status != OrderStatus.PICKUP && status != OrderStatus.DELIVERY) {
             throw new OrderDomainException("Order must be in balcony or in delivery to be finished", OrderDomainError.ORD_001);
         }
 
-        promote();
+        this.status = OrderStatus.COMPLETED;
     }
 
     public byte[] serialized(ObjectMapper serializer) {

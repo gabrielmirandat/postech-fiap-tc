@@ -1,5 +1,8 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
+import com.gabriel.adapter.api.exceptions.NotFound;
+import com.gabriel.core.application.exception.ApplicationError;
+import com.gabriel.core.application.exception.ApplicationException;
 import com.gabriel.core.domain.model.*;
 import com.gabriel.core.domain.model.id.IngredientID;
 import com.gabriel.core.domain.model.id.OrderID;
@@ -8,8 +11,10 @@ import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.core.domain.model.*;
 import com.gabriel.orders.core.domain.port.OrderRepository;
 import com.gabriel.orders.core.domain.port.OrderSearchParameters;
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 
@@ -30,14 +35,32 @@ public class OrderMongoRepository implements OrderRepository {
     @Override
     public Order saveOrder(Order order) {
         Document document = OrderConverter.orderToDocument(order);
-        orderCollection.insertOne(document);
+
+        try {
+            orderCollection.insertOne(document);
+        } catch (MongoWriteException ex) {
+            throw new ApplicationException(ex.getError().getMessage(), ApplicationError.APP_OO1);
+        }
         return order;
+    }
+
+    @Override
+    public Order updateOrder(Order newOrder) {
+        Document document = OrderConverter.orderToDocument(newOrder);
+        UpdateResult result = orderCollection.replaceOne(Filters.eq("_id", newOrder.getOrderId().getId()), document);
+        if (result.getMatchedCount() == 0) {
+            throw new NotFound("Order not found");
+        }
+        return newOrder;
     }
 
     @Override
     public Order getByTicket(String ticket) {
         Document doc = orderCollection.find(Filters.eq("ticketId", ticket)).first();
-        return doc != null ? OrderConverter.documentToOrder(doc) : null;
+        if (doc != null) {
+            return OrderConverter.documentToOrder(doc);
+        }
+        throw new NotFound("Order not found");
     }
 
     @Override
@@ -46,11 +69,13 @@ public class OrderMongoRepository implements OrderRepository {
         if (parameters.status() != null) {
             orderCollection.find(Filters.eq("status", parameters.status().toString()))
                 .forEach(doc -> orders.add(OrderConverter.documentToOrder(doc)));
+        } else {
+            orderCollection.find().forEach(doc -> orders.add(OrderConverter.documentToOrder(doc)));
         }
         return orders;
     }
 
-    public class OrderConverter {
+    private static class OrderConverter {
 
         public static Document orderToDocument(Order order) {
             Document doc = new Document();

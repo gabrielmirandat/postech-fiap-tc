@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderTest {
 
     private Order basicOrder;
-
     private Order fullOrder;
 
     @BeforeEach
@@ -103,66 +102,66 @@ class OrderTest {
 
     @Test
     void testPrepareOrder() {
-        basicOrder.prepare_order();
+        basicOrder.promote(OrderStatus.PREPARATION);
         assertEquals(OrderStatus.PREPARATION, basicOrder.getStatus());
     }
 
     @Test
     void testPackageOrder() {
-        basicOrder.prepare_order();
-        basicOrder.package_order();
+        basicOrder.promote(OrderStatus.PREPARATION);
+        basicOrder.promote(OrderStatus.PACKAGING);
         assertEquals(OrderStatus.PACKAGING, basicOrder.getStatus());
     }
 
     @Test
     void testPickupOrder() {
-        basicOrder.prepare_order();
-        basicOrder.package_order();
-        basicOrder.pickup_order();
+        basicOrder.promote(OrderStatus.PREPARATION);
+        basicOrder.promote(OrderStatus.PACKAGING);
+        basicOrder.promote(OrderStatus.PICKUP);
         assertEquals(OrderStatus.PICKUP, basicOrder.getStatus());
     }
 
     @Test
     void testDeliverShippableOrder() {
-        fullOrder.prepare_order();
-        fullOrder.package_order();
-        fullOrder.pickup_order();
-        fullOrder.deliver_order();
+        fullOrder.promote(OrderStatus.PREPARATION);
+        fullOrder.promote(OrderStatus.PACKAGING);
+        fullOrder.promote(OrderStatus.PICKUP);
+        fullOrder.promote(OrderStatus.DELIVERY);
         assertEquals(OrderStatus.DELIVERY, fullOrder.getStatus());
     }
 
     @Test
     void testDeliverUnshippableOrder() {
-        basicOrder.prepare_order();
-        basicOrder.package_order();
-        basicOrder.pickup_order();
-        assertThrows(DomainException.class, () -> fullOrder.deliver_order());
+        basicOrder.promote(OrderStatus.PREPARATION);
+        basicOrder.promote(OrderStatus.PACKAGING);
+        basicOrder.promote(OrderStatus.PICKUP);
+        assertThrows(DomainException.class, () -> basicOrder.promote(OrderStatus.DELIVERY));
     }
 
     @Test
     void testFinishShippableOrder() {
-        fullOrder.prepare_order();
-        fullOrder.package_order();
-        fullOrder.pickup_order();
-        fullOrder.deliver_order();
-        fullOrder.finish_order();
+        fullOrder.promote(OrderStatus.PREPARATION);
+        fullOrder.promote(OrderStatus.PACKAGING);
+        fullOrder.promote(OrderStatus.PICKUP);
+        fullOrder.promote(OrderStatus.DELIVERY);
+        fullOrder.promote(OrderStatus.COMPLETED);
         assertEquals(OrderStatus.COMPLETED, fullOrder.getStatus());
     }
 
     @Test
     void testFinishUnshippableOrder() {
-        basicOrder.prepare_order();
-        basicOrder.package_order();
-        basicOrder.pickup_order();
-        basicOrder.finish_order();
+        basicOrder.promote(OrderStatus.PREPARATION);
+        basicOrder.promote(OrderStatus.PACKAGING);
+        basicOrder.promote(OrderStatus.PICKUP);
+        basicOrder.promote(OrderStatus.COMPLETED);
         assertEquals(OrderStatus.COMPLETED, basicOrder.getStatus());
     }
 
     @Test
     void testFinishOrderBeforeReady() {
-        basicOrder.prepare_order();
-        basicOrder.package_order();
-        assertThrows(DomainException.class, () -> basicOrder.finish_order());
+        basicOrder.promote(OrderStatus.PREPARATION);
+        basicOrder.promote(OrderStatus.PACKAGING);
+        assertThrows(DomainException.class, () -> basicOrder.promote(OrderStatus.COMPLETED));
     }
 }
 

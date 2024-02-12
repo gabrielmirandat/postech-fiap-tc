@@ -8,6 +8,8 @@ public interface OrderRepository {
 
     Order saveOrder(Order order);
 
+    Order updateOrder(Order newOrder);
+
     Order getByTicket(String ticket);
 
     List<Order> searchBy(OrderSearchParameters parameters);
