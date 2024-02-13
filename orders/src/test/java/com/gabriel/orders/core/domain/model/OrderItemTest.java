@@ -12,12 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OrderItemTest {
-
-    // Generate unit tests for OrderItem class
-    // Test the following:
-    // 1. Generate valid OrderItem for each constructor
-    // 2. Generate invalid OrderItem for each constructor
-
+    
     @Test
     void shouldCreateOrderItemSuccessfully_whenValidProductIsProvided() {
         // Arrange

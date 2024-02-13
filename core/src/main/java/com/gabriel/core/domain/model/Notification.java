@@ -1,5 +1,7 @@
 package com.gabriel.core.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +16,8 @@ public class Notification extends ValueObject {
     @Valid
     private final Notifiable repr;
 
-    public Notification(NotificationType type, String repr) {
+    @JsonCreator
+    public Notification(@JsonProperty("type") NotificationType type, @JsonProperty("repr") String repr) {
         this.type = type;
         validate();
         this.repr = createNotifiable(type, repr);

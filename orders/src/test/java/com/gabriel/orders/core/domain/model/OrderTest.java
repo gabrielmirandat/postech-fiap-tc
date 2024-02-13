@@ -1,5 +1,7 @@
 package com.gabriel.orders.core.domain.model;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gabriel.core.domain.exception.DomainException;
 import com.gabriel.core.domain.model.Address;
 import com.gabriel.core.domain.model.CPF;
@@ -14,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrderTest {
@@ -25,6 +28,13 @@ class OrderTest {
     void setUp() {
         basicOrder = generateOrder();
         fullOrder = generateFullOrder();
+    }
+
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        // Register the JavaTimeModule to handle Java 8 date/time types
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
     }
 
     String generateRandomString() {
@@ -162,6 +172,33 @@ class OrderTest {
         basicOrder.promote(OrderStatus.PREPARATION);
         basicOrder.promote(OrderStatus.PACKAGING);
         assertThrows(DomainException.class, () -> basicOrder.promote(OrderStatus.COMPLETED));
+    }
+
+    @Test
+    void testRollbackOrder() {
+        fullOrder.promote(OrderStatus.PREPARATION);
+        fullOrder.rollback();
+        assertEquals(OrderStatus.CREATED, fullOrder.getStatus());
+    }
+
+    @Test
+    void testSerializeOrder() {
+        byte[] serialized = fullOrder.serialized(objectMapper());
+        assertThat(serialized).isNotNull();
+    }
+
+    @Test
+    void testDeserializeOrder() {
+        byte[] serialized = fullOrder.serialized(objectMapper());
+        Order deserialized = Order.deserialize(objectMapper(), serialized);
+        assertThat(deserialized).isNotNull();
+        assertThat(deserialized.getOrderId()).isEqualTo(fullOrder.getOrderId());
+        assertThat(deserialized.getShippingAddress().getCity()).isEqualTo(fullOrder.getShippingAddress().getCity());
+        assertThat(deserialized.getNotification().getRepr().getValue()).isEqualTo(
+            fullOrder.getNotification().getRepr().getValue());
+        assertThat(deserialized.getStatus()).isEqualTo(fullOrder.getStatus());
+        assertThat(deserialized.getPrice().getValue()).isEqualTo(fullOrder.getPrice().getValue());
+        assertThat(deserialized.getTicketId()).isEqualTo(fullOrder.getTicketId());
     }
 }
 
