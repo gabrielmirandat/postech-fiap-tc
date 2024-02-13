@@ -1,5 +1,7 @@
 package com.gabriel.orders.core.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gabriel.core.domain.Entity;
 import com.gabriel.core.domain.model.id.OrderItemID;
 import lombok.Getter;
@@ -30,7 +32,12 @@ public class OrderItem extends Entity {
         this.itemID = new OrderItemID();
     }
 
-    private OrderItem(OrderItemID itemID, Product product, List<Extra> extras) {
+    /**
+     * Constructor for Jackson deserialization.
+     */
+    @JsonCreator
+    OrderItem(@JsonProperty("itemID") OrderItemID itemID, @JsonProperty("product") Product product,
+              @JsonProperty("extras") List<Extra> extras) {
         this.itemID = itemID;
         this.product = product;
         this.extras = extras;

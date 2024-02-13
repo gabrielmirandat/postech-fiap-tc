@@ -1,5 +1,7 @@
 package com.gabriel.orders.core.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.application.exception.ApplicationError;
@@ -60,8 +62,15 @@ public class Order extends AggregateRoot {
         initialize();
     }
 
-    private Order(OrderID orderId, List<OrderItem> items, CPF customer, Address shippingAddress, Notification additionalNotification,
-                  Price price, String ticketId, OrderStatus status, Instant createdAt, Instant updatedAt) {
+    /**
+     * Constructor for Jackson deserialization.
+     */
+    @JsonCreator
+    Order(@JsonProperty("orderId") OrderID orderId, @JsonProperty("items") List<OrderItem> items,
+          @JsonProperty("customer") CPF customer, @JsonProperty("shippingAddress") Address shippingAddress,
+          @JsonProperty("notification") Notification additionalNotification, @JsonProperty("price") Price price,
+          @JsonProperty("ticketId") String ticketId, @JsonProperty("status") OrderStatus status,
+          @JsonProperty("creationTimestamp") Instant createdAt, @JsonProperty("updateTimestamp") Instant updatedAt) {
         this.orderId = orderId;
         this.items = items;
         this.customer = customer;
@@ -142,6 +151,7 @@ public class Order extends AggregateRoot {
         }
 
         switch (status) {
+            case PREPARATION -> this.status = OrderStatus.CREATED;
             case PACKAGING -> this.status = OrderStatus.PREPARATION;
             case PICKUP -> this.status = OrderStatus.PACKAGING;
             case DELIVERY -> this.status = OrderStatus.PICKUP;
