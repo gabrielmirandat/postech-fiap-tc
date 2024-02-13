@@ -3,7 +3,7 @@ package com.gabriel.orders.adapter.driver.messaging;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.orders.core.application.event.*;
-import com.gabriel.orders.core.domain.port.MenuRepository;
+import com.gabriel.orders.core.application.usecase.UpdateMenuUseCase;
 import com.gabriel.orders.core.domain.port.MenuSubscriber;
 import io.cloudevents.CloudEvent;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,11 +17,11 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
 
     private final ObjectMapper mapper;
 
-    private final MenuRepository menuRepository;
+    private final UpdateMenuUseCase updateMenuUseCase;
 
-    public MenuKafkaSubscriber(ObjectMapper mapper, MenuRepository menuRepository) {
+    public MenuKafkaSubscriber(ObjectMapper mapper, UpdateMenuUseCase updateMenuUseCase) {
         this.mapper = mapper;
-        this.menuRepository = menuRepository;
+        this.updateMenuUseCase = updateMenuUseCase;
 
         this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -33,21 +33,21 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
         try {
             switch (cloudEvent.getType()) {
                 case "postech.menu.v1.product.created":
-                    addProduct(new MenuProductAddedEvent(
+                    listenProductAdded(new MenuProductAddedEvent(
                         CloudEventMapper.productFrom(mapper, cloudEvent),
                         timestamp));
                     break;
                 case "postech.menu.v1.product.deleted":
-                    deleteProduct(new MenuProductDeletedEvent(
+                    listenProductDeleted(new MenuProductDeletedEvent(
                         CloudEventMapper.productFrom(mapper, cloudEvent)));
                     break;
                 case "postech.menu.v1.ingredient.created":
-                    addExtra(new MenuExtraAddedEvent(
+                    listenExtraAdded(new MenuExtraAddedEvent(
                         CloudEventMapper.extraFrom(mapper, cloudEvent),
                         timestamp));
                     break;
                 case "postech.menu.v1.ingredient.deleted":
-                    deleteExtra(new MenuExtraDeletedEvent(
+                    listenExtraDeleted(new MenuExtraDeletedEvent(
                         CloudEventMapper.extraFrom(mapper, cloudEvent)));
                     break;
                 default:
@@ -61,26 +61,22 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
     }
 
     @Override
-    public void addProduct(MenuProductAddedEvent event) {
-        System.out.println("Produto adicionado: " + event);
-        menuRepository.addProduct(event.productAdded());
+    public void listenProductAdded(MenuProductAddedEvent event) {
+        updateMenuUseCase.handleProductAdded(event.productAdded());
     }
 
     @Override
-    public void deleteProduct(MenuProductDeletedEvent event) {
-        System.out.println("Produto deletado: " + event);
-        menuRepository.deleteProduct(event.productDeleted().getProductID());
+    public void listenProductDeleted(MenuProductDeletedEvent event) {
+        updateMenuUseCase.handleProductDeleted(event.productDeleted());
     }
 
     @Override
-    public void addExtra(MenuExtraAddedEvent event) {
-        System.out.println("Ingrediente adicionado: " + event);
-        menuRepository.addExtra(event.extraAdded());
+    public void listenExtraAdded(MenuExtraAddedEvent event) {
+        updateMenuUseCase.handleExtraAdded(event.extraAdded());
     }
 
     @Override
-    public void deleteExtra(MenuExtraDeletedEvent event) {
-        System.out.println("Ingrediente deletado: " + event);
-        menuRepository.deleteExtra(event.extraDeleted().getIngredientID());
+    public void listenExtraDeleted(MenuExtraDeletedEvent event) {
+        updateMenuUseCase.handleExtraDeleted(event.extraDeleted());
     }
 }

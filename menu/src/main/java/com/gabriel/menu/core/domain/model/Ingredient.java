@@ -1,5 +1,7 @@
 package com.gabriel.menu.core.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.domain.model.Name;
@@ -43,8 +45,14 @@ public class Ingredient extends Menu {
         this.isExtra = isExtra;
     }
 
-    private Ingredient(IngredientID ingredientID, Name name, Category category, Price price,
-                       Weight weight, boolean isExtra, Instant createdAt, Instant updatedAt) {
+    /**
+     * Constructor for Jackson deserialization.
+     */
+    @JsonCreator
+    Ingredient(@JsonProperty("menuId") IngredientID ingredientID, @JsonProperty("name") Name name,
+               @JsonProperty("category") Category category, @JsonProperty("price") Price price,
+               @JsonProperty("weight") Weight weight, @JsonProperty("extra") boolean isExtra,
+               @JsonProperty("createdAt") Instant createdAt, @JsonProperty("updatedAt") Instant updatedAt) {
         this.ingredientID = ingredientID;
         this.name = name;
         this.category = category;
