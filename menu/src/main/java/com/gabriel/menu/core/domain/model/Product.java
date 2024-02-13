@@ -1,5 +1,7 @@
 package com.gabriel.menu.core.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.application.exception.ApplicationError;
@@ -47,9 +49,15 @@ public class Product extends Menu {
         validateIngredients(ingredients, allIngredients);
     }
 
-    private Product(ProductID productID, Name name, Price price, Category category,
-                    Description description, Image image, List<IngredientID> ingredients,
-                    Instant createdAt, Instant updatedAt) {
+    /**
+     * Constructor for Jackson deserialization.
+     */
+    @JsonCreator
+    Product(@JsonProperty("menuId") ProductID productID, @JsonProperty("name") Name name,
+            @JsonProperty("price") Price price, @JsonProperty("category") Category category,
+            @JsonProperty("description") Description description, @JsonProperty("image") Image image,
+            @JsonProperty("ingredients") List<IngredientID> ingredients,
+            @JsonProperty("createdAt") Instant createdAt, @JsonProperty("updatedAt") Instant updatedAt) {
         this.productID = productID;
         this.name = name;
         this.price = price;

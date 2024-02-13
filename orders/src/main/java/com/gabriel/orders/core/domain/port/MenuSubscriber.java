@@ -7,11 +7,11 @@ import com.gabriel.orders.core.application.event.MenuProductDeletedEvent;
 
 public interface MenuSubscriber {
 
-    void addProduct(MenuProductAddedEvent event);
+    void listenProductAdded(MenuProductAddedEvent event);
 
-    void deleteProduct(MenuProductDeletedEvent event);
+    void listenProductDeleted(MenuProductDeletedEvent event);
 
-    void addExtra(MenuExtraAddedEvent event);
+    void listenExtraAdded(MenuExtraAddedEvent event);
 
-    void deleteExtra(MenuExtraDeletedEvent event);
+    void listenExtraDeleted(MenuExtraDeletedEvent event);
 }
