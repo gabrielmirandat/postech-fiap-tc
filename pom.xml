@@ -40,11 +40,23 @@
         <mapper.version>2.4.4</mapper.version>
         <cloudevents.version>2.5.0</cloudevents.version>
         <opentelemetry.version>1.32.0</opentelemetry.version>
+        <testcontainer.version>1.19.5</testcontainer.version>
         <openapi.generator.skip>true</openapi.generator.skip>
     </properties>
 
-    <dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainer.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
+    <dependencies>
         <!-- LOMBOK -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -110,6 +122,11 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
