@@ -1,5 +1,8 @@
 package com.gabriel.core.application.exception;
 
+import lombok.Getter;
+
+@Getter
 public enum ApplicationError {
 
     APP_OO1("APP_OO1 - DATABASE WRITE VALIDATION EXCEPTION"),

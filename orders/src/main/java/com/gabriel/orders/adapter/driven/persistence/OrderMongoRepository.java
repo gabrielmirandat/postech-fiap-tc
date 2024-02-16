@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Repository
@@ -88,7 +89,7 @@ public class OrderMongoRepository implements OrderRepository {
                 .append("price", order.getPrice().getValue())
                 .append("ticketId", order.getTicketId())
                 .append("status", order.getStatus().toString())
-                .append("customer", order.getCustomer().getId())
+                .append("customer", Objects.nonNull(order.getCustomer()) ? order.getCustomer().getId() : null)
                 .append("creationTimestamp", order.getCreationTimestamp().toString())
                 .append("updateTimestamp", order.getUpdateTimestamp().toString());
             return doc;
@@ -99,7 +100,7 @@ public class OrderMongoRepository implements OrderRepository {
             List<OrderItem> items = ((List<Document>) doc.get("items")).stream()
                 .map(OrderConverter::documentToOrderItem)
                 .collect(Collectors.toList());
-            CPF customer = new CPF(doc.getString("customer"));
+            CPF customer = Objects.nonNull(doc.getString("customer")) ? new CPF(doc.getString("customer")) : null;
             Address shippingAddress = documentToAddress((Document) doc.get("shippingAddress"));
             Notification notification = documentToNotification((Document) doc.get("notification"));
             Price price = new Price(doc.getDouble("price"));

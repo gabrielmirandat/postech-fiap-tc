@@ -1,55 +1,76 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
 import com.gabriel.adapter.api.exceptions.NotFound;
-import com.gabriel.orders.adapter.TestContainersBase;
+import com.gabriel.core.application.exception.ApplicationError;
+import com.gabriel.core.application.exception.ApplicationException;
+import com.gabriel.orders.adapter.container.MongoDBTestContainer;
 import com.gabriel.orders.core.OrderMock;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
 import com.gabriel.orders.core.domain.port.OrderSearchParameters;
-import org.junit.jupiter.api.AfterEach;
+import com.gabriel.orders.infra.mongodb.MongoDbConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DataMongoTest
-@Import(OrderMongoRepository.class)
-public class OrderMongoRepositoryTest extends TestContainersBase {
+@Import({OrderMongoRepository.class, MongoDbConfig.class})
+@ContextConfiguration(classes = MongoDBTestContainer.class)
+public class OrderMongoRepositoryTest {
 
     @Autowired
     private OrderMongoRepository orderRepository;
+    private Order basicOrder;
+    private Order fullOrder;
 
-    private Order sampleOrder;
-
-    private Order otherSampleOrder;
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry registry) {
+        MongoDBTestContainer.mongoProperties(registry);
+    }
 
     @BeforeEach
     void setup() {
-        sampleOrder = OrderMock.generateBasic();
-        otherSampleOrder = OrderMock.generateFull();
-    }
-
-    @AfterEach
-    void cleanUp() {
+        basicOrder = OrderMock.generateBasic();
+        fullOrder = OrderMock.generateFull();
     }
 
     @Test
-    void testSaveOrder() {
-        Order savedOrder = orderRepository.saveOrder(sampleOrder);
+    void testSaveBasicRequiredFieldsOrder() {
+        Order savedOrder = orderRepository.saveOrder(basicOrder);
         assertThat(savedOrder).isNotNull();
     }
 
     @Test
+    void testSaveFullOptionalFieldsOrder() {
+        Order savedOrder = orderRepository.saveOrder(fullOrder);
+        assertThat(savedOrder).isNotNull();
+    }
+
+    @Test
+    void testSaveOrderRestrictionById() {
+        orderRepository.saveOrder(basicOrder);
+
+        ApplicationException thrown = assertThrows(ApplicationException.class, () -> {
+            orderRepository.saveOrder(basicOrder);
+        }, "Expected saveOrder to throw, but it didn't");
+
+        assertEquals(ApplicationError.APP_OO1.getMessage(), thrown.getType(), "The exception error does not match the expected value");
+    }
+
+    @Test
     void testUpdateOrder() {
-        Order savedOrder = orderRepository.saveOrder(sampleOrder);
+        Order savedOrder = orderRepository.saveOrder(basicOrder);
         savedOrder.promote(OrderStatus.PREPARATION);
         orderRepository.updateOrder(savedOrder);
 
@@ -59,10 +80,10 @@ public class OrderMongoRepositoryTest extends TestContainersBase {
 
     @Test
     void testGetByTicket() {
-        orderRepository.saveOrder(sampleOrder);
-        Order foundOrder = orderRepository.getByTicket(sampleOrder.getTicketId());
+        orderRepository.saveOrder(basicOrder);
+        Order foundOrder = orderRepository.getByTicket(basicOrder.getTicketId());
         assertThat(foundOrder).isNotNull();
-        assertThat(foundOrder.getTicketId()).isEqualTo(sampleOrder.getTicketId());
+        assertThat(foundOrder.getTicketId()).isEqualTo(basicOrder.getTicketId());
     }
 
     @Test
@@ -74,7 +95,7 @@ public class OrderMongoRepositoryTest extends TestContainersBase {
 
     @Test
     void testSearchByStatus() {
-        orderRepository.saveOrder(sampleOrder);
+        orderRepository.saveOrder(basicOrder);
         List<Order> foundOrders = orderRepository.searchBy(new OrderSearchParameters(OrderStatus.CREATED));
 
         assertThat(foundOrders).isNotEmpty();
