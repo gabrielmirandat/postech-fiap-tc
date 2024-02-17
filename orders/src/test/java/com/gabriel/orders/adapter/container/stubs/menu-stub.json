@@ -1,0 +1,23 @@
+{
+  "service": "MenuService",
+  "method": "RetrieveMenu",
+  "input": {},
+  "output": {
+    "items": [
+      {
+        "id": "fabe70b1-INGR-2024-02-12",
+        "name": "Costela",
+        "price": 1.99,
+        "category": "burger",
+        "lastUpdated": "2022-01-01T12:00:00Z"
+      },
+      {
+        "id": "5ed5dad3-PRDC-2024-02-12",
+        "name": "Cheese Burger",
+        "price": 10.99,
+        "category": "burger",
+        "lastUpdated": "2022-01-02T12:00:00Z"
+      }
+    ]
+  }
+}
