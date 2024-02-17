@@ -25,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataMongoTest
-@Import({OrderMongoRepository.class, MongoDbConfig.class})
-@ContextConfiguration(classes = MongoDBTestContainer.class)
+@Import({MongoDbConfig.class})
+@ContextConfiguration(classes = {OrderMongoRepository.class, MongoDBTestContainer.class})
 public class OrderMongoRepositoryTest {
 
     @Autowired

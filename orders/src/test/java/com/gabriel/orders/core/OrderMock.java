@@ -1,14 +1,12 @@
 package com.gabriel.orders.core;
 
-import com.gabriel.core.domain.model.Address;
-import com.gabriel.core.domain.model.CPF;
-import com.gabriel.core.domain.model.Notification;
-import com.gabriel.core.domain.model.NotificationType;
+import com.gabriel.core.domain.model.*;
 import com.gabriel.core.domain.model.id.IngredientID;
 import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.domain.model.*;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -45,12 +43,14 @@ public class OrderMock {
 
     public static Extra generateExtra() {
         IngredientID ingredientID = new IngredientID("11111111-INGR-1111-11-11");
-        return new Extra(ingredientID, generateRandomString(), 2.0);
+        return new Extra(ingredientID, new Name(generateRandomString()),
+            new Price(2.0), Instant.now());
     }
 
     public static Product generateProduct() {
         ProductID productID = new ProductID("11111111-PRDC-1111-11-11");
-        return new Product(productID, generateRandomString(), 10.0);
+        return new Product(productID, new Name(generateRandomString()),
+            new Price(10.0), Instant.now());
     }
 
     public static String generateRandomString() {

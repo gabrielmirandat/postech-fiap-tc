@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @EnableCaching
@@ -21,13 +22,7 @@ public class RedisConfig {
     public RedisTemplate<String, byte[]> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, byte[]> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
-
-//        // Set the default serializer for string keys
-//        template.setKeySerializer(new StringRedisSerializer());
-//
-//        // Use ByteArrayRedisSerializer for byte[] values
-//        template.setValueSerializer(new ByteArrayRedisSerializer());
-
+        template.setKeySerializer(new StringRedisSerializer());
         return template;
     }
 
