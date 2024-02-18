@@ -23,7 +23,7 @@ public class MenuGrpcController extends MenuGrpc.MenuImplBase {
     @Blocking
     public void retrieveMenu(com.gabriel.specs.menu.MenuRequest request,
                              io.grpc.stub.StreamObserver<com.gabriel.specs.menu.MenuResponse> responseObserver) {
-        List<Menu> menu = !request.getCategory().isEmpty()
+        List<Menu> menu = !request.getCategory().isEmpty() && !request.getCategory().equals("all")
             ? menuUseCase.searchMenuByCategory(
             new SearchMenuQuery(Category.valueOf(request.getCategory().toUpperCase())))
             : menuUseCase.searchMenu();

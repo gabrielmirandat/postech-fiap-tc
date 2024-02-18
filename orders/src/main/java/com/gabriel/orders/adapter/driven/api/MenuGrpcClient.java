@@ -23,9 +23,9 @@ public class MenuGrpcClient {
         System.out.println("Starting grpc client");
 
         MenuGrpc.MenuBlockingStub stub = MenuGrpc.newBlockingStub(managedMenuChannel);
-        MenuRequest request = MenuRequest.newBuilder().build();
+        MenuRequest request = MenuRequest.newBuilder().setCategory("all").build();
         MenuResponse response = stub.retrieveMenu(request);
         setupMenuUseCase.setupData(response);
-        managedMenuChannel.shutdownNow();
+        // managedMenuChannel.shutdownNow();
     }
 }
