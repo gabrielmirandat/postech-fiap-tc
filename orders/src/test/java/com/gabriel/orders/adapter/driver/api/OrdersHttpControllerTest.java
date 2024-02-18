@@ -11,6 +11,7 @@ import com.gabriel.orders.infra.mongodb.MongoDbConfig;
 import com.gabriel.orders.infra.redis.RedisConfig;
 import com.gabriel.orders.infra.serializer.SerializerConfig;
 import in.specmatic.test.SpecmaticJUnitSupport;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +34,18 @@ public class OrdersHttpControllerTest extends SpecmaticJUnitSupport {
     @LocalServerPort
     private int port; // Injects the port the server is running on
 
+    @BeforeAll
+    public static void setup() {
+        KafkaTestContainer.startContainer();
+        File apiContract = new File("src/main/resources/oas/orders-api.yaml");
+        System.setProperty("contractPaths", apiContract.getAbsolutePath());
+    }
+
+    @AfterAll
+    public static void stop() {
+        KafkaTestContainer.stopContainer();
+    }
+
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
         MongoDBTestContainer.mongoProperties(registry);
@@ -40,13 +53,7 @@ public class OrdersHttpControllerTest extends SpecmaticJUnitSupport {
         RedisTestContainer.redisProperties(registry);
         KafkaTestContainer.kafkaProperties(registry);
     }
-
-    @BeforeAll
-    public static void setUp() {
-        File apiContract = new File("src/main/resources/oas/orders-api.yaml");
-        System.setProperty("contractPaths", apiContract.getAbsolutePath());
-    }
-
+    
     @BeforeEach
     public void initialize() {
         // Now using the dynamically assigned port
