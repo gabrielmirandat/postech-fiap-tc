@@ -11,6 +11,8 @@ import com.gabriel.orders.infra.kafka.KafkaConfig;
 import com.gabriel.orders.infra.serializer.SerializerConfig;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -29,10 +31,11 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.timeout;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
@@ -46,6 +49,8 @@ public class MenuKafkaSubscriberTest {
     private KafkaTemplate<String, CloudEvent> kafkaTemplate;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private MenuKafkaSubscriber menuKafkaSubscriber;
     @MockBean
     private MenuRepository menuRepository; // Mocking the repository instead of the use case
     @Captor
@@ -53,9 +58,21 @@ public class MenuKafkaSubscriberTest {
     @Captor
     private ArgumentCaptor<Extra> extraCaptor;
 
+    private CountDownLatch countDownLatch;
+
     private Product product;
 
     private Extra extra;
+
+    @BeforeAll
+    public static void startContainer() {
+        KafkaTestContainer.startContainer();
+    }
+
+    @AfterAll
+    public static void stopContainer() {
+        KafkaTestContainer.stopContainer();
+    }
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
@@ -66,6 +83,8 @@ public class MenuKafkaSubscriberTest {
     void setup() {
         product = OrderMock.generateProduct();
         extra = OrderMock.generateExtra();
+        countDownLatch = new CountDownLatch(1);
+        menuKafkaSubscriber.setCountDownLatch(countDownLatch);
     }
 
     @Test
@@ -83,8 +102,9 @@ public class MenuKafkaSubscriberTest {
 
         kafkaTemplate.send("menu", cloudEvent);
 
-        // Use verify with timeout to wait for event processed
-        verify(updateMenuUseCase, timeout(10000)).handleProductAdded(any(Product.class));
+        // Wait for the listener to process the message
+        assertTrue(countDownLatch.await(20, TimeUnit.SECONDS),
+            "Listener did not process the message in time");
 
         // Capture and assert the response passed to setupMenuUseCase
         verify(updateMenuUseCase).handleProductAdded(productCaptor.capture());
@@ -114,8 +134,9 @@ public class MenuKafkaSubscriberTest {
 
         kafkaTemplate.send("menu", cloudEvent);
 
-        // Use verify with timeout to wait for event processed
-        verify(updateMenuUseCase, timeout(10000)).handleProductDeleted(any(Product.class));
+        // Wait for the listener to process the message
+        assertTrue(countDownLatch.await(20, TimeUnit.SECONDS),
+            "Listener did not process the message in time");
 
         verify(updateMenuUseCase).handleProductDeleted(productCaptor.capture());
         Product deletedProduct = productCaptor.getValue();
@@ -139,8 +160,9 @@ public class MenuKafkaSubscriberTest {
 
         kafkaTemplate.send("menu", cloudEvent);
 
-        // Use verify with timeout to wait for event processed
-        verify(updateMenuUseCase, timeout(10000)).handleExtraAdded(any(Extra.class));
+        // Wait for the listener to process the message
+        assertTrue(countDownLatch.await(20, TimeUnit.SECONDS),
+            "Listener did not process the message in time");
 
         verify(updateMenuUseCase).handleExtraAdded(extraCaptor.capture());
         Extra addedExtra = extraCaptor.getValue();
@@ -164,8 +186,9 @@ public class MenuKafkaSubscriberTest {
 
         kafkaTemplate.send("menu", cloudEvent);
 
-        // Use verify with timeout to wait for event processed
-        verify(updateMenuUseCase, timeout(10000)).handleExtraDeleted(any(Extra.class));
+        // Wait for the listener to process the message
+        assertTrue(countDownLatch.await(20, TimeUnit.SECONDS),
+            "Listener did not process the message in time");
 
         verify(updateMenuUseCase).handleExtraDeleted(extraCaptor.capture());
         Extra deletedExtra = extraCaptor.getValue();

@@ -6,11 +6,14 @@ import com.gabriel.orders.core.application.event.*;
 import com.gabriel.orders.core.application.usecase.UpdateMenuUseCase;
 import com.gabriel.orders.core.domain.port.MenuSubscriber;
 import io.cloudevents.CloudEvent;
+import lombok.Setter;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CountDownLatch;
 
 @Service
 public class MenuKafkaSubscriber implements MenuSubscriber {
@@ -18,6 +21,9 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
     private final ObjectMapper mapper;
 
     private final UpdateMenuUseCase updateMenuUseCase;
+
+    @Setter
+    private CountDownLatch countDownLatch;
 
     public MenuKafkaSubscriber(ObjectMapper mapper, UpdateMenuUseCase updateMenuUseCase) {
         this.mapper = mapper;
@@ -57,6 +63,10 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
             // TODO: deadletters
             System.out.println("Erro ao  " +
                 "processar evento: " + ex.getMessage());
+        }
+
+        if (countDownLatch != null) {
+            countDownLatch.countDown();
         }
     }
 

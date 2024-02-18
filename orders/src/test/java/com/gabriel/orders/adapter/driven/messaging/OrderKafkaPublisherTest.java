@@ -10,6 +10,8 @@ import com.gabriel.orders.infra.serializer.SerializerConfig;
 import io.cloudevents.CloudEvent;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,16 @@ public class OrderKafkaPublisherTest {
     @Autowired
     private ObjectMapper objectMapper;
     private Order order;
+
+    @BeforeAll
+    public static void startContainer() {
+        KafkaTestContainer.startContainer();
+    }
+
+    @AfterAll
+    public static void stopContainer() {
+        KafkaTestContainer.stopContainer();
+    }
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
