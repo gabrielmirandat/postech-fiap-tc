@@ -16,8 +16,8 @@ public class GrpcServerTestContainer {
     private static final GenericContainer GRPC_CONTAINER;
 
     static {
-        GRPC_CONTAINER = new GenericContainer<>("tkpd/gripmock:v1.11-beta")
-            .withExposedPorts(4770) // Default gRPC port for GripMock
+        GRPC_CONTAINER = new GenericContainer<>("gabrielmirandat/gripmock:latest")
+            .withExposedPorts(4770, 4771) // Default gRPC port for GripMock
             .withCopyFileToContainer(
                 MountableFile.forHostPath(PROJECT_ROOT + PROTO_RELATIVE_PATH), "/proto")
             .withCopyFileToContainer(
@@ -33,6 +33,6 @@ public class GrpcServerTestContainer {
     @DynamicPropertySource
     public static void grpcProperties(DynamicPropertyRegistry registry) {
         registry.add("grpc.menu.server.host", GRPC_CONTAINER::getHost);
-        registry.add("grpc.menu.server.port", GRPC_CONTAINER::getFirstMappedPort);
+        registry.add("grpc.menu.server.port", () -> GRPC_CONTAINER.getMappedPort(4770));
     }
 }
