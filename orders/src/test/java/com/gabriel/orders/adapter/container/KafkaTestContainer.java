@@ -23,7 +23,7 @@ public class KafkaTestContainer {
     @DynamicPropertySource
     public static void kafkaProperties(DynamicPropertyRegistry registry) {
         registry.add("kafka.domain.topic", () -> "orders");
-        registry.add("kafka.group.id", () -> "orders-group");
+        registry.add("kafka.group.id", () -> "orders-group-id");
         registry.add("kafka.server.url", KAFKA_CONTAINER::getBootstrapServers);
     }
 }
