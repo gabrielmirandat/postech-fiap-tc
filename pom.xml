@@ -41,7 +41,7 @@
         <cloudevents.version>2.5.0</cloudevents.version>
         <opentelemetry.version>1.32.0</opentelemetry.version>
         <testcontainer.version>1.19.5</testcontainer.version>
-        <openapi.generator.skip>true</openapi.generator.skip>
+        <openapi.generator.skip>false</openapi.generator.skip>
     </properties>
 
     <dependencyManagement>
