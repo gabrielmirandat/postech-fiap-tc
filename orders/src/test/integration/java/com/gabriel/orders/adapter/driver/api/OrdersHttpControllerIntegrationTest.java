@@ -1,63 +1,107 @@
 package com.gabriel.orders.adapter.driver.api;
 
-import com.gabriel.orders.OrdersApplication;
-import com.gabriel.orders.adapter.container.GrpcServerTestContainer;
-import com.gabriel.orders.adapter.container.KafkaTestContainer;
-import com.gabriel.orders.adapter.container.MongoDBTestContainer;
-import com.gabriel.orders.adapter.container.RedisTestContainer;
-import com.gabriel.orders.infra.grpc.GrpcClientConfig;
-import com.gabriel.orders.infra.kafka.KafkaConfig;
-import com.gabriel.orders.infra.mongodb.MongoDbConfig;
-import com.gabriel.orders.infra.redis.RedisConfig;
-import com.gabriel.orders.infra.serializer.SerializerConfig;
-import in.specmatic.test.SpecmaticJUnitSupport;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.orders.core.OrderMock;
+import com.gabriel.orders.core.application.command.CreateOrderCommand;
+import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
+import com.gabriel.orders.core.application.usecase.ProcessOrderUseCase;
+import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
+import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
+import com.gabriel.orders.core.domain.model.Order;
+import com.gabriel.specs.orders.models.OrderItemRequest;
+import com.gabriel.specs.orders.models.OrderRequest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // This will start the server on a random port
-@Import({MongoDbConfig.class, GrpcClientConfig.class, RedisConfig.class, KafkaConfig.class, SerializerConfig.class})
-@ContextConfiguration(classes =
-    {OrdersApplication.class, MongoDBTestContainer.class, GrpcServerTestContainer.class, RedisTestContainer.class, KafkaTestContainer.class}
-)
-public class OrdersHttpControllerIntegrationTest extends SpecmaticJUnitSupport {
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-    @LocalServerPort
-    private int port; // Injects the port the server is running on
+@WebMvcTest(OrdersHttpController.class)
+public class OrdersHttpControllerIntegrationTest {
 
-    @BeforeAll
-    public static void setup() {
-        KafkaTestContainer.startContainer();
-        File apiContract = new File("src/main/resources/oas/orders-api.yaml");
-        System.setProperty("contractPaths", apiContract.getAbsolutePath());
+    private final ObjectMapper objectMapper = objectMapper();
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private CreateOrderUseCase createOrderUseCase;
+
+    @MockBean
+    private RetrieveOrderUseCase retrieveOrderUseCase;
+
+    @MockBean
+    private ProcessOrderUseCase processOrderUseCase;
+
+    @MockBean
+    private SearchOrderUseCase searchOrderUseCase;
+
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 
-    @AfterAll
-    public static void stop() {
-        KafkaTestContainer.stopContainer();
+    @Test
+    public void whenPostRequestToAddOrder_thenCorrectResponse() throws Exception {
+        OrderRequest orderRequest = new OrderRequest()
+            .addItemsItem(new OrderItemRequest()
+                .productId(new ProductID().getId())
+                .extras(new ArrayList<>())
+                .quantity(1));
+
+        when(createOrderUseCase.createOrder(any(CreateOrderCommand.class)))
+            .thenReturn(OrderMock.generateBasic());
+
+        mockMvc.perform(post("/orders")
+                .content(objectMapper.writeValueAsString(orderRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.ticketId").exists());
     }
 
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
-        MongoDBTestContainer.mongoProperties(registry);
-        GrpcServerTestContainer.grpcProperties(registry);
-        RedisTestContainer.redisProperties(registry);
-        KafkaTestContainer.kafkaProperties(registry);
+    @Test
+    public void whenGetRequestToOrderById_thenCorrectResponse() throws Exception {
+        Order order = OrderMock.generateBasic();
+        when(retrieveOrderUseCase.getByTicketId(any()))
+            .thenReturn(order);
+
+        mockMvc.perform(get("/orders/{orderId}", order.getTicketId())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.ticketId").value(order.getTicketId()));
     }
 
-    @BeforeEach
-    public void initialize() {
-        // Now using the dynamically assigned port
-        System.setProperty("host", "localhost");
-        System.setProperty("port", String.valueOf(port));
+    @Test
+    public void whenPostRequestToChangeOrderStatus_thenCorrectResponse() throws Exception {
+        doNothing().when(processOrderUseCase).processOrder(any());
+
+        mockMvc.perform(post("/orders/{orderId}/status/{status}",
+                "123", "PREPARATION")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNoContent());
     }
+
+    @Test
+    public void whenGetRequestToFindOrdersByStatus_thenCorrectResponse() throws Exception {
+        Order order = OrderMock.generateBasic();
+        when(searchOrderUseCase.searchBy(any()))
+            .thenReturn(List.of(order));
+
+        mockMvc.perform(get("/orders")
+                .param("category", "burger"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].ticketId").value(order.getTicketId()));
+    }
+
 }
