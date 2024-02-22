@@ -4,7 +4,6 @@ import com.gabriel.adapter.api.exceptions.NotFound;
 import com.gabriel.orders.adapter.driven.persistence.mapper.MongoMapper;
 import com.gabriel.orders.core.OrderMock;
 import com.gabriel.orders.core.domain.model.Order;
-import com.gabriel.orders.core.domain.model.OrderStatus;
 import com.gabriel.orders.core.domain.port.OrderSearchParameters;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -18,7 +17,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,7 +34,7 @@ public class OrderMongoRepositoryTest {
     private UpdateResult updateResult;
 
     @Mock
-    private FindIterable<Bson> iterableMock;
+    private FindIterable<Document> findIterable;
 
     @Captor
     private ArgumentCaptor<Document> documentCaptor;
@@ -79,9 +80,8 @@ public class OrderMongoRepositoryTest {
 
     @Test
     public void getByTicket_NotFound_ThrowsNotFound() {
-        lenient().when(mongoCollection.find((Class<Bson>) any()))
-            .thenReturn(iterableMock);
-        when(iterableMock.first()).thenReturn(null);
+        when(mongoCollection.find(any(Bson.class))).thenReturn(findIterable);
+        when(findIterable.first()).thenReturn(null);
         assertThrows(NotFound.class, () -> repository.getByTicket("ticket123"));
     }
 
@@ -90,8 +90,8 @@ public class OrderMongoRepositoryTest {
         Order order = OrderMock.generateBasic();
         Document document = MongoMapper.orderToDocument(order);
 
-        when(mongoCollection.find((Class<Bson>) any())).thenReturn(iterableMock);
-        when(iterableMock.first()).thenReturn(document);
+        when(mongoCollection.find(any(Bson.class))).thenReturn(findIterable);
+        when(findIterable.first()).thenReturn(document);
 
         Order retrievedOrder = repository.getByTicket("ticket123");
         assertNotNull(retrievedOrder);
@@ -100,17 +100,37 @@ public class OrderMongoRepositoryTest {
 
     @Test
     public void searchBy_WithStatus_FindsOrders() {
-        // Mock the behavior of `mongoCollection.find()` to return a cursor-like structure that you iterate over
-        // This could be a mock of `FindIterable<Document>` and `MongoCursor<Document>`
-        // Use `when(...).thenReturn(...)` to simulate the database returning documents
-        // Then, verify that `searchBy` correctly transforms these documents into `Order` objects
+        // Mock orders
+        Order order1 = OrderMock.generateBasic(); // Assume this sets a specific status
+        Order order2 = OrderMock.generateBasic();
+        // Assume MongoMapper can convert documents to orders correctly
+        Document doc1 = MongoMapper.orderToDocument(order1);
+        Document doc2 = MongoMapper.orderToDocument(order2);
+        List<Document> documents = Arrays.asList(doc1, doc2);
 
-        List<Document> documents = List.of(new Document(), new Document()); // Populate these documents as needed
-        // Mock the find and forEach behavior here
+        // Mock the behavior of the findIterable to simulate database operation
+        when(mongoCollection.find(any(Bson.class))).thenReturn(findIterable);
+        // Use thenAnswer to simulate forEach operation on findIterable
+        doAnswer(invocation -> {
+            Consumer<Document> consumer = invocation.getArgument(0);
+            documents.forEach(consumer);
+            return null;
+        }).when(findIterable).forEach(any(Consumer.class));
 
-        OrderSearchParameters parameters = new OrderSearchParameters(OrderStatus.DELIVERY); // Set up parameters as needed
-        List<Order> orders = repository.searchBy(parameters);
-        assertFalse(orders.isEmpty());
-        // Additional assertions as needed
+        // Create search parameters with the specific status you're testing
+        OrderSearchParameters parameters = new OrderSearchParameters(order1.getStatus());
+
+        // Execute the search
+        List<Order> foundOrders = repository.searchBy(parameters);
+
+        // Assertions
+        assertNotNull(foundOrders);
+        assertEquals(2, foundOrders.size());
+        assertTrue(foundOrders.stream().allMatch(order -> order.getStatus().equals(order1.getStatus())));
+
+        // Optionally, verify interactions
+        verify(findIterable).forEach(any(Consumer.class));
     }
+
+
 }
