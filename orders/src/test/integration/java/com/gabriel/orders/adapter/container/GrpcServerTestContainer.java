@@ -11,7 +11,7 @@ public class GrpcServerTestContainer {
 
     private static final String PROJECT_ROOT = System.getProperty("user.dir");
     private static final String PROTO_RELATIVE_PATH = "/../core/src/main/java/com/gabriel/specs/menu";
-    private static final String STUB_RELATIVE_PATH = "/src/test/java/com/gabriel/orders/adapter/container/stubs";
+    private static final String STUB_RELATIVE_PATH = "/src/test/integration/java/com/gabriel/orders/adapter/container/stubs";
 
     private static final GenericContainer GRPC_CONTAINER;
 
