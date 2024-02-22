@@ -41,7 +41,7 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 @Import({KafkaConfig.class, SerializerConfig.class})
 @ContextConfiguration(classes = {MenuKafkaSubscriber.class, KafkaTestContainer.class})
-public class MenuKafkaSubscriberTest {
+public class MenuKafkaSubscriberIntegrationTest {
 
     @SpyBean
     UpdateMenuUseCase updateMenuUseCase;

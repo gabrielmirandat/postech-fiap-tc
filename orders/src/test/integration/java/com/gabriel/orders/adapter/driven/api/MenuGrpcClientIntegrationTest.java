@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 @SpringBootTest
 @Import({GrpcClientConfig.class})
 @ContextConfiguration(classes = {MenuGrpcClient.class, GrpcServerTestContainer.class})
-public class MenuGrpcClientTest {
+public class MenuGrpcClientIntegrationTest {
 
     @Autowired
     ManagedChannel managedMenuChannel;
