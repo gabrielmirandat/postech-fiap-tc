@@ -29,7 +29,7 @@ import java.io.File;
 @ContextConfiguration(classes =
     {OrdersApplication.class, MongoDBTestContainer.class, GrpcServerTestContainer.class, RedisTestContainer.class, KafkaTestContainer.class}
 )
-public class OrdersHttpControllerTest extends SpecmaticJUnitSupport {
+public class OrdersHttpControllerIntegrationTest extends SpecmaticJUnitSupport {
 
     @LocalServerPort
     private int port; // Injects the port the server is running on
@@ -53,7 +53,7 @@ public class OrdersHttpControllerTest extends SpecmaticJUnitSupport {
         RedisTestContainer.redisProperties(registry);
         KafkaTestContainer.kafkaProperties(registry);
     }
-    
+
     @BeforeEach
     public void initialize() {
         // Now using the dynamically assigned port

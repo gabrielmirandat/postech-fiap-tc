@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Import({RedisConfig.class, SerializerConfig.class})
 @ContextConfiguration(classes = {MenuRedisRepository.class, RedisTestContainer.class})
-public class MenuRedisRepositoryTest {
+public class MenuRedisRepositoryIntegrationTest {
 
     @Autowired
     private MenuRedisRepository menuRepository;

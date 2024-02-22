@@ -1,7 +1,8 @@
-package com.gabriel.orders.adapter.driven.messaging;
+package com.gabriel.orders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.orders.adapter.container.KafkaTestContainer;
+import com.gabriel.orders.adapter.driven.messaging.OrderKafkaPublisher;
 import com.gabriel.orders.core.OrderMock;
 import com.gabriel.orders.core.domain.event.OrderCreatedEvent;
 import com.gabriel.orders.core.domain.model.Order;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @Import({KafkaConfig.class, SerializerConfig.class})
 @ContextConfiguration(classes = {OrderKafkaPublisher.class, KafkaTestContainer.class})
-public class OrderKafkaPublisherTest {
+public class OrderAsyncApiContractTest {
 
     @Autowired
     ConsumerFactory<String, CloudEvent> consumerFactory;
