@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DataMongoTest
 @Import({MongoDbConfig.class})
 @ContextConfiguration(classes = {OrderMongoRepository.class, MongoDBTestContainer.class})
-public class OrderMongoRepositoryTest {
+public class OrderMongoRepositoryIntegrationTest {
 
     @Autowired
     private OrderMongoRepository orderRepository;
