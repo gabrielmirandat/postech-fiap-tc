@@ -107,7 +107,7 @@ public class OrderMapper {
 
         OrderResponse response = new OrderResponse(order.getOrderId().getId(), order.getTicketId(),
             OrderStatusDTO.fromValue(order.getStatus().toString().toLowerCase()),
-            BigDecimal.valueOf(order.getPrice().getValue()), responseOrderItems);
+            Double.valueOf(order.getPrice().getValue()), responseOrderItems);
 
         if (order.getCustomer() != null) {
             response.setCustomer(new CustomerDTO(order.getCustomer().getId()));
