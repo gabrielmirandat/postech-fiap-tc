@@ -44,17 +44,78 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/OrderResponse'
+                example:
+                  SUCCESS_SEARCH_ORDER_RESPONSE:
+                    value:
+                      - id: "12345678-ORDR-1009-20-08"
+                        ticketId: "12345678"
+                        status: "created"
+                        price: 20.50
+                        customer:
+                          cpf: "038.573.411-57"
+                        shippingAddress:
+                          street: "Vila Olivo"
+                          city: "Valinhos"
+                          state: "SP"
+                          zip: "13011-300"
+                        notification: "(19) 99644-3590"
+                        items:
+                          - itemId: "12345678-ORDI-1009-20-08"
+                            product:
+                              id: "12345678-PRDC-1009-20-08"
+                              name: "X-Burger"
+                              price: 10.90
+                            extras:
+                              - ingredient:
+                                  id: "12345678-INGR-1009-20-08"
+                                  name: "Costela meat"
+                                  price: 2.90
+                                quantity: 1
+
         '401':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Not Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                UNAUTHORIZED_RESPONSE:
+                  value:
+                    status: 401
+                    message: Unauthorized
         '403':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                FORBIDDEN_RESPONSE:
+                  value:
+                    status: 403
+                    message: Forbidden
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                BAD_REQUEST_RESPONSE:
+                  value:
+                    status: 400
+                    message: Bad Request
         '500':
-          $ref: '#/components/responses/ErrorResponse'
-    #      security:
-    #        - hydra:
-    #            - orders.read
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                INTERNAL_ERROR_RESPONSE:
+                  value:
+                    status: 500
+                    message: Internal Server Error
     post:
       tags:
         - orders
@@ -67,20 +128,22 @@ paths:
             schema:
               $ref: '#/components/schemas/OrderRequest'
             example:
-              customer:
-                cpf: "038.573.411-57"
-              shippingAddress:
-                street: "Vila Olivo"
-                city: "Valinhos"
-                state: "SP"
-                zip: "13011-300"
-              notification: "(19) 99644-3590"
-              items:
-                - productId: "12345678-PRDC-2018-10-10"
-                  extras:
-                    - ingredientId: "12345678-INGR-2018-10-10"
+              ORDER_REQUEST:
+                value:
+                  customer:
+                    cpf: "038.573.411-57"
+                  shippingAddress:
+                    street: "Vila Olivo"
+                    city: "Valinhos"
+                    state: "SP"
+                    zip: "13011-300"
+                  notification: "(19) 99644-3590"
+                  items:
+                    - productId: "12345678-PRDC-2018-10-10"
+                      extras:
+                        - ingredientId: "12345678-INGR-2018-10-10"
+                          quantity: 2
                       quantity: 2
-                  quantity: 2
       responses:
         '201':
           description: Order created response
@@ -88,17 +151,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderCreated'
+              example:
+                SUCCESS_CREATED_ORDER_RESPONSE:
+                  value:
+                    ticketId: "12345678"
         '401':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Not Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                UNAUTHORIZED_RESPONSE:
+                  value:
+                    status: 401
+                    message: Unauthorized
         '403':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                FORBIDDEN_RESPONSE:
+                  value:
+                    status: 403
+                    message: Forbidden
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                BAD_REQUEST_RESPONSE:
+                  value:
+                    status: 400
+                    message: Bad Request
         '500':
-          $ref: '#/components/responses/ErrorResponse'
-  #      security:
-  #        - hydra:
-  #            - orders.write
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                INTERNAL_ERROR_RESPONSE:
+                  value:
+                    status: 500
+                    message: Internal Server Error
   /orders/{orderId}:
     get:
       tags:
@@ -120,19 +220,88 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderResponse'
+              example:
+                SUCCESS_CREATED_ORDER_RESPONSE:
+                  value:
+                    id: "12345678-ORDR-1009-20-08"
+                    ticketId: "12345678"
+                    status: "created"
+                    price: 20.50
+                    customer:
+                      cpf: "038.573.411-57"
+                    shippingAddress:
+                      street: "Vila Olivo"
+                      city: "Valinhos"
+                      state: "SP"
+                      zip: "13011-300"
+                    notification: "(19) 99644-3590"
+                    items:
+                      - itemId: "12345678-ORDI-1009-20-08"
+                        product:
+                          id: "12345678-PRDC-1009-20-08"
+                          name: "X-Burger"
+                          price: 10.90
+                        extras:
+                          - ingredient:
+                              id: "12345678-INGR-1009-20-08"
+                              name: "Costela meat"
+                              price: 2.90
+                            quantity: 1
         '401':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Not Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                UNAUTHORIZED_RESPONSE:
+                  value:
+                    status: 401
+                    message: Unauthorized
         '403':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                FORBIDDEN_RESPONSE:
+                  value:
+                    status: 403
+                    message: Forbidden
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                BAD_REQUEST_RESPONSE:
+                  value:
+                    status: 400
+                    message: Bad Request
         '404':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                NOT_FOUND_RESPONSE:
+                  value:
+                    status: 404
+                    message: Not Found
         '500':
-          $ref: '#/components/responses/ErrorResponse'
-  #      security:
-  #        - hydra:
-  #            - orders.read
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                INTERNAL_ERROR_RESPONSE:
+                  value:
+                    status: 500
+                    message: Internal Server Error
   /orders/{orderId}/status/{status}:
     post:
       tags:
@@ -158,19 +327,60 @@ paths:
         '204':
           description: Ok
         '401':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Not Authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                UNAUTHORIZED_RESPONSE:
+                  value:
+                    status: 401
+                    message: Unauthorized
         '403':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                FORBIDDEN_RESPONSE:
+                  value:
+                    status: 403
+                    message: Forbidden
         '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '412':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                BAD_REQUEST_RESPONSE:
+                  value:
+                    status: 400
+                    message: Bad Request
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                UNPROCESSABLE_ENTITY_RESPONSE:
+                  value:
+                    status: 422
+                    message: Unprocessable Entity
         '500':
-          $ref: '#/components/responses/ErrorResponse'
-#      security:
-#        - hydra:
-#            - orders.read
-#            - orders.write
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                INTERNAL_ERROR_RESPONSE:
+                  value:
+                    status: 500
+                    message: Internal Server Error
 
 components:
   schemas:
@@ -180,12 +390,17 @@ components:
       properties:
         street:
           type: string
+          maximum: 30
         city:
           type: string
+          maximum: 30
         state:
           type: string
+          minimum: 2
+          maximum: 2
         zip:
           type: string
+          pattern: '^[0-9]{5}-[0-9]{3}$'
     OrderStatusDTO:
       type: string
       description: Status of the order
@@ -205,6 +420,7 @@ components:
         cpf:
           type: string
           description: Customer identified CPF
+          pattern: '^\d{3}\.\d{3}\.\d{3}-\d{2}$'
     OrderExtraRequest:
       type: object
       required:
@@ -265,6 +481,8 @@ components:
         ticketId:
           type: string
           description: Generated ticketId for the Order
+          minimum: 8
+          maximum: 8
     IngredientResponse:
       type: object
       description: Extra ingredient of the product
@@ -276,14 +494,17 @@ components:
         id:
           type: string
           description: ID of the Ingredient
+          pattern: '^\d{8}-INGR-\d{4}-\d{2}-\d{2}$'
         name:
           type: string
           description: Name of the Ingredient
+          maximum: 30
         price:
           type: number
           format: double
           description: Price of the ingredient
           minimum: 0.1
+          maximum: 10000.0
     ProductResponse:
       type: object
       description: Product of the item
@@ -295,14 +516,17 @@ components:
         id:
           type: string
           description: ID of the Product
+          pattern: '^\d{8}-PRDC-\d{4}-\d{2}-\d{2}$'
         name:
           type: string
           description: Name of the Product
+          maximum: 30
         price:
           type: number
           format: double
           description: Price of the product
           minimum: 0.1
+          maximum: 10000.0
     OrderExtraResponse:
       type: object
       required:
@@ -314,6 +538,8 @@ components:
         quantity:
           type: number
           description: Extra ingredient of the product
+          minimum: 1
+          maximum: 2
     OrderItemResponse:
       type: object
       required:
@@ -323,6 +549,7 @@ components:
         itemId:
           type: string
           description: ID of the item
+          pattern: '^\d{8}-ORDI-\d{4}-\d{2}-\d{2}$'
         product:
           $ref: '#/components/schemas/ProductResponse'
         extras:
@@ -330,6 +557,8 @@ components:
           description: Extras of the Product
           items:
             $ref: '#/components/schemas/OrderExtraResponse'
+          minimum: 1
+          maximum: 3
     OrderResponse:
       type: object
       required:
@@ -342,14 +571,20 @@ components:
         id:
           type: string
           description: ID of the Order
+          pattern: '^\d{8}-ORDR-\d{4}-\d{2}-\d{2}$'
         ticketId:
           type: string
           description: ticketId of the item, sent to customer
+          minimum: 8
+          maximum: 8
         status:
           $ref: '#/components/schemas/OrderStatusDTO'
         price:
           type: number
           description: Price of the order
+          format: double
+          minimum: 0.1
+          maximum: 10000.0
         customer:
           $ref: '#/components/schemas/CustomerDTO'
         shippingAddress:
@@ -357,11 +592,14 @@ components:
         notification:
           type: string
           description: Mobile phone for additional notification
+          pattern: '^\(\d{2}\) \d{4,5}-\d{4}$'
         items:
           type: array
           description: Items of the Order
           items:
             $ref: '#/components/schemas/OrderItemResponse'
+          minimum: 1
+          maximum: 10
     ErrorResponse:
       type: object
       required:
@@ -372,63 +610,15 @@ components:
           type: integer
           format: int32
           description: Status of the error
+          maximum: 600
         message:
           type: string
           description: Message of the error
+          maximum: 100
         code:
           type: string
           description: Specific code of the error
-
-  responses:
-    OrderCreated:
-      description: Order created response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/OrderCreated'
-          example:
-            ticketId: "12345678"
-    ErrorResponse:
-      description: Error response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            status: 422
-            message: "Precondition Failed"
-            code: "ERR-001"
-    OrderResponse:
-      description: Order search response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/OrderResponse'
-          example:
-            id: "12345678-ordr-10092008"
-            ticketId: "12345678"
-            status: "created"
-            price: 20.50
-            customer:
-              govId: "03857341157"
-            shippingAddress:
-              street: "Vila Olivo"
-              city: "Valinhos"
-              state: "SP"
-              zip: "130111300"
-            notification: "+5519996553790"
-            items:
-              - itemId: "12345678-item-10092008"
-                product:
-                  id: "12345678-prdc-10092008"
-                  name: "X-Burger"
-                  price: 10.90
-                extras:
-                  - ingredient:
-                      id: "12345678-ingr-10092008"
-                      name: "Costela meat"
-                      price: 2.90
-                    quantity: 1
+          maximum: 10
 
 #  securitySchemes:
 #    hydra:
