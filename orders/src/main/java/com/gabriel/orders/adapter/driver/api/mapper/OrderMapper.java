@@ -134,6 +134,6 @@ public class OrderMapper {
         return new ErrorResponse()
             .status(exception.getStatus())
             .message(exception.getMessage())
-            .code(exception.getCode());
+            .code(exception.getCode() != null ? exception.getCode() : "");
     }
 }
