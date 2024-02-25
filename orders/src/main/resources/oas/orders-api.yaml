@@ -34,6 +34,16 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/OrderStatusDTO'
+          examples:
+            SEARCH_ORDERS_SUCCESS:
+              value:
+                created
+            SEARCH_ORDERS_BAD_REQUEST:
+              value:
+                invalid
+            SEARCH_ORDERS_INTERNAL_SERVER_ERROR:
+              value:
+                completed
       responses:
         '200':
           description: Order search response
@@ -70,29 +80,6 @@ paths:
                                 name: "Costela meat"
                                 price: 2.90
                               quantity: 1
-
-        '401':
-          description: Not Authorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                UNAUTHORIZED_RESPONSE:
-                  value:
-                    status: 401
-                    message: Unauthorized
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                FORBIDDEN_RESPONSE:
-                  value:
-                    status: 403
-                    message: Forbidden
         '400':
           description: Bad Request
           content:
@@ -100,7 +87,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                BAD_REQUEST_RESPONSE:
+                SEARCH_ORDERS_BAD_REQUEST:
                   value:
                     status: 400
                     message: Bad Request
@@ -111,7 +98,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                INTERNAL_ERROR_RESPONSE:
+                SEARCH_ORDERS_INTERNAL_SERVER_ERROR:
                   value:
                     status: 500
                     message: Internal Server Error
@@ -146,7 +133,7 @@ paths:
               CREATE_ORDER_BAD_REQUEST:
                 value:
                   customer:
-                    cpf: "03857341157"
+                    govId: "038.573.411-57"
                   items:
                     - productId: "11111111-PRDC-1111-11-11"
                       extras:
@@ -161,6 +148,16 @@ paths:
                     - productId: "11111111-PRDC-1111-11-12"
                       extras:
                         - ingredientId: "11111111-INGR-1111-11-12"
+                          quantity: 2
+                      quantity: 2
+              CREATE_ORDER_INTERNAL_SERVER_ERROR:
+                value:
+                  customer:
+                    cpf: "038.573.411-57"
+                  items:
+                    - productId: "11111111-PRDC-1111-11-19"
+                      extras:
+                        - ingredientId: "11111111-INGR-1111-11-19"
                           quantity: 2
                       quantity: 2
       responses:
@@ -196,28 +193,17 @@ paths:
                   value:
                     status: 422
                     message: Unprocessable Entity
-  #        '401':
-  #          description: Not Authorized
-  #          content:
-  #            application/json:
-  #              schema:
-  #                $ref: '#/components/schemas/ErrorResponse'
-  #              examples:
-  #                UNAUTHORIZED_RESPONSE:
-  #                  value:
-  #                    status: 401
-  #                    message: Unauthorized
-  #        '403':
-  #          description: Forbidden
-  #          content:
-  #            application/json:
-  #              schema:
-  #                $ref: '#/components/schemas/ErrorResponse'
-  #              examples:
-  #                FORBIDDEN_RESPONSE:
-  #                  value:
-  #                    status: 403
-  #                    message: Forbidden
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CREATE_ORDER_INTERNAL_SERVER_ERROR:
+                  value:
+                    status: 500
+                    message: Internal Server Error
   /orders/{orderId}:
     get:
       tags:
@@ -405,6 +391,11 @@ components:
     AddressDTO:
       type: object
       description: Address in case of delivery
+      required:
+        - street
+        - city
+        - state
+        - zip
       properties:
         street:
           type: string
@@ -623,15 +614,12 @@ components:
           type: integer
           format: int32
           description: Status of the error
-          maximum: 600
         message:
           type: string
           description: Message of the error
-          maxLength: 100
         code:
           type: string
           description: Specific code of the error
-          maxLength: 10
 
 #  securitySchemes:
 #    hydra:

@@ -1,6 +1,8 @@
 package com.gabriel.orders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.adapter.container.GrpcServerTestContainer;
 import com.gabriel.orders.adapter.container.KafkaTestContainer;
 import com.gabriel.orders.adapter.container.MongoDBTestContainer;
@@ -85,12 +87,18 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
     @BeforeEach
     public void initialize() throws JsonProcessingException {
         order = OrderMock.generateBasic();
-        when(menuRepository.getProduct(eq("11111111-PRDC-1111-11-11")))
-            .thenReturn(OrderMock.generateProduct());
-        when(menuRepository.getExtra(eq("11111111-INGR-1111-11-11")))
-            .thenReturn(OrderMock.generateExtra());
         when(orderRepository.getByTicket(eq("11111111")))
             .thenReturn(OrderMock.generateBasic());
+        when(menuRepository.getProduct(eq(new ProductID("11111111-PRDC-1111-11-11"))))
+            .thenReturn(OrderMock.generateProduct());
+        when(menuRepository.existsProduct(eq(new ProductID("11111111-PRDC-1111-11-11"))))
+            .thenReturn(true);
+        when(menuRepository.existsProduct(eq(new ProductID("11111111-PRDC-1111-11-19"))))
+            .thenThrow(RuntimeException.class);
+        when(menuRepository.getExtra(eq(new IngredientID("11111111-INGR-1111-11-11"))))
+            .thenReturn(OrderMock.generateExtra());
+        when(menuRepository.existsExtra(eq(new IngredientID("11111111-INGR-1111-11-11"))))
+            .thenReturn(true);
 
         System.setProperty("host", "localhost");
         System.setProperty("port", String.valueOf(port));
