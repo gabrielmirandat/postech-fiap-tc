@@ -32,7 +32,6 @@ paths:
           in: query
           description: Status values that need to be considered for filter
           required: false
-          explode: true
           schema:
             $ref: '#/components/schemas/OrderStatusDTO'
       responses:
@@ -44,33 +43,33 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/OrderResponse'
-                example:
-                  SUCCESS_SEARCH_ORDER_RESPONSE:
-                    value:
-                      - id: "12345678-ORDR-1009-20-08"
-                        ticketId: "12345678"
-                        status: "created"
-                        price: 20.50
-                        customer:
-                          cpf: "038.573.411-57"
-                        shippingAddress:
-                          street: "Vila Olivo"
-                          city: "Valinhos"
-                          state: "SP"
-                          zip: "13011-300"
-                        notification: "(19) 99644-3590"
-                        items:
-                          - itemId: "12345678-ORDI-1009-20-08"
-                            product:
-                              id: "12345678-PRDC-1009-20-08"
-                              name: "X-Burger"
-                              price: 10.90
-                            extras:
-                              - ingredient:
-                                  id: "12345678-INGR-1009-20-08"
-                                  name: "Costela meat"
-                                  price: 2.90
-                                quantity: 1
+              examples:
+                SUCCESS_SEARCH_ORDER_RESPONSE:
+                  value:
+                    - id: "12345678-ORDR-1009-20-08"
+                      ticketId: "12345678"
+                      status: "created"
+                      price: 20.50
+                      customer:
+                        cpf: "038.573.411-57"
+                      shippingAddress:
+                        street: "Vila Olivo"
+                        city: "Valinhos"
+                        state: "SP"
+                        zip: "13011-300"
+                      notification: "(19) 99644-3590"
+                      items:
+                        - itemId: "12345678-ORDI-1009-20-08"
+                          product:
+                            id: "12345678-PRDC-1009-20-08"
+                            name: "X-Burger"
+                            price: 10.90
+                          extras:
+                            - ingredient:
+                                id: "12345678-INGR-1009-20-08"
+                                name: "Costela meat"
+                                price: 2.90
+                              quantity: 1
 
         '401':
           description: Not Authorized
@@ -127,7 +126,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OrderRequest'
-            example:
+            examples:
               ORDER_REQUEST:
                 value:
                   customer:
@@ -151,7 +150,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderCreated'
-              example:
+              examples:
                 SUCCESS_CREATED_ORDER_RESPONSE:
                   value:
                     ticketId: "12345678"
@@ -220,7 +219,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderResponse'
-              example:
+              examples:
                 SUCCESS_CREATED_ORDER_RESPONSE:
                   value:
                     id: "12345678-ORDR-1009-20-08"
@@ -320,7 +319,6 @@ paths:
           in: path
           description: Status to change
           required: true
-          explode: true
           schema:
             $ref: '#/components/schemas/OrderStatusDTO'
       responses:
@@ -390,14 +388,14 @@ components:
       properties:
         street:
           type: string
-          maximum: 30
+          maxLength: 30
         city:
           type: string
-          maximum: 30
+          maxLength: 30
         state:
           type: string
-          minimum: 2
-          maximum: 2
+          minLength: 2
+          maxLength: 2
         zip:
           type: string
           pattern: '^[0-9]{5}-[0-9]{3}$'
@@ -446,8 +444,8 @@ components:
           description: ProductId of the item
         extras:
           type: array
-          minimum: 1
-          maximum: 3
+          minItems: 1
+          maxItems: 3
           description: Extras ingredients of the product
           items:
             $ref: '#/components/schemas/OrderExtraRequest'
@@ -481,8 +479,8 @@ components:
         ticketId:
           type: string
           description: Generated ticketId for the Order
-          minimum: 8
-          maximum: 8
+          minLength: 8
+          maxLength: 8
     IngredientResponse:
       type: object
       description: Extra ingredient of the product
@@ -498,7 +496,7 @@ components:
         name:
           type: string
           description: Name of the Ingredient
-          maximum: 30
+          maxLength: 30
         price:
           type: number
           format: double
@@ -520,7 +518,7 @@ components:
         name:
           type: string
           description: Name of the Product
-          maximum: 30
+          maxLength: 30
         price:
           type: number
           format: double
@@ -557,8 +555,8 @@ components:
           description: Extras of the Product
           items:
             $ref: '#/components/schemas/OrderExtraResponse'
-          minimum: 1
-          maximum: 3
+          minItems: 1
+          maxItems: 3
     OrderResponse:
       type: object
       required:
@@ -575,8 +573,8 @@ components:
         ticketId:
           type: string
           description: ticketId of the item, sent to customer
-          minimum: 8
-          maximum: 8
+          minLength: 8
+          maxLength: 8
         status:
           $ref: '#/components/schemas/OrderStatusDTO'
         price:
@@ -598,8 +596,8 @@ components:
           description: Items of the Order
           items:
             $ref: '#/components/schemas/OrderItemResponse'
-          minimum: 1
-          maximum: 10
+          minItems: 1
+          maxItems: 10
     ErrorResponse:
       type: object
       required:
@@ -614,11 +612,11 @@ components:
         message:
           type: string
           description: Message of the error
-          maximum: 100
+          maxLength: 100
         code:
           type: string
           description: Specific code of the error
-          maximum: 10
+          maxLength: 10
 
 #  securitySchemes:
 #    hydra:
