@@ -5,13 +5,13 @@ import com.gabriel.orders.adapter.container.GrpcServerTestContainer;
 import com.gabriel.orders.adapter.container.KafkaTestContainer;
 import com.gabriel.orders.adapter.container.MongoDBTestContainer;
 import com.gabriel.orders.adapter.container.RedisTestContainer;
+import com.gabriel.orders.adapter.driven.api.MenuGrpcClient;
 import com.gabriel.orders.core.OrderMock;
-import com.gabriel.orders.core.application.command.CreateOrderCommand;
-import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
-import com.gabriel.orders.core.application.usecase.ProcessOrderUseCase;
-import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
-import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
+import com.gabriel.orders.core.domain.port.MenuRepository;
+import com.gabriel.orders.core.domain.port.MenuSubscriber;
+import com.gabriel.orders.core.domain.port.OrderPublisher;
+import com.gabriel.orders.core.domain.port.OrderRepository;
 import com.gabriel.orders.infra.grpc.GrpcClientConfig;
 import com.gabriel.orders.infra.kafka.KafkaConfig;
 import com.gabriel.orders.infra.mongodb.MongoDbConfig;
@@ -31,10 +31,8 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 import java.io.File;
-import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // This will start the server on a random port
@@ -48,16 +46,19 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
     private int port; // Injects the port the server is running on
 
     @MockBean
-    private CreateOrderUseCase createOrderUseCase;
+    private MenuGrpcClient menuGrpcClient;
 
     @MockBean
-    private RetrieveOrderUseCase retrieveOrderUseCase;
+    private OrderPublisher orderPublisher;
 
     @MockBean
-    private ProcessOrderUseCase processOrderUseCase;
+    private MenuRepository menuRepository;
 
     @MockBean
-    private SearchOrderUseCase searchOrderUseCase;
+    private OrderRepository orderRepository;
+
+    @MockBean
+    private MenuSubscriber menuSubscriber;
 
     private Order order;
 
@@ -84,10 +85,12 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
     @BeforeEach
     public void initialize() throws JsonProcessingException {
         order = OrderMock.generateBasic();
-        when(createOrderUseCase.createOrder(any(CreateOrderCommand.class))).thenReturn(order);
-        when(retrieveOrderUseCase.getByTicketId(any())).thenReturn(order);
-        doNothing().when(processOrderUseCase).processOrder(any());
-        when(searchOrderUseCase.searchBy(any())).thenReturn(List.of(order));
+        when(menuRepository.getProduct(eq("11111111-PRDC-1111-11-11")))
+            .thenReturn(OrderMock.generateProduct());
+        when(menuRepository.getExtra(eq("11111111-INGR-1111-11-11")))
+            .thenReturn(OrderMock.generateExtra());
+        when(orderRepository.getByTicket(eq("11111111")))
+            .thenReturn(OrderMock.generateBasic());
 
         System.setProperty("host", "localhost");
         System.setProperty("port", String.valueOf(port));
