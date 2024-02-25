@@ -19,7 +19,9 @@ import com.gabriel.specs.orders.models.OrderResponse;
 import com.gabriel.specs.orders.models.OrderStatusDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +51,13 @@ public class OrdersHttpController implements OrdersApi {
     public ResponseEntity<OrderCreated> addOrder(OrderRequest orderRequest) throws JsonProcessingException {
         CreateOrderCommand command = OrderMapper.toCommand(orderRequest);
         Order newOrder = createOrderUseCase.createOrder(command);
-        return ResponseEntity.ok(new OrderCreated(newOrder.getTicketId()));
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(newOrder.getTicketId())
+            .toUri();
+        
+        return ResponseEntity.created(location).body(new OrderCreated(newOrder.getTicketId()));
     }
 
     @Override

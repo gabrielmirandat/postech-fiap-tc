@@ -44,7 +44,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/OrderResponse'
               examples:
-                SUCCESS_SEARCH_ORDER_RESPONSE:
+                SEARCH_ORDERS_SUCCESS:
                   value:
                     - id: "12345678-ORDR-1009-20-08"
                       ticketId: "12345678"
@@ -127,7 +127,7 @@ paths:
             schema:
               $ref: '#/components/schemas/OrderRequest'
             examples:
-              ORDER_REQUEST:
+              CREATE_ORDER_SUCCESS:
                 value:
                   customer:
                     cpf: "038.573.411-57"
@@ -138,9 +138,29 @@ paths:
                     zip: "13011-300"
                   notification: "(19) 99644-3590"
                   items:
-                    - productId: "12345678-PRDC-2018-10-10"
+                    - productId: "11111111-PRDC-1111-11-11"
                       extras:
-                        - ingredientId: "12345678-INGR-2018-10-10"
+                        - ingredientId: "11111111-INGR-1111-11-11"
+                          quantity: 2
+                      quantity: 2
+              CREATE_ORDER_BAD_REQUEST:
+                value:
+                  customer:
+                    cpf: "03857341157"
+                  items:
+                    - productId: "11111111-PRDC-1111-11-11"
+                      extras:
+                        - ingredientId: "11111111-INGR-1111-11-11"
+                          quantity: 2
+                      quantity: 2
+              CREATE_ORDER_UNPROCESSABLE_ENTITY:
+                value:
+                  customer:
+                    cpf: "038.573.411-57"
+                  items:
+                    - productId: "11111111-PRDC-1111-11-12"
+                      extras:
+                        - ingredientId: "11111111-INGR-1111-11-12"
                           quantity: 2
                       quantity: 2
       responses:
@@ -151,31 +171,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderCreated'
               examples:
-                SUCCESS_CREATED_ORDER_RESPONSE:
+                CREATE_ORDER_SUCCESS:
                   value:
                     ticketId: "12345678"
-        '401':
-          description: Not Authorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                UNAUTHORIZED_RESPONSE:
-                  value:
-                    status: 401
-                    message: Unauthorized
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                FORBIDDEN_RESPONSE:
-                  value:
-                    status: 403
-                    message: Forbidden
         '400':
           description: Bad Request
           content:
@@ -183,21 +181,43 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                BAD_REQUEST_RESPONSE:
+                CREATE_ORDER_BAD_REQUEST:
                   value:
                     status: 400
                     message: Bad Request
-        '500':
-          description: Internal Server Error
+        '422':
+          description: Unprocessable Entity
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                INTERNAL_ERROR_RESPONSE:
+                CREATE_ORDER_UNPROCESSABLE_ENTITY:
                   value:
-                    status: 500
-                    message: Internal Server Error
+                    status: 422
+                    message: Unprocessable Entity
+  #        '401':
+  #          description: Not Authorized
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ErrorResponse'
+  #              examples:
+  #                UNAUTHORIZED_RESPONSE:
+  #                  value:
+  #                    status: 401
+  #                    message: Unauthorized
+  #        '403':
+  #          description: Forbidden
+  #          content:
+  #            application/json:
+  #              schema:
+  #                $ref: '#/components/schemas/ErrorResponse'
+  #              examples:
+  #                FORBIDDEN_RESPONSE:
+  #                  value:
+  #                    status: 403
+  #                    message: Forbidden
   /orders/{orderId}:
     get:
       tags:
@@ -220,7 +240,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/OrderResponse'
               examples:
-                SUCCESS_CREATED_ORDER_RESPONSE:
+                GET_ORDER_SUCCESS:
                   value:
                     id: "12345678-ORDR-1009-20-08"
                     ticketId: "12345678"
@@ -398,7 +418,6 @@ components:
           maxLength: 2
         zip:
           type: string
-          pattern: '^[0-9]{5}-[0-9]{3}$'
     OrderStatusDTO:
       type: string
       description: Status of the order
@@ -418,7 +437,6 @@ components:
         cpf:
           type: string
           description: Customer identified CPF
-          pattern: '^\d{3}\.\d{3}\.\d{3}-\d{2}$'
     OrderExtraRequest:
       type: object
       required:
@@ -471,6 +489,8 @@ components:
           description: Items of the Order
           items:
             $ref: '#/components/schemas/OrderItemRequest'
+          minItems: 1
+          maxItems: 10
     OrderCreated:
       type: object
       required:
@@ -492,7 +512,6 @@ components:
         id:
           type: string
           description: ID of the Ingredient
-          pattern: '^\d{8}-INGR-\d{4}-\d{2}-\d{2}$'
         name:
           type: string
           description: Name of the Ingredient
@@ -514,7 +533,6 @@ components:
         id:
           type: string
           description: ID of the Product
-          pattern: '^\d{8}-PRDC-\d{4}-\d{2}-\d{2}$'
         name:
           type: string
           description: Name of the Product
@@ -547,7 +565,6 @@ components:
         itemId:
           type: string
           description: ID of the item
-          pattern: '^\d{8}-ORDI-\d{4}-\d{2}-\d{2}$'
         product:
           $ref: '#/components/schemas/ProductResponse'
         extras:
@@ -569,7 +586,6 @@ components:
         id:
           type: string
           description: ID of the Order
-          pattern: '^\d{8}-ORDR-\d{4}-\d{2}-\d{2}$'
         ticketId:
           type: string
           description: ticketId of the item, sent to customer
@@ -590,7 +606,6 @@ components:
         notification:
           type: string
           description: Mobile phone for additional notification
-          pattern: '^\(\d{2}\) \d{4,5}-\d{4}$'
         items:
           type: array
           description: Items of the Order

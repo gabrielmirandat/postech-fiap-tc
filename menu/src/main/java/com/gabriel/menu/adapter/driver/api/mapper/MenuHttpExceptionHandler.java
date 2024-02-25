@@ -2,7 +2,7 @@ package com.gabriel.menu.adapter.driver.api.mapper;
 
 import com.gabriel.adapter.api.exceptions.BaseHttpException;
 import com.gabriel.adapter.api.exceptions.InternalServerError;
-import com.gabriel.adapter.api.exceptions.PreconditionFailed;
+import com.gabriel.adapter.api.exceptions.UnprocessableEntity;
 import com.gabriel.core.application.exception.ApplicationException;
 import com.gabriel.core.domain.exception.DomainException;
 import jakarta.ws.rs.core.Response;
@@ -37,11 +37,11 @@ public class MenuHttpExceptionHandler implements ExceptionMapper<Throwable> {
     }
 
     private Response handleDomainException(DomainException exception) {
-        return convertHttpAndSend(PreconditionFailed.from(exception));
+        return convertHttpAndSend(UnprocessableEntity.from(exception));
     }
 
     private Response handleApplicationException(ApplicationException exception) {
-        return convertHttpAndSend(PreconditionFailed.from(exception));
+        return convertHttpAndSend(UnprocessableEntity.from(exception));
     }
 
     private Response handleBaseHttpException(BaseHttpException exception) {

@@ -3,7 +3,7 @@ package com.gabriel.orders.adapter.driver.api;
 import com.gabriel.adapter.api.exceptions.BadRequest;
 import com.gabriel.adapter.api.exceptions.BaseHttpException;
 import com.gabriel.adapter.api.exceptions.InternalServerError;
-import com.gabriel.adapter.api.exceptions.PreconditionFailed;
+import com.gabriel.adapter.api.exceptions.UnprocessableEntity;
 import com.gabriel.core.application.exception.ApplicationException;
 import com.gabriel.core.domain.exception.DomainException;
 import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
@@ -24,19 +24,20 @@ public class OrdersHttpExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.valueOf(error.getStatus()));
     }
 
-    @ExceptionHandler({MethodArgumentTypeMismatchException.class, ConversionFailedException.class})
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class,
+        ConversionFailedException.class})
     public ResponseEntity<ErrorResponse> handleConversionFailed(Exception exception) {
         return convertHttpAndSend(BadRequest.from(exception));
     }
 
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ErrorResponse> handleDomainException(DomainException exception) {
-        return convertHttpAndSend(PreconditionFailed.from(exception));
+        return convertHttpAndSend(UnprocessableEntity.from(exception));
     }
 
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ErrorResponse> handleApplicationException(ApplicationException exception) {
-        return convertHttpAndSend(PreconditionFailed.from(exception));
+        return convertHttpAndSend(UnprocessableEntity.from(exception));
     }
 
     @ExceptionHandler(BaseHttpException.class)
