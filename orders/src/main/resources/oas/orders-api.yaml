@@ -43,7 +43,7 @@ paths:
                 invalid
             SEARCH_ORDERS_INTERNAL_SERVER_ERROR:
               value:
-                completed
+                failure
       responses:
         '200':
           description: Order search response
@@ -419,6 +419,8 @@ components:
         - pickup
         - delivery
         - completed
+        - invalid
+        - failure
     CustomerDTO:
       type: object
       description: Identified Customer in Order
