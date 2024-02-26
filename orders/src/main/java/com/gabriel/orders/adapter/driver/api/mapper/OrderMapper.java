@@ -106,7 +106,7 @@ public class OrderMapper {
         }
 
         OrderResponse response = new OrderResponse(order.getOrderId().getId(), order.getTicketId(),
-            OrderStatusDTO.fromValue(order.getStatus().toString().toLowerCase()),
+            OrderStatusDTO.fromValue(order.getStatus().toString().toUpperCase()),
             Double.valueOf(order.getPrice().getValue()), responseOrderItems);
 
         if (order.getCustomer() != null) {
