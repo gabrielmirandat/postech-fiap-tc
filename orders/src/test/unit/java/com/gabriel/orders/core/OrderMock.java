@@ -36,7 +36,7 @@ public class OrderMock {
         OrderItem item2 = generateOrderItem(true);
 
         Address shippingAddress = new Address("Street", "City", "SP", "13011-300");
-        Notification notification = new Notification(NotificationType.CUSTOM, "firebase|uuid");
+        Notification notification = new Notification(NotificationType.CELLPHONE, "(19) 99644-3590");
         CPF customer = new CPF("123.456.789-00");
         return new Order(Arrays.asList(item1, item2), customer, shippingAddress, notification);
     }
