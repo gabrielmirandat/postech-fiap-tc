@@ -8,7 +8,6 @@ import com.gabriel.orders.adapter.container.KafkaTestContainer;
 import com.gabriel.orders.adapter.container.MongoDBTestContainer;
 import com.gabriel.orders.adapter.container.RedisTestContainer;
 import com.gabriel.orders.adapter.driven.api.MenuGrpcClient;
-import com.gabriel.orders.adapter.driver.api.mapper.StringToOrderStatusDTOConverter;
 import com.gabriel.orders.core.OrderMock;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Order;
@@ -20,7 +19,6 @@ import com.gabriel.orders.infra.kafka.KafkaConfig;
 import com.gabriel.orders.infra.mongodb.MongoDbConfig;
 import com.gabriel.orders.infra.redis.RedisConfig;
 import com.gabriel.orders.infra.serializer.SerializerConfig;
-import com.gabriel.orders.infra.web.WebConfig;
 import in.specmatic.test.SpecmaticJUnitSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -45,8 +43,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // This will start the server on a random port
 @Import({MongoDbConfig.class, GrpcClientConfig.class, RedisConfig.class,
-    KafkaConfig.class, SerializerConfig.class,
-    StringToOrderStatusDTOConverter.class, WebConfig.class})
+    KafkaConfig.class, SerializerConfig.class})
 @ContextConfiguration(classes =
     {OrdersApplication.class, MongoDBTestContainer.class, GrpcServerTestContainer.class,
         RedisTestContainer.class, KafkaTestContainer.class}

@@ -37,13 +37,13 @@ paths:
           examples:
             SEARCH_ORDERS_SUCCESS:
               value:
-                created
+                CREATED
             SEARCH_ORDERS_BAD_REQUEST:
               value:
-                invalid
+                INVALID
             SEARCH_ORDERS_INTERNAL_SERVER_ERROR:
               value:
-                failure
+                FORCE_FAILURE
       responses:
         '200':
           description: Order search response
@@ -413,14 +413,14 @@ components:
       type: string
       description: Status of the order
       enum:
-        - created
-        - preparation
-        - packaging
-        - pickup
-        - delivery
-        - completed
-        - invalid
-        - failure
+        - CREATED
+        - PREPARATION
+        - PACKAGING
+        - PICKUP
+        - DELIVERY
+        - COMPLETED
+        - INVALID
+        - FORCE_FAILURE
     CustomerDTO:
       type: object
       description: Identified Customer in Order
