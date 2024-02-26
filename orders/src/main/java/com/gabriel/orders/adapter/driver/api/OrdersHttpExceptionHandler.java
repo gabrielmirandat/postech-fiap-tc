@@ -25,7 +25,9 @@ public class OrdersHttpExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.valueOf(error.getStatus()));
     }
 
-    @ExceptionHandler({MethodArgumentTypeMismatchException.class,
+    @ExceptionHandler({
+        IllegalArgumentException.class,
+        MethodArgumentTypeMismatchException.class,
         ConversionFailedException.class,
         HttpMessageNotReadableException.class})
     public ResponseEntity<ErrorResponse> handleConversionFailed(Exception exception) {
