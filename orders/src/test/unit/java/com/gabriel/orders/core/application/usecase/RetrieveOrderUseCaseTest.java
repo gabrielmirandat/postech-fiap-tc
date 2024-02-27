@@ -3,6 +3,7 @@ package com.gabriel.orders.core.application.usecase;
 import com.gabriel.orders.core.OrderMock;
 import com.gabriel.orders.core.application.query.GetByTicketOrderQuery;
 import com.gabriel.orders.core.domain.model.Order;
+import com.gabriel.orders.core.domain.model.TicketId;
 import com.gabriel.orders.core.domain.port.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,17 +31,17 @@ public class RetrieveOrderUseCaseTest {
     @Test
     public void testGetByTicketId() {
         // Given
-        String ticketId = "testTicketId";
+        TicketId ticketId = new TicketId("testTicketId");
         GetByTicketOrderQuery query = new GetByTicketOrderQuery(ticketId);
         Order expectedOrder = OrderMock.generateBasic();
         // If your Order class requires specific setup, do it here
-        when(orderRepository.getByTicket(ticketId)).thenReturn(expectedOrder);
+        when(orderRepository.getByTicket(String.valueOf(ticketId))).thenReturn(expectedOrder);
 
         // When
         Order actualOrder = retrieveOrderUseCase.getByTicketId(query);
 
         // Then
-        verify(orderRepository).getByTicket(ticketId);
+        verify(orderRepository).getByTicket(String.valueOf(ticketId));
         assertEquals(expectedOrder, actualOrder, "The retrieved order should match the expected one.");
     }
 }

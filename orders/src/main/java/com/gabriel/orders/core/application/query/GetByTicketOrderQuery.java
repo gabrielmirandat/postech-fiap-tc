@@ -1,4 +1,6 @@
 package com.gabriel.orders.core.application.query;
 
-public record GetByTicketOrderQuery(String ticket) {
+import com.gabriel.orders.core.domain.model.TicketId;
+
+public record GetByTicketOrderQuery(TicketId ticket) {
 }
