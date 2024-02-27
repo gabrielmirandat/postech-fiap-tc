@@ -15,7 +15,7 @@ public class ProcessOrderUseCase {
     }
 
     public void processOrder(ProcessOrderCommand command) {
-        Order toUpdateOrder = orderRepository.getByTicket(command.ticketId());
+        Order toUpdateOrder = orderRepository.getByTicket(command.ticketId().getId());
         toUpdateOrder.promote(command.status());
         orderRepository.updateOrder(toUpdateOrder);
     }
