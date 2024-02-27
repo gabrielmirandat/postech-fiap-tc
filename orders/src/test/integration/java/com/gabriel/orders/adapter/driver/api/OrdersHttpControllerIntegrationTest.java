@@ -18,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -56,7 +55,6 @@ public class OrdersHttpControllerIntegrationTest {
         OrderRequest orderRequest = new OrderRequest()
             .addItemsItem(new OrderItemRequest()
                 .productId(new ProductID().getId())
-                .extras(new ArrayList<>())
                 .quantity(1));
 
         when(createOrderUseCase.createOrder(any(CreateOrderCommand.class)))
@@ -65,7 +63,7 @@ public class OrdersHttpControllerIntegrationTest {
         mockMvc.perform(post("/orders")
                 .content(objectMapper.writeValueAsString(orderRequest))
                 .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
+            .andExpect(status().isCreated())
             .andExpect(jsonPath("$.ticketId").exists());
     }
 
@@ -87,9 +85,9 @@ public class OrdersHttpControllerIntegrationTest {
         doNothing().when(processOrderUseCase).processOrder(any());
 
         mockMvc.perform(post("/orders/{orderId}/status/{status}",
-                "123", "PREPARATION")
+                "12345678", "PREPARATION")
                 .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isNoContent());
+            .andExpect(status().isOk());
     }
 
     @Test

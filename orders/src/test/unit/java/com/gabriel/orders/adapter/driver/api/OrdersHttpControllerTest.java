@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +50,13 @@ public class OrdersHttpControllerTest {
     public void setUp() {
         order = OrderMock.generateBasic();
         openMocks(this);
+
+        // Set up MockHttpServletRequest
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        ServletRequestAttributes attributes = new ServletRequestAttributes(request);
+
+        // Set the request attributes to the RequestContextHolder
+        RequestContextHolder.setRequestAttributes(attributes);
     }
 
     @Test
@@ -57,7 +67,7 @@ public class OrdersHttpControllerTest {
 
         ResponseEntity<OrderCreated> response = controller.addOrder(orderRequest);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(201, response.getStatusCodeValue());
         assertNotNull(response.getBody());
         assertEquals(order.getTicketId(), response.getBody().getTicketId());
     }
@@ -66,7 +76,7 @@ public class OrdersHttpControllerTest {
     void getOrderById_Success() {
         when(retrieveOrderUseCase.getByTicketId(any())).thenReturn(order);
 
-        ResponseEntity<OrderResponse> response = controller.getOrderById("123");
+        ResponseEntity<OrderResponse> response = controller.getOrderById("12345678");
 
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
@@ -75,9 +85,9 @@ public class OrdersHttpControllerTest {
 
     @Test
     void changeOrderStatus_Success() throws Exception {
-        ResponseEntity<OrderUpdated> response = controller.changeOrderStatus("123", OrderStatusDTO.COMPLETED);
+        ResponseEntity<OrderUpdated> response = controller.changeOrderStatus("12345678", OrderStatusDTO.COMPLETED);
 
-        assertEquals(204, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCodeValue());
     }
 
     @Test

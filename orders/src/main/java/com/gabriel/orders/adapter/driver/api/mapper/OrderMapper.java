@@ -39,11 +39,13 @@ public class OrderMapper {
 
         List<OrderItemRef> items = request.getItems().stream().flatMap(in -> IntStream.range(0, in.getQuantity()).mapToObj(dump -> {
             List<String> extras = new ArrayList<>();
-            in.getExtras().forEach(extra -> {
-                for (int i = 0; i < extra.getQuantity(); i++) {
-                    extras.add(extra.getIngredientId());
-                }
-            });
+            if (in.getExtras() != null) {
+                in.getExtras().forEach(extra -> {
+                    for (int i = 0; i < extra.getQuantity(); i++) {
+                        extras.add(extra.getIngredientId());
+                    }
+                });
+            }
             return new OrderItemRef(in.getProductId(), extras);
         })).collect(Collectors.toList());
 
