@@ -31,7 +31,7 @@ public class RetrieveOrderUseCaseTest {
     @Test
     public void testGetByTicketId() {
         // Given
-        TicketId ticketId = new TicketId("testTicketId");
+        TicketId ticketId = new TicketId("12345678");
         GetByTicketOrderQuery query = new GetByTicketOrderQuery(ticketId);
         Order expectedOrder = OrderMock.generateBasic();
         // If your Order class requires specific setup, do it here

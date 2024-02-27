@@ -21,6 +21,10 @@ public class VerifyMenuUseCase {
                 throw new OrderApplicationException("Product not found", OrderApplicationError.ORD_100);
             }
 
+            if (item.getExtrasIds() == null) {
+                return;
+            }
+            
             item.getExtrasIds().forEach(extraId -> {
                 if (!menuRepository.existsExtra(extraId)) {
                     throw new OrderApplicationException("Extra not found", OrderApplicationError.ORD_101);
