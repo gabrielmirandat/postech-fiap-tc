@@ -28,4 +28,22 @@ public class TicketId extends ValueObject {
             throw new IllegalArgumentException("Invalid ticketId: " + id);
         }
     }
+
+    @Override
+    public String toString() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TicketId ticketId = (TicketId) o;
+        return id.equals(ticketId.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
