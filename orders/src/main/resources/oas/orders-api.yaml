@@ -218,8 +218,6 @@ paths:
           required: true
           schema:
             type: string
-            minLength: 8
-            maxLength: 8
           examples:
             GET_ORDER_SUCCESS:
               value: "11111111"
@@ -296,7 +294,7 @@ paths:
                   value:
                     status: 500
                     message: Internal Server Error
-  /orders/{orderId}/status/{status}:
+  /orders/{id}/status/{status}:
     post:
       tags:
         - orders
@@ -304,43 +302,52 @@ paths:
       description: Changes order status given step
       operationId: changeOrderStatus
       parameters:
-        - name: orderId
+        - name: id
           in: path
-          description: ID of order to change
+          description: TicketId of order to change
           required: true
           schema:
             type: string
+          examples:
+            CHANGE_ORDER_STATUS_SUCCESS:
+              value: "11111111"
+            CHANGE_ORDER_STATUS_BAD_REQUEST:
+              value: "INVALID"
+            CHANGE_ORDER_STATUS_NOT_FOUND:
+              value: "11111113"
+            CHANGE_ORDER_STATUS_UNPROCESSABLE_ENTITY:
+              value: "11111111"
+            CHANGE_ORDER_STATUS_INTERNAL_SERVER_ERROR:
+              value: "11111119"
         - name: status
           in: path
           description: Status to change
           required: true
           schema:
             $ref: '#/components/schemas/OrderStatusDTO'
+          examples:
+            CHANGE_ORDER_STATUS_SUCCESS:
+              value: "PREPARATION"
+            CHANGE_ORDER_STATUS_BAD_REQUEST:
+              value: "PREPARATION"
+            CHANGE_ORDER_STATUS_NOT_FOUND:
+              value: "PREPARATION"
+            CHANGE_ORDER_STATUS_UNPROCESSABLE_ENTITY:
+              value: "DELIVERY"
+            CHANGE_ORDER_STATUS_INTERNAL_SERVER_ERROR:
+              value: "PREPARATION"
       responses:
-        '204':
+        '200':
           description: Ok
-        '401':
-          description: Not Authorized
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/OrderUpdated'
               examples:
-                UNAUTHORIZED_RESPONSE:
+                CHANGE_ORDER_STATUS_SUCCESS:
                   value:
-                    status: 401
-                    message: Unauthorized
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                FORBIDDEN_RESPONSE:
-                  value:
-                    status: 403
-                    message: Forbidden
+                    id: "11111111"
+                    status: "preparation"
         '400':
           description: Bad Request
           content:
@@ -348,10 +355,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                BAD_REQUEST_RESPONSE:
+                CHANGE_ORDER_STATUS_BAD_REQUEST:
                   value:
                     status: 400
                     message: Bad Request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CHANGE_ORDER_STATUS_NOT_FOUND:
+                  value:
+                    status: 404
+                    message: Not Found
         '422':
           description: Unprocessable Entity
           content:
@@ -359,7 +377,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                UNPROCESSABLE_ENTITY_RESPONSE:
+                CHANGE_ORDER_STATUS_UNPROCESSABLE_ENTITY:
                   value:
                     status: 422
                     message: Unprocessable Entity
@@ -370,7 +388,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                INTERNAL_ERROR_RESPONSE:
+                CHANGE_ORDER_STATUS_INTERNAL_SERVER_ERROR:
                   value:
                     status: 500
                     message: Internal Server Error
@@ -595,6 +613,17 @@ components:
             $ref: '#/components/schemas/OrderItemResponse'
           minItems: 1
           maxItems: 10
+    OrderUpdated:
+      type: object
+      required:
+        - id
+        - updatedTo
+      properties:
+        id:
+          type: string
+          description: Id of the order
+        updatedTo:
+          $ref: '#/components/schemas/OrderStatusDTO'
     ErrorResponse:
       type: object
       required:

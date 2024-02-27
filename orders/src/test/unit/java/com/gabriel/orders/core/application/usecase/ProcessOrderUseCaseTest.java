@@ -4,6 +4,7 @@ import com.gabriel.orders.core.OrderMock;
 import com.gabriel.orders.core.application.command.ProcessOrderCommand;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
+import com.gabriel.orders.core.domain.model.TicketId;
 import com.gabriel.orders.core.domain.port.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,18 +31,18 @@ public class ProcessOrderUseCaseTest {
     @Test
     public void testProcessOrder() {
         // Given
-        String ticketId = "11111111";
+        TicketId id = new TicketId("11111111");
         OrderStatus status = OrderStatus.PREPARATION;
-        ProcessOrderCommand command = new ProcessOrderCommand(ticketId, status);
+        ProcessOrderCommand command = new ProcessOrderCommand(id, status);
 
         Order mockOrder = OrderMock.generateBasic();
-        when(orderRepository.getByTicket(ticketId)).thenReturn(mockOrder);
+        when(orderRepository.getByTicket(id.getId())).thenReturn(mockOrder);
 
         // When
         processOrderUseCase.processOrder(command);
 
         // Then
-        verify(orderRepository).getByTicket(ticketId);
+        verify(orderRepository).getByTicket(id.getId());
         verify(orderRepository).updateOrder(orderCaptor.capture());
         Order capturedOrder = orderCaptor.getValue();
         assertEquals(status, capturedOrder.getStatus(), "The order status should be updated.");

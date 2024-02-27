@@ -7,10 +7,7 @@ import com.gabriel.orders.core.application.usecase.ProcessOrderUseCase;
 import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
 import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
-import com.gabriel.specs.orders.models.OrderCreated;
-import com.gabriel.specs.orders.models.OrderRequest;
-import com.gabriel.specs.orders.models.OrderResponse;
-import com.gabriel.specs.orders.models.OrderStatusDTO;
+import com.gabriel.specs.orders.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -78,7 +75,7 @@ public class OrdersHttpControllerTest {
 
     @Test
     void changeOrderStatus_Success() throws Exception {
-        ResponseEntity<Void> response = controller.changeOrderStatus("123", OrderStatusDTO.COMPLETED);
+        ResponseEntity<OrderUpdated> response = controller.changeOrderStatus("123", OrderStatusDTO.COMPLETED);
 
         assertEquals(204, response.getStatusCodeValue());
     }
