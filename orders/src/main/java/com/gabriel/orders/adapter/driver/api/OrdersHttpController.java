@@ -14,10 +14,7 @@ import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
 import com.gabriel.orders.core.domain.model.TicketId;
 import com.gabriel.specs.orders.OrdersApi;
-import com.gabriel.specs.orders.models.OrderCreated;
-import com.gabriel.specs.orders.models.OrderRequest;
-import com.gabriel.specs.orders.models.OrderResponse;
-import com.gabriel.specs.orders.models.OrderStatusDTO;
+import com.gabriel.specs.orders.models.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -68,10 +65,10 @@ public class OrdersHttpController implements OrdersApi {
     }
 
     @Override
-    public ResponseEntity<Void> changeOrderStatus(String orderId, OrderStatusDTO status) throws Exception {
+    public ResponseEntity<OrderUpdated> changeOrderStatus(String id, OrderStatusDTO status) throws Exception {
         processOrderUseCase.processOrder(
-            new ProcessOrderCommand(orderId, OrderStatus.valueOf(status.name().toUpperCase())));
-        return ResponseEntity.noContent().build();
+            new ProcessOrderCommand(new TicketId(id), OrderStatus.valueOf(status.name().toUpperCase())));
+        return ResponseEntity.ok(new OrderUpdated(id, status));
     }
 
     @Override
