@@ -218,9 +218,20 @@ paths:
           required: true
           schema:
             type: string
+            minLength: 8
+            maxLength: 8
+          examples:
+            GET_ORDER_SUCCESS:
+              value: "11111111"
+            GET_ORDER_BAD_REQUEST:
+              value: "INVALID"
+            GET_ORDER_NOT_FOUND:
+              value: "11111113"
+            GET_ORDER_INTERNAL_SERVER_ERROR:
+              value: "11111119"
       responses:
         '200':
-          description: Order search response
+          description: Get order response
           content:
             application/json:
               schema:
@@ -228,8 +239,8 @@ paths:
               examples:
                 GET_ORDER_SUCCESS:
                   value:
-                    id: "12345678-ORDR-1009-20-08"
-                    ticketId: "12345678"
+                    id: "11111111-ORDR-1111-11-11"
+                    ticketId: "11111111"
                     status: "created"
                     price: 20.50
                     customer:
@@ -241,39 +252,17 @@ paths:
                       zip: "13011-300"
                     notification: "(19) 99644-3590"
                     items:
-                      - itemId: "12345678-ORDI-1009-20-08"
+                      - itemId: "11111111-ORDI-1111-11-11"
                         product:
-                          id: "12345678-PRDC-1009-20-08"
+                          id: "11111111-PRDC-1111-11-11"
                           name: "X-Burger"
                           price: 10.90
                         extras:
                           - ingredient:
-                              id: "12345678-INGR-1009-20-08"
+                              id: "11111111-INGR-1111-11-11"
                               name: "Costela meat"
                               price: 2.90
                             quantity: 1
-        '401':
-          description: Not Authorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                UNAUTHORIZED_RESPONSE:
-                  value:
-                    status: 401
-                    message: Unauthorized
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples:
-                FORBIDDEN_RESPONSE:
-                  value:
-                    status: 403
-                    message: Forbidden
         '400':
           description: Bad Request
           content:
@@ -281,7 +270,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                BAD_REQUEST_RESPONSE:
+                GET_ORDER__BAD_REQUEST:
                   value:
                     status: 400
                     message: Bad Request
@@ -292,10 +281,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                NOT_FOUND_RESPONSE:
+                GET_ORDER_NOT_FOUND:
                   value:
-                    status: 404
-                    message: Not Found
+                    status: 400
+                    message: Bad Request
         '500':
           description: Internal Server Error
           content:
@@ -303,7 +292,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                INTERNAL_ERROR_RESPONSE:
+                GET_ORDER_INTERNAL_SERVER_ERROR:
                   value:
                     status: 500
                     message: Internal Server Error
