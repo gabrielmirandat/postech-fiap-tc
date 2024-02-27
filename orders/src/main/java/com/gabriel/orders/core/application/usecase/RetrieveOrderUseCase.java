@@ -16,7 +16,7 @@ public class RetrieveOrderUseCase {
 
 
     public Order getByTicketId(GetByTicketOrderQuery query) {
-        return orderRepository.getByTicket(query.ticket());
+        return orderRepository.getByTicket(query.ticket().getId());
     }
 }
 

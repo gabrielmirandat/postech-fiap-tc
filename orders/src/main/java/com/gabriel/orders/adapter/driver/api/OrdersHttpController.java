@@ -12,6 +12,7 @@ import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
 import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
+import com.gabriel.orders.core.domain.model.TicketId;
 import com.gabriel.specs.orders.OrdersApi;
 import com.gabriel.specs.orders.models.OrderCreated;
 import com.gabriel.specs.orders.models.OrderRequest;
@@ -56,13 +57,13 @@ public class OrdersHttpController implements OrdersApi {
             .path("/{id}")
             .buildAndExpand(newOrder.getTicketId())
             .toUri();
-        
+
         return ResponseEntity.created(location).body(new OrderCreated(newOrder.getTicketId()));
     }
 
     @Override
     public ResponseEntity<OrderResponse> getOrderById(String orderId) {
-        Order currentOrder = retrieveOrderUseCase.getByTicketId(new GetByTicketOrderQuery(orderId));
+        Order currentOrder = retrieveOrderUseCase.getByTicketId(new GetByTicketOrderQuery(new TicketId(orderId)));
         return ResponseEntity.ok(OrderMapper.toResponse(currentOrder));
     }
 

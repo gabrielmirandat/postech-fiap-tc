@@ -1,6 +1,7 @@
 package com.gabriel.orders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.gabriel.adapter.api.exceptions.NotFound;
 import com.gabriel.core.domain.model.id.IngredientID;
 import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.adapter.container.GrpcServerTestContainer;
@@ -98,7 +99,11 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
         extra = OrderMock.generateExtra();
 
         when(orderRepository.getByTicket(eq("11111111")))
-            .thenReturn(order);
+            .thenReturn(orderFull);
+        when(orderRepository.getByTicket(eq("11111113")))
+            .thenThrow(new NotFound("Could not find order with ticket 11111113"));
+        when(orderRepository.getByTicket(eq("11111119")))
+            .thenThrow(RuntimeException.class);
         when(orderRepository.searchBy(eq(new OrderSearchParameters(OrderStatus.CREATED))))
             .thenReturn(List.of(orderFull));
         when(menuRepository.getProduct(eq(new ProductID("11111111-PRDC-1111-11-11"))))
