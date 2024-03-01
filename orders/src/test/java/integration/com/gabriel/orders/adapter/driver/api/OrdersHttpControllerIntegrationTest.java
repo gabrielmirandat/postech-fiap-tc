@@ -3,14 +3,12 @@ package integration.com.gabriel.orders.adapter.driver.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.adapter.driver.api.OrdersHttpController;
-import com.gabriel.orders.adapter.driver.api.OrdersHttpExceptionHandler;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
 import com.gabriel.orders.core.application.usecase.ProcessOrderUseCase;
 import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
 import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
-import com.gabriel.specs.orders.OrdersApi;
 import com.gabriel.specs.orders.models.OrderItemRequest;
 import com.gabriel.specs.orders.models.OrderRequest;
 import org.junit.jupiter.api.Test;
@@ -19,7 +17,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import unit.com.gabriel.orders.core.OrderMock;
 
 import java.util.List;
@@ -30,8 +30,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = {OrdersHttpController.class, OrdersApi.class, OrdersHttpExceptionHandler.class})
+@ContextConfiguration(classes = OrdersHttpController.class)
+@SpringBootTest
 @AutoConfigureMockMvc
+@EnableWebMvc
 public class OrdersHttpControllerIntegrationTest {
 
     private final ObjectMapper objectMapper = objectMapper();
