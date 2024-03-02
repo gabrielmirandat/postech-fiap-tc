@@ -40,7 +40,7 @@ In this file, the following services have been defined:
 
 Please review the tags of the used images and set them to the same as you're running in production.
 
-mvn test
-mvn failsafe:integration-test -Dit.test=integration/**/*
-mvn failsafe:integration-test -Dit.test=contract/**/*
-mvn failsafe:integration-test -Dit.test=e2e/**/*
+mvn clean test -Punit-tests
+mvn clean verify -Pintegration-tests
+mvn clean verify -Pcontract-tests
+mvn clean verify -Pe2e-tests
