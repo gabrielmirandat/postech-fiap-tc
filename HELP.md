@@ -40,7 +40,7 @@ In this file, the following services have been defined:
 
 Please review the tags of the used images and set them to the same as you're running in production.
 
-mvn clean test -Punit-tests
-mvn clean verify -Pintegration-tests
-mvn clean verify -Pcontract-tests
-mvn clean verify -Pe2e-tests
+mvn test -Punit-tests -Dopenapi.generator.skip=true
+mvn verify -Pintegration-tests -Dopenapi.generator.skip=true
+mvn verify -Pcontract-tests -Dopenapi.generator.skip=true
+mvn verify -Pe2e-tests -Dopenapi.generator.skip=true
