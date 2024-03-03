@@ -141,6 +141,15 @@
             </activation>
             <modules>
                 <module>orders</module>
+                <module>promotional-campaigns</module>
+                <module>customers</module>
+                <module>menu</module>
+                <module>deliveries</module>
+                <module>supplies</module>
+                <module>payments</module>
+                <module>notifications</module>
+                <module>permissions</module>
+                <module>core</module>
             </modules>
             <build>
                 <plugins>
@@ -187,6 +196,10 @@
                                     <includes>
                                         <include>**/integration/**</include>
                                     </includes>
+                                    <excludes>
+                                        <exclude>**/contract/**</exclude>
+                                        <exclude>**/e2e/**</exclude>
+                                    </excludes>
                                 </configuration>
                             </execution>
                         </executions>
@@ -221,6 +234,10 @@
                                     <includes>
                                         <include>**/contract/**</include>
                                     </includes>
+                                    <excludes>
+                                        <include>**/integration/**</include>
+                                        <exclude>**/e2e/**</exclude>
+                                    </excludes>
                                 </configuration>
                             </execution>
                         </executions>
@@ -238,7 +255,6 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <!-- Pula a execução dos testes unitários quando este perfil está ativo -->
                             <skip>true</skip>
                         </configuration>
                     </plugin>
@@ -256,6 +272,10 @@
                                     <includes>
                                         <include>**/e2e/**</include>
                                     </includes>
+                                    <excludes>
+                                        <include>**/integration/**</include>
+                                        <exclude>**/contract/**</exclude>
+                                    </excludes>
                                 </configuration>
                             </execution>
                         </executions>

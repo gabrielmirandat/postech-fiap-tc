@@ -1,0 +1,17 @@
+name: Auto PR to production from certification when merge
+
+on:
+  push:
+    branches:
+      - cert
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create PR
+        uses: poorva17/create-pr-action@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_BRANCH: cert
+          BASE_BRANCH: main

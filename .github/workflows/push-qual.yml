@@ -1,0 +1,17 @@
+name: Auto PR to certification from quality when merge
+
+on:
+  push:
+    branches:
+      - qual
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create PR
+        uses: poorva17/create-pr-action@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_BRANCH: qual
+          BASE_BRANCH: cert
