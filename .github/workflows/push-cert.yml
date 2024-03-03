@@ -6,17 +6,21 @@ on:
       - cert
 
 jobs:
-  pull-request:
+  pull-request-main:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Reset main branch
+        run: |
+          git fetch origin cert:cert
+          git reset --hard cert
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: cert
-          delete-branch: false
-          base: main
+          branch: main-promotion
       - name: Enable Auto-merge
         if: steps.cpr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@v3
