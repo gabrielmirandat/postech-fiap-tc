@@ -52,4 +52,4 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Test with Maven
-        run: mvn test -Punit-tests -Dopenapi.generator.skip=true
+        run: mvn test -Punit-tests
