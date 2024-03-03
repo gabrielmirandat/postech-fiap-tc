@@ -1,9 +1,9 @@
-name: Flow to merge to production from quality
+name: Flow to merge to production from certification
 
 on:
   pull_request:
     branches:
-      - cert
+      - main
 
 jobs:
   build:
