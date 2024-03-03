@@ -32,9 +32,18 @@ paths:
           in: query
           description: Status values that need to be considered for filter
           required: false
-          explode: true
           schema:
             $ref: '#/components/schemas/OrderStatusDTO'
+          examples:
+            SEARCH_ORDERS_SUCCESS:
+              value:
+                CREATED
+            SEARCH_ORDERS_BAD_REQUEST:
+              value:
+                INVALID
+            SEARCH_ORDERS_INTERNAL_SERVER_ERROR:
+              value:
+                FORCE_FAILURE
       responses:
         '200':
           description: Order search response
@@ -44,17 +53,55 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/OrderResponse'
-        '401':
-          $ref: '#/components/responses/ErrorResponse'
-        '403':
-          $ref: '#/components/responses/ErrorResponse'
+              examples:
+                SEARCH_ORDERS_SUCCESS:
+                  value:
+                    - id: "12345678-ORDR-1009-20-08"
+                      ticketId: "12345678"
+                      status: "created"
+                      price: 20.50
+                      customer:
+                        cpf: "038.573.411-57"
+                      shippingAddress:
+                        street: "Vila Olivo"
+                        city: "Valinhos"
+                        state: "SP"
+                        zip: "13011-300"
+                      notification: "(19) 99644-3590"
+                      items:
+                        - itemId: "12345678-ORDI-1009-20-08"
+                          product:
+                            id: "12345678-PRDC-1009-20-08"
+                            name: "X-Burger"
+                            price: 10.90
+                          extras:
+                            - ingredient:
+                                id: "12345678-INGR-1009-20-08"
+                                name: "Costela meat"
+                                price: 2.90
+                              quantity: 1
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                SEARCH_ORDERS_BAD_REQUEST:
+                  value:
+                    status: 400
+                    message: Bad Request
         '500':
-          $ref: '#/components/responses/ErrorResponse'
-    #      security:
-    #        - hydra:
-    #            - orders.read
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                SEARCH_ORDERS_INTERNAL_SERVER_ERROR:
+                  value:
+                    status: 500
+                    message: Internal Server Error
     post:
       tags:
         - orders
@@ -66,21 +113,53 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OrderRequest'
-            example:
-              customer:
-                cpf: "038.573.411-57"
-              shippingAddress:
-                street: "Vila Olivo"
-                city: "Valinhos"
-                state: "SP"
-                zip: "13011-300"
-              notification: "(19) 99644-3590"
-              items:
-                - productId: "12345678-PRDC-2018-10-10"
-                  extras:
-                    - ingredientId: "12345678-INGR-2018-10-10"
+            examples:
+              CREATE_ORDER_SUCCESS:
+                value:
+                  customer:
+                    cpf: "038.573.411-57"
+                  shippingAddress:
+                    street: "Vila Olivo"
+                    city: "Valinhos"
+                    state: "SP"
+                    zip: "13011-300"
+                  notification: "(19) 99644-3590"
+                  items:
+                    - productId: "11111111-PRDC-1111-11-11"
+                      extras:
+                        - ingredientId: "11111111-INGR-1111-11-11"
+                          quantity: 2
                       quantity: 2
-                  quantity: 2
+              CREATE_ORDER_BAD_REQUEST:
+                value:
+                  customer:
+                    govId: "038.573.411-57"
+                  items:
+                    - productId: "11111111-PRDC-1111-11-11"
+                      extras:
+                        - ingredientId: "11111111-INGR-1111-11-11"
+                          quantity: 2
+                      quantity: 2
+              CREATE_ORDER_UNPROCESSABLE_ENTITY:
+                value:
+                  customer:
+                    cpf: "038.573.411-57"
+                  items:
+                    - productId: "11111111-PRDC-1111-11-12"
+                      extras:
+                        - ingredientId: "11111111-INGR-1111-11-12"
+                          quantity: 2
+                      quantity: 2
+              CREATE_ORDER_INTERNAL_SERVER_ERROR:
+                value:
+                  customer:
+                    cpf: "038.573.411-57"
+                  items:
+                    - productId: "11111111-PRDC-1111-11-19"
+                      extras:
+                        - ingredientId: "11111111-INGR-1111-11-19"
+                          quantity: 2
+                      quantity: 2
       responses:
         '201':
           description: Order created response
@@ -88,17 +167,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderCreated'
-        '401':
-          $ref: '#/components/responses/ErrorResponse'
-        '403':
-          $ref: '#/components/responses/ErrorResponse'
+              examples:
+                CREATE_ORDER_SUCCESS:
+                  value:
+                    ticketId: "12345678"
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CREATE_ORDER_BAD_REQUEST:
+                  value:
+                    status: 400
+                    message: Bad Request
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CREATE_ORDER_UNPROCESSABLE_ENTITY:
+                  value:
+                    status: 422
+                    message: Unprocessable Entity
         '500':
-          $ref: '#/components/responses/ErrorResponse'
-  #      security:
-  #        - hydra:
-  #            - orders.write
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CREATE_ORDER_INTERNAL_SERVER_ERROR:
+                  value:
+                    status: 500
+                    message: Internal Server Error
   /orders/{orderId}:
     get:
       tags:
@@ -113,27 +218,83 @@ paths:
           required: true
           schema:
             type: string
+          examples:
+            GET_ORDER_SUCCESS:
+              value: "11111111"
+            GET_ORDER_BAD_REQUEST:
+              value: "INVALID"
+            GET_ORDER_NOT_FOUND:
+              value: "11111113"
+            GET_ORDER_INTERNAL_SERVER_ERROR:
+              value: "11111119"
       responses:
         '200':
-          description: Order search response
+          description: Get order response
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderResponse'
-        '401':
-          $ref: '#/components/responses/ErrorResponse'
-        '403':
-          $ref: '#/components/responses/ErrorResponse'
+              examples:
+                GET_ORDER_SUCCESS:
+                  value:
+                    id: "11111111-ORDR-1111-11-11"
+                    ticketId: "11111111"
+                    status: "created"
+                    price: 20.50
+                    customer:
+                      cpf: "038.573.411-57"
+                    shippingAddress:
+                      street: "Vila Olivo"
+                      city: "Valinhos"
+                      state: "SP"
+                      zip: "13011-300"
+                    notification: "(19) 99644-3590"
+                    items:
+                      - itemId: "11111111-ORDI-1111-11-11"
+                        product:
+                          id: "11111111-PRDC-1111-11-11"
+                          name: "X-Burger"
+                          price: 10.90
+                        extras:
+                          - ingredient:
+                              id: "11111111-INGR-1111-11-11"
+                              name: "Costela meat"
+                              price: 2.90
+                            quantity: 1
         '400':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                GET_ORDER__BAD_REQUEST:
+                  value:
+                    status: 400
+                    message: Bad Request
         '404':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                GET_ORDER_NOT_FOUND:
+                  value:
+                    status: 400
+                    message: Bad Request
         '500':
-          $ref: '#/components/responses/ErrorResponse'
-  #      security:
-  #        - hydra:
-  #            - orders.read
-  /orders/{orderId}/status/{status}:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                GET_ORDER_INTERNAL_SERVER_ERROR:
+                  value:
+                    status: 500
+                    message: Internal Server Error
+  /orders/{id}/status/{status}:
     post:
       tags:
         - orders
@@ -141,61 +302,132 @@ paths:
       description: Changes order status given step
       operationId: changeOrderStatus
       parameters:
-        - name: orderId
+        - name: id
           in: path
-          description: ID of order to change
+          description: TicketId of order to change
           required: true
           schema:
             type: string
+          examples:
+            CHANGE_ORDER_STATUS_SUCCESS:
+              value: "11111111"
+            CHANGE_ORDER_STATUS_BAD_REQUEST:
+              value: "INVALID"
+            CHANGE_ORDER_STATUS_NOT_FOUND:
+              value: "11111113"
+            CHANGE_ORDER_STATUS_UNPROCESSABLE_ENTITY:
+              value: "11111111"
+            CHANGE_ORDER_STATUS_INTERNAL_SERVER_ERROR:
+              value: "11111119"
         - name: status
           in: path
           description: Status to change
           required: true
-          explode: true
           schema:
             $ref: '#/components/schemas/OrderStatusDTO'
+          examples:
+            CHANGE_ORDER_STATUS_SUCCESS:
+              value: "PREPARATION"
+            CHANGE_ORDER_STATUS_BAD_REQUEST:
+              value: "PREPARATION"
+            CHANGE_ORDER_STATUS_NOT_FOUND:
+              value: "PREPARATION"
+            CHANGE_ORDER_STATUS_UNPROCESSABLE_ENTITY:
+              value: "DELIVERY"
+            CHANGE_ORDER_STATUS_INTERNAL_SERVER_ERROR:
+              value: "PREPARATION"
       responses:
-        '204':
+        '200':
           description: Ok
-        '401':
-          $ref: '#/components/responses/ErrorResponse'
-        '403':
-          $ref: '#/components/responses/ErrorResponse'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderUpdated'
+              examples:
+                CHANGE_ORDER_STATUS_SUCCESS:
+                  value:
+                    id: "11111111"
+                    status: "preparation"
         '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '412':
-          $ref: '#/components/responses/ErrorResponse'
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CHANGE_ORDER_STATUS_BAD_REQUEST:
+                  value:
+                    status: 400
+                    message: Bad Request
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CHANGE_ORDER_STATUS_NOT_FOUND:
+                  value:
+                    status: 404
+                    message: Not Found
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CHANGE_ORDER_STATUS_UNPROCESSABLE_ENTITY:
+                  value:
+                    status: 422
+                    message: Unprocessable Entity
         '500':
-          $ref: '#/components/responses/ErrorResponse'
-#      security:
-#        - hydra:
-#            - orders.read
-#            - orders.write
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CHANGE_ORDER_STATUS_INTERNAL_SERVER_ERROR:
+                  value:
+                    status: 500
+                    message: Internal Server Error
 
 components:
   schemas:
     AddressDTO:
       type: object
       description: Address in case of delivery
+      required:
+        - street
+        - city
+        - state
+        - zip
       properties:
         street:
           type: string
+          maxLength: 30
         city:
           type: string
+          maxLength: 30
         state:
           type: string
+          minLength: 2
+          maxLength: 2
         zip:
           type: string
     OrderStatusDTO:
       type: string
       description: Status of the order
       enum:
-        - created
-        - preparation
-        - packaging
-        - pickup
-        - delivery
-        - completed
+        - CREATED
+        - PREPARATION
+        - PACKAGING
+        - PICKUP
+        - DELIVERY
+        - COMPLETED
+        - INVALID
+        - FORCE_FAILURE
     CustomerDTO:
       type: object
       description: Identified Customer in Order
@@ -230,8 +462,8 @@ components:
           description: ProductId of the item
         extras:
           type: array
-          minimum: 1
-          maximum: 3
+          minItems: 1
+          maxItems: 3
           description: Extras ingredients of the product
           items:
             $ref: '#/components/schemas/OrderExtraRequest'
@@ -257,6 +489,8 @@ components:
           description: Items of the Order
           items:
             $ref: '#/components/schemas/OrderItemRequest'
+          minItems: 1
+          maxItems: 10
     OrderCreated:
       type: object
       required:
@@ -265,6 +499,8 @@ components:
         ticketId:
           type: string
           description: Generated ticketId for the Order
+          minLength: 8
+          maxLength: 8
     IngredientResponse:
       type: object
       description: Extra ingredient of the product
@@ -279,11 +515,13 @@ components:
         name:
           type: string
           description: Name of the Ingredient
+          maxLength: 30
         price:
           type: number
           format: double
           description: Price of the ingredient
           minimum: 0.1
+          maximum: 10000.0
     ProductResponse:
       type: object
       description: Product of the item
@@ -298,11 +536,13 @@ components:
         name:
           type: string
           description: Name of the Product
+          maxLength: 30
         price:
           type: number
           format: double
           description: Price of the product
           minimum: 0.1
+          maximum: 10000.0
     OrderExtraResponse:
       type: object
       required:
@@ -314,6 +554,8 @@ components:
         quantity:
           type: number
           description: Extra ingredient of the product
+          minimum: 1
+          maximum: 2
     OrderItemResponse:
       type: object
       required:
@@ -330,6 +572,8 @@ components:
           description: Extras of the Product
           items:
             $ref: '#/components/schemas/OrderExtraResponse'
+          minItems: 1
+          maxItems: 3
     OrderResponse:
       type: object
       required:
@@ -345,11 +589,16 @@ components:
         ticketId:
           type: string
           description: ticketId of the item, sent to customer
+          minLength: 8
+          maxLength: 8
         status:
           $ref: '#/components/schemas/OrderStatusDTO'
         price:
           type: number
           description: Price of the order
+          format: double
+          minimum: 0.1
+          maximum: 10000.0
         customer:
           $ref: '#/components/schemas/CustomerDTO'
         shippingAddress:
@@ -362,6 +611,19 @@ components:
           description: Items of the Order
           items:
             $ref: '#/components/schemas/OrderItemResponse'
+          minItems: 1
+          maxItems: 10
+    OrderUpdated:
+      type: object
+      required:
+        - id
+        - updatedTo
+      properties:
+        id:
+          type: string
+          description: Id of the order
+        updatedTo:
+          $ref: '#/components/schemas/OrderStatusDTO'
     ErrorResponse:
       type: object
       required:
@@ -378,57 +640,6 @@ components:
         code:
           type: string
           description: Specific code of the error
-
-  responses:
-    OrderCreated:
-      description: Order created response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/OrderCreated'
-          example:
-            ticketId: "12345678"
-    ErrorResponse:
-      description: Error response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            status: 422
-            message: "Precondition Failed"
-            code: "ERR-001"
-    OrderResponse:
-      description: Order search response
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/OrderResponse'
-          example:
-            id: "12345678-ordr-10092008"
-            ticketId: "12345678"
-            status: "created"
-            price: 20.50
-            customer:
-              govId: "03857341157"
-            shippingAddress:
-              street: "Vila Olivo"
-              city: "Valinhos"
-              state: "SP"
-              zip: "130111300"
-            notification: "+5519996553790"
-            items:
-              - itemId: "12345678-item-10092008"
-                product:
-                  id: "12345678-prdc-10092008"
-                  name: "X-Burger"
-                  price: 10.90
-                extras:
-                  - ingredient:
-                      id: "12345678-ingr-10092008"
-                      name: "Costela meat"
-                      price: 2.90
-                    quantity: 1
 
 #  securitySchemes:
 #    hydra:

@@ -16,7 +16,8 @@
         <mongodb.version>4.11.0</mongodb.version>
         <newrelic.version>8.7.0</newrelic.version>
         <grpc.version>1.61.0</grpc.version>
-        <specmatic.version>1.2.21</specmatic.version>
+        <specmatic.version>1.2.23</specmatic.version>
+        <mockito.version>5.2.0</mockito.version>
         <maven.deps.plugin.version>3.6.1</maven.deps.plugin.version>
     </properties>
 
@@ -125,8 +126,20 @@
         </dependency>
         <dependency>
             <groupId>in.specmatic</groupId>
+            <artifactId>specmatic-core</artifactId>
+            <version>${specmatic.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>in.specmatic</groupId>
             <artifactId>junit5-support</artifactId>
             <version>${specmatic.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

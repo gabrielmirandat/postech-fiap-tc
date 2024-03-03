@@ -1,6 +1,7 @@
 # Getting Started
 
 ### Reference Documentation
+
 For further reference, please consider the following sections:
 
 * [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
@@ -19,6 +20,7 @@ For further reference, please consider the following sections:
 * [Testcontainers](https://java.testcontainers.org/)
 
 ### Guides
+
 The following guides illustrate how to use some features concretely:
 
 * [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
@@ -29,6 +31,7 @@ The following guides illustrate how to use some features concretely:
 * [Building a RESTful Web Service with Spring Boot Actuator](https://spring.io/guides/gs/actuator-service/)
 
 ### Docker Compose support
+
 This project contains a Docker Compose file named `compose.yaml`.
 In this file, the following services have been defined:
 
@@ -37,3 +40,7 @@ In this file, the following services have been defined:
 
 Please review the tags of the used images and set them to the same as you're running in production.
 
+mvn test -Punit-tests -Dopenapi.generator.skip=true
+mvn verify -Pintegration-tests -Dopenapi.generator.skip=true
+mvn verify -Pcontract-tests -Dopenapi.generator.skip=true
+mvn verify -Pe2e-tests -Dopenapi.generator.skip=true

@@ -39,11 +39,13 @@ public class OrderMapper {
 
         List<OrderItemRef> items = request.getItems().stream().flatMap(in -> IntStream.range(0, in.getQuantity()).mapToObj(dump -> {
             List<String> extras = new ArrayList<>();
-            in.getExtras().forEach(extra -> {
-                for (int i = 0; i < extra.getQuantity(); i++) {
-                    extras.add(extra.getIngredientId());
-                }
-            });
+            if (in.getExtras() != null) {
+                in.getExtras().forEach(extra -> {
+                    for (int i = 0; i < extra.getQuantity(); i++) {
+                        extras.add(extra.getIngredientId());
+                    }
+                });
+            }
             return new OrderItemRef(in.getProductId(), extras);
         })).collect(Collectors.toList());
 
@@ -106,8 +108,8 @@ public class OrderMapper {
         }
 
         OrderResponse response = new OrderResponse(order.getOrderId().getId(), order.getTicketId(),
-            OrderStatusDTO.fromValue(order.getStatus().toString().toLowerCase()),
-            BigDecimal.valueOf(order.getPrice().getValue()), responseOrderItems);
+            OrderStatusDTO.fromValue(order.getStatus().toString().toUpperCase()),
+            Double.valueOf(order.getPrice().getValue()), responseOrderItems);
 
         if (order.getCustomer() != null) {
             response.setCustomer(new CustomerDTO(order.getCustomer().getId()));
@@ -134,6 +136,6 @@ public class OrderMapper {
         return new ErrorResponse()
             .status(exception.getStatus())
             .message(exception.getMessage())
-            .code(exception.getCode());
+            .code(exception.getCode() != null ? exception.getCode() : "");
     }
 }

@@ -12,14 +12,14 @@ import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
 import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
+import com.gabriel.orders.core.domain.model.TicketId;
 import com.gabriel.specs.orders.OrdersApi;
-import com.gabriel.specs.orders.models.OrderCreated;
-import com.gabriel.specs.orders.models.OrderRequest;
-import com.gabriel.specs.orders.models.OrderResponse;
-import com.gabriel.specs.orders.models.OrderStatusDTO;
+import com.gabriel.specs.orders.models.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,20 +49,26 @@ public class OrdersHttpController implements OrdersApi {
     public ResponseEntity<OrderCreated> addOrder(OrderRequest orderRequest) throws JsonProcessingException {
         CreateOrderCommand command = OrderMapper.toCommand(orderRequest);
         Order newOrder = createOrderUseCase.createOrder(command);
-        return ResponseEntity.ok(new OrderCreated(newOrder.getTicketId()));
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(newOrder.getTicketId())
+            .toUri();
+
+        return ResponseEntity.created(location).body(new OrderCreated(newOrder.getTicketId()));
     }
 
     @Override
     public ResponseEntity<OrderResponse> getOrderById(String orderId) {
-        Order currentOrder = retrieveOrderUseCase.getByTicketId(new GetByTicketOrderQuery(orderId));
+        Order currentOrder = retrieveOrderUseCase.getByTicketId(new GetByTicketOrderQuery(new TicketId(orderId)));
         return ResponseEntity.ok(OrderMapper.toResponse(currentOrder));
     }
 
     @Override
-    public ResponseEntity<Void> changeOrderStatus(String orderId, OrderStatusDTO status) throws Exception {
+    public ResponseEntity<OrderUpdated> changeOrderStatus(String id, OrderStatusDTO status) throws Exception {
         processOrderUseCase.processOrder(
-            new ProcessOrderCommand(orderId, OrderStatus.valueOf(status.name().toUpperCase())));
-        return ResponseEntity.noContent().build();
+            new ProcessOrderCommand(new TicketId(id), OrderStatus.valueOf(status.name().toUpperCase())));
+        return ResponseEntity.ok(new OrderUpdated(id, status));
     }
 
     @Override
