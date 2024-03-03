@@ -56,8 +56,6 @@ jobs:
   integration-test:
     needs: build
     runs-on: ubuntu-latest
-    env:
-      POSTECH_BASE_URL: ${GITHUB_WORKSPACE}
     steps:
       - uses: actions/checkout@v2
       - name: Cache Maven packages
@@ -82,8 +80,6 @@ jobs:
   contract-test:
     needs: build
     runs-on: ubuntu-latest
-    env:
-      POSTECH_BASE_URL: ${GITHUB_WORKSPACE}
     steps:
       - uses: actions/checkout@v2
       - name: Cache Maven packages
@@ -108,8 +104,6 @@ jobs:
   e2e-test:
     needs: build
     runs-on: ubuntu-latest
-    env:
-      POSTECH_BASE_URL: ${GITHUB_WORKSPACE}
     steps:
       - uses: actions/checkout@v2
       - name: Cache Maven packages
