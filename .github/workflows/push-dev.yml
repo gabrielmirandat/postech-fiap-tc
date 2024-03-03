@@ -6,12 +6,22 @@ on:
       - develop
 
 jobs:
-  release:
+  pull-request:
     runs-on: ubuntu-latest
     steps:
-      - name: Create PR
-        uses: poorva17/create-pr-action@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HEAD_BRANCH: develop
-          BASE_BRANCH: qual
+      - uses: actions/checkout@v4
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.PAT }}
+          branch: develop
+          delete-branch: false
+          base: qual
+      - name: Enable Auto-merge
+        if: steps.cpr.outputs.pull-request-operation == 'created'
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.PAT }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: rebase
