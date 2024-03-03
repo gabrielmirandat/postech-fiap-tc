@@ -52,7 +52,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Test with Maven
-        run: mvn test -Punit-tests -Dopenapi.generator.skip=true
+        run: mvn test -Punit-tests
   integration-test:
     needs: build
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Test with Maven
-        run: mvn verify -Pintegration-tests -Dopenapi.generator.skip=true
+        run: mvn verify -Pintegration-tests
   contract-test:
     needs: build
     runs-on: ubuntu-latest
@@ -100,7 +100,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Test with Maven
-        run: mvn verify -Pcontract-tests -Dopenapi.generator.skip=true
+        run: mvn verify -Pcontract-tests
   e2e-test:
     needs: build
     runs-on: ubuntu-latest
@@ -124,4 +124,4 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Test with Maven
-        run: mvn verify -Pe2e-tests -Dopenapi.generator.skip=true
+        run: mvn verify -Pe2e-tests
