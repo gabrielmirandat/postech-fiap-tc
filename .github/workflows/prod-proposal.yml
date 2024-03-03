@@ -1,4 +1,4 @@
-name: Auto PR to quality from development when merge
+name: Auto PR to production from development when merge
 
 on:
   push:
@@ -6,13 +6,13 @@ on:
       - develop
 
 jobs:
-  pull-request-qual:
+  pull-request-main:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: qual
-      - name: Reset qual branch
+          ref: main
+      - name: Reset main branch
         run: |
           git fetch origin develop:develop
           git reset --hard develop
@@ -21,11 +21,11 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PAT }}
-          branch: develop-clone-bot
+          branch: proposal-bot
       - name: Enable Auto-merge
         if: steps.cpr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@v3
         with:
           token: ${{ secrets.PAT }}
           pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
-          merge-method: rebase
+          merge-method: merge
