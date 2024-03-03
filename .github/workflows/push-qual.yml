@@ -6,17 +6,21 @@ on:
       - qual
 
 jobs:
-  pull-request:
+  pull-request-cert:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: cert
+      - name: Reset cert branch
+        run: |
+          git fetch origin qual:qual
+          git reset --hard qual
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
-          branch: qual
-          delete-branch: false
-          base: cert
+          branch: cert-promotion
       - name: Enable Auto-merge
         if: steps.cpr.outputs.pull-request-operation == 'created'
         uses: peter-evans/enable-pull-request-automerge@v3
