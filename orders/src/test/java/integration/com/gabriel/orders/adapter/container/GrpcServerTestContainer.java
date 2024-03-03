@@ -3,8 +3,11 @@ package integration.com.gabriel.orders.adapter.container;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
+
+import java.time.Duration;
 
 @Testcontainers
 public class GrpcServerTestContainer {
@@ -18,7 +21,14 @@ public class GrpcServerTestContainer {
 
     static {
         GRPC_CONTAINER = new GenericContainer<>(GRIPMOCK_IMAGE)
-            .withExposedPorts(4770, 4771) // Default gRPC port for GripMock
+            .withNetworkAliases("gripmock")
+            .withExposedPorts(4770, 4771)
+            .waitingFor(
+                new LogMessageWaitStrategy()
+                    .withRegEx(".*Serving gRPC on tcp://:4770.*")
+                    .withTimes(1)
+                    .withStartupTimeout(Duration.ofSeconds(30))
+            )
             .withCopyFileToContainer(
                 MountableFile.forHostPath(BASE_ABSOLUTE_PATH + PROTO_RELATIVE_PATH), "/proto")
             .withCopyFileToContainer(
