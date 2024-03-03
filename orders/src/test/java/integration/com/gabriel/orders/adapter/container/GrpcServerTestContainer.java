@@ -12,9 +12,9 @@ import java.time.Duration;
 @Testcontainers
 public class GrpcServerTestContainer {
 
-    private static final String BASE_ABSOLUTE_PATH = System.getenv("POSTECH_BASE_URL");
-    private static final String PROTO_RELATIVE_PATH = "/core/src/main/java/com/gabriel/specs/menu";
-    private static final String STUB_RELATIVE_PATH = "/orders/src/test/java/integration/com/gabriel/orders/adapter/container/stubs";
+    private static final String PROJECT_ROOT = System.getProperty("user.dir");
+    private static final String PROTO_RELATIVE_PATH = "/../core/src/main/java/com/gabriel/specs/menu";
+    private static final String STUB_RELATIVE_PATH = "/src/test/java/integration/com/gabriel/orders/adapter/container/stubs";
     private static final String GRIPMOCK_IMAGE = "tkpd/gripmock:latest"; // gabrielmirandat/gripmock:latest
     private static final GenericContainer GRPC_CONTAINER;
 
@@ -30,9 +30,9 @@ public class GrpcServerTestContainer {
                     .withStartupTimeout(Duration.ofSeconds(30))
             )
             .withCopyFileToContainer(
-                MountableFile.forHostPath(BASE_ABSOLUTE_PATH + PROTO_RELATIVE_PATH), "/proto")
+                MountableFile.forHostPath(PROJECT_ROOT + PROTO_RELATIVE_PATH), "/proto")
             .withCopyFileToContainer(
-                MountableFile.forHostPath(BASE_ABSOLUTE_PATH + STUB_RELATIVE_PATH), "/stub")
+                MountableFile.forHostPath(PROJECT_ROOT + STUB_RELATIVE_PATH), "/stub")
             .withCommand("--stub=/stub /proto/menu-api.proto");
 
         GRPC_CONTAINER.start();
