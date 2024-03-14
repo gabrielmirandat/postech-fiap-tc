@@ -45,18 +45,22 @@ jobs:
         with:
           name: orders-artifact
           path: ./temp/orders
+      - name: List downloaded files
+        run: ls -R ./temp/orders
       - name: Reorganize New Relic Files for orders-api
         run: |
           mkdir -p ./orders/target/newrelic
           mkdir -p ./orders/src/main/resources/newrelic
-          mv ./temp/orders/newrelic.jar ./orders/target/newrelic/newrelic.jar
-          mv ./temp/orders/newrelic.yml ./orders/src/main/resources/newrelic/newrelic.yml
-          mv ./temp/orders/orders*.jar ./orders/target/
+          mv ./temp/orders/orders/target/newrelic/newrelic.jar ./orders/target/newrelic/newrelic.jar
+          mv ./temp/orders/orders/src/main/resources/newrelic/newrelic.yml ./orders/src/main/resources/newrelic/newrelic.yml
+          mv ./temp/orders/orders/target/orders*.jar ./orders/target/
       - name: Download menu-api artifact
         uses: actions/download-artifact@v2
         with:
           name: menu-artifact
           path: ./menu/target
+      - name: List downloaded files
+        run: ls -R ./temp/orders
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
         with:
