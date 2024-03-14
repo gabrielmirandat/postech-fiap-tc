@@ -1,4 +1,4 @@
-name: Flow to merge to production from certification
+name: Flow to merge to production from develop
 
 on:
   pull_request:
