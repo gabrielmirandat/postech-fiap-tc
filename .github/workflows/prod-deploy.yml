@@ -67,27 +67,45 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push Docker images
         run: |
-          VERSION="v${{ github.run_number }}-${{ steps.short-sha.outputs.sha }}"
-          docker build -t gabrielmirandat/postech-fiap-tc-orders-api:$VERSION ./orders
-          docker push gabrielmirandat/postech-fiap-tc-orders-api:$VERSION
-          docker build -t gabrielmirandat/postech-fiap-tc-menu-api:$VERSION ./menu
-          docker push gabrielmirandat/postech-fiap-tc-menu-api:$VERSION
+          TAGGED_VERSION="v${{ github.run_number }}-${{ steps.short-sha.outputs.sha }}"
+          TAGGED_COMMIT_SHA=${{ github.sha }}
+          TAGGED_VERSION_URL="https://github.com/${{ github.repository }}/releases/tag/$TAGGED_VERSION"
+          TAGGED_COMMIT_URL="https://github.com/${{ github.repository }}/commit/$TAGGED_COMMIT_SHA"
+          
+          echo "TAGGED_VERSION=$TAGGED_VERSION" >> $GITHUB_ENV
+          echo "TAGGED_COMMIT_SHA=$TAGGED_COMMIT_SHA" >> $GITHUB_ENV
+          echo "TAGGED_VERSION_URL=$TAGGED_VERSION_URL" >> $GITHUB_ENV
+          echo "TAGGED_COMMIT_URL=$TAGGED_COMMIT_URL" >> $GITHUB_ENV
+          
+          docker build -t gabrielmirandat/postech-fiap-tc-orders-api:$TAGGED_VERSION ./orders
+          docker push gabrielmirandat/postech-fiap-tc-orders-api:$TAGGED_VERSION
+          docker build -t gabrielmirandat/postech-fiap-tc-menu-api:$TAGGED_VERSION ./menu
+          docker push gabrielmirandat/postech-fiap-tc-menu-api:$TAGGED_VERSION
 
   tag:
     needs: publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Extract short SHA
-        id: short-sha
-        run: echo "::set-output name=sha::$(git rev-parse --short ${{ github.sha }})"
       - name: Create and push tag
         run: |
-          VERSION="v${{ github.run_number }}-${{ steps.short-sha.outputs.sha }}"
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git tag -a $VERSION -m "Deploying version $VERSION"
-          git push origin $VERSION
+          git tag -a ${{ env.TAGGED_VERSION }} -m "Deploying version ${{ env.TAGGED_VERSION }}. Details: ${{ env.TAGGED_COMMIT_URL }}"
+          git push origin ${{ env.TAGGED_VERSION }}
+  
+
+  notify:
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: "A build ${{ github.run_number }} foi concluída com sucesso! Confira os detalhes no commit: ${{ env.TAGGED_COMMIT_URL }}. Veja a tag da versão: ${{ env.TAGGED_VERSION_URL }}"
+
 
 #  deploy:
 #    needs: tag
