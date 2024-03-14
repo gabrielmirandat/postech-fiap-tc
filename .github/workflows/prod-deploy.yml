@@ -24,13 +24,17 @@ jobs:
       - name: Upload orders-api artifact
         uses: actions/upload-artifact@v2
         with:
-          name: orders-api-jar
-          path: ./orders/target/orders*.jar
+          name: orders-artifact
+          path: |
+            ./orders/target/orders*.jar
+            ./orders/target/newrelic/newrelic.jar
+            ./orders/src/main/resources/newrelic/newrelic.yml
       - name: Upload menu-api artifact
         uses: actions/upload-artifact@v2
         with:
-          name: menu-api-jar
+          name: menu-artifact
           path: ./menu/target/menu*.jar
+
   publish:
     needs: build
     runs-on: ubuntu-latest
@@ -39,15 +43,25 @@ jobs:
       - name: Download orders-api artifact
         uses: actions/download-artifact@v2
         with:
-          name: orders-api-jar
-          path: ./orders/target
+          name: orders-artifact
+          path: ./temp/orders
+      - name: Reorganize New Relic Files for orders-api
+        run: |
+          mkdir -p ./orders/target/newrelic
+          mkdir -p ./orders/src/main/resources/newrelic
+          mv ./temp/orders/newrelic.jar ./orders/target/newrelic/newrelic.jar
+          mv ./temp/orders/newrelic.yml ./orders/src/main/resources/newrelic/newrelic.yml
+          mv ./temp/orders/orders*.jar ./orders/target/
       - name: Download menu-api artifact
         uses: actions/download-artifact@v2
         with:
-          name: menu-api-jar
+          name: menu-artifact
           path: ./menu/target
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push orders-api Docker image
         run: |
           docker build -t gabrielmirandat/postech-fiap-tc-orders-api:${{ github.sha }} ./orders
@@ -68,6 +82,7 @@ jobs:
           git config --global user.email 'github-actions@github.com'
           git tag -a ${{ github.sha }} -m "Deploying version ${{ github.sha }}"
           git push origin ${{ github.sha }}
+
 #  deploy:
 #    needs: tag
 #    runs-on: ubuntu-latest
