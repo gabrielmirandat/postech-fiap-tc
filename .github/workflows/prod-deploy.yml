@@ -34,21 +34,22 @@ jobs:
         with:
           name: menu-artifact
           path: ./menu/target/menu*.jar
-
   publish:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Extract short SHA
+        id: short-sha
+        run: echo "::set-output name=sha::$(git rev-parse --short ${{ github.sha }})"
       - name: Download orders-api artifact
         uses: actions/download-artifact@v2
         with:
           name: orders-artifact
           path: ./temp/orders
-      - name: List downloaded files
-        run: find ./temp/orders -type f -exec printf '%s\n' {} \;
-      - name: Reorganize New Relic Files for orders-api
+      - name: Reorganize orders-api files
         run: |
+          find ./temp/orders -type f -exec printf '%s\n' {} \;
           mkdir -p ./orders/target/newrelic
           mkdir -p ./orders/src/main/resources/newrelic
           mv ./temp/orders/target/newrelic/newrelic.jar ./orders/target/newrelic/newrelic.jar
@@ -64,26 +65,29 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and push orders-api Docker image
+      - name: Build and push Docker images
         run: |
-          docker build -t gabrielmirandat/postech-fiap-tc-orders-api:${{ github.sha }} ./orders
-          docker push gabrielmirandat/postech-fiap-tc-orders-api:${{ github.sha }}
-      - name: Build and push menu-api Docker image
-        run: |
-          docker build -t gabrielmirandat/postech-fiap-tc-menu-api:${{ github.sha }} ./menu
-          docker push gabrielmirandat/postech-fiap-tc-menu-api:${{ github.sha }}
+          VERSION="v${{ github.run_number }}-${{ steps.short-sha.outputs.sha }}"
+          docker build -t gabrielmirandat/postech-fiap-tc-orders-api:$VERSION ./orders
+          docker push gabrielmirandat/postech-fiap-tc-orders-api:$VERSION
+          docker build -t gabrielmirandat/postech-fiap-tc-menu-api:$VERSION ./menu
+          docker push gabrielmirandat/postech-fiap-tc-menu-api:$VERSION
 
   tag:
     needs: publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Create tag
+      - name: Extract short SHA
+        id: short-sha
+        run: echo "::set-output name=sha::$(git rev-parse --short ${{ github.sha }})"
+      - name: Create and push tag
         run: |
+          VERSION="v${{ github.run_number }}-${{ steps.short-sha.outputs.sha }}"
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git tag -a ${{ github.sha }} -m "Deploying version ${{ github.sha }}"
-          git push origin ${{ github.sha }}
+          git tag -a $VERSION -m "Deploying version $VERSION"
+          git push origin $VERSION
 
 #  deploy:
 #    needs: tag
