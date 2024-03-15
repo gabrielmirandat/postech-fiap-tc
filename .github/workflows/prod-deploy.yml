@@ -96,14 +96,16 @@ jobs:
     needs: tag
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Prepare Notification Message
-        id: prepare-message
         run: |
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
           TAGGED_VERSION="v${{ github.run_number }}-$SHORT_SHA"
           TAGGED_VERSION_URL="https://github.com/${{ github.repository }}/releases/tag/$TAGGED_VERSION"
           TAGGED_COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
-
+  
           echo "DISCORD_ARGS=A build ${{ github.run_number }} foi concluída com sucesso! Confira os detalhes no commit: $TAGGED_COMMIT_URL. Veja a tag da versão: $TAGGED_VERSION_URL" >> $GITHUB_ENV
 
       - name: Notify Discord
@@ -123,7 +125,14 @@ jobs:
           REPOSITORY="gabrielmirandat/postech-fiap-tc-orders-api"
           
           TOKEN_RAW=$(curl -s -X POST -H "Content-Type: application/json" -d '{"username": "${{ secrets.DOCKER_HUB_USERNAME }}", "password": "${{ secrets.DOCKER_HUB_PASSWORD }}"}' https://hub.docker.com/v2/users/login)
-          TOKEN=$(echo TOKEN_RAW | jq -r .token)
+          TOKEN=$(echo $TOKEN_RAW | jq -r .token)
+          
+          # Verifica se o token foi obtido com sucesso
+          if [ -z "$TOKEN" ] || [ "$TOKEN" == "null" ]; then
+            echo "Failed to obtain token."
+            exit 1
+          fi
+  
           TAGS=$(curl -s -H "Authorization: JWT $TOKEN" "https://hub.docker.com/v2/repositories/$REPOSITORY/tags" | jq -r '.results | sort_by(.tag_last_pushed) | .[].name')
           TAGS_ARRAY=($TAGS)
           TOTAL_TAGS=${#TAGS_ARRAY[@]}
@@ -149,7 +158,14 @@ jobs:
           REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
 
           TOKEN_RAW=$(curl -s -X POST -H "Content-Type: application/json" -d '{"username": "${{ secrets.DOCKER_HUB_USERNAME }}", "password": "${{ secrets.DOCKER_HUB_PASSWORD }}"}' https://hub.docker.com/v2/users/login)
-          TOKEN=$(echo TOKEN_RAW | jq -r .token)
+          TOKEN=$(echo $TOKEN_RAW | jq -r .token)
+          
+          # Verifica se o token foi obtido com sucesso
+          if [ -z "$TOKEN" ] || [ "$TOKEN" == "null" ]; then
+            echo "Failed to obtain token."
+            exit 1
+          fi
+          
           TAGS=$(curl -s -H "Authorization: JWT $TOKEN" "https://hub.docker.com/v2/repositories/$REPOSITORY/tags" | jq -r '.results | sort_by(.tag_last_pushed) | .[].name')
           TAGS_ARRAY=($TAGS)
           TOTAL_TAGS=${#TAGS_ARRAY[@]}
