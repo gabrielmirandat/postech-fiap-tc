@@ -64,10 +64,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push Docker images
         run: |
-          ORDERS_REPOSITORY="${{ secrets.DOCKER_HUB_USERNAME }}/postech-fiap-tc-orders-api"
-          MENU_REPOSITORY="${{ secrets.DOCKER_HUB_USERNAME }}/postech-fiap-tc-menu-api"
+          ORDERS_REPOSITORY="gabrielmirandat/postech-fiap-tc-orders-api"
+          MENU_REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
           TAGGED_VERSION="v${{ github.run_number }}-$SHORT_SHA"
+          
           docker build -t $ORDERS_REPOSITORY:$TAGGED_VERSION ./orders
           docker push $ORDERS_REPOSITORY:$TAGGED_VERSION
           docker build -t $MENU_REPOSITORY:$TAGGED_VERSION ./menu
@@ -112,13 +113,14 @@ jobs:
         with:
           args: ${{ env.DISCORD_ARGS }}
   cleanup:
+    needs: publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: List and Delete Old Tags for Orders-API
         run: |
-          REPOSITORY="${{ secrets.DOCKER_HUB_USERNAME }}/postech-fiap-tc-orders-api"
+          REPOSITORY="gabrielmirandat/postech-fiap-tc-orders-api"
           
           TOKEN_RAW=$(curl -s -X POST -H "Content-Type: application/json" -d '{"username": "${{ secrets.DOCKER_HUB_USERNAME }}", "password": "${{ secrets.DOCKER_HUB_PASSWORD }}"}' https://hub.docker.com/v2/users/login)
           TOKEN=$(echo TOKEN_RAW | jq -r .token)
@@ -144,7 +146,7 @@ jobs:
           fi
       - name: List and Delete Old Tags for Menu-API
         run: |
-          REPOSITORY="${{ secrets.DOCKER_HUB_USERNAME }}/postech-fiap-tc-menu-api"
+          REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
 
           TOKEN_RAW=$(curl -s -X POST -H "Content-Type: application/json" -d '{"username": "${{ secrets.DOCKER_HUB_USERNAME }}", "password": "${{ secrets.DOCKER_HUB_PASSWORD }}"}' https://hub.docker.com/v2/users/login)
           TOKEN=$(echo TOKEN_RAW | jq -r .token)
