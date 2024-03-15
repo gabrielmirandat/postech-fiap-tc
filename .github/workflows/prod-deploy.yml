@@ -95,24 +95,22 @@ jobs:
     needs: tag
     runs-on: ubuntu-latest
     steps:
-      - name: Notify Discord
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      - name: Prepare Notification Message
+        id: prepare-message
         run: |
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
           TAGGED_VERSION="v${{ github.run_number }}-$SHORT_SHA"
           TAGGED_VERSION_URL="https://github.com/${{ github.repository }}/releases/tag/$TAGGED_VERSION"
           TAGGED_COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
 
-          ARGS="A build ${{ github.run_number }} foi concluída com sucesso! Confira os detalhes no commit: $TAGGED_COMMIT_URL. Veja a tag da versão: $TAGGED_VERSION_URL"
+          echo "DISCORD_ARGS=A build ${{ github.run_number }} foi concluída com sucesso! Confira os detalhes no commit: $TAGGED_COMMIT_URL. Veja a tag da versão: $TAGGED_VERSION_URL" >> $GITHUB_ENV
 
-          curl -H "Content-Type: application/json" \
-               -d "{\"content\": \"$ARGS\"}" \
-               $DISCORD_WEBHOOK
-
-
-
+      - name: Notify Discord
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: ${{ env.DISCORD_ARGS }}
   cleanup:
     runs-on: ubuntu-latest
     steps:
