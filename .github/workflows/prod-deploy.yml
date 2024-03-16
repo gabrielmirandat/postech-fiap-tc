@@ -201,6 +201,11 @@ jobs:
           echo "Listing tags..."
           tags=$(gh api repos/gabrielmirandat/postech-fiap-tc/git/refs/tags --paginate --jq '.[].ref' | sed 's|refs/tags/||')
           
+          if [ -z "$tags" ]; then
+            echo "No tags found or failed to list tags."
+            exit 1
+          fi
+
           echo "Processing tags..."
           IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
           KEEP=5
