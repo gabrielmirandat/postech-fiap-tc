@@ -209,20 +209,18 @@ jobs:
             exit 1
           fi
 
-          echo "Processing tags..."
-          IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
           KEEP=5
-          total_tags=${#tags_array[@]}
-          
-          echo "Total tags: $total_tags. Tags to potentially delete: $(($total_tags-$KEEP))"
+          total_tags=$(echo "$tags" | wc -l)
+          echo "Total tags: $total_tags. Tags to potentially delete: $(($total_tags > $KEEP ? $total_tags - $KEEP : 0))"
           
           if [ "$total_tags" -gt "$KEEP" ]; then
-            for ((i=KEEP; i<total_tags; i++)); do
-              tag_to_delete=${tags_array[$i]}
-              echo "Deleting tag: $tag_to_delete"
+            echo "Deleting excess tags..."
+            echo "$tags" | tail -n +$(($KEEP + 1)) | while read tag_to_delete; do
+              echo "Preparing to delete tag: $tag_to_delete"
+              # Substitua o próximo comando pelo real, se necessário.
               gh api -X DELETE repos/gabrielmirandat/postech-fiap-tc/tags/$tag_to_delete
               echo "$tag_to_delete would be deleted."
             done
           else
             echo "No tags to delete. Total tags ($total_tags) is less than or equal to the keep limit ($KEEP)."
-  
+
