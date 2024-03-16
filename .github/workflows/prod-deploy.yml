@@ -86,7 +86,7 @@ jobs:
           
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git tag -a $TAGGED_VERSION -m "Deploying version $TAGGED_VERSION. Details: $TAGGED_COMMIT_URL" ${{ github.sha }}
+          git tag -a $TAGGED_VERSION -m "Deploying version $TAGGED_VERSION. Details: $TAGGED_COMMIT_URL"
           git push origin $TAGGED_VERSION
   notify:
     needs: tag
@@ -110,7 +110,7 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
           args: ${{ env.DISCORD_ARGS }}
-  cleanup:
+  cleanup-registry:
     needs: publish
     runs-on: ubuntu-latest
     steps:
@@ -162,7 +162,6 @@ jobs:
           TOKEN_RAW=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"username\": \"${DOCKER_HUB_USERNAME}\", \"password\": \"${DOCKER_HUB_PASSWORD}\"}" https://hub.docker.com/v2/users/login)
           TOKEN=$(echo $TOKEN_RAW | jq -r .token)
           
-          # Verifica se o token foi obtido com sucesso
           if [ -z "$TOKEN" ] || [ "$TOKEN" == "null" ]; then
             echo "Failed to obtain token."
             exit 1
@@ -188,3 +187,31 @@ jobs:
           else
             echo "No tags to delete. Keeping the latest $KEEP tags."
           fi
+  cleanup-tags:
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Keep only the 30 most recent tags
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        tags=$(gh api repos/${{ github.repository }}/tags --paginate --jq '.[].name' --header "Authorization: Bearer $GH_TOKEN")
+        IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
+        KEEP=30
+        total_tags=${#tags_array[@]}
+
+        if [ "$total_tags" -gt "$KEEP" ]; then
+          echo "Total tags: $total_tags. Tags to be deleted: $(($total_tags-$KEEP))"
+
+          for ((i=KEEP; i<total_tags; i++)); do
+            tag_to_delete=${tags_array[$i]}
+            echo "Deleting tag: $tag_to_delete"
+            gh api -X DELETE repos/${{ github.repository }}/git/refs/tags/$tag_to_delete --header "Authorization: Bearer $GH_TOKEN"
+            echo "$tag_to_delete deleted."
+          done
+        else
+          echo "No tags to delete. Total tags ($total_tags) is less than or equal to the keep limit ($KEEP)."
+        fi
