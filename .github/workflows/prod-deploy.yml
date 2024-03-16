@@ -187,34 +187,34 @@ jobs:
           else
             echo "No tags to delete. Keeping the latest $KEEP tags."
           fi
-    cleanup-tags:
-      needs: tag
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-    
-        - name: Keep only the 30 most recent tags
-          env:
-            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Ajuste aqui para usar GITHUB_TOKEN diretamente
-          run: |
-            echo "Listing tags..."
-            tags=$(gh api repos/gabrielmirandat/postech-fiap-tc/git/refs/tags --paginate --jq '.[].ref' | sed 's|refs/tags/||')
-            
-            echo "Processing tags..."
-            IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
-            KEEP=5
-            total_tags=${#tags_array[@]}
-            
-            echo "Total tags: $total_tags. Tags to potentially delete: $(($total_tags-$KEEP))"
-            
-            if [ "$total_tags" -gt "$KEEP" ]; then
-              for ((i=KEEP; i<total_tags; i++)); do
-                tag_to_delete=${tags_array[$i]}
-                echo "Deleting tag: $tag_to_delete"
-                gh api -X DELETE repos/gabrielmirandat/postech-fiap-tc/git/refs/tags/$tag_to_delete
-                echo "$tag_to_delete would be deleted."
-              done
-            else
-              echo "No tags to delete. Total tags ($total_tags) is less than or equal to the keep limit ($KEEP)."
-    
+  cleanup-tags:
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+  
+      - name: Keep only the 30 most recent tags
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Ajuste aqui para usar GITHUB_TOKEN diretamente
+        run: |
+          echo "Listing tags..."
+          tags=$(gh api repos/gabrielmirandat/postech-fiap-tc/git/refs/tags --paginate --jq '.[].ref' | sed 's|refs/tags/||')
+          
+          echo "Processing tags..."
+          IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
+          KEEP=5
+          total_tags=${#tags_array[@]}
+          
+          echo "Total tags: $total_tags. Tags to potentially delete: $(($total_tags-$KEEP))"
+          
+          if [ "$total_tags" -gt "$KEEP" ]; then
+            for ((i=KEEP; i<total_tags; i++)); do
+              tag_to_delete=${tags_array[$i]}
+              echo "Deleting tag: $tag_to_delete"
+              gh api -X DELETE repos/gabrielmirandat/postech-fiap-tc/git/refs/tags/$tag_to_delete
+              echo "$tag_to_delete would be deleted."
+            done
+          else
+            echo "No tags to delete. Total tags ($total_tags) is less than or equal to the keep limit ($KEEP)."
+  
