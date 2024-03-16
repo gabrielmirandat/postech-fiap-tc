@@ -200,6 +200,9 @@ jobs:
         run: |
           echo "Listing tags..."
           tags=$(gh api repos/gabrielmirandat/postech-fiap-tc/tags --paginate --jq '.[].name')
+
+          echo "Tags obtained:"
+          echo "$tags"
           
           if [ -z "$tags" ]; then
             echo "No tags found or failed to list tags."
