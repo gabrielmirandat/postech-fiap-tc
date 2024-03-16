@@ -73,7 +73,6 @@ jobs:
           docker push $ORDERS_REPOSITORY:$TAGGED_VERSION
           docker build -t $MENU_REPOSITORY:$TAGGED_VERSION ./menu
           docker push $MENU_REPOSITORY:$TAGGED_VERSION
-
   tag:
     needs: publish
     runs-on: ubuntu-latest
@@ -89,9 +88,6 @@ jobs:
           git config --global user.email 'github-actions@github.com'
           git tag -a $TAGGED_VERSION -m "Deploying version $TAGGED_VERSION. Details: $TAGGED_COMMIT_URL" ${{ github.sha }}
           git push origin $TAGGED_VERSION
-
-  
-
   notify:
     needs: tag
     runs-on: ubuntu-latest
@@ -139,7 +135,7 @@ jobs:
           TAGS=$(curl -s -H "Authorization: JWT $TOKEN" "https://hub.docker.com/v2/repositories/$REPOSITORY/tags" | jq -r '.results | sort_by(.tag_last_pushed) | .[].name')
           TAGS_ARRAY=($TAGS)
           TOTAL_TAGS=${#TAGS_ARRAY[@]}
-          KEEP=1
+          KEEP=5
           DELETE_COUNT=$(($TOTAL_TAGS-$KEEP))
 
           if [ $DELETE_COUNT -gt 0 ]; then
@@ -157,10 +153,13 @@ jobs:
             echo "No tags to delete. Keeping the latest $KEEP tags."
           fi
       - name: List and Delete Old Tags for Menu-API
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
-
-          TOKEN_RAW=$(curl -s -X POST -H "Content-Type: application/json" -d '{"username": "${{ secrets.DOCKER_HUB_USERNAME }}", "password": "${{ secrets.DOCKER_HUB_PASSWORD }}"}' https://hub.docker.com/v2/users/login)
+          
+          TOKEN_RAW=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"username\": \"${DOCKER_HUB_USERNAME}\", \"password\": \"${DOCKER_HUB_PASSWORD}\"}" https://hub.docker.com/v2/users/login)
           TOKEN=$(echo $TOKEN_RAW | jq -r .token)
           
           # Verifica se o token foi obtido com sucesso
@@ -172,7 +171,7 @@ jobs:
           TAGS=$(curl -s -H "Authorization: JWT $TOKEN" "https://hub.docker.com/v2/repositories/$REPOSITORY/tags" | jq -r '.results | sort_by(.tag_last_pushed) | .[].name')
           TAGS_ARRAY=($TAGS)
           TOTAL_TAGS=${#TAGS_ARRAY[@]}
-          KEEP=1
+          KEEP=5
           DELETE_COUNT=$(($TOTAL_TAGS-$KEEP))
 
           if [ $DELETE_COUNT -gt 0 ]; then
