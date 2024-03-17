@@ -217,7 +217,7 @@ jobs:
             echo "$tags" | tail -n +$(($KEEP + 1)) | while read tag_to_delete; do
               echo "Preparing to delete tag: $tag_to_delete"
               # Substitua o próximo comando pelo real, se necessário.
-              gh api -X DELETE repos/gabrielmirandat/postech-fiap-tc/tags/$tag_to_delete
+              gh api -X DELETE repos/gabrielmirandat/postech-fiap-tc/git/refs/tags/$tag_to_delete
               echo "$tag_to_delete would be deleted."
             done
           else
