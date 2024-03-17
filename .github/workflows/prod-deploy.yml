@@ -200,7 +200,6 @@ jobs:
         run: |
           echo "Listing tags..."
           tags=$(gh api repos/gabrielmirandat/postech-fiap-tc/tags --paginate --jq '.[].name')
-
           echo "Tags obtained:"
           echo "$tags"
           
@@ -208,10 +207,10 @@ jobs:
             echo "No tags found or failed to list tags."
             exit 1
           fi
-
+          
           KEEP=5
           total_tags=$(echo "$tags" | wc -l)
-          echo "Total tags: $total_tags. Tags to potentially delete: $(($total_tags > $KEEP ? $total_tags - $KEEP : 0))"
+          echo "Total tags: $total_tags. Tags to potentially delete: $(($total_tags - $KEEP))"
           
           if [ "$total_tags" -gt "$KEEP" ]; then
             echo "Deleting excess tags..."
@@ -223,4 +222,4 @@ jobs:
             done
           else
             echo "No tags to delete. Total tags ($total_tags) is less than or equal to the keep limit ($KEEP)."
-
+          fi
