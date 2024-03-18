@@ -3,7 +3,7 @@ name: Flow to deploy production artifact
 on:
   push:
     branches:
-     - feature**
+     - main
 
 jobs:
   build:
@@ -126,7 +126,6 @@ jobs:
           TOKEN_RAW=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"username\": \"${DOCKER_HUB_USERNAME}\", \"password\": \"${DOCKER_HUB_PASSWORD}\"}" https://hub.docker.com/v2/users/login)
           TOKEN=$(echo $TOKEN_RAW | jq -r .token)
           
-          # Verifica se o token foi obtido com sucesso
           if [ -z "$TOKEN" ] || [ "$TOKEN" == "null" ]; then
             echo "Failed to obtain token."
             exit 1
@@ -194,32 +193,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
   
-      - name: Keep only the 30 most recent tags
+      - name: Keep only most recent tags
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Ajuste aqui para usar GITHUB_TOKEN diretamente
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Listing tags..."
-          tags=$(gh api repos/gabrielmirandat/postech-fiap-tc/tags --paginate --jq '.[].name')
-          echo "Tags obtained:"
-          echo "$tags"
+          TAGS=$(gh api repos/gabrielmirandat/postech-fiap-tc/tags --paginate --jq '.[].name')
           
-          if [ -z "$tags" ]; then
+          if [ -z "$TAGS" ]; then
             echo "No tags found or failed to list tags."
             exit 1
           fi
           
           KEEP=5
-          total_tags=$(echo "$tags" | wc -l)
-          echo "Total tags: $total_tags. Tags to potentially delete: $(($total_tags - $KEEP))"
+          TOTAL_TAGS=$(echo "$TAGS" | wc -l)
+          echo "Total tags: $TOTAL_TAGS. Tags to potentially delete: $(($TOTAL_TAGS - $KEEP))"
           
-          if [ "$total_tags" -gt "$KEEP" ]; then
+          if [ "$TOTAL_TAGS" -gt "$KEEP" ]; then
             echo "Deleting excess tags..."
-            echo "$tags" | tail -n +$(($KEEP + 1)) | while read tag_to_delete; do
-              echo "Preparing to delete tag: $tag_to_delete"
-              # Substitua o próximo comando pelo real, se necessário.
-              gh api -X DELETE repos/gabrielmirandat/postech-fiap-tc/git/refs/tags/$tag_to_delete
-              echo "$tag_to_delete would be deleted."
+            echo "$TAGS" | tail -n +$(($KEEP + 1)) | while read TAG_TO_DELETE; do
+              echo "Preparing to delete tag: $TAG_TO_DELETE"
+              gh api -X DELETE repos/gabrielmirandat/postech-fiap-tc/git/refs/tags/$TAG_TO_DELETE
+              echo "$TAG_TO_DELETE deleted."
             done
           else
-            echo "No tags to delete. Total tags ($total_tags) is less than or equal to the keep limit ($KEEP)."
+            echo "No tags to delete. Total tags ($TOTAL_TAGS) is less than or equal to the keep limit ($KEEP)."
           fi
