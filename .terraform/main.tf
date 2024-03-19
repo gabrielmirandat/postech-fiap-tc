@@ -25,11 +25,10 @@ terraform {
 provider "aws" {
   region = "us-east-1"
 
-  assume_role {
-    role_arn     = "arn:aws:iam::654654351833:role/LabRole"
-    session_name = "TerraformSession"
-    // Adicione external_id aqui se necessário
-  }
+//  assume_role {
+//    role_arn     = "arn:aws:iam::654654351833:role/LabRole"
+//    session_name = "TerraformSession"
+//  }
 }
 
 resource "random_pet" "sg" {}
