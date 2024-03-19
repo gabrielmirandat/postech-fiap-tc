@@ -13,7 +13,6 @@ env:
 
 jobs:
   terraform-plan-p:
-    needs: terraform-plan-d
     runs-on: ubuntu-latest
     permissions:
       contents: read
