@@ -1,9 +1,15 @@
-name: Flow to deploy production artifact
+name: Test terraform executions
 
 on:
   push:
     branches:
      - feature**
+
+env:
+  TF_CLOUD_ORGANIZATION: "gabsrell"
+  TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
+  TF_WORKSPACE: "learn-terraform-github-actions"
+  TF_DIR: ./terraform
 
 jobs:
   terraform-plan-d:
@@ -19,12 +25,16 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - name: Format terraform files
         run: terraform fmt -check
+        working-directory: ${{ env.TF_DIR }}
       - name: Init configuration
         run: terraform init
+        working-directory: ${{ env.TF_DIR }}
       - name: Validate terraform script
         run: terraform validate -no-color
+        working-directory: ${{ env.TF_DIR }}
       - name: Plan infra changes
         run: terraform plan -no-color -input=false
+        working-directory: ${{ env.TF_DIR }}
         continue-on-error: true
       - name: Add commented changes
         uses: actions/github-script@v6
@@ -70,7 +80,7 @@ jobs:
         uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
         with:
           workspace: ${{ env.TF_WORKSPACE }}
-          directory: ${{ env.CONFIG_DIRECTORY }}
+          directory: ${{ env.TF_DIR }}
           speculative: true
       - name: Create Plan Run
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
