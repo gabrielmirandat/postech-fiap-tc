@@ -12,6 +12,13 @@ terraform {
       version = "3.4.3"
     }
   }
+  cloud {
+    organization = "gabsrell"
+
+    workspaces {
+      name = "learn-terraform-github-actions"
+    }
+  }
   required_version = ">= 1.1.0"
 }
 
