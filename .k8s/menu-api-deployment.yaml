@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: menu-service
-          image: menu-service:1.0-1
+          image: <MENU_API_IMAGE>
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8002

@@ -121,7 +121,7 @@ jobs:
           git config --global user.email 'github-actions@github.com'
           git tag -a $TAGGED_VERSION -m "Deploying version $TAGGED_VERSION. Details: $TAGGED_COMMIT_URL"
           git push origin $TAGGED_VERSION
-  notify:
+  notify-build:
     needs: tag
     runs-on: ubuntu-latest
     steps:
@@ -136,6 +136,62 @@ jobs:
           TAGGED_COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
   
           echo "DISCORD_ARGS=A build ${{ github.run_number }} foi concluída com sucesso! Confira os detalhes no commit: $TAGGED_COMMIT_URL. Veja a tag da versão: $TAGGED_VERSION_URL" >> $GITHUB_ENV
+
+      - name: Notify Discord
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        with:
+          args: ${{ env.DISCORD_ARGS }}
+  deploy:
+    needs: notify-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Update kubeconfig
+        run: |
+          aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME }}
+      - name: Update API versions
+        run: |
+          ORDERS_REPOSITORY="gabrielmirandat/postech-fiap-tc-orders-api"
+          MENU_REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
+          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
+          TAGGED_VERSION="v${{ github.run_number }}-$SHORT_SHA"
+          
+          sed -i 's|<ORDERS_API_IMAGE>|'"$ORDERS_REPOSITORY:$TAGGED_VERSION"'|g' .k8s/orders-api-deployment.yaml
+          sed -i 's|<MENU_API_IMAGE>|'"$MENU_REPOSITORY:$TAGGED_VERSION"'|g' .k8s/menu-api-deployment.yaml
+      - name: Deploy to EKS
+        run: |
+          kubectl apply -f mongodb-secrets.yaml
+          kubectl apply -f mongodb-deployment.yaml
+          kubectl apply -f mongodb-service.yaml
+          kubectl apply -f redis-deployment.yaml
+          kubectl apply -f redis-service.yaml
+          kubectl apply -f zookeeper-deployment.yaml
+          kubectl apply -f zookeeper-service.yaml
+          kubectl apply -f kafka-deployment.yaml
+          kubectl apply -f kafka-service.yaml
+          kubectl apply -f menu-api-deployment.yaml
+          kubectl apply -f menu-api-service.yaml
+          kubectl apply -f orders-api-deployment.yaml
+          kubectl apply -f orders-api-service.yaml
+  notify-deploy:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Prepare Notification Message
+        run: |
+          # TODO
 
       - name: Notify Discord
         uses: Ilshidur/action-discord@master
@@ -163,7 +219,7 @@ jobs:
             echo "Failed to obtain token."
             exit 1
           fi
-  
+          
           TAGS=$(curl -s -H "Authorization: JWT $TOKEN" "https://hub.docker.com/v2/repositories/$REPOSITORY/tags" | jq -r '.results | sort_by(.tag_last_pushed) | .[].name')
           TAGS_ARRAY=($TAGS)
           TOTAL_TAGS=${#TAGS_ARRAY[@]}
@@ -225,7 +281,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-  
+
       - name: Keep only most recent tags
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
