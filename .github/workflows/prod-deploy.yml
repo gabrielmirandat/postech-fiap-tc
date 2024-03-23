@@ -41,7 +41,7 @@ jobs:
           name: menu-artifact
           path: ./menu/target/menu*.jar
   terraform-apply:
-    name: "Terraform Apply"
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -68,7 +68,7 @@ jobs:
           run: ${{ steps.apply-run.outputs.run_id }}
           comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
   publish:
-    needs: build
+    needs: terraform-apply
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -100,12 +100,12 @@ jobs:
           ORDERS_REPOSITORY="gabrielmirandat/postech-fiap-tc-orders-api"
           MENU_REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
-          TAGGED_VERSION="v${{ github.run_number }}-$SHORT_SHA"
+          GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
           
-          docker build -t $ORDERS_REPOSITORY:$TAGGED_VERSION ./orders
-          docker push $ORDERS_REPOSITORY:$TAGGED_VERSION
-          docker build -t $MENU_REPOSITORY:$TAGGED_VERSION ./menu
-          docker push $MENU_REPOSITORY:$TAGGED_VERSION
+          docker build -t $ORDERS_REPOSITORY:$GEN_VERSION ./orders
+          docker push $ORDERS_REPOSITORY:$GEN_VERSION
+          docker build -t $MENU_REPOSITORY:$GEN_VERSION ./menu
+          docker push $MENU_REPOSITORY:$GEN_VERSION
   tag:
     needs: publish
     runs-on: ubuntu-latest
@@ -114,29 +114,36 @@ jobs:
       - name: Create and push tag
         run: |
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
-          TAGGED_VERSION="v${{ github.run_number }}-$SHORT_SHA"
-          TAGGED_COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
+          COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git tag -a $TAGGED_VERSION -m "Deploying version $TAGGED_VERSION. Details: $TAGGED_COMMIT_URL"
-          git push origin $TAGGED_VERSION
-  notify-build:
-    needs: tag
+          git tag -a $GEN_VERSION -m "Deploying version $GEN_VERSION. Details: $COMMIT_URL"
+          git push origin $GEN_VERSION
+  notify-publish:
+    needs: publish
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Prepare Notification Message
+      - name: Prepare Success Message
+        if: ${{ needs.publish.result == 'success' }}
         run: |
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
-          TAGGED_VERSION="v${{ github.run_number }}-$SHORT_SHA"
-          TAGGED_VERSION_URL="https://github.com/${{ github.repository }}/releases/tag/$TAGGED_VERSION"
-          TAGGED_COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
-  
-          echo "DISCORD_ARGS=A build ${{ github.run_number }} foi concluída com sucesso! Confira os detalhes no commit: $TAGGED_COMMIT_URL. Veja a tag da versão: $TAGGED_VERSION_URL" >> $GITHUB_ENV
-
+          GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
+          COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          TAG_URL="https://github.com/${{ github.repository }}/releases/tag/$GEN_VERSION"
+          
+          echo "DISCORD_ARGS=A build ${{ github.run_number }} foi concluída com sucesso! Confira os detalhes no commit: $COMMIT_URL. Veja a tag da versão: $TAG_URL" >> $GITHUB_ENV
+      - name: Prepare Failure Message
+        if: ${{ needs.publish.result == 'failure' }}
+        run: |
+          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
+          GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
+          WORKFLOW_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "DISCORD_ARGS=A build $GEN_VERSION falhou. Confira os detalhes: $WORKFLOW_URL." >> $GITHUB_ENV
       - name: Notify Discord
         uses: Ilshidur/action-discord@master
         env:
@@ -144,7 +151,7 @@ jobs:
         with:
           args: ${{ env.DISCORD_ARGS }}
   deploy:
-    needs: notify-build
+    needs: publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -163,10 +170,10 @@ jobs:
           ORDERS_REPOSITORY="gabrielmirandat/postech-fiap-tc-orders-api"
           MENU_REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
-          TAGGED_VERSION="v${{ github.run_number }}-$SHORT_SHA"
+          GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
           
-          sed -i 's|<ORDERS_API_IMAGE>|'"$ORDERS_REPOSITORY:$TAGGED_VERSION"'|g' .k8s/orders-api-deployment.yaml
-          sed -i 's|<MENU_API_IMAGE>|'"$MENU_REPOSITORY:$TAGGED_VERSION"'|g' .k8s/menu-api-deployment.yaml
+          sed -i 's|<ORDERS_API_IMAGE>|'"$ORDERS_REPOSITORY:$GEN_VERSION"'|g' .k8s/orders-api-deployment.yaml
+          sed -i 's|<MENU_API_IMAGE>|'"$MENU_REPOSITORY:$GEN_VERSION"'|g' .k8s/menu-api-deployment.yaml
       - name: Deploy to EKS
         run: |
           kubectl apply -f mongodb-secrets.yaml
@@ -184,15 +191,26 @@ jobs:
           kubectl apply -f orders-api-service.yaml
   notify-deploy:
     needs: deploy
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Prepare Notification Message
+      - name: Prepare Success Message
+        if: ${{ needs.deploy.result == 'success' }}
         run: |
-          # TODO
-
+          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
+          GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
+          COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          TAG_URL="https://github.com/${{ github.repository }}/releases/tag/$GEN_VERSION"  
+          echo "DISCORD_ARGS=O deploy ${{ github.run_number }} foi concluído com sucesso! Confira os detalhes no commit: $COMMIT_URL. Veja a tag da versão: $TAG_URL" >> $GITHUB_ENV
+      - name: Prepare Failure Message
+        if: ${{ needs.deploy.result == 'failure' }}
+        run: |
+          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
+          GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
+          WORKFLOW_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "DISCORD_ARGS=O deploy $GEN_VERSION falhou. Confira os detalhes: $WORKFLOW_URL." >> $GITHUB_ENV
       - name: Notify Discord
         uses: Ilshidur/action-discord@master
         env:
