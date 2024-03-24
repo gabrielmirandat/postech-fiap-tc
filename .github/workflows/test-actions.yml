@@ -23,6 +23,7 @@ jobs:
           
           cat .k8s/orders-api-deployment.yaml
           cat .k8s/menu-api-deployment.yaml
+          exit 1
   notify-deploy:
     needs: deploy
     if: always()
