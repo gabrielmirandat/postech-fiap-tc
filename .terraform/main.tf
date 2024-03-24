@@ -15,7 +15,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "postech-fiap-tc-cluster"
+  cluster_name = "postech-fiap-tc"
   vpc_name     = "postech-fiap-tc-vpc"
 }
 
