@@ -15,13 +15,8 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "postech-fiap-tc-eks-${random_string.suffix.result}"
+  cluster_name = "postech-fiap-tc"
   vpc_name     = "postech-fiap-tc-vpc"
-}
-
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
 }
 
 module "vpc" {
