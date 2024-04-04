@@ -5,9 +5,9 @@ mvn org.owasp:dependency-check-maven:check
 
 # Verifica o resultado da execução
 if [ $? -ne 0 ]; then
-  echo "Vulnerabilidades foram encontradas. Corrija-as antes de prosseguir."
+  echo "Vulnerability Alert"
   exit 1
 fi
 
-echo "Nenhuma vulnerabilidade encontrada. Continuando com o commit."
+echo "None Vulnerabilities"
 exit 0
