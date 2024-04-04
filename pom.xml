@@ -132,8 +132,6 @@
     </dependencies>
 
     <profiles>
-
-        <!-- Perfil para Testes Unitarios -->
         <profile>
             <id>unit-tests</id>
             <activation>
@@ -170,7 +168,6 @@
             </build>
         </profile>
 
-        <!-- Perfil para Testes de Integração -->
         <profile>
             <id>integration-tests</id>
             <build>
@@ -208,7 +205,6 @@
             </build>
         </profile>
 
-        <!-- Perfil para Testes de Contrato -->
         <profile>
             <id>contract-tests</id>
             <build>
@@ -246,7 +242,6 @@
             </build>
         </profile>
 
-        <!-- Perfil para Testes End-to-End (E2E) -->
         <profile>
             <id>e2e-tests</id>
             <build>
@@ -284,4 +279,25 @@
             </build>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>9.1.0</version>
+                <configuration>
+                    <failBuildOnCVSS>4</failBuildOnCVSS>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

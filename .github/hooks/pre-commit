@@ -1,0 +1,13 @@
+#!/bin/sh
+
+echo "Iniciando o OWASP Dependency-Check..."
+mvn org.owasp:dependency-check-maven:check
+
+# Verifica o resultado da execução
+if [ $? -ne 0 ]; then
+  echo "Vulnerabilidades foram encontradas. Corrija-as antes de prosseguir."
+  exit 1
+fi
+
+echo "Nenhuma vulnerabilidade encontrada. Continuando com o commit."
+exit 0
