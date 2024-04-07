@@ -12,13 +12,12 @@
     <artifactId>menu</artifactId>
 
     <properties>
-        <jackson.datetime>2.16.1</jackson.datetime>
-        <quarkus.version>3.7.1</quarkus.version>
-        <mongodb.version>4.10.2</mongodb.version>
-        <mongock.version>5.0.28</mongock.version>
-        <compiler-plugin.version>3.11.0</compiler-plugin.version>
-        <grpc.version>1.61.0</grpc.version>
-        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+        <jackson.datetime>2.17.0</jackson.datetime>
+        <quarkus.version>3.9.2</quarkus.version>
+        <mongodb.version>5.0.1</mongodb.version>
+        <mongock.version>5.4.1</mongock.version>
+        <compiler-plugin.version>3.13.0</compiler-plugin.version>
+        <grpc.version>1.63.0</grpc.version>
     </properties>
 
     <dependencyManagement>

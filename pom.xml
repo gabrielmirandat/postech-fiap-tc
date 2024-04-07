@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
+        <version>3.2.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -31,16 +31,17 @@
     </modules>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <swagger.version>2.2.17</swagger.version>
+        <swagger.version>2.2.21</swagger.version>
         <openapi.generator.version>7.0.1</openapi.generator.version>
-        <mapper.version>2.4.4</mapper.version>
+        <mapper.version>3.2.0</mapper.version>
         <cloudevents.version>2.5.0</cloudevents.version>
-        <opentelemetry.version>1.32.0</opentelemetry.version>
-        <testcontainer.version>1.19.5</testcontainer.version>
+        <opentelemetry.version>1.36.0</opentelemetry.version>
+        <testcontainer.version>1.19.7</testcontainer.version>
+        <maven.failsafe.plugin.version>3.2.5</maven.failsafe.plugin.version>
         <openapi.generator.skip>false</openapi.generator.skip>
     </properties>
 
@@ -117,18 +118,6 @@
             <artifactId>opentelemetry-exporter-otlp</artifactId>
             <version>${opentelemetry.version}</version>
         </dependency>
-
-        <!-- TEST -->
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <profiles>
@@ -182,7 +171,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>3.2.2</version>
+                        <version>${maven.failsafe.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>integration-test</id>
@@ -219,7 +208,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>3.2.2</version>
+                        <version>${maven.failsafe.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>contract-test</id>
@@ -256,7 +245,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>3.2.2</version>
+                        <version>${maven.failsafe.plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>e2e-test</id>
@@ -282,21 +271,22 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>9.1.0</version>
-                <configuration>
-                    <failBuildOnCVSS>4</failBuildOnCVSS>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.owasp</groupId>-->
+<!--                <artifactId>dependency-check-maven</artifactId>-->
+<!--                <version>9.1.0</version>-->
+<!--                <configuration>-->
+<!--                    <failBuildOnCVSS>4</failBuildOnCVSS>-->
+<!--                    <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>check</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 

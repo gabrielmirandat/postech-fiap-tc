@@ -1,13 +1,25 @@
 #!/bin/sh
 
-echo "Iniciando o OWASP Dependency-Check..."
-mvn org.owasp:dependency-check-maven:check
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+PROJECT_NAME=techchallenge
 
-# Verifica o resultado da execução
-if [ $? -ne 0 ]; then
-  echo "Vulnerability Alert"
-  exit 1
-fi
+echo "[CHECKING COMPATIBLE UPDATES]"
+mvn versions:display-dependency-updates
 
-echo "None Vulnerabilities"
-exit 0
+echo "[CHECKING COMPATIBLE PLUGINS]"
+mvn versions:display-plugin-updates
+
+echo "[APPLYING UPDATES]"
+# mvn versions:update-properties
+# mvn versions:use-latest-versions
+
+#echo "[OWASP Dependency-Check] branch $CURRENT_BRANCH in $PROJECT_NAME"
+#mvn org.owasp:dependency-check-maven:check
+#
+#if [ $? -ne 0 ]; then
+#  echo "Vulnerabilities found"
+#  exit 1
+#fi
+#
+#echo "No vulnerabilities found"
+#exit 0

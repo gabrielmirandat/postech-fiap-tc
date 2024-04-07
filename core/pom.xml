@@ -12,19 +12,15 @@
     <artifactId>core</artifactId>
 
     <properties>
-        <openapi.generator.skip>false</openapi.generator.skip>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <junit.jupiter.version>5.7.0</junit.jupiter.version>
-        <assertj.core.version>3.24.2</assertj.core.version>
-        <jakarta.validation.version>3.0.2</jakarta.validation.version>
-        <jakarta.annotation.version>2.1.1</jakarta.annotation.version>
+        <junit.jupiter.version>5.10.2</junit.jupiter.version>
+        <assertj.core.version>3.25.3</assertj.core.version>
+        <jakarta.validation.version>3.1.0-M2</jakarta.validation.version>
+        <jakarta.annotation.version>3.0.0-M1</jakarta.annotation.version>
         <hibernate.jakarta.validations>8.0.1.Final</hibernate.jakarta.validations>
         <glassfish.jakarta.el>5.0.0</glassfish.jakarta.el>
         <grpc.version>1.61.0</grpc.version>
         <protobuf.version>3.25.2</protobuf.version>
-        <protobuf.maven.plugin.version>0.6.1
-        </protobuf.maven.plugin.version>
+        <protobuf.maven.plugin.version>0.6.1</protobuf.maven.plugin.version>
         <os.maven.plugin.version>1.7.1</os.maven.plugin.version>
     </properties>
 

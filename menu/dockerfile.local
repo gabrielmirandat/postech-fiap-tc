@@ -1,4 +1,4 @@
-FROM amazoncorretto:17
+FROM amazoncorretto:21
 WORKDIR /app
 EXPOSE 8002
 COPY target/menu*-runner.jar menu.jar
