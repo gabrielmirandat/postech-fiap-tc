@@ -1,0 +1,25 @@
+#!/bin/sh
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+PROJECT_NAME=techchallenge
+
+# echo "[CHECKING COMPATIBLE UPDATES]"
+# mvn versions:display-dependency-updates
+
+# echo "[CHECKING COMPATIBLE PLUGINS]"
+# mvn versions:display-plugin-updates
+
+# echo "[APPLYING UPDATES]"
+# mvn versions:update-properties
+# mvn versions:use-latest-versions
+
+echo "[OWASP Dependency-Check] branch $CURRENT_BRANCH in $PROJECT_NAME"
+mvn org.owasp:dependency-check-maven:aggregate
+
+if [ $? -ne 0 ]; then
+  echo "Vulnerabilities found"
+  exit 1
+fi
+
+echo "No vulnerabilities found"
+exit 0
