@@ -3,7 +3,7 @@ name: Flow to deploy production artifact
 on:
   push:
     branches:
-     - develop
+     - fix*
 
 env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
@@ -177,19 +177,19 @@ jobs:
           sed -i 's|<MENU_API_IMAGE>|'"$MENU_REPOSITORY:$GEN_VERSION"'|g' .k8s/menu-api-deployment.yaml
       - name: Deploy to EKS
         run: |
-          kubectl apply -f mongodb-secrets.yaml
-          kubectl apply -f mongodb-deployment.yaml
-          kubectl apply -f mongodb-service.yaml
-          kubectl apply -f redis-deployment.yaml
-          kubectl apply -f redis-service.yaml
-          kubectl apply -f zookeeper-deployment.yaml
-          kubectl apply -f zookeeper-service.yaml
-          kubectl apply -f kafka-deployment.yaml
-          kubectl apply -f kafka-service.yaml
-          kubectl apply -f menu-api-deployment.yaml
-          kubectl apply -f menu-api-service.yaml
-          kubectl apply -f orders-api-deployment.yaml
-          kubectl apply -f orders-api-service.yaml
+          kubectl apply -f .k8s/mongodb-secrets.yaml
+          kubectl apply -f .k8s/mongodb-deployment.yaml
+          kubectl apply -f .k8s/mongodb-service.yaml
+          kubectl apply -f .k8s/redis-deployment.yaml
+          kubectl apply -f .k8s/redis-service.yaml
+          kubectl apply -f .k8s/zookeeper-deployment.yaml
+          kubectl apply -f .k8s/zookeeper-service.yaml
+          kubectl apply -f .k8s/kafka-deployment.yaml
+          kubectl apply -f .k8s/kafka-service.yaml
+          kubectl apply -f .k8s/menu-api-deployment.yaml
+          kubectl apply -f .k8s/menu-api-service.yaml
+          kubectl apply -f .k8s/orders-api-deployment.yaml
+          kubectl apply -f .k8s/orders-api-service.yaml
   notify-deploy:
     needs: deploy
     if: always()
