@@ -3,10 +3,9 @@ kind: Service
 metadata:
   name: menu-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 8002
       targetPort: 8002
-      nodePort: 30002
   selector:
     app: menu-service
