@@ -3,13 +3,13 @@
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 PROJECT_NAME=techchallenge
 
-echo "[CHECKING COMPATIBLE UPDATES]"
-mvn versions:display-dependency-updates
+# echo "[CHECKING COMPATIBLE UPDATES]"
+# mvn versions:display-dependency-updates
 
-echo "[CHECKING COMPATIBLE PLUGINS]"
-mvn versions:display-plugin-updates
+# echo "[CHECKING COMPATIBLE PLUGINS]"
+# mvn versions:display-plugin-updates
 
-echo "[APPLYING UPDATES]"
+# echo "[APPLYING UPDATES]"
 # mvn versions:update-properties
 # mvn versions:use-latest-versions
 
