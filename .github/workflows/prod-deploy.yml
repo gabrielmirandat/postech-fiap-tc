@@ -303,7 +303,7 @@ jobs:
 
       - name: Keep only most recent tags
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT }}
         run: |
           TAGS=$(gh api repos/gabrielmirandat/postech-fiap-tc/tags --paginate --jq '.[].name')
           
