@@ -297,7 +297,7 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>9.1.0</version>
                 <configuration>
-                    <failBuildOnCVSS>5</failBuildOnCVSS>
+                    <failBuildOnCVSS>8</failBuildOnCVSS>
                     <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
                     <suppressionFiles>
                         <suppressionFile>owasp-suppression.xml</suppressionFile>

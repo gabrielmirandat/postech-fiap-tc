@@ -1,4 +1,4 @@
-package com.gabriel.menu.core.domain.model;
+package com.gabriel.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

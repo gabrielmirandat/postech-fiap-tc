@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.application.exception.ApplicationError;
 import com.gabriel.core.application.exception.ApplicationException;
+import com.gabriel.core.domain.model.Description;
 import com.gabriel.core.domain.model.Name;
 import com.gabriel.core.domain.model.Price;
 import com.gabriel.core.domain.model.id.IngredientID;
