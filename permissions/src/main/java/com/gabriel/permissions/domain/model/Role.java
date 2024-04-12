@@ -1,6 +1,6 @@
 package com.gabriel.permissions.domain.model;
 
-import com.gabriel.core.domain.AggregateRoot;
+import com.gabriel.core.domain.Entity;
 import com.gabriel.core.domain.model.Description;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
@@ -14,10 +14,10 @@ import lombok.RequiredArgsConstructor;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@jakarta.persistence.Entity
 @RequiredArgsConstructor
 @Data
-public class Role extends AggregateRoot {
+public class Role extends Entity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
