@@ -1,18 +1,23 @@
 package com.gabriel.permissions.infraestructure.security;
 
-import org.springframework.context.annotation.Configuration;
+import com.okta.spring.boot.oauth.Okta;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
 @EnableWebSecurity
-@EnableOAuth2Sso
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-            .antMatchers("/", "/login**").permitAll()
-            .anyRequest().authenticated();
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests(authorizeRequests ->
+            authorizeRequests
+                .requestMatchers("/").permitAll()
+                .anyRequest().authenticated());
+        
+        Okta.configureResourceServer401ResponseBody(http);
+        return http.build();
     }
 }

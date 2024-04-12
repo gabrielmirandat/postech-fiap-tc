@@ -24,6 +24,18 @@ services:
   #    networks:
   #      - postech_network
 
+  postgres:
+    container_name: postech_postgres
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postech_db
+      POSTGRES_USER: dummy
+      POSTGRES_PASSWORD: dummy
+    networks:
+      - postech_network
+
   mongo:
     container_name: postech_mongo
     image: mongo:latest

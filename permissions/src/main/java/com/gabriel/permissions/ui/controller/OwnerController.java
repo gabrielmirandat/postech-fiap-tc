@@ -4,9 +4,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @SpringBootApplication
 @RestController
 public class OwnerController {
+
+    @GetMapping("/hello-oauth")
+    public String hello(Principal principal) {
+        return "Hello, " + principal.getName();
+    }
+
+    @GetMapping("authorization-code/callback")
+    public String redirect(Principal principal) {
+        return "Hello, " + principal.getName();
+    }
 
     @GetMapping("/groups")
     @PreAuthorize("hasAuthority('groups:read')")
@@ -21,7 +33,7 @@ public class OwnerController {
     }
 
     @GetMapping("/group-admins")
-        @PreAuthorize("hasAuthority('group_admins:read')")
+    @PreAuthorize("hasAuthority('group_admins:read')")
     public String listGroupAdmins() {
         return "List all group admins";
     }
