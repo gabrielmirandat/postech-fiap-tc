@@ -1,38 +1,31 @@
 package com.gabriel.permissions.domain.model;
 
-import com.gabriel.core.domain.Entity;
-import com.gabriel.core.domain.model.Description;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
-@jakarta.persistence.Entity
-@RequiredArgsConstructor
+@Entity
+@Table(name = "authority")
 @Data
-public class Authority extends Entity {
-
+public class Authority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Authority cannot be blank")
-    @Size(max = 255, message = "Authority name cannot exceed 255 characters")
-    @Pattern(regexp = "^[^:]+:(write|read|update|delete)$", message = "Authority must follow the pattern <resource>:<write|read|update|delete>")
-    @Column(unique = true)
+    @Column(nullable = false, unique = true, length = 255)
     private String name;
 
-    @Valid
-    @Embedded
-    private Description description;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    @ManyToMany(mappedBy = "authorities")
-    private Set<Role> roles;
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "authority")
+    private Set<RoleAuthority> roleAuthorities;
 }

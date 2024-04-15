@@ -1,0 +1,25 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_outer_classname = "PermissionsProtoClient";
+package com.gabriel.specs.permissions;
+
+// O serviço gRPC para Permissions
+service Permissions {
+  rpc RetrieveRoleAuthorities (RoleAuthoritiesRequest) returns (RoleAuthoritiesResponse);
+}
+
+// Mensagem de requisição (possivelmente para filtrar por role específica)
+message RoleAuthoritiesRequest {
+  string role = 1; // Opcional, se você quiser filtrar por uma role específica
+}
+
+// Definindo a associação entre role e authorities
+message RoleAuthority {
+  string role = 1;
+  repeated string authorities = 2;
+}
+
+// Mensagem de resposta que contém uma lista de associações de roles com suas permissions
+message RoleAuthoritiesResponse {
+  repeated RoleAuthority roleAuthorities = 1;
+}

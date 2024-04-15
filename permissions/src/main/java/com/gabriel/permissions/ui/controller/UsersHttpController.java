@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-public class AuthController {
+public class UsersHttpController {
 
     @Value("${auth0.issuer}")
     private String issuer;
