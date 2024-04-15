@@ -1,27 +1,30 @@
 package com.gabriel.permissions.domain.model;
 
-import com.gabriel.core.domain.AggregateRoot;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-public class RoleAuthority extends AggregateRoot {
+@Table(name = "role_authority")
+@IdClass(RoleAuthorityKey.class)  // This should be linked with simple fields below
+public class RoleAuthority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "role_id")
+    private Long roleId;  // Corresponds to roleId in RoleAuthorityKey
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
+    @Id
+    @Column(name = "authority_id")
+    private Long authorityId;  // Corresponds to authorityId in RoleAuthorityKey
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", insertable = false, updatable = false)
     private Role role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "authority_id")
+    @ManyToOne
+    @JoinColumn(name = "authority_id", insertable = false, updatable = false)
     private Authority authority;
 
     @Column(name = "associated_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
