@@ -1,18 +1,22 @@
 package com.gabriel.permissions.domain.model;
 
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Embeddable
 public class RoleAuthorityKey implements Serializable {
-    private Long roleId;     // Matches the RoleAuthority.roleId
-    private Long authorityId; // Matches the RoleAuthority.authorityId
+    
+    private UUID roleId;     // Matches the RoleAuthority.roleId
+    private UUID authorityId; // Matches the RoleAuthority.authorityId
 
     @Override
     public boolean equals(Object o) {

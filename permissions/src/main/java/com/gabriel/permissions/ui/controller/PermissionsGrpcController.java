@@ -8,6 +8,7 @@ import com.gabriel.specs.permissions.RoleAuthoritiesResponse;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class PermissionsGrpcController extends PermissionsGrpc.PermissionsImplBa
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void retrieveRoleAuthorities(RoleAuthoritiesRequest request, StreamObserver<RoleAuthoritiesResponse> responseObserver) {
         try {
             List<Role> roles = !request.getRole().isEmpty() ?
@@ -28,6 +30,7 @@ public class PermissionsGrpcController extends PermissionsGrpc.PermissionsImplBa
                 permissionService.retrieveAllRoles();
 
             RoleAuthoritiesResponse.Builder responseBuilder = RoleAuthoritiesResponse.newBuilder();
+
             for (Role role : roles) {
                 responseBuilder.addRoleAuthorities(
                     com.gabriel.specs.permissions.RoleAuthority.newBuilder()
@@ -37,7 +40,7 @@ public class PermissionsGrpcController extends PermissionsGrpc.PermissionsImplBa
                         .build()
                 );
             }
-
+            
             responseObserver.onNext(responseBuilder.build());
             responseObserver.onCompleted();
 
