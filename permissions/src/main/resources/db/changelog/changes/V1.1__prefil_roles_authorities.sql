@@ -52,6 +52,3 @@ VALUES ((SELECT id FROM role WHERE name = 'POSTECH_OWNER'), (SELECT id FROM auth
        ((SELECT id FROM role WHERE name = 'POSTECH_MENU_ADMIN'), (SELECT id FROM authority WHERE name = 'menu:add'), 'system'),
        ((SELECT id FROM role WHERE name = 'POSTECH_MENU_ADMIN'), (SELECT id FROM authority WHERE name = 'menu:remove'), 'system'),
        ((SELECT id FROM role WHERE name = 'POSTECH_MENU_SQUAD'), (SELECT id FROM authority WHERE name = 'menu:update'), 'system');
-
-
-
