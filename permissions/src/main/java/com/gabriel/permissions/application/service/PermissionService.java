@@ -32,6 +32,7 @@ public class PermissionService {
     }
 
     public Set<RoleAuthority> retrieveRoleAuthorities(String role) {
+
         return roleRepository.findByName(role)
             .orElseThrow(() -> new RoleNotFoundException("Role not found with name: " + role))
             .getRoleAuthorities();
