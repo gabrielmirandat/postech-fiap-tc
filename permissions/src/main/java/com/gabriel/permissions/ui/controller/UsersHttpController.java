@@ -1,14 +1,13 @@
 package com.gabriel.permissions.ui.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gabriel.permissions.application.service.PermissionService;
 import com.gabriel.permissions.ui.controller.request.CredentialsRequest;
 import com.gabriel.permissions.ui.controller.request.RegisterRequest;
 import com.gabriel.permissions.ui.controller.response.AuthenticationResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
-import kong.unirest.core.UnirestException;
-import kong.unirest.core.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +36,8 @@ public class UsersHttpController {
     private String logoutRedirectUrl;
     private ObjectMapper objectMapper;
 
+    private PermissionService permissionService;
+
     public UsersHttpController(
         @Value("${auth0.issuer}") String issuer,
         @Value("${auth0.clientId}") String clientId,
@@ -47,7 +48,8 @@ public class UsersHttpController {
         @Value("${auth0.scope}") String scope,
         @Value("${auth0.applicationScope}") String applicationScope,
         @Value("${auth0.logout_url}") String logoutRedirectUrl,
-        ObjectMapper objectMapper
+        ObjectMapper objectMapper,
+        PermissionService permissionService
     ) {
         this.issuer = issuer;
         this.clientId = clientId;
@@ -59,6 +61,7 @@ public class UsersHttpController {
         this.applicationScope = applicationScope;
         this.logoutRedirectUrl = logoutRedirectUrl;
         this.objectMapper = objectMapper;
+        this.permissionService = permissionService;
     }
 
     @PostMapping("/login")
@@ -96,7 +99,7 @@ public class UsersHttpController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
         try {
-            String token = getManagementApiToken();
+            String token = permissionService.getManagementApiToken();
             HttpResponse<String> response = Unirest.post("https://" + issuer + "/dbconnections/signup")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .header("Authorization", "Bearer " + token)
@@ -123,7 +126,7 @@ public class UsersHttpController {
     @DeleteMapping("/delete-account")
     public ResponseEntity<?> deleteAccount(Principal principal) {
         try {
-            String token = getManagementApiToken();
+            String token = permissionService.getManagementApiToken();
             HttpResponse<String> response = Unirest.delete("https://" + issuer + "/api/v2/users/" + encodeUserId(principal.getName()))
                 .header("Authorization", "Bearer " + token)
                 .asString();
@@ -138,30 +141,10 @@ public class UsersHttpController {
         }
     }
 
-    private String getManagementApiToken() throws UnirestException {
-        HttpResponse<String> response = Unirest.post("https://" + issuer + "/oauth/token")
-            .header("Content-Type", "application/x-www-form-urlencoded")
-            .field("grant_type", "client_credentials")
-            .field("client_id", applicationId)
-            .field("client_secret", applicationSecret)
-            .field("audience", "https://" + issuer + "/api/v2/")
-            .field("scope", applicationScope)
-            .asString();
-
-        if (response.isSuccess()) {
-            JSONObject jsonResponse = new JSONObject(response.getBody());
-            return jsonResponse.getString("access_token");
-        } else {
-            throw new RuntimeException("Failed to obtain management API token.");
-        }
-    }
-
     private String encodeUserId(String userId) {
         try {
-            // Encode the userId using URL encoding rules
             return URLEncoder.encode(userId, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            // Handle encoding exceptions if necessary
             throw new RuntimeException("Error encoding user ID", e);
         }
     }

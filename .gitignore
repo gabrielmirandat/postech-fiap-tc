@@ -199,3 +199,6 @@ README.html
 *.iml
 .idea
 .exercism
+
+### PERMISSIONS ###
+permissions/src/main/resources/permissions.properties
