@@ -49,7 +49,7 @@ public class SecurityConfig {
             if (roles == null) {
                 return List.of();
             }
-            return permissionService.retrieveRolesGrantedAuthorities(roles);
+            return permissionService.retrieveRolesGrantedAuthoritiesByName(roles);
         });
 
         return jwtConverter;

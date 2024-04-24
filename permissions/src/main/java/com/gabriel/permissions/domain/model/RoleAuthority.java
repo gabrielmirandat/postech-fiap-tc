@@ -2,14 +2,14 @@ package com.gabriel.permissions.domain.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "role_authority")
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleAuthority {

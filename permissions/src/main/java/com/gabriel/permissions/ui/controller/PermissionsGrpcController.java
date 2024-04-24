@@ -26,7 +26,7 @@ public class PermissionsGrpcController extends PermissionsGrpc.PermissionsImplBa
     public void retrieveRoleAuthorities(RoleAuthoritiesRequest request, StreamObserver<RoleAuthoritiesResponse> responseObserver) {
         try {
             List<Role> roles = !request.getRole().isEmpty() ?
-                List.of(permissionService.retrieveRole(request.getRole())) :
+                List.of(permissionService.retrieveRoleByName(request.getRole())) :
                 permissionService.retrieveAllRoles();
 
             RoleAuthoritiesResponse.Builder responseBuilder = RoleAuthoritiesResponse.newBuilder();
@@ -40,7 +40,7 @@ public class PermissionsGrpcController extends PermissionsGrpc.PermissionsImplBa
                         .build()
                 );
             }
-            
+
             responseObserver.onNext(responseBuilder.build());
             responseObserver.onCompleted();
 
