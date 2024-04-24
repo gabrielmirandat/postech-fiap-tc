@@ -1,7 +1,7 @@
 package com.gabriel.permissions.ui.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.permissions.application.service.PermissionService;
+import com.gabriel.permissions.infraestructure.provider.Auth0Provider;
 import com.gabriel.permissions.ui.controller.request.CredentialsRequest;
 import com.gabriel.permissions.ui.controller.request.RegisterRequest;
 import com.gabriel.permissions.ui.controller.response.AuthenticationResponse;
@@ -28,40 +28,31 @@ public class UsersHttpController {
     private String issuer;
     private String clientId;
     private String clientSecret;
-    private String applicationId;
-    private String applicationSecret;
     private String audience;
     private String scope;
-    private String applicationScope;
     private String logoutRedirectUrl;
     private ObjectMapper objectMapper;
 
-    private PermissionService permissionService;
+    private Auth0Provider auth0Provider;
 
     public UsersHttpController(
         @Value("${auth0.issuer}") String issuer,
         @Value("${auth0.clientId}") String clientId,
         @Value("${auth0.clientSecret}") String clientSecret,
-        @Value("${auth0.applicationId}") String applicationId,
-        @Value("${auth0.applicationSecret}") String applicationSecret,
         @Value("${auth0.audience}") String audience,
         @Value("${auth0.scope}") String scope,
-        @Value("${auth0.applicationScope}") String applicationScope,
         @Value("${auth0.logout_url}") String logoutRedirectUrl,
         ObjectMapper objectMapper,
-        PermissionService permissionService
+        Auth0Provider auth0Provider
     ) {
         this.issuer = issuer;
         this.clientId = clientId;
         this.clientSecret = clientSecret;
-        this.applicationId = applicationId;
-        this.applicationSecret = applicationSecret;
         this.audience = audience;
         this.scope = scope;
-        this.applicationScope = applicationScope;
         this.logoutRedirectUrl = logoutRedirectUrl;
         this.objectMapper = objectMapper;
-        this.permissionService = permissionService;
+        this.auth0Provider = auth0Provider;
     }
 
     @PostMapping("/login")
@@ -99,7 +90,7 @@ public class UsersHttpController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
         try {
-            String token = permissionService.getManagementApiToken();
+            String token = auth0Provider.getManagementApiToken();
             HttpResponse<String> response = Unirest.post("https://" + issuer + "/dbconnections/signup")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .header("Authorization", "Bearer " + token)
@@ -126,7 +117,7 @@ public class UsersHttpController {
     @DeleteMapping("/delete-account")
     public ResponseEntity<?> deleteAccount(Principal principal) {
         try {
-            String token = permissionService.getManagementApiToken();
+            String token = auth0Provider.getManagementApiToken();
             HttpResponse<String> response = Unirest.delete("https://" + issuer + "/api/v2/users/" + encodeUserId(principal.getName()))
                 .header("Authorization", "Bearer " + token)
                 .asString();
