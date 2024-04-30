@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/permissions")
 public class PermissionsHttpController {
 
     private final PermissionService permissionService;

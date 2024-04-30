@@ -1,0 +1,189 @@
+{
+  "info": {
+    "name": "Permissions API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Groups",
+      "item": [
+        {
+          "name": "List Groups",
+          "request": {
+            "method": "GET",
+            "url": "{{permissionBaseUrl}}/permissions/groups"
+          }
+        },
+        {
+          "name": "Create Group",
+          "request": {
+            "method": "POST",
+            "url": "{{permissionBaseUrl}}/permissions/groups",
+            "body": {
+              "name": "New Group",
+              "description": "Description of new group"
+            }
+          }
+        },
+        {
+          "name": "Update Group",
+          "request": {
+            "method": "PUT",
+            "url": "{{permissionBaseUrl}}/permissions/groups/{groupId}",
+            "body": {
+              "name": "Updated Group",
+              "description": "Updated group description"
+            }
+          }
+        },
+        {
+          "name": "Delete Group",
+          "request": {
+            "method": "DELETE",
+            "url": "{{permissionBaseUrl}}/permissions/groups/{groupId}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Group Admins",
+      "item": [
+        {
+          "name": "List Group Admins",
+          "request": {
+            "method": "GET",
+            "url": "{{permissionBaseUrl}}/permissions/group_admins"
+          }
+        },
+        {
+          "name": "Add Group Admin",
+          "request": {
+            "method": "POST",
+            "url": "{{permissionBaseUrl}}/permissions/group_admins",
+            "body": {
+              "userId": "12345"
+            }
+          }
+        },
+        {
+          "name": "Remove Group Admin",
+          "request": {
+            "method": "DELETE",
+            "url": "{{permissionBaseUrl}}/permissions/group_admins/{adminId}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Groups Users",
+      "item": [
+        {
+          "name": "List Group Users",
+          "request": {
+            "method": "GET",
+            "url": "{{permissionBaseUrl}}/permissions/groups/{groupId}/users"
+          }
+        },
+        {
+          "name": "Add Group User",
+          "request": {
+            "method": "POST",
+            "url": "{{permissionBaseUrl}}/permissions/groups/{groupId}/users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"userId\": \"example-user-id\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Remove Group User",
+          "request": {
+            "method": "DELETE",
+            "url": "{{permissionBaseUrl}}/permissions/groups/{groupId}/users/{userId}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Groups Scopes",
+      "item": [
+        {
+          "name": "List Group Scopes",
+          "request": {
+            "method": "GET",
+            "url": "{{permissionBaseUrl}}/permissions/groups/{groupId}/scopes"
+          }
+        },
+        {
+          "name": "Add Group Scope",
+          "request": {
+            "method": "POST",
+            "url": "{{permissionBaseUrl}}/permissions/groups/{groupId}/scopes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"authorityId\": \"example-authority-id\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Remove Group Scope",
+          "request": {
+            "method": "DELETE",
+            "url": "{{permissionBaseUrl}}/permissions/groups/{groupId}/scopes/{scopeId}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scopes",
+      "item": [
+        {
+          "name": "List Scopes",
+          "request": {
+            "method": "GET",
+            "url": "{{permissionBaseUrl}}/permissions/scopes"
+          }
+        },
+        {
+          "name": "Create Scope",
+          "request": {
+            "method": "POST",
+            "url": "{{permissionBaseUrl}}/permissions/scopes",
+            "body": {
+              "name": "New Scope",
+              "description": "Description of new scope"
+            }
+          }
+        },
+        {
+          "name": "Update Scope",
+          "request": {
+            "method": "PUT",
+            "url": "{{permissionBaseUrl}}/permissions/scopes/{scopeId}",
+            "body": {
+              "name": "Updated Scope",
+              "description": "Updated scope description"
+            }
+          }
+        },
+        {
+          "name": "Delete Scope",
+          "request": {
+            "method": "DELETE",
+            "url": "{{permissionBaseUrl}}/permissions/scopes/{scopeId}"
+          }
+        }
+      ]
+    }
+  ]
+}
