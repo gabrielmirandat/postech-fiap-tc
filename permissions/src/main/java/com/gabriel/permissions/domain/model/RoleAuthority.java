@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class RoleAuthority {
 
-    @Setter
     @EmbeddedId
     private RoleAuthorityKey id;
 
@@ -29,10 +28,10 @@ public class RoleAuthority {
     @JoinColumn(name = "authority_id")
     private Authority authority;
 
-    @Column(name = "associated_at", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(name = "associated_at", nullable = false, updatable = false)
     private LocalDateTime associatedAt;
 
-    @Setter
     @Column(name = "user_id", nullable = false)
     private String userId;
 }
