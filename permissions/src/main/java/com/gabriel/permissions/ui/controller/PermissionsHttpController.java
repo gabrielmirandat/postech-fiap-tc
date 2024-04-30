@@ -2,12 +2,16 @@ package com.gabriel.permissions.ui.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gabriel.permissions.application.service.PermissionService;
-import com.gabriel.permissions.domain.model.Authority;
-import com.gabriel.permissions.domain.model.Role;
+import com.gabriel.permissions.ui.controller.request.GroupRequest;
+import com.gabriel.permissions.ui.controller.request.ScopeGroupRequest;
+import com.gabriel.permissions.ui.controller.request.ScopeRequest;
+import com.gabriel.permissions.ui.controller.request.UserGroupRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.UUID;
 
 @RestController
@@ -29,20 +33,20 @@ public class PermissionsHttpController {
 
     @PostMapping("/groups")
     @PreAuthorize("hasAuthority('groups:manage')")
-    public ResponseEntity<?> createGroup(@RequestBody Role role) {
-        return ResponseEntity.ok(permissionService.createRole(role));
+    public ResponseEntity<?> createGroup(@RequestBody GroupRequest groupRequest) {
+        return ResponseEntity.ok(permissionService.createRole(groupRequest.toRole()));
     }
 
     @PutMapping("/groups/{groupId}")
     @PreAuthorize("hasAuthority('groups:manage')")
-    public ResponseEntity<?> updateGroup(@PathVariable UUID roleId, @RequestBody Role role) {
-        return ResponseEntity.ok(permissionService.updateRoleById(roleId, role));
+    public ResponseEntity<?> updateGroup(@PathVariable UUID groupId, @RequestBody GroupRequest groupRequest) {
+        return ResponseEntity.ok(permissionService.updateRoleById(groupId, groupRequest.toRole()));
     }
 
     @DeleteMapping("/groups/{groupId}")
     @PreAuthorize("hasAuthority('groups:remove')")
-    public ResponseEntity<?> deleteGroup(@PathVariable UUID roleId) {
-        permissionService.deleteRoleById(roleId);
+    public ResponseEntity<?> deleteGroup(@PathVariable UUID groupId) {
+        permissionService.deleteRoleById(groupId);
         return ResponseEntity.ok("Group deleted successfully");
     }
 
@@ -55,15 +59,57 @@ public class PermissionsHttpController {
 
     @PostMapping("/group_admins")
     @PreAuthorize("hasAuthority('groups:admins:add')")
-    public ResponseEntity<?> addGroupAdmin(@RequestBody String userId) {
-        return ResponseEntity.ok(permissionService.addRoleAdmin(userId));
+    public ResponseEntity<?> addGroupAdmin(@RequestBody UserGroupRequest userGroupRequest) {
+        return ResponseEntity.ok(permissionService.addRoleAdmin(userGroupRequest.userId()));
     }
 
-    @DeleteMapping("/group_admins/{adminId}")
+    @DeleteMapping("/group_admins/{base64adminId}")
     @PreAuthorize("hasAuthority('groups:admins:remove')")
-    public ResponseEntity<?> removeGroupAdmin(@PathVariable String userId) {
-        permissionService.removeRoleAdmin(userId);
+    public ResponseEntity<?> removeGroupAdmin(@PathVariable String base64adminId) {
+        permissionService.removeRoleAdmin(new String(Base64.getDecoder().decode(base64adminId),
+            StandardCharsets.UTF_8));
         return ResponseEntity.ok("Group admin removed successfully");
+    }
+
+    // Groups Users endpoints
+    @GetMapping("/groups/{groupId}/users")
+    @PreAuthorize("hasAuthority('groups:users:view')")
+    public ResponseEntity<?> listGroupUsers(@PathVariable UUID groupId) throws JsonProcessingException {
+        return ResponseEntity.ok(permissionService.listRoleUsers(groupId));
+    }
+
+    @PostMapping("/groups/{groupId}/users")
+    @PreAuthorize("hasAuthority('groups:users:add')")
+    public ResponseEntity<?> addGroupUser(@PathVariable UUID groupId, @RequestBody UserGroupRequest userGroupRequest) {
+        return ResponseEntity.ok(permissionService.addRoleUser(groupId, userGroupRequest.userId()));
+    }
+
+    @DeleteMapping("/groups/{groupId}/users/{base64adminId}")
+    @PreAuthorize("hasAuthority('groups:users:remove')")
+    public ResponseEntity<?> removeGroupUser(@PathVariable UUID groupId, @PathVariable String base64adminId) {
+        permissionService.removeRoleUser(groupId, new String(Base64.getDecoder().decode(base64adminId),
+            StandardCharsets.UTF_8));
+        return ResponseEntity.ok("User removed from group successfully");
+    }
+
+    // Groups Scopes endpoints
+    @GetMapping("/groups/{groupId}/scopes")
+    @PreAuthorize("hasAuthority('groups:scopes:view')")
+    public ResponseEntity<?> listGroupScopes(@PathVariable UUID groupId) {
+        return ResponseEntity.ok(permissionService.listRoleAuthorities(groupId));
+    }
+
+    @PostMapping("/groups/{groupId}/scopes")
+    @PreAuthorize("hasAuthority('groups:scopes:add')")
+    public ResponseEntity<?> addGroupScope(@PathVariable UUID groupId, @RequestBody ScopeGroupRequest scopeGroupRequest) {
+        return ResponseEntity.ok(permissionService.addRoleAuthority(groupId, scopeGroupRequest.authorityId()));
+    }
+
+    @DeleteMapping("/groups/{groupId}/scopes/{scopeId}")
+    @PreAuthorize("hasAuthority('groups:scopes:remove')")
+    public ResponseEntity<?> removeGroupScope(@PathVariable UUID groupId, @PathVariable UUID scopeId) {
+        permissionService.removeRoleAuthority(groupId, scopeId);
+        return ResponseEntity.ok("Scope removed from group successfully");
     }
 
     // Scopes endpoints
@@ -75,60 +121,20 @@ public class PermissionsHttpController {
 
     @PostMapping("/scopes")
     @PreAuthorize("hasAuthority('scopes:manage')")
-    public ResponseEntity<?> createScope(@RequestBody Authority authority) throws JsonProcessingException {
-        return ResponseEntity.ok(permissionService.createAuthority(authority));
+    public ResponseEntity<?> createScope(@RequestBody ScopeRequest scopeRequest) {
+        return ResponseEntity.ok(permissionService.createAuthority(scopeRequest.toAuthority()));
     }
 
     @PutMapping("/scopes/{scopeId}")
     @PreAuthorize("hasAuthority('scopes:manage')")
-    public ResponseEntity<?> updateScope(@PathVariable UUID authorityId, @RequestBody Authority authority) throws JsonProcessingException {
-        return ResponseEntity.ok(permissionService.updateAuthorityById(authorityId, authority));
+    public ResponseEntity<?> updateScope(@PathVariable UUID scopeId, @RequestBody ScopeRequest scopeRequest) throws JsonProcessingException {
+        return ResponseEntity.ok(permissionService.updateAuthorityById(scopeId, scopeRequest.toAuthority()));
     }
 
     @DeleteMapping("/scopes/{scopeId}")
     @PreAuthorize("hasAuthority('scopes:remove')")
-    public ResponseEntity<?> deleteScope(@PathVariable UUID authorityId) {
-        permissionService.deleteAuthorityById(authorityId);
+    public ResponseEntity<?> deleteScope(@PathVariable UUID scopeId) {
+        permissionService.deleteAuthorityById(scopeId);
         return ResponseEntity.ok("Scope removed successfully");
-    }
-
-    // Groups Users endpoints
-    @GetMapping("/groups/{groupId}/users")
-    @PreAuthorize("hasAuthority('groups:users:view')")
-    public ResponseEntity<?> listGroupUsers(@PathVariable UUID roleId) throws JsonProcessingException {
-        return ResponseEntity.ok(permissionService.listRoleUsers(roleId));
-    }
-
-    @PostMapping("/groups/{groupId}/users")
-    @PreAuthorize("hasAuthority('groups:users:add')")
-    public ResponseEntity<?> addGroupUser(@PathVariable UUID roleId, @RequestBody String userId) {
-        return ResponseEntity.ok(permissionService.addRoleUser(roleId, userId));
-    }
-
-    @DeleteMapping("/groups/{groupId}/users/{userId}")
-    @PreAuthorize("hasAuthority('groups:users:remove')")
-    public ResponseEntity<?> removeGroupUser(@PathVariable UUID roleId, @PathVariable String userId) {
-        permissionService.removeRoleUser(roleId, userId);
-        return ResponseEntity.ok("User removed from group successfully");
-    }
-
-    // Groups Scopes endpoints
-    @GetMapping("/groups/{groupId}/scopes")
-    @PreAuthorize("hasAuthority('groups:scopes:view')")
-    public ResponseEntity<?> listGroupScopes(@PathVariable UUID roleId) {
-        return ResponseEntity.ok(permissionService.listRoleAuthorities(roleId));
-    }
-
-    @PostMapping("/groups/{groupId}/scopes")
-    @PreAuthorize("hasAuthority('groups:scopes:add')")
-    public ResponseEntity<?> addGroupScope(@PathVariable UUID roleId, @RequestBody UUID authorityId) {
-        return ResponseEntity.ok(permissionService.addRoleAuthority(roleId, authorityId));
-    }
-
-    @DeleteMapping("/groups/{groupId}/scopes/{scopeId}")
-    @PreAuthorize("hasAuthority('groups:scopes:remove')")
-    public ResponseEntity<?> removeGroupScope(@PathVariable UUID roleId, @PathVariable UUID authorityId) {
-        permissionService.removeRoleAuthority(roleId, authorityId);
-        return ResponseEntity.ok("Scope removed from group successfully");
     }
 }

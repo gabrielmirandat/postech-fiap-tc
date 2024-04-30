@@ -1,0 +1,515 @@
+{
+	"info": {
+		"_postman_id": "ac24638f-3576-404f-a39e-2a47bbe2477a",
+		"name": "Permissions API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1328011"
+	},
+	"item": [
+		{
+			"name": "Groups",
+			"item": [
+				{
+					"name": "List Groups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{permissions_url}}/permissions/groups",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Group",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.environment.set('group_id', res.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"P_TEST_GROUP\",\r\n    \"description\": \"a simple test group\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{permissions_url}}/permissions/groups",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Group",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"UPDATED_TEST_GROUP\",\r\n    \"description\": \"a simpler test group\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{permissions_url}}/permissions/groups/{{group_id}}",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"groups",
+								"{{group_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Group",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{permissions_url}}/permissions/groups/{{group_id}}",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"groups",
+								"{{group_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Group Admins",
+			"item": [
+				{
+					"name": "List Group Admins",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.environment.set('user_id', res[0].user_id);\r",
+									"pm.environment.set('base64_user_id', btoa(res[0].user_id));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{permissions_url}}/permissions/group_admins",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"group_admins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Group Admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"{{user_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{permissions_url}}/permissions/group_admins",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"group_admins"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Group Admin",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{permissions_url}}/permissions/group_admins/{{base64_user_id}}",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"group_admins",
+								"{{base64_user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Groups Users",
+			"item": [
+				{
+					"name": "List Group Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.environment.set('user_id', res[0].user_id);\r",
+									"pm.environment.set('base64_user_id', btoa(res[0].user_id));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{permissions_url}}/permissions/groups/{{group_id}}/users",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"groups",
+								"{{group_id}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Group User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"{{user_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{permissions_url}}/permissions/groups/{{group_id}}/users",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"groups",
+								"{{group_id}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Group User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{permissions_url}}/permissions/groups/{{group_id}}/users/{{base64_user_id}}",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"groups",
+								"{{group_id}}",
+								"users",
+								"{{base64_user_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Groups Scopes",
+			"item": [
+				{
+					"name": "List Group Scopes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{permissions_url}}/permissions/groups/{{group_id}}/scopes",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"groups",
+								"{{group_id}}",
+								"scopes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Group Scope",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"authorityId\": \"{{scope_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{permissions_url}}/permissions/groups/{{group_id}}/scopes",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"groups",
+								"{{group_id}}",
+								"scopes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Group Scope",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{permissions_url}}/permissions/groups/{{group_id}}/scopes/{{scope_id}}",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"groups",
+								"{{group_id}}",
+								"scopes",
+								"{{scope_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Scopes",
+			"item": [
+				{
+					"name": "List Scopes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{permissions_url}}/permissions/scopes",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"scopes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Scope",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.environment.set('scope_id', res.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"scope:test\",\r\n    \"description\":\"A simple scope\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{permissions_url}}/permissions/scopes",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"scopes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Scope",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"simpler:scope\",\r\n    \"description\":\"A simpler scope\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{permissions_url}}/permissions/scopes/{{scope_id}}",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"scopes",
+								"{{scope_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Scope",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{permissions_url}}/permissions/scopes/{{scope_id}}",
+							"host": [
+								"{{permissions_url}}"
+							],
+							"path": [
+								"permissions",
+								"scopes",
+								"{{scope_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

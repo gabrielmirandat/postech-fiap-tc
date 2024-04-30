@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
 import kong.unirest.core.UnirestException;
+import kong.unirest.core.json.JSONArray;
 import kong.unirest.core.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,11 @@ public class Auth0Provider {
         this.objectMapper = objectMapper;
     }
 
+    public static String formatUserId(String userId) {
+        // remove auth0| prefix
+        return userId.substring(6);
+    }
+
     public String getManagementApiToken() throws UnirestException {
         HttpResponse<String> response = Unirest.post("https://" + issuer + "/oauth/token")
             .header("Content-Type", "application/x-www-form-urlencoded")
@@ -58,10 +64,16 @@ public class Auth0Provider {
             .asString();
 
         if (response.isSuccess()) {
-            JSONObject jsonResponse = new JSONObject(response.getBody());
-            return jsonResponse.getJSONArray("roles").getJSONObject(0).getString("id");
+            JSONArray jsonResponse = new JSONArray(response.getBody());
+            for (int i = 0; i < jsonResponse.length(); i++) {
+                JSONObject role = jsonResponse.getJSONObject(i);
+                if (role.getString("name").equals(name)) {
+                    return role.getString("id");
+                }
+            }
+            throw new RuntimeException("No roles found with the exact name: " + name);
         } else {
-            throw new RuntimeException("Failed to obtain role id from name.");
+            throw new RuntimeException("Failed to obtain role id from name. Status: " + response.getStatus());
         }
     }
 }

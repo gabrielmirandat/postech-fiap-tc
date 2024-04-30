@@ -16,11 +16,14 @@ import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
 import kong.unirest.core.UnirestException;
+import kong.unirest.core.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -103,7 +106,7 @@ public class PermissionService {
 
         String token = auth0Provider.getManagementApiToken();
 
-        HttpResponse<JsonNode> response = Unirest.post(issuer + "/roles")
+        HttpResponse<JsonNode> response = Unirest.post("https://" + issuer + "/api/v2/roles")
             .header("Authorization", "Bearer " + token)
             .header("Content-Type", "application/json")
             .body(new JsonNode("{\"name\":\"" + role.getName() + "\", \"description\": \"" + role.getDescription() + "\"}"))
@@ -127,7 +130,7 @@ public class PermissionService {
         roleRepository.save(roleToUpdate);
 
         String token = auth0Provider.getManagementApiToken();
-        HttpResponse<JsonNode> response = Unirest.patch(issuer + "/roles/" + roleProviderId)
+        HttpResponse<JsonNode> response = Unirest.patch("https://" + issuer + "/api/v2/roles/" + roleProviderId)
             .header("Authorization", "Bearer " + token)
             .header("Content-Type", "application/json")
             .body(new JsonNode("{\"name\":\"" + roleDetails.getName() + "\", \"description\": \"" + roleDetails.getDescription() + "\"}"))
@@ -148,7 +151,7 @@ public class PermissionService {
         roleRepository.deleteById(roleId);
 
         String token = auth0Provider.getManagementApiToken();
-        HttpResponse<JsonNode> response = Unirest.delete(issuer + "/roles/" + roleProviderId)
+        HttpResponse<JsonNode> response = Unirest.delete("https://" + issuer + "/api/v2/roles/" + roleProviderId)
             .header("Authorization", "Bearer " + token)
             .asJson();
 
@@ -187,7 +190,7 @@ public class PermissionService {
         String roleId = auth0Provider.getRoleIdFromName("POSTECH_GROUP_ADMIN");
         String token = auth0Provider.getManagementApiToken();
 
-        HttpResponse<JsonNode> response = Unirest.get(issuer + "/api/v2/roles/" + roleId + "/users")
+        HttpResponse<JsonNode> response = Unirest.get("https://" + issuer + "/api/v2/roles/" + roleId + "/users")
             .header("Authorization", "Bearer " + token)
             .asJson();
 
@@ -202,13 +205,17 @@ public class PermissionService {
         String roleId = auth0Provider.getRoleIdFromName("POSTECH_GROUP_ADMIN");
         String token = auth0Provider.getManagementApiToken();
 
-        HttpResponse<JsonNode> response = Unirest.post(issuer + "/api/v2/roles/" + roleId + "/users")
+        JSONObject payload = new JSONObject();
+        payload.put("users", new String[]{userId});
+
+        HttpResponse<JsonNode> response = Unirest.post("https://" + issuer + "/api/v2/roles/" + roleId + "/users")
             .header("Authorization", "Bearer " + token)
-            .body(new JsonNode("{\"users\": [\"" + userId + "\"]}"))
+            .header("Content-Type", "application/json")
+            .body(payload.toString())
             .asJson();
 
         if (!response.isSuccess()) {
-            throw new RuntimeException("Failed to add role admin");
+            throw new RuntimeException("Failed to add role admin: " + response.getBody());
         }
 
         return roleId;
@@ -218,13 +225,23 @@ public class PermissionService {
         String roleId = auth0Provider.getRoleIdFromName("POSTECH_GROUP_ADMIN");
         String token = auth0Provider.getManagementApiToken();
 
-        HttpResponse<JsonNode> response = Unirest.delete(issuer + "/api/v2/roles/" + roleId + "/users")
+        String encodedUserId = URLEncoder.encode(userId, StandardCharsets.UTF_8);
+        System.out.println("Encoded UserID: " + encodedUserId);
+
+        JSONObject payload = new JSONObject();
+        payload.put("roles", new String[]{roleId});
+
+        String url = "https://" + issuer + "/api/v2/users/" + encodedUserId + "/roles";
+        System.out.println("Request URL: " + url);  // Debugging output
+
+        HttpResponse<JsonNode> response = Unirest.delete(url)
             .header("Authorization", "Bearer " + token)
-            .body(new JsonNode("{\"users\": [\"" + userId + "\"]}"))
+            .header("Content-Type", "application/json")
+            .body(payload.toString())
             .asJson();
 
         if (!response.isSuccess()) {
-            throw new RuntimeException("Failed to remove role admin");
+            throw new RuntimeException("Failed to remove role admin: " + response.getBody());
         }
     }
 
@@ -232,7 +249,7 @@ public class PermissionService {
         String roleProviderId = auth0Provider.getRoleIdFromName(retrieveRoleById(roleId).getName());
         String token = auth0Provider.getManagementApiToken();
 
-        HttpResponse<JsonNode> response = Unirest.get(issuer + "/api/v2/roles/" + roleProviderId + "/users")
+        HttpResponse<JsonNode> response = Unirest.get("https://" + issuer + "/api/v2/roles/" + roleProviderId + "/users")
             .header("Authorization", "Bearer " + token)
             .asJson();
 
@@ -247,13 +264,17 @@ public class PermissionService {
         String roleProviderId = auth0Provider.getRoleIdFromName(retrieveRoleById(roleId).getName());
         String token = auth0Provider.getManagementApiToken();
 
-        HttpResponse<JsonNode> response = Unirest.post(issuer + "/api/v2/roles/" + roleProviderId + "/users")
+        JSONObject payload = new JSONObject();
+        payload.put("users", new String[]{userId});
+
+        HttpResponse<JsonNode> response = Unirest.post("https://" + issuer + "/api/v2/roles/" + roleProviderId + "/users")
             .header("Authorization", "Bearer " + token)
-            .body(new JsonNode("{\"users\": [\"" + userId + "\"]}"))
+            .header("Content-Type", "application/json")
+            .body(payload.toString())
             .asJson();
 
         if (!response.isSuccess()) {
-            throw new RuntimeException("Failed to add role user");
+            throw new RuntimeException("Failed to add role admin: " + response.getBody());
         }
 
         return roleProviderId;
@@ -263,13 +284,23 @@ public class PermissionService {
         String roleProviderId = auth0Provider.getRoleIdFromName(retrieveRoleById(roleId).getName());
         String token = auth0Provider.getManagementApiToken();
 
-        HttpResponse<JsonNode> response = Unirest.delete(issuer + "/api/v2/roles/" + roleProviderId + "/users")
+        String encodedUserId = URLEncoder.encode(userId, StandardCharsets.UTF_8);
+        System.out.println("Encoded UserID: " + encodedUserId);
+
+        JSONObject payload = new JSONObject();
+        payload.put("roles", new String[]{roleProviderId});
+
+        String url = "https://" + issuer + "/api/v2/users/" + encodedUserId + "/roles";
+        System.out.println("Request URL: " + url);  // Debugging output
+
+        HttpResponse<JsonNode> response = Unirest.delete(url)
             .header("Authorization", "Bearer " + token)
-            .body(new JsonNode("{\"users\": [\"" + userId + "\"]}"))
+            .header("Content-Type", "application/json")
+            .body(payload.toString())
             .asJson();
 
         if (!response.isSuccess()) {
-            throw new RuntimeException("Failed to remove role user");
+            throw new RuntimeException("Failed to remove role admin: " + response.getBody());
         }
     }
 
@@ -279,13 +310,22 @@ public class PermissionService {
     }
 
     public RoleAuthority addRoleAuthority(UUID roleId, UUID authorityId) {
-        RoleAuthority roleAuthority = new RoleAuthority();
-        roleAuthority.setId(new RoleAuthorityKey(roleId, authorityId));
-        roleAuthority.setUserId("admin");
+        RoleAuthority roleAuthority = new RoleAuthority(
+            new RoleAuthorityKey(roleId, authorityId),
+            retrieveRoleById(roleId),
+            retrieveAuthorityById(authorityId),
+            null,
+            "admin"
+        );
         return roleAuthorityRepository.save(roleAuthority);
     }
 
     public void removeRoleAuthority(UUID roleId, UUID authorityId) {
         roleAuthorityRepository.deleteById(new RoleAuthorityKey(roleId, authorityId));
+    }
+
+    public Authority retrieveAuthorityById(UUID authorityId) {
+        return authorityRepository.findById(authorityId)
+            .orElseThrow(() -> new RoleNotFoundException("Authority not found with id: " + authorityId));
     }
 }
