@@ -33,6 +33,7 @@ public class PermissionService {
     private final RoleRepository roleRepository;
     private final AuthorityRepository authorityRepository;
     private final RoleAuthorityRepository roleAuthorityRepository;
+
     private final String issuer;
     private final Auth0Provider auth0Provider;
     private final ObjectMapper objectMapper;
@@ -65,6 +66,7 @@ public class PermissionService {
             .orElseThrow(() -> new RoleNotFoundException("Role not found with name: " + roleName));
     }
 
+    @Transactional
     public Set<RoleAuthority> retrieveRoleAuthoritiesByName(String roleName) {
 
         return roleRepository.findByName(roleName)
@@ -72,6 +74,7 @@ public class PermissionService {
             .getRoleAuthorities();
     }
 
+    @Transactional
     public Set<RoleAuthority> retrieveRolesAuthoritiesByName(List<String> rolesNames) {
         return rolesNames.stream()
             .map(this::retrieveRoleAuthoritiesByName)
@@ -79,12 +82,14 @@ public class PermissionService {
             .collect(Collectors.toSet());
     }
 
+    @Transactional
     public Set<GrantedAuthority> retrieveRoleGrantedAuthoritiesByName(String roleName) {
         return retrieveRoleAuthoritiesByName(roleName).stream()
             .map(roleAuthority -> new SimpleGrantedAuthority(roleAuthority.getAuthority().getName()))
             .collect(Collectors.toSet());
     }
 
+    @Transactional
     public Set<GrantedAuthority> retrieveRolesGrantedAuthoritiesByName(List<String> rolesNames) {
         return retrieveRolesAuthoritiesByName(rolesNames).stream()
             .map(roleAuthority -> new SimpleGrantedAuthority(roleAuthority.getAuthority().getName()))

@@ -1,0 +1,138 @@
+{
+  "info": {
+    "_postman_id": "7536968e-f5ff-4692-9703-4a866599d13c",
+    "name": "Users API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1328011"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"username\": \"{{username}}\",\r\n  \"password\": \"{{password}}\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{users_url}}/users/login",
+          "host": [
+            "{{users_url}}"
+          ],
+          "path": [
+            "users",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{users_url}}/users/logout",
+          "host": [
+            "{{users_url}}"
+          ],
+          "path": [
+            "users",
+            "logout"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"username\": \"{{new_username}}\",\r\n  \"password\": \"{{new_password}}\",\r\n  \"name\": \"Novo Usuario Normal\",\r\n  \"email\": \"normal2@email.com\"\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{users_url}}/users/register",
+          "host": [
+            "{{users_url}}"
+          ],
+          "path": [
+            "users",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Account",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{users_url}}/users/delete-account",
+          "host": [
+            "{{users_url}}"
+          ],
+          "path": [
+            "users",
+            "delete-account"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjFZOVQyempueGZsUEIzLS1jZmJOdiJ9.eyJpc3MiOiJodHRwczovL2Rldi01YTVlMGM0ajNmc3NocWlqLnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw2NjJmZmQ4ZTY3OTk2ODUyMWRhYjM3ZWUiLCJhdWQiOiJwb3N0ZWNoX3VzZXJzIiwiaWF0IjoxNzE0NDIxMTc0LCJleHAiOjE3MTQ1MDc1NzQsInNjb3BlIjoicHJvZmlsZSBwb3N0ZWNoX3JvbGVzIiwiZ3R5IjoicGFzc3dvcmQiLCJhenAiOiJvSmk3VGs2eE9TQmdHcXpwalZaSmRvcFdEZ1UycU52RCJ9.FTadOtik6JSLAUScg_dWE6twBaak_5_F-PrQH1vC-Ms993UiyOit3RE0c3EhQhTxLtWA1RG9a1McruRT25t5FDthPVIjkwn8YYvU-X_c_hJO8fZaiDxumFoAvXSmcoqZP7rgexXxp3tozTvwip2vDWpXs9WzAQOWoggN9roAYgY7-7H6Z6vcpgnXS8NY_-NeWZBG2T6UozvgLWEjteuMQPvwp-Y4FoFt70PMTQPXvp2hroq2FRhRFnFsVyjoTvp_zKRFD8bj9sWoqvawgm2C07shVwfdf26mS7DDb1KKavDAXzkpuKXF_LbPlAyP0JEG5Qh6o0YtIh6cTX_qWUiVzQ",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
