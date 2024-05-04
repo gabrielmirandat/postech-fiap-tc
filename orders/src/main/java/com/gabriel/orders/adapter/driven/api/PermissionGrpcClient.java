@@ -9,15 +9,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MenuGrpcClient {
+public class PermissionGrpcClient {
 
     private final SetupMenuUseCase setupMenuUseCase;
 
-    private final ManagedChannel menuManagedChannel;
+    private final ManagedChannel permissionsManagedChannel;
 
-    public MenuGrpcClient(@Qualifier("menuManagedChannel") ManagedChannel menuManagedChannel,
-                          SetupMenuUseCase setupMenuUseCase) {
-        this.menuManagedChannel = menuManagedChannel;
+    public PermissionGrpcClient(@Qualifier("permissionManagedChannel") ManagedChannel permissionsManagedChannel,
+                                SetupMenuUseCase setupMenuUseCase) {
+        this.permissionsManagedChannel = permissionsManagedChannel;
         this.setupMenuUseCase = setupMenuUseCase;
     }
 
@@ -25,7 +25,7 @@ public class MenuGrpcClient {
         System.out.println("Starting grpc client");
 
         try {
-            MenuGrpc.MenuBlockingStub stub = MenuGrpc.newBlockingStub(menuManagedChannel);
+            MenuGrpc.MenuBlockingStub stub = MenuGrpc.newBlockingStub(permissionsManagedChannel);
             MenuRequest request = MenuRequest.newBuilder().setCategory("all").build();
             MenuResponse response = stub.retrieveMenu(request);
             setupMenuUseCase.setupData(response);

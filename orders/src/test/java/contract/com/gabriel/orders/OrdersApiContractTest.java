@@ -11,7 +11,7 @@ import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.*;
-import com.gabriel.orders.infra.grpc.GrpcClientConfig;
+import com.gabriel.orders.infra.grpc.MenuGrpcClientConfig;
 import com.gabriel.orders.infra.kafka.KafkaConfig;
 import com.gabriel.orders.infra.mongodb.MongoDbConfig;
 import com.gabriel.orders.infra.redis.RedisConfig;
@@ -44,7 +44,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // This will start the server on a random port
-@Import({MongoDbConfig.class, GrpcClientConfig.class, RedisConfig.class,
+@Import({MongoDbConfig.class, MenuGrpcClientConfig.class, RedisConfig.class,
     KafkaConfig.class, SerializerConfig.class})
 @ContextConfiguration(classes =
     {OrdersApplication.class, MongoDBTestContainer.class, GrpcServerTestContainer.class,

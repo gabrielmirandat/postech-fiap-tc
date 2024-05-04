@@ -18,11 +18,10 @@ import java.util.stream.StreamSupport;
 public class StartManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StartManager.class);
+    private final MenuGrpcClient menuGrpcClient;
     List<String> allowedAttributes = Arrays.asList("mongo", "liquibase", "kafka", "redis", "newrelic", "grpc");
     List<String> notAllowedAttributes = Arrays.asList("credential", "password");
     Environment environment;
-
-    MenuGrpcClient menuGrpcClient;
 
     public StartManager(Environment environment, MenuGrpcClient menuGrpcClient) {
         this.environment = environment;
