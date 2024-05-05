@@ -4,7 +4,7 @@ import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
-import java.util.List;
+import java.time.Instant;
 
 @Getter
 public class RoleAuthority extends ValueObject {
@@ -12,11 +12,15 @@ public class RoleAuthority extends ValueObject {
     @NotBlank(message = "Role name cannot be null or empty")
     private final String roleName;
 
-    private final List<String> authoritiesNameList;
+    @NotBlank(message = "Authority name cannot be null or empty")
+    private final String authorityName;
 
-    public RoleAuthority(String roleName, List<String> authoritiesNameList) {
+    private final Instant timestamp;
+
+    public RoleAuthority(String roleName, String authorityName, Instant timestamp) {
         this.roleName = roleName;
-        this.authoritiesNameList = authoritiesNameList;
+        this.authorityName = authorityName;
+        this.timestamp = timestamp;
         validate();
     }
 }

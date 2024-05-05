@@ -1,9 +1,9 @@
 package com.gabriel.orders.adapter.driven.api;
 
-import com.gabriel.orders.core.application.usecase.SetupMenuUseCase;
-import com.gabriel.specs.menu.MenuGrpc;
-import com.gabriel.specs.menu.MenuRequest;
-import com.gabriel.specs.menu.MenuResponse;
+import com.gabriel.orders.core.application.usecase.SetupPermissionUseCase;
+import com.gabriel.specs.permissions.PermissionGrpc;
+import com.gabriel.specs.permissions.PermissionRequest;
+import com.gabriel.specs.permissions.PermissionResponse;
 import io.grpc.ManagedChannel;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -11,24 +11,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class PermissionGrpcClient {
 
-    private final SetupMenuUseCase setupMenuUseCase;
+    private final SetupPermissionUseCase setupPermissionUseCase;
 
     private final ManagedChannel permissionsManagedChannel;
 
     public PermissionGrpcClient(@Qualifier("permissionManagedChannel") ManagedChannel permissionsManagedChannel,
-                                SetupMenuUseCase setupMenuUseCase) {
+                                SetupPermissionUseCase setupPermissionUseCase) {
         this.permissionsManagedChannel = permissionsManagedChannel;
-        this.setupMenuUseCase = setupMenuUseCase;
+        this.setupPermissionUseCase = setupPermissionUseCase;
     }
 
-    public void dumpMenuData() {
-        System.out.println("Starting grpc client");
+    public void dumpPermissionData() {
+        System.out.println("Starting grpc permission client");
 
         try {
-            MenuGrpc.MenuBlockingStub stub = MenuGrpc.newBlockingStub(permissionsManagedChannel);
-            MenuRequest request = MenuRequest.newBuilder().setCategory("all").build();
-            MenuResponse response = stub.retrieveMenu(request);
-            setupMenuUseCase.setupData(response);
+            PermissionGrpc.PermissionBlockingStub stub = PermissionGrpc.newBlockingStub(permissionsManagedChannel);
+            PermissionRequest request = PermissionRequest.newBuilder().setRole("all").build();
+            PermissionResponse response = stub.retrievePermissions(request);
+            setupPermissionUseCase.setupData(response);
             // managedMenuChannel.shutdownNow();
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());

@@ -1,6 +1,6 @@
-package com.gabriel.permissions.infraestructure.security;
+package com.gabriel.orders.infra.security;
 
-import com.gabriel.permissions.application.service.PermissionService;
+import com.gabriel.orders.core.domain.port.PermissionRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,33 +8,33 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    private final PermissionService permissionService;
-    private final String issuer;
+    private final PermissionRepository permissionRepository;
+    private final String authEndpointUrl;
 
-    public SecurityConfig(PermissionService permissionService, @Value("${auth0.issuer}") String issuer) {
-        this.permissionService = permissionService;
-        this.issuer = issuer;
+    public SecurityConfig(PermissionRepository permissionRepository, @Value("${auth.endpoint.url}") String authEndpointUrl) {
+        this.permissionRepository = permissionRepository;
+        this.authEndpointUrl = authEndpointUrl;
     }
 
     @Bean
     SecurityFilterChain web(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/users/login", "/users/register").permitAll()
-                .anyRequest().authenticated())
+            .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
             );
@@ -50,7 +50,10 @@ public class SecurityConfig {
             if (roles == null) {
                 return List.of();
             }
-            return permissionService.retrieveRolesGrantedAuthoritiesByName(roles);
+            return permissionRepository.allRolesAuthorities().stream()
+                .filter(item -> roles.contains(item.getRoleName()))
+                .map(item -> new SimpleGrantedAuthority(item.getAuthorityName()))
+                .collect(Collectors.toSet());
         });
 
         return jwtConverter;
@@ -58,6 +61,6 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromOidcIssuerLocation("https://" + issuer + "/");
+        return JwtDecoders.fromOidcIssuerLocation(authEndpointUrl);
     }
 }

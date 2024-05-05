@@ -1,25 +1,28 @@
 syntax = "proto3";
 option java_multiple_files = true;
-option java_outer_classname = "PermissionsProtoClient";
+option java_outer_classname = "PermissionProtoClient";
 package com.gabriel.specs.permissions;
 
+import "google/protobuf/timestamp.proto";
+
 // O serviço gRPC para Permissions
-service Permissions {
-  rpc RetrieveRoleAuthorities (RoleAuthoritiesRequest) returns (RoleAuthoritiesResponse);
+service Permission {
+  rpc RetrievePermissions (PermissionRequest) returns (PermissionResponse);
 }
 
 // Mensagem de requisição (possivelmente para filtrar por role específica)
-message RoleAuthoritiesRequest {
+message PermissionRequest {
   string role = 1; // Opcional, se você quiser filtrar por uma role específica
 }
 
 // Definindo a associação entre role e authorities
-message RoleAuthority {
+message PermissionItem {
   string role = 1;
-  repeated string authorities = 2;
+  string authority = 2;
+  google.protobuf.Timestamp lastUpdated = 3;
 }
 
 // Mensagem de resposta que contém uma lista de associações de roles com suas permissions
-message RoleAuthoritiesResponse {
-  repeated RoleAuthority roleAuthorities = 1;
+message PermissionResponse {
+  repeated PermissionItem items = 1;
 }
