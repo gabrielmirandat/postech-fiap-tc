@@ -1,6 +1,7 @@
 package com.gabriel.orders.infra.application;
 
 import com.gabriel.orders.adapter.driven.api.MenuGrpcClient;
+import com.gabriel.orders.adapter.driven.api.PermissionGrpcClient;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,19 +20,24 @@ public class StartManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StartManager.class);
     private final MenuGrpcClient menuGrpcClient;
+
+    private final PermissionGrpcClient permissionGrpcClient;
     List<String> allowedAttributes = Arrays.asList("mongo", "liquibase", "kafka", "redis", "newrelic", "grpc");
     List<String> notAllowedAttributes = Arrays.asList("credential", "password");
     Environment environment;
 
-    public StartManager(Environment environment, MenuGrpcClient menuGrpcClient) {
+    public StartManager(Environment environment, MenuGrpcClient menuGrpcClient,
+                        PermissionGrpcClient permissionGrpcClient) {
         this.environment = environment;
         this.menuGrpcClient = menuGrpcClient;
+        this.permissionGrpcClient = permissionGrpcClient;
     }
 
     @PostConstruct
     public void exec() {
         showProperties();
         menuGrpcClient.dumpMenuData();
+        permissionGrpcClient.dumpPermissionData();
     }
 
     public void showProperties() {
