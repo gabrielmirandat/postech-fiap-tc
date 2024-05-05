@@ -7,7 +7,7 @@ import jakarta.validation.Validator;
 
 import java.util.stream.Collectors;
 
-public interface DomainValid {
+public interface DomainObject {
 
     default void validate() {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();

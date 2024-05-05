@@ -50,7 +50,7 @@ public class SecurityConfig {
             if (roles == null) {
                 return List.of();
             }
-            return permissionRepository.allRolesAuthorities().stream()
+            return permissionRepository.allPermissions().stream()
                 .filter(item -> roles.contains(item.getRoleName()))
                 .map(item -> new SimpleGrantedAuthority(item.getAuthorityName()))
                 .collect(Collectors.toSet());

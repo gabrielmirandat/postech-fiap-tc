@@ -2,6 +2,7 @@ package com.gabriel.permissions.application.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gabriel.core.domain.model.id.PermissionID;
 import com.gabriel.permissions.domain.model.Authority;
 import com.gabriel.permissions.domain.model.Role;
 import com.gabriel.permissions.domain.model.RoleAuthority;
@@ -312,6 +313,7 @@ public class PermissionService {
     public RoleAuthority addRoleAuthority(UUID roleId, UUID authorityId) {
         RoleAuthority roleAuthority = new RoleAuthority(
             new RoleAuthorityKey(roleId, authorityId),
+            new PermissionID(),
             retrieveRoleById(roleId),
             retrieveAuthorityById(authorityId),
             null,

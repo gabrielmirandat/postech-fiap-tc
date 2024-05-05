@@ -17,9 +17,10 @@ message PermissionRequest {
 
 // Definindo a associação entre role e authorities
 message PermissionItem {
-  string role = 1;
-  string authority = 2;
-  google.protobuf.Timestamp lastUpdated = 3;
+  string id = 1;
+  string role = 2;
+  string authority = 3;
+  google.protobuf.Timestamp lastUpdated = 4;
 }
 
 // Mensagem de resposta que contém uma lista de associações de roles com suas permissions

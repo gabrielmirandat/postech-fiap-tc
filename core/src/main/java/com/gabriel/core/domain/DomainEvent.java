@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.UUID;
 
-public interface DomainEvent {
+public interface DomainEvent extends DomainObject {
 
     default String id() {
         return UUID.randomUUID().toString();
