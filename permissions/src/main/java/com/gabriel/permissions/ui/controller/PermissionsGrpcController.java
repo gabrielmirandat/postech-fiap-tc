@@ -45,6 +45,7 @@ public class PermissionsGrpcController extends PermissionGrpc.PermissionImplBase
 
                     responseBuilder.addItems(
                         com.gabriel.specs.permissions.PermissionItem.newBuilder()
+                            .setId(authority.getPermissionID().getId())
                             .setRole(authority.getRole().getName())
                             .setAuthority(authority.getAuthority().getName())
                             .setLastUpdated(timestamp)

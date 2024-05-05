@@ -1,16 +1,20 @@
 package com.gabriel.orders.core.domain.port;
 
-import com.gabriel.core.domain.model.RoleAuthority;
+import com.gabriel.core.domain.model.Permission;
 
 import java.util.List;
 
 public interface PermissionRepository {
 
-    List<RoleAuthority> allRolesAuthorities();
+    List<Permission> allPermissions();
 
-    void addRoleAuthority(RoleAuthority roleAuthority);
+    void addPermission(Permission permission);
 
-    void updateRoleAuthority(RoleAuthority roleAuthority);
+    void updatePermissionsByRole(String currentRoleName, String newRoleName);
 
-    void deleteRoleAuthority(String roleName);
+    void updatePermissionsByAuthority(String currentAuthorityName, String newAuthorityName);
+
+    void deletePermission(String roleName, String authorityName);
+
+    void deletePermissionsByRole(String currentRoleName, String newRoleName);
 }

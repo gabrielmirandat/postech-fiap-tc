@@ -1,4 +1,4 @@
 package com.gabriel.core.domain;
 
-public abstract class ValueObject implements DomainValid {
+public abstract class ValueObject implements DomainObject {
 }

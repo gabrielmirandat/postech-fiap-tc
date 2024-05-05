@@ -30,7 +30,9 @@ public class MenuRedisRepository implements MenuRepository {
 
     private void showCurrentKeys() {
         System.out.println("Current keys:");
-        Objects.requireNonNull(redisTemplate.keys("*"))
+        Objects.requireNonNull(redisTemplate.keys("prod:*"))
+            .forEach(System.out::println);
+        Objects.requireNonNull(redisTemplate.keys("extr:*"))
             .forEach(System.out::println);
     }
 
