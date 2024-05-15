@@ -42,6 +42,16 @@ public class MenuRedisRepository implements MenuRepository {
     }
 
     @Override
+    public List<ProductID> allProducts() {
+        Set<String> keys = redisTemplate.keys("prod:*");
+        if (keys == null)
+            return new ArrayList<>();
+        return new ArrayList<>(keys).stream()
+            .map(key -> new ProductID(key.substring(5)))
+            .toList();
+    }
+
+    @Override
     public Product getProduct(ProductID productID) {
         ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
         byte[] data = valueOps.get("prod:" + productID.getId());
@@ -77,18 +87,18 @@ public class MenuRedisRepository implements MenuRepository {
     }
 
     @Override
-    public List<ProductID> allProducts() {
-        Set<String> keys = redisTemplate.keys("prod:*");
-        if (keys == null)
-            return new ArrayList<>();
-        return new ArrayList<>(keys).stream()
-            .map(key -> new ProductID(key.substring(5)))
-            .toList();
+    public boolean existsExtra(IngredientID ingredientID) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey("extr:" + ingredientID.getId()));
     }
 
     @Override
-    public boolean existsExtra(IngredientID ingredientID) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey("extr:" + ingredientID.getId()));
+    public List<IngredientID> allExtras() {
+        Set<String> keys = redisTemplate.keys("extr:*");
+        if (keys == null)
+            return new ArrayList<>();
+        return new ArrayList<>(keys).stream()
+            .map(key -> new IngredientID(key.substring(5)))
+            .toList();
     }
 
     @Override
@@ -124,15 +134,5 @@ public class MenuRedisRepository implements MenuRepository {
     @Override
     public void deleteExtra(IngredientID ingredientID) {
         redisTemplate.delete("extr:" + ingredientID.getId());
-    }
-
-    @Override
-    public List<IngredientID> allExtras() {
-        Set<String> keys = redisTemplate.keys("extr:*");
-        if (keys == null)
-            return new ArrayList<>();
-        return new ArrayList<>(keys).stream()
-            .map(key -> new IngredientID(key.substring(5)))
-            .toList();
     }
 }

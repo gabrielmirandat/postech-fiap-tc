@@ -316,7 +316,6 @@ public class PermissionService {
             new PermissionID(),
             retrieveRoleById(roleId),
             retrieveAuthorityById(authorityId),
-            null,
             "admin"
         );
         return roleAuthorityRepository.save(roleAuthority);

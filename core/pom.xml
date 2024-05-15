@@ -16,6 +16,7 @@
         <assertj.core.version>3.25.3</assertj.core.version>
         <jakarta.validation.version>3.1.0-M2</jakarta.validation.version>
         <jakarta.annotation.version>3.0.0-M1</jakarta.annotation.version>
+        <jakarta.persistence.version>3.2.0-M2</jakarta.persistence.version>
         <hibernate.jakarta.validations>8.0.1.Final</hibernate.jakarta.validations>
         <glassfish.jakarta.el>5.0.0</glassfish.jakarta.el>
         <grpc.version>1.61.0</grpc.version>
@@ -40,6 +41,12 @@
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
             <version>${jakarta.annotation.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>${jakarta.persistence.version}</version>
         </dependency>
 
         <dependency>

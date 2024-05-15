@@ -1,9 +1,11 @@
 package com.gabriel.core.domain;
 
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 
 import java.time.Instant;
 
+@MappedSuperclass
 @Getter
 public abstract class AggregateRoot extends Entity {
 
