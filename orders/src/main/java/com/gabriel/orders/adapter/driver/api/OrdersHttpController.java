@@ -59,6 +59,12 @@ public class OrdersHttpController implements OrdersApi {
     }
 
     @Override
+    public ResponseEntity<Void> cancelOrder(String orderId) throws Exception {
+        // TODO: Implement this method
+        return null;
+    }
+
+    @Override
     public ResponseEntity<OrderResponse> getOrderById(String orderId) {
         Order currentOrder = retrieveOrderUseCase.getByTicketId(new GetByTicketOrderQuery(new TicketId(orderId)));
         return ResponseEntity.ok(OrderMapper.toResponse(currentOrder));
@@ -79,4 +85,6 @@ public class OrdersHttpController implements OrdersApi {
                     .orElse(null)));
         return ResponseEntity.ok(OrderMapper.toResponseList(orders));
     }
+
+
 }

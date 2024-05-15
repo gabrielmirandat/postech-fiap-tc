@@ -27,6 +27,9 @@ paths:
       summary: Find Orders By Query
       description: Filter orders by parameters
       operationId: findOrdersByQuery
+      security:
+        - BearerAuth:
+            - orders:list
       parameters:
         - name: status
           in: query
@@ -91,6 +94,28 @@ paths:
                   value:
                     status: 400
                     message: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                SEARCH_ORDERS_UNAUTHORIZED:
+                  value:
+                    status: 401
+                    message: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                SEARCH_ORDERS_FORBIDDEN:
+                  value:
+                    status: 403
+                    message: Forbidden
         '500':
           description: Internal Server Error
           content:
@@ -108,6 +133,9 @@ paths:
       summary: Add New Order
       description: Add a new order in the restaurant
       operationId: addOrder
+      security:
+        - BearerAuth:
+            - orders:add
       requestBody:
         content:
           application/json:
@@ -182,6 +210,28 @@ paths:
                   value:
                     status: 400
                     message: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CREATE_ORDER_UNAUTHORIZED:
+                  value:
+                    status: 401
+                    message: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CREATE_ORDER_FORBIDDEN:
+                  value:
+                    status: 403
+                    message: Forbidden
         '422':
           description: Unprocessable Entity
           content:
@@ -211,6 +261,9 @@ paths:
       summary: Find Order By ID
       description: Returns a single order by ID
       operationId: getOrderById
+      security:
+        - BearerAuth:
+            - orders:view
       parameters:
         - name: orderId
           in: path
@@ -272,6 +325,28 @@ paths:
                   value:
                     status: 400
                     message: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                GET_ORDER_UNAUTHORIZED:
+                  value:
+                    status: 401
+                    message: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                GET_ORDER_FORBIDDEN:
+                  value:
+                    status: 403
+                    message: Forbidden
         '404':
           description: Not Found
           content:
@@ -294,6 +369,80 @@ paths:
                   value:
                     status: 500
                     message: Internal Server Error
+    delete:
+      tags:
+        - orders
+      summary: Cancel Order
+      description: Cancel an existing order by ID
+      operationId: cancelOrder
+      security:
+        - BearerAuth:
+            - orders:cancel
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of the order to cancel
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Order cancelled successfully
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CANCEL_ORDER_BAD_REQUEST:
+                  value:
+                    status: 400
+                    message: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CANCEL_ORDER_UNAUTHORIZED:
+                  value:
+                    status: 401
+                    message: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CANCEL_ORDER_FORBIDDEN:
+                  value:
+                    status: 403
+                    message: Forbidden
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CANCEL_ORDER_NOT_FOUND:
+                  value:
+                    status: 404
+                    message: Order not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CANCEL_ORDER_INTERNAL_SERVER_ERROR:
+                  value:
+                    status: 500
+                    message: Internal server error
   /orders/{id}/status/{status}:
     post:
       tags:
@@ -301,6 +450,9 @@ paths:
       summary: Change Order Status
       description: Changes order status given step
       operationId: changeOrderStatus
+      security:
+        - BearerAuth:
+            - orders:update
       parameters:
         - name: id
           in: path
@@ -359,6 +511,28 @@ paths:
                   value:
                     status: 400
                     message: Bad Request
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CHANGE_ORDER_STATUS_UNAUTHORIZED:
+                  value:
+                    status: 401
+                    message: Unauthorized
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                CHANGE_ORDER_STATUS_FORBIDDEN:
+                  value:
+                    status: 403
+                    message: Forbidden
         '404':
           description: Not Found
           content:
@@ -394,6 +568,12 @@ paths:
                     message: Internal Server Error
 
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     AddressDTO:
       type: object
