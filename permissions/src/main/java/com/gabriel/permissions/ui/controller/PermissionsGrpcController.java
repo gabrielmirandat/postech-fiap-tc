@@ -6,12 +6,13 @@ import com.gabriel.permissions.domain.model.RoleAuthority;
 import com.gabriel.specs.permissions.PermissionGrpc;
 import com.gabriel.specs.permissions.PermissionRequest;
 import com.gabriel.specs.permissions.PermissionResponse;
+import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @GrpcService
@@ -36,11 +37,11 @@ public class PermissionsGrpcController extends PermissionGrpc.PermissionImplBase
             for (Role role : roles) {
                 for (RoleAuthority authority : role.getRoleAuthorities()) {
 
-                    LocalDateTime localDateTime = authority.getRole().getUpdatedAt();
+                    Instant instant = authority.getUpdateTimestamp();
 
-                    com.google.protobuf.Timestamp timestamp = com.google.protobuf.Timestamp.newBuilder()
-                        .setSeconds(localDateTime.getSecond())
-                        .setNanos(localDateTime.getNano())
+                    Timestamp timestamp = Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
                         .build();
 
                     responseBuilder.addItems(

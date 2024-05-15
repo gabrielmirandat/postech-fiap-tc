@@ -6,15 +6,16 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "role_authority")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@AttributeOverrides({
+    @AttributeOverride(name = "creationTimestamp", column = @Column(name = "created_at", nullable = false, updatable = false)),
+    @AttributeOverride(name = "updateTimestamp", column = @Column(name = "updated_at", nullable = false))
+})
 public class RoleAuthority extends AggregateRoot {
 
     @EmbeddedId
@@ -33,10 +34,6 @@ public class RoleAuthority extends AggregateRoot {
     @MapsId("authorityId")
     @JoinColumn(name = "authority_id")
     private Authority authority;
-
-    @CreationTimestamp
-    @Column(name = "associated_at", nullable = false, updatable = false)
-    private LocalDateTime associatedAt;
 
     @Column(name = "user_id", nullable = false)
     private String userId;
