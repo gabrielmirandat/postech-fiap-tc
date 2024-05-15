@@ -26,7 +26,7 @@ public class PermissionsHttpController {
 
     // Groups Roles endpoints
     @GetMapping("/groups")
-    @PreAuthorize("hasAuthority('groups:view')")
+    @PreAuthorize("hasAuthority('groups:list')")
     public ResponseEntity<?> listGroups() {
         return ResponseEntity.ok(permissionService.retrieveAllRoles());
     }
@@ -52,7 +52,7 @@ public class PermissionsHttpController {
 
     // Group Admins endpoints
     @GetMapping("/group_admins")
-    @PreAuthorize("hasAuthority('groups:admins:view')")
+    @PreAuthorize("hasAuthority('groups:admins:list')")
     public ResponseEntity<?> listGroupAdmins() throws JsonProcessingException {
         return ResponseEntity.ok(permissionService.listRoleAdmins());
     }
@@ -73,7 +73,7 @@ public class PermissionsHttpController {
 
     // Groups Users endpoints
     @GetMapping("/groups/{groupId}/users")
-    @PreAuthorize("hasAuthority('groups:users:view')")
+    @PreAuthorize("hasAuthority('groups:users:list')")
     public ResponseEntity<?> listGroupUsers(@PathVariable UUID groupId) throws JsonProcessingException {
         return ResponseEntity.ok(permissionService.listRoleUsers(groupId));
     }
@@ -94,7 +94,7 @@ public class PermissionsHttpController {
 
     // Groups Scopes endpoints
     @GetMapping("/groups/{groupId}/scopes")
-    @PreAuthorize("hasAuthority('groups:scopes:view')")
+    @PreAuthorize("hasAuthority('groups:scopes:list')")
     public ResponseEntity<?> listGroupScopes(@PathVariable UUID groupId) {
         return ResponseEntity.ok(permissionService.listRoleAuthorities(groupId));
     }
@@ -114,7 +114,7 @@ public class PermissionsHttpController {
 
     // Scopes endpoints
     @GetMapping("/scopes")
-    @PreAuthorize("hasAuthority('scopes:view')")
+    @PreAuthorize("hasAuthority('scopes:list')")
     public ResponseEntity<?> listScopes() {
         return ResponseEntity.ok(permissionService.listAuthorities());
     }

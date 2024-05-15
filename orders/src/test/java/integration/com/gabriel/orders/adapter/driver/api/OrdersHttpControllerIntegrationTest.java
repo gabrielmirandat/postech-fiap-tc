@@ -11,6 +11,7 @@ import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.specs.orders.models.OrderItemRequest;
 import com.gabriel.specs.orders.models.OrderRequest;
+import integration.com.gabriel.orders.adapter.security.WithMockJwt;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -58,6 +59,7 @@ public class OrdersHttpControllerIntegrationTest {
     }
 
     @Test
+    @WithMockJwt(scopes = {"orders:add"})
     public void whenPostRequestToAddOrder_thenCorrectResponse() throws Exception {
         OrderRequest orderRequest = new OrderRequest()
             .addItemsItem(new OrderItemRequest()
@@ -75,6 +77,7 @@ public class OrdersHttpControllerIntegrationTest {
     }
 
     @Test
+    @WithMockJwt(scopes = {"orders:view"})
     public void whenGetRequestToOrderById_thenCorrectResponse() throws Exception {
         Order order = OrderMock.generateBasic();
         when(retrieveOrderUseCase.getByTicketId(any()))
@@ -88,6 +91,7 @@ public class OrdersHttpControllerIntegrationTest {
     }
 
     @Test
+    @WithMockJwt(scopes = {"orders:update"})
     public void whenPostRequestToChangeOrderStatus_thenCorrectResponse() throws Exception {
         doNothing().when(processOrderUseCase).processOrder(any());
 
@@ -98,6 +102,7 @@ public class OrdersHttpControllerIntegrationTest {
     }
 
     @Test
+    @WithMockJwt(scopes = {"orders:list"})
     public void whenGetRequestToFindOrdersByStatus_thenCorrectResponse() throws Exception {
         Order order = OrderMock.generateBasic();
         when(searchOrderUseCase.searchBy(any()))
