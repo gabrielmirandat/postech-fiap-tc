@@ -1,9 +1,6 @@
 package com.gabriel.orders.adapter.driver.api;
 
-import com.gabriel.adapter.api.exceptions.BadRequest;
-import com.gabriel.adapter.api.exceptions.BaseHttpException;
-import com.gabriel.adapter.api.exceptions.InternalServerError;
-import com.gabriel.adapter.api.exceptions.UnprocessableEntity;
+import com.gabriel.adapter.api.exceptions.*;
 import com.gabriel.core.application.exception.ApplicationException;
 import com.gabriel.core.domain.exception.DomainException;
 import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
@@ -14,6 +11,9 @@ import org.springframework.core.env.Profiles;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -44,6 +44,16 @@ public class OrdersHttpExceptionHandler {
         HttpMessageNotReadableException.class})
     public ResponseEntity<ErrorResponse> handleConversionFailed(Exception exception) {
         return convertHttpAndSend(BadRequest.from(exception));
+    }
+
+    @ExceptionHandler({AuthenticationException.class, InsufficientAuthenticationException.class})
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(Exception exception) {
+        return convertHttpAndSend(Unauthorized.from(exception));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleFobiddenAcess(Exception exception) {
+        return convertHttpAndSend(Forbidden.from(exception));
     }
 
     @ExceptionHandler(DomainException.class)

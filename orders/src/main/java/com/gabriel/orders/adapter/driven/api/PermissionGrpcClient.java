@@ -29,7 +29,7 @@ public class PermissionGrpcClient {
             PermissionRequest request = PermissionRequest.newBuilder().setRole("all").build();
             PermissionResponse response = stub.retrievePermissions(request);
             setupPermissionUseCase.setupData(response);
-            // managedMenuChannel.shutdownNow();
+            // permissionsManagedChannel.shutdownNow();
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }

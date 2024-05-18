@@ -820,13 +820,3 @@ components:
         code:
           type: string
           description: Specific code of the error
-
-#  securitySchemes:
-#    hydra:
-#      type: openIdConnect
-#      openIdConnectUrl: 'https://competent-cori-vgu1750x6j.projects.oryapis.com/.well-known/openid-configuration'
-#
-#security:
-#  - hydra:
-#      - orders.write
-#      - orders.read

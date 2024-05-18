@@ -3,7 +3,6 @@ package com.gabriel.orders.infra.grpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import jakarta.annotation.PreDestroy;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +25,8 @@ public class MenuGrpcClientConfig {
     }
 
     @PreDestroy
-    public void destroyMenuChannel(@Qualifier("menuManagedChannel") ManagedChannel managedMenuChannel) {
+    public void destroyMenuChannel() {
+        ManagedChannel managedMenuChannel = menuManagedChannel();
         if (managedMenuChannel != null && !managedMenuChannel.isShutdown()) {
             managedMenuChannel.shutdown();
         }
