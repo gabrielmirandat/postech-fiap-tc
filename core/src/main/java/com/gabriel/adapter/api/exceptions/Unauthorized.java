@@ -9,4 +9,8 @@ public class Unauthorized extends BaseHttpException {
     public Unauthorized(String message, String code) {
         super(401, message, code);
     }
+
+    public static Unauthorized from(Exception exception) {
+        return new Unauthorized(exception.getMessage());
+    }
 }

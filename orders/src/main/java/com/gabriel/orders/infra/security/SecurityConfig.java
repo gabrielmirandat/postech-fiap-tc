@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtDecoders;
@@ -15,6 +16,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -50,10 +52,13 @@ public class SecurityConfig {
             if (roles == null) {
                 return List.of();
             }
-            return permissionRepository.allPermissions().stream()
-                .filter(item -> roles.contains(item.getRoleName()))
-                .map(item -> new SimpleGrantedAuthority(item.getAuthorityName()))
+
+            Set<GrantedAuthority> allRolesAuthorities = permissionRepository.allPermissions().stream()
+                .filter(item -> roles.contains(item.getRoleName().getValue()))
+                .map(item -> new SimpleGrantedAuthority(item.getAuthorityName().getValue()))
                 .collect(Collectors.toSet());
+
+            return allRolesAuthorities;
         });
 
         return jwtConverter;

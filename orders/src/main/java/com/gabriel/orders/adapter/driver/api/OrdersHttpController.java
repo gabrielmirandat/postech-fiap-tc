@@ -16,6 +16,7 @@ import com.gabriel.orders.core.domain.model.TicketId;
 import com.gabriel.specs.orders.OrdersApi;
 import com.gabriel.specs.orders.models.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -45,7 +46,7 @@ public class OrdersHttpController implements OrdersApi {
         this.searchOrderUseCase = searchOrderUseCase;
     }
 
-    @Override
+    @PreAuthorize("hasAuthority('orders:add')")
     public ResponseEntity<OrderCreated> addOrder(OrderRequest orderRequest) throws JsonProcessingException {
         CreateOrderCommand command = OrderMapper.toCommand(orderRequest);
         Order newOrder = createOrderUseCase.createOrder(command);
@@ -58,26 +59,26 @@ public class OrdersHttpController implements OrdersApi {
         return ResponseEntity.created(location).body(new OrderCreated(newOrder.getTicketId()));
     }
 
-    @Override
+    @PreAuthorize("hasAuthority('orders:cancel')")
     public ResponseEntity<Void> cancelOrder(String orderId) throws Exception {
         // TODO: Implement this method
         return null;
     }
 
-    @Override
+    @PreAuthorize("hasAuthority('orders:view')")
     public ResponseEntity<OrderResponse> getOrderById(String orderId) {
         Order currentOrder = retrieveOrderUseCase.getByTicketId(new GetByTicketOrderQuery(new TicketId(orderId)));
         return ResponseEntity.ok(OrderMapper.toResponse(currentOrder));
     }
 
-    @Override
+    @PreAuthorize("hasAuthority('orders:update')")
     public ResponseEntity<OrderUpdated> changeOrderStatus(String id, OrderStatusDTO status) throws Exception {
         processOrderUseCase.processOrder(
             new ProcessOrderCommand(new TicketId(id), OrderStatus.valueOf(status.name().toUpperCase())));
         return ResponseEntity.ok(new OrderUpdated(id, status));
     }
 
-    @Override
+    @PreAuthorize("hasAuthority('orders:list')")
     public ResponseEntity<List<OrderResponse>> findOrdersByQuery(Optional<OrderStatusDTO> status) throws Exception {
         List<Order> orders = searchOrderUseCase.searchBy(
             new SearchByOrderStatusQuery(
