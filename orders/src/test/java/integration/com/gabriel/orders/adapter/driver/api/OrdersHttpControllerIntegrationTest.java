@@ -11,13 +11,13 @@ import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.specs.orders.models.OrderItemRequest;
 import com.gabriel.specs.orders.models.OrderRequest;
-import integration.com.gabriel.orders.adapter.security.WithMockJwt;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -25,7 +25,9 @@ import unit.com.gabriel.orders.core.OrderMock;
 
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -59,7 +61,6 @@ public class OrdersHttpControllerIntegrationTest {
     }
 
     @Test
-    @WithMockJwt(scopes = {"orders:add"})
     public void whenPostRequestToAddOrder_thenCorrectResponse() throws Exception {
         OrderRequest orderRequest = new OrderRequest()
             .addItemsItem(new OrderItemRequest()
@@ -70,6 +71,7 @@ public class OrdersHttpControllerIntegrationTest {
             .thenReturn(OrderMock.generateBasic());
 
         mockMvc.perform(post("/orders")
+                .with(SecurityMockMvcRequestPostProcessors.jwt())
                 .content(objectMapper.writeValueAsString(orderRequest))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
@@ -77,13 +79,13 @@ public class OrdersHttpControllerIntegrationTest {
     }
 
     @Test
-    @WithMockJwt(scopes = {"orders:view"})
     public void whenGetRequestToOrderById_thenCorrectResponse() throws Exception {
         Order order = OrderMock.generateBasic();
         when(retrieveOrderUseCase.getByTicketId(any()))
             .thenReturn(order);
 
         mockMvc.perform(get("/orders/{orderId}", order.getTicketId())
+                .with(SecurityMockMvcRequestPostProcessors.jwt())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -91,27 +93,26 @@ public class OrdersHttpControllerIntegrationTest {
     }
 
     @Test
-    @WithMockJwt(scopes = {"orders:update"})
     public void whenPostRequestToChangeOrderStatus_thenCorrectResponse() throws Exception {
         doNothing().when(processOrderUseCase).processOrder(any());
 
         mockMvc.perform(post("/orders/{orderId}/status/{status}",
                 "12345678", "PREPARATION")
+                .with(SecurityMockMvcRequestPostProcessors.jwt())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     }
 
     @Test
-    @WithMockJwt(scopes = {"orders:list"})
     public void whenGetRequestToFindOrdersByStatus_thenCorrectResponse() throws Exception {
         Order order = OrderMock.generateBasic();
         when(searchOrderUseCase.searchBy(any()))
             .thenReturn(List.of(order));
 
         mockMvc.perform(get("/orders")
+                .with(SecurityMockMvcRequestPostProcessors.jwt())
                 .param("category", "burger"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].ticketId").value(order.getTicketId()));
     }
-
 }
