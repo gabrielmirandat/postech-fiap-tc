@@ -17,7 +17,11 @@ tags:
     description: Handling orders
 
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8001
+    description: Local server
+
+security:
+  - oAuth2Password: [ ]
 
 paths:
   /orders:
@@ -28,7 +32,7 @@ paths:
       description: Filter orders by parameters
       operationId: findOrdersByQuery
       security:
-        - BearerAuth:
+        - oAuth2Password:
             - orders:list
       parameters:
         - name: status
@@ -134,7 +138,7 @@ paths:
       description: Add a new order in the restaurant
       operationId: addOrder
       security:
-        - BearerAuth:
+        - oAuth2Password:
             - orders:add
       requestBody:
         content:
@@ -262,7 +266,7 @@ paths:
       description: Returns a single order by ID
       operationId: getOrderById
       security:
-        - BearerAuth:
+        - oAuth2Password:
             - orders:view
       parameters:
         - name: orderId
@@ -376,7 +380,7 @@ paths:
       description: Cancel an existing order by ID
       operationId: cancelOrder
       security:
-        - BearerAuth:
+        - oAuth2Password:
             - orders:cancel
       parameters:
         - name: orderId
@@ -451,7 +455,7 @@ paths:
       description: Changes order status given step
       operationId: changeOrderStatus
       security:
-        - BearerAuth:
+        - oAuth2Password:
             - orders:update
       parameters:
         - name: id
@@ -569,10 +573,18 @@ paths:
 
 components:
   securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    oAuth2Password:
+      type: oauth2
+      description: For more information, see https://example.com/docs/oauth
+      flows:
+        password:
+          tokenUrl: http://localhost:8000/users/login
+          scopes:
+            orders:add: Create an order
+            orders:view: View an order
+            orders:list: List all orders
+            orders:cancel: Cancel orders
+            orders:update: Update orders
 
   schemas:
     AddressDTO:
