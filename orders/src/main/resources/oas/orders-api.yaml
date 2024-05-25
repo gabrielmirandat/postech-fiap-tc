@@ -35,6 +35,21 @@ paths:
         - oAuth2Password:
             - orders:list
       parameters:
+        - name: Authorization
+          in: header
+          required: false
+          schema:
+            type: string
+          examples:
+            SEARCH_ORDERS_SUCCESS:
+              summary: Valid token to list orders
+              value: Bearer TOKENWITHSCOPEORDERSLIST
+            SEARCH_ORDERS_FORBIDDEN:
+              summary: Token with wrong scope
+              value: Bearer TOKENWITHWRONGSCOPE
+            SEARCH_ORDERS_UNAUTHORIZED:
+              summary: Invalid token
+              value: INVALIDTOKEN
         - name: status
           in: query
           description: Status values that need to be considered for filter

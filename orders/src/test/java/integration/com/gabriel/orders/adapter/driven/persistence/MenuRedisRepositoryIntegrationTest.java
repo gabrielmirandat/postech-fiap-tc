@@ -5,7 +5,6 @@ import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.infra.redis.RedisConfig;
 import com.gabriel.orders.infra.serializer.SerializerConfig;
-import integration.com.gabriel.orders.adapter.container.RedisTestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import unit.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
+import utils.com.gabriel.orders.core.OrderMock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;

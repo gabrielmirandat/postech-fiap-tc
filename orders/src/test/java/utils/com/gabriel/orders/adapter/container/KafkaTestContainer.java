@@ -1,4 +1,4 @@
-package integration.com.gabriel.orders.adapter.container;
+package utils.com.gabriel.orders.adapter.container;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

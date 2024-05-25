@@ -1,4 +1,4 @@
-package integration.com.gabriel.orders.adapter.container;
+package utils.com.gabriel.orders.adapter.container;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;

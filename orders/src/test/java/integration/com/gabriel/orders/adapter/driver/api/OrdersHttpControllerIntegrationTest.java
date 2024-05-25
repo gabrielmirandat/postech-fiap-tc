@@ -9,6 +9,7 @@ import com.gabriel.orders.core.application.usecase.ProcessOrderUseCase;
 import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
 import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
+import com.gabriel.orders.core.domain.port.PermissionRepository;
 import com.gabriel.specs.orders.models.OrderItemRequest;
 import com.gabriel.specs.orders.models.OrderRequest;
 import org.junit.jupiter.api.Test;
@@ -17,17 +18,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import unit.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.OrderMock;
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -56,6 +58,9 @@ public class OrdersHttpControllerIntegrationTest {
     @MockBean
     private SearchOrderUseCase searchOrderUseCase;
 
+    @MockBean
+    private PermissionRepository permissionRepository;
+
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
@@ -71,7 +76,7 @@ public class OrdersHttpControllerIntegrationTest {
             .thenReturn(OrderMock.generateBasic());
 
         mockMvc.perform(post("/orders")
-                .with(SecurityMockMvcRequestPostProcessors.jwt())
+                .with(jwt().authorities(new SimpleGrantedAuthority("orders:add")))
                 .content(objectMapper.writeValueAsString(orderRequest))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
@@ -85,7 +90,7 @@ public class OrdersHttpControllerIntegrationTest {
             .thenReturn(order);
 
         mockMvc.perform(get("/orders/{orderId}", order.getTicketId())
-                .with(SecurityMockMvcRequestPostProcessors.jwt())
+                .with(jwt().authorities(new SimpleGrantedAuthority("orders:view")))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -98,7 +103,7 @@ public class OrdersHttpControllerIntegrationTest {
 
         mockMvc.perform(post("/orders/{orderId}/status/{status}",
                 "12345678", "PREPARATION")
-                .with(SecurityMockMvcRequestPostProcessors.jwt())
+                .with(jwt().authorities(new SimpleGrantedAuthority("orders:update")))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     }
@@ -110,7 +115,7 @@ public class OrdersHttpControllerIntegrationTest {
             .thenReturn(List.of(order));
 
         mockMvc.perform(get("/orders")
-                .with(SecurityMockMvcRequestPostProcessors.jwt())
+                .with(jwt().authorities(new SimpleGrantedAuthority("orders:list")))
                 .param("category", "burger"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].ticketId").value(order.getTicketId()));

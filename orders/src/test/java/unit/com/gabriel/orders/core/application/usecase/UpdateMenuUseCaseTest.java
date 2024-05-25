@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import unit.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.OrderMock;
 
 import static org.mockito.Mockito.verify;
 

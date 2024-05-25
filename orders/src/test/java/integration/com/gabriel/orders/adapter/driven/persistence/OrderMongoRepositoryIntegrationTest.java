@@ -8,7 +8,6 @@ import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
 import com.gabriel.orders.core.domain.port.OrderSearchParameters;
 import com.gabriel.orders.infra.mongodb.MongoDbConfig;
-import integration.com.gabriel.orders.adapter.container.MongoDBTestContainer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import unit.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.adapter.container.MongoDBTestContainer;
+import utils.com.gabriel.orders.core.OrderMock;
 
 import java.util.List;
 
