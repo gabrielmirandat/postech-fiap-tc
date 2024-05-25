@@ -1,4 +1,4 @@
-package integration.com.gabriel.orders.adapter.container;
+package utils.com.gabriel.orders.adapter.container;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;

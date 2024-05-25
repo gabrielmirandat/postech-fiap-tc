@@ -17,10 +17,6 @@ import com.gabriel.orders.infra.mongodb.MongoDbConfig;
 import com.gabriel.orders.infra.redis.RedisConfig;
 import com.gabriel.orders.infra.serializer.SerializerConfig;
 import in.specmatic.test.SpecmaticJUnitSupport;
-import integration.com.gabriel.orders.adapter.container.GrpcServerTestContainer;
-import integration.com.gabriel.orders.adapter.container.KafkaTestContainer;
-import integration.com.gabriel.orders.adapter.container.MongoDBTestContainer;
-import integration.com.gabriel.orders.adapter.container.RedisTestContainer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,7 +31,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import unit.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.adapter.container.GrpcServerTestContainer;
+import utils.com.gabriel.orders.adapter.container.KafkaTestContainer;
+import utils.com.gabriel.orders.adapter.container.MongoDBTestContainer;
+import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
+import utils.com.gabriel.orders.core.OrderMock;
 
 import java.io.File;
 import java.util.List;
@@ -65,7 +65,7 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
     private MenuSubscriber menuSubscriber;
 
     @LocalServerPort
-    private int port; // Injects the port the server is running on
+    private int port;
 
     private Order order;
     private Order orderFull;

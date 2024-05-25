@@ -15,7 +15,9 @@ import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,21 +50,27 @@ public class SecurityConfig {
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
         jwtConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
-            List<String> roles = jwt.getClaimAsStringList("postech_roles");
-            if (roles == null) {
-                return List.of();
-            }
-
-            Set<GrantedAuthority> allRolesAuthorities = permissionRepository.allPermissions().stream()
+            final List<String> roles = Optional.ofNullable(jwt.getClaimAsStringList("postech_roles")).orElse(List.of());
+            final Set<GrantedAuthority> allRolesAuthorities = permissionRepository.allPermissions().stream()
                 .filter(item -> roles.contains(item.getRoleName().getValue()))
                 .map(item -> new SimpleGrantedAuthority(item.getAuthorityName().getValue()))
                 .collect(Collectors.toSet());
 
-            return allRolesAuthorities;
+            final List<String> scopes = Optional.ofNullable(jwt.getClaimAsStringList("scope")).orElse(List.of());
+            final Set<GrantedAuthority> scopeAuthorities = scopes.stream()
+                .map(scope -> new SimpleGrantedAuthority("SCOPE_" + scope))
+                .collect(Collectors.toSet());
+
+            final Set<GrantedAuthority> combinedAuthorities = new HashSet<>();
+            combinedAuthorities.addAll(allRolesAuthorities);
+            combinedAuthorities.addAll(scopeAuthorities);
+
+            return combinedAuthorities;
         });
 
         return jwtConverter;
     }
+
 
     @Bean
     public JwtDecoder jwtDecoder() {

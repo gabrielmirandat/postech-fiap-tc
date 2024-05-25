@@ -8,7 +8,6 @@ import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.MenuRepository;
 import com.gabriel.orders.infra.kafka.KafkaConfig;
 import com.gabriel.orders.infra.serializer.SerializerConfig;
-import integration.com.gabriel.orders.adapter.container.KafkaTestContainer;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
 import org.junit.jupiter.api.AfterAll;
@@ -26,7 +25,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import unit.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.adapter.container.KafkaTestContainer;
+import utils.com.gabriel.orders.core.OrderMock;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;

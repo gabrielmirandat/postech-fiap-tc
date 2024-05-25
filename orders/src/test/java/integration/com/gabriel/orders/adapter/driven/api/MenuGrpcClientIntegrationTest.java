@@ -11,7 +11,6 @@ import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.MenuRepository;
 import com.gabriel.orders.infra.grpc.MenuGrpcClientConfig;
 import com.gabriel.specs.menu.MenuResponse;
-import integration.com.gabriel.orders.adapter.container.GrpcServerTestContainer;
 import io.grpc.ManagedChannel;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,6 +23,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import utils.com.gabriel.orders.adapter.container.GrpcServerTestContainer;
 
 import java.time.Instant;
 

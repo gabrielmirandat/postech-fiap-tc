@@ -16,7 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import unit.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.OrderMock;
 
 import java.util.Arrays;
 import java.util.List;

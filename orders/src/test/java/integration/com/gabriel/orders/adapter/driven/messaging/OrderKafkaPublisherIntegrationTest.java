@@ -6,7 +6,6 @@ import com.gabriel.orders.core.domain.event.OrderCreatedEvent;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.infra.kafka.KafkaConfig;
 import com.gabriel.orders.infra.serializer.SerializerConfig;
-import integration.com.gabriel.orders.adapter.container.KafkaTestContainer;
 import io.cloudevents.CloudEvent;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -22,7 +21,8 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import unit.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.adapter.container.KafkaTestContainer;
+import utils.com.gabriel.orders.core.OrderMock;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;

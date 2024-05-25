@@ -1,4 +1,4 @@
-package unit.com.gabriel.orders.core;
+package utils.com.gabriel.orders.core;
 
 import com.gabriel.core.domain.model.*;
 import com.gabriel.core.domain.model.id.IngredientID;
