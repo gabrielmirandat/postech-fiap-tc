@@ -22,5 +22,5 @@ build
 target
 .secrets
 
-### PROJECT:PERMISSIONS ###
-permissions/src/main/resources/permissions.properties
+### PERMISSIONS ###
+**/*/permissions.properties
