@@ -27,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -36,6 +37,7 @@ import utils.com.gabriel.orders.adapter.container.KafkaTestContainer;
 import utils.com.gabriel.orders.adapter.container.MongoDBTestContainer;
 import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
 import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.infra.SecurityConfig;
 
 import java.io.File;
 import java.util.List;
@@ -45,7 +47,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // This will start the server on a random port
 @Import({MongoDbConfig.class, MenuGrpcClientConfig.class, RedisConfig.class,
-    KafkaConfig.class, SerializerConfig.class})
+    KafkaConfig.class, SerializerConfig.class, SecurityConfig.class})
 @ContextConfiguration(classes =
     {OrdersApplication.class, MongoDBTestContainer.class, GrpcServerTestContainer.class,
         RedisTestContainer.class, KafkaTestContainer.class}
@@ -63,6 +65,8 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
     private OrderPublisher orderPublisher;
     @MockBean
     private MenuSubscriber menuSubscriber;
+    @MockBean
+    private JwtDecoder jwtDecoder;
 
     @LocalServerPort
     private int port;

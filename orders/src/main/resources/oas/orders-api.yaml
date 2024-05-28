@@ -42,14 +42,15 @@ paths:
             type: string
           examples:
             SEARCH_ORDERS_SUCCESS:
-              summary: Valid token to list orders
               value: Bearer TOKENWITHSCOPEORDERSLIST
-            SEARCH_ORDERS_FORBIDDEN:
-              summary: Token with wrong scope
-              value: Bearer TOKENWITHWRONGSCOPE
+            SEARCH_ORDERS_BAD_REQUEST:
+              value: Bearer TOKENWITHSCOPEORDERSLIST
+            SEARCH_ORDERS_INTERNAL_SERVER_ERROR:
+              value: Bearer TOKENWITHSCOPEORDERSLIST
             SEARCH_ORDERS_UNAUTHORIZED:
-              summary: Invalid token
-              value: INVALIDTOKEN
+              value: Bearer INVALIDTOKEN
+            SEARCH_ORDERS_FORBIDDEN:
+              value: Bearer TOKENWITHWRONGSCOPE
         - name: status
           in: query
           description: Status values that need to be considered for filter
@@ -155,6 +156,25 @@ paths:
       security:
         - oAuth2Password:
             - orders:add
+      parameters:
+        - name: Authorization
+          in: header
+          required: false
+          schema:
+            type: string
+          examples:
+            CREATE_ORDER_SUCCESS:
+              value: Bearer TOKENWITHSCOPEORDERSADD
+            CREATE_ORDER_BAD_REQUEST:
+              value: Bearer TOKENWITHSCOPEORDERSADD
+            CREATE_ORDER_UNPROCESSABLE_ENTITY:
+              value: Bearer TOKENWITHSCOPEORDERSADD
+            CREATE_ORDER_INTERNAL_SERVER_ERROR:
+              value: Bearer TOKENWITHSCOPEORDERSADD
+            CREATE_ORDER_UNAUTHORIZED:
+              value: Bearer INVALIDTOKEN
+            CREATE_ORDER_FORBIDDEN:
+              value: Bearer TOKENWITHWRONGSCOPE
       requestBody:
         content:
           application/json:
@@ -284,6 +304,24 @@ paths:
         - oAuth2Password:
             - orders:view
       parameters:
+        - name: Authorization
+          in: header
+          required: false
+          schema:
+            type: string
+          examples:
+            GET_ORDER_SUCCESS:
+              value: Bearer TOKENWITHSCOPEORDERSVIEW
+            GET_ORDER_BAD_REQUEST:
+              value: Bearer TOKENWITHSCOPEORDERSVIEW
+            GET_ORDER_NOT_FOUND:
+              value: Bearer TOKENWITHSCOPEORDERSVIEW
+            GET_ORDER_INTERNAL_SERVER_ERROR:
+              value: Bearer TOKENWITHSCOPEORDERSVIEW
+            GET_ORDER_UNAUTHORIZED:
+              value: Bearer INVALIDTOKEN
+            GET_ORDER_FORBIDDEN:
+              value: Bearer TOKENWITHWRONGSCOPE
         - name: orderId
           in: path
           description: ID of order to return
@@ -340,7 +378,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               examples:
-                GET_ORDER__BAD_REQUEST:
+                GET_ORDER_BAD_REQUEST:
                   value:
                     status: 400
                     message: Bad Request
@@ -398,6 +436,24 @@ paths:
         - oAuth2Password:
             - orders:cancel
       parameters:
+        - name: Authorization
+          in: header
+          required: false
+          schema:
+            type: string
+          examples:
+            CANCEL_ORDER_SUCCESS:
+              value: Bearer TOKENWITHSCOPEORDERSCANCEL
+            CANCEL_ORDER_BAD_REQUEST:
+              value: Bearer TOKENWITHSCOPEORDERSCANCEL
+            CANCEL_ORDER_NOT_FOUND:
+              value: Bearer TOKENWITHSCOPEORDERSCANCEL
+            CANCEL_ORDER_INTERNAL_SERVER_ERROR:
+              value: Bearer TOKENWITHSCOPEORDERSCANCEL
+            CANCEL_ORDER_UNAUTHORIZED:
+              value: Bearer INVALIDTOKEN
+            CANCEL_ORDER_FORBIDDEN:
+              value: Bearer TOKENWITHWRONGSCOPE
         - name: orderId
           in: path
           description: ID of the order to cancel
@@ -407,6 +463,13 @@ paths:
       responses:
         '204':
           description: Order cancelled successfully
+          content:
+            application/json:
+              schema:
+                type: string
+              examples:
+                CANCEL_ORDER_SUCCESS:
+                  value: No content
         '400':
           description: Invalid request
           content:
@@ -473,6 +536,26 @@ paths:
         - oAuth2Password:
             - orders:update
       parameters:
+        - name: Authorization
+          in: header
+          required: false
+          schema:
+            type: string
+          examples:
+            CHANGE_ORDER_STATUS_SUCCESS:
+              value: Bearer TOKENWITHSCOPEORDERSUPDATE
+            CHANGE_ORDER_STATUS_BAD_REQUEST:
+              value: Bearer TOKENWITHSCOPEORDERSUPDATE
+            CHANGE_ORDER_STATUS_NOT_FOUND:
+              value: Bearer TOKENWITHSCOPEORDERSUPDATE
+            CHANGE_ORDER_STATUS_UNPROCESSABLE_ENTITY:
+              value: Bearer TOKENWITHSCOPEORDERSUPDATE
+            CHANGE_ORDER_INTERNAL_SERVER_ERROR:
+              value: Bearer TOKENWITHSCOPEORDERSUPDATE
+            CHANGE_ORDER_UNAUTHORIZED:
+              value: Bearer INVALIDTOKEN
+            CHANGE_ORDER_FORBIDDEN:
+              value: Bearer TOKENWITHWRONGSCOPE
         - name: id
           in: path
           description: TicketId of order to change
