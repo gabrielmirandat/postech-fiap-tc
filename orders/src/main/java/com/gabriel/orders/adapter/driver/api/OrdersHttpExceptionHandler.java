@@ -12,8 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -44,11 +42,6 @@ public class OrdersHttpExceptionHandler {
         HttpMessageNotReadableException.class})
     public ResponseEntity<ErrorResponse> handleConversionFailed(Exception exception) {
         return convertHttpAndSend(BadRequest.from(exception));
-    }
-
-    @ExceptionHandler({AuthenticationException.class, InsufficientAuthenticationException.class})
-    public ResponseEntity<ErrorResponse> handleAuthenticationException(Exception exception) {
-        return convertHttpAndSend(Unauthorized.from(exception));
     }
 
     @ExceptionHandler(AccessDeniedException.class)

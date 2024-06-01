@@ -1,12 +1,17 @@
 package utils.com.gabriel.orders.infra;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.gabriel.adapter.api.exceptions.Unauthorized;
+import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
+import com.gabriel.specs.orders.models.ErrorResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -33,9 +38,17 @@ public class MockAuthenticationFilter extends GenericFilterBean {
         return new TestingAuthenticationToken(mockedAuth, null, authorities);
     }
 
+    private ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        // Register the JavaTimeModule to handle Java 8 date/time types
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
+    }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
         String mockedAuth = httpRequest.getHeader("Authorization");
 
         if (mockedAuth != null) {
@@ -44,7 +57,12 @@ public class MockAuthenticationFilter extends GenericFilterBean {
             }
 
             if (mockedAuth.equals("NONE")) {
-                throw new AuthenticationServiceException("Unauthorized");
+                Unauthorized unauthorized = new Unauthorized("Unauthorized");
+                ErrorResponse error = OrderMapper.toErrorResponse(unauthorized);
+                httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                httpResponse.setContentType("application/json");
+                httpResponse.getWriter().write(objectMapper().writeValueAsString(error));
+                return;
             }
 
             TestingAuthenticationToken authentication = getTestingAuthenticationToken(mockedAuth);
