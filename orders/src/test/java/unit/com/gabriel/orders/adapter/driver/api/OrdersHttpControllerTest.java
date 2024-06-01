@@ -2,10 +2,7 @@ package unit.com.gabriel.orders.adapter.driver.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gabriel.orders.adapter.driver.api.OrdersHttpController;
-import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
-import com.gabriel.orders.core.application.usecase.ProcessOrderUseCase;
-import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
-import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
+import com.gabriel.orders.core.application.usecase.*;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.specs.orders.models.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +22,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -32,6 +30,9 @@ public class OrdersHttpControllerTest {
 
     @Mock
     private CreateOrderUseCase createOrderUseCase;
+
+    @Mock
+    private CancelOrderUseCase cancelOrderUseCase;
 
     @Mock
     private RetrieveOrderUseCase retrieveOrderUseCase;
@@ -74,6 +75,15 @@ public class OrdersHttpControllerTest {
     }
 
     @Test
+    void cancelOrder_Success() throws Exception {
+        doNothing().when(cancelOrderUseCase).cancelOrder(any());
+
+        ResponseEntity<String> response = controller.cancelOrder("12345678");
+
+        assertEquals(204, response.getStatusCodeValue());
+    }
+
+    @Test
     void getOrderById_Success() {
         when(retrieveOrderUseCase.getByTicketId(any())).thenReturn(order);
 
@@ -81,7 +91,6 @@ public class OrdersHttpControllerTest {
 
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
-        // Additional assertions based on OrderResponse structure
     }
 
     @Test

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 @Profile("!test")
 public class SecurityConfig {
 
@@ -72,7 +72,7 @@ public class SecurityConfig {
 
         return jwtConverter;
     }
-    
+
     @Bean
     public JwtDecoder jwtDecoder() {
         return JwtDecoders.fromOidcIssuerLocation(authEndpointUrl);

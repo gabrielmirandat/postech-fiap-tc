@@ -2,14 +2,12 @@ package com.gabriel.orders.adapter.driver.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
+import com.gabriel.orders.core.application.command.CancelOrderCommand;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.application.command.ProcessOrderCommand;
 import com.gabriel.orders.core.application.query.GetByTicketOrderQuery;
 import com.gabriel.orders.core.application.query.SearchByOrderStatusQuery;
-import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
-import com.gabriel.orders.core.application.usecase.ProcessOrderUseCase;
-import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
-import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
+import com.gabriel.orders.core.application.usecase.*;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
 import com.gabriel.orders.core.domain.model.TicketId;
@@ -30,6 +28,8 @@ public class OrdersHttpController implements OrdersApi {
 
     private final CreateOrderUseCase createOrderUseCase;
 
+    private final CancelOrderUseCase cancelOrderUseCase;
+
     private final RetrieveOrderUseCase retrieveOrderUseCase;
 
     private final ProcessOrderUseCase processOrderUseCase;
@@ -37,10 +37,12 @@ public class OrdersHttpController implements OrdersApi {
     private final SearchOrderUseCase searchOrderUseCase;
 
     public OrdersHttpController(CreateOrderUseCase createOrderUseCase,
+                                CancelOrderUseCase cancelOrderUseCase,
                                 RetrieveOrderUseCase retrieveOrderUseCase,
                                 ProcessOrderUseCase processOrderUseCase,
                                 SearchOrderUseCase searchOrderUseCase) {
         this.createOrderUseCase = createOrderUseCase;
+        this.cancelOrderUseCase = cancelOrderUseCase;
         this.retrieveOrderUseCase = retrieveOrderUseCase;
         this.processOrderUseCase = processOrderUseCase;
         this.searchOrderUseCase = searchOrderUseCase;
@@ -60,9 +62,9 @@ public class OrdersHttpController implements OrdersApi {
     }
 
     @PreAuthorize("hasAuthority('orders:cancel')")
-    public ResponseEntity<Void> cancelOrder(String orderId) throws Exception {
-        // TODO: Implement this method
-        return null;
+    public ResponseEntity<String> cancelOrder(String orderId) throws Exception {
+        cancelOrderUseCase.cancelOrder(new CancelOrderCommand(new TicketId(orderId)));
+        return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasAuthority('orders:view')")

@@ -12,7 +12,7 @@ public class TicketId extends ValueObject {
 
     @JsonValue
     @Pattern(regexp = "[0-9a-f]{8}",
-        message = "Invalid Ingredient ID format")
+            message = "Invalid Ingredient ID format")
     private final String id;
 
     public TicketId(String id) {

@@ -11,7 +11,9 @@ public enum OrderStatus {
 
     DELIVERY("delivery"),
 
-    COMPLETED("completed");
+    COMPLETED("completed"),
+
+    CANCELED("canceled");
 
     private final String value;
 

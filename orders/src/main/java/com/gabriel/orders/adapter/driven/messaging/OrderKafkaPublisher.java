@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.orders.core.application.event.CloudEventMapper;
 import com.gabriel.orders.core.domain.event.OrderCreatedEvent;
+import com.gabriel.orders.core.domain.event.OrderDeletedEvent;
 import com.gabriel.orders.core.domain.port.OrderPublisher;
 import io.cloudevents.CloudEvent;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,11 @@ public class OrderKafkaPublisher implements OrderPublisher {
 
     @Override
     public void orderCreated(OrderCreatedEvent event) throws JsonProcessingException {
+        kafkaTemplate.send(topicName, CloudEventMapper.ceFrom(objectMapper, event));
+    }
+
+    @Override
+    public void orderCanceled(OrderDeletedEvent event) throws JsonProcessingException {
         kafkaTemplate.send(topicName, CloudEventMapper.ceFrom(objectMapper, event));
     }
 }

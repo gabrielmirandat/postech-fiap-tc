@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.adapter.driver.api.OrdersHttpController;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
-import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
-import com.gabriel.orders.core.application.usecase.ProcessOrderUseCase;
-import com.gabriel.orders.core.application.usecase.RetrieveOrderUseCase;
-import com.gabriel.orders.core.application.usecase.SearchOrderUseCase;
+import com.gabriel.orders.core.application.usecase.*;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.port.PermissionRepository;
 import com.gabriel.specs.orders.models.OrderItemRequest;
@@ -30,8 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,6 +44,9 @@ public class OrdersHttpControllerIntegrationTest {
 
     @MockBean
     private CreateOrderUseCase createOrderUseCase;
+
+    @MockBean
+    private CancelOrderUseCase cancelOrderUseCase;
 
     @MockBean
     private RetrieveOrderUseCase retrieveOrderUseCase;
@@ -81,6 +80,16 @@ public class OrdersHttpControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.ticketId").exists());
+    }
+
+    @Test
+    public void whenDeleteRequestToCancelOrder_thenCorrectResponse() throws Exception {
+        doNothing().when(cancelOrderUseCase).cancelOrder(any());
+
+        mockMvc.perform(delete("/orders/{orderId}", "12345678")
+                .with(jwt().authorities(new SimpleGrantedAuthority("orders:cancel")))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNoContent());
     }
 
     @Test

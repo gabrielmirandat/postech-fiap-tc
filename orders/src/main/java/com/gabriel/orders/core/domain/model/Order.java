@@ -127,6 +127,10 @@ public class Order extends AggregateRoot {
             throw new OrderDomainException("Order is already finished and cant be promoted", OrderDomainError.ORD_001);
         }
 
+        if (status == OrderStatus.CANCELED) {
+            throw new OrderDomainException("Order is already canceled and cant be promoted", OrderDomainError.ORD_001);
+        }
+
         if (toStatus == OrderStatus.CREATED) {
             throw new OrderDomainException("Order can't be promoted to created status", OrderDomainError.ORD_001);
         }
@@ -144,6 +148,10 @@ public class Order extends AggregateRoot {
     public void rollback() {
         if (status == OrderStatus.COMPLETED) {
             throw new OrderDomainException("Order is already finished and cant be rolled back", OrderDomainError.ORD_001);
+        }
+
+        if (status == OrderStatus.CANCELED) {
+            throw new OrderDomainException("Order is already canceled and cant be rolled back", OrderDomainError.ORD_001);
         }
 
         if (status == OrderStatus.CREATED) {
@@ -200,6 +208,18 @@ public class Order extends AggregateRoot {
         }
 
         this.status = OrderStatus.COMPLETED;
+    }
+
+    public void cancel_order() {
+        if (status == OrderStatus.COMPLETED) {
+            throw new OrderDomainException("Order is already finished and cant be canceled", OrderDomainError.ORD_001);
+        }
+
+        if (status == OrderStatus.CANCELED) {
+            throw new OrderDomainException("Order is already canceled", OrderDomainError.ORD_001);
+        }
+
+        this.status = OrderStatus.CANCELED;
     }
 
     public byte[] serialized(ObjectMapper serializer) {
