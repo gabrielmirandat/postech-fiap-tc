@@ -10,7 +10,7 @@ public interface OrderRepository {
 
     Order updateOrder(Order newOrder);
 
-    Order getByTicket(String ticket);
+    Order getByTicket(String ticketId);
 
     List<Order> searchBy(OrderSearchParameters parameters);
 }

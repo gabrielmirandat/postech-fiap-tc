@@ -207,6 +207,7 @@
                                 <documentationProvider>springdoc</documentationProvider>
                                 <apiPackage>com.gabriel.specs.orders</apiPackage>
                                 <modelPackage>com.gabriel.specs.orders.models</modelPackage>
+                                <implicitHeaders>true</implicitHeaders>
                             </configOptions>
                             <skip>${openapi.generator.skip}</skip>
                         </configuration>

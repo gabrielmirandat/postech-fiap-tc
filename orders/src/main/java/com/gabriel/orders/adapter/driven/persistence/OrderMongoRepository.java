@@ -49,8 +49,8 @@ public class OrderMongoRepository implements OrderRepository {
     }
 
     @Override
-    public Order getByTicket(String ticket) {
-        Document doc = orderCollection.find(Filters.eq("ticketId", ticket)).first();
+    public Order getByTicket(String ticketId) {
+        Document doc = orderCollection.find(Filters.eq("ticketId", ticketId)).first();
         if (doc != null) {
             return MongoMapper.documentToOrder(doc);
         }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gabriel.orders.adapter.driven.messaging.OrderKafkaPublisher;
 import com.gabriel.orders.core.domain.event.OrderCreatedEvent;
+import com.gabriel.orders.core.domain.event.OrderDeletedEvent;
 import io.cloudevents.CloudEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,18 @@ class OrderKafkaPublisherTest {
 
         // When
         orderKafkaPublisher.orderCreated(event);
+
+        // Then
+        verify(kafkaTemplate).send(eq(topicName), any(CloudEvent.class));
+    }
+
+    @Test
+    void orderCancelled_sendsMessageToKafka() throws Exception {
+        // Given
+        OrderDeletedEvent event = new OrderDeletedEvent(OrderMock.generateBasic().getTicketId());
+
+        // When
+        orderKafkaPublisher.orderCanceled(event);
 
         // Then
         verify(kafkaTemplate).send(eq(topicName), any(CloudEvent.class));

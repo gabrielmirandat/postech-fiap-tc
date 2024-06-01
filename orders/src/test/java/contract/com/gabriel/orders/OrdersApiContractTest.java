@@ -27,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -98,15 +99,19 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
 
     @BeforeEach
     public void initialize() throws JsonProcessingException {
-        order = OrderMock.generateBasic();
+        SecurityContextHolder.clearContext();
+
         orderFull = OrderMock.generateFull();
+        order = OrderMock.generateBasic();
         product = OrderMock.generateProduct();
         extra = OrderMock.generateExtra();
 
         when(orderRepository.getByTicket(eq("11111111")))
             .thenReturn(orderFull);
+        when(orderRepository.getByTicket(eq("11111112")))
+            .thenReturn(order);
         when(orderRepository.getByTicket(eq("11111113")))
-            .thenThrow(new NotFound("Could not find order with ticket 11111113"));
+            .thenThrow(new NotFound("Could not find order with ticketId 11111113"));
         when(orderRepository.getByTicket(eq("11111119")))
             .thenThrow(RuntimeException.class);
         when(orderRepository.searchBy(eq(new OrderSearchParameters(OrderStatus.CREATED))))
