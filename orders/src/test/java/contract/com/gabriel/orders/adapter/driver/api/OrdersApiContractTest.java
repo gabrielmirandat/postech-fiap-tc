@@ -17,7 +17,6 @@ import com.gabriel.orders.infra.mongodb.MongoDbConfig;
 import com.gabriel.orders.infra.redis.RedisConfig;
 import com.gabriel.orders.infra.serializer.SerializerConfig;
 import in.specmatic.test.SpecmaticJUnitSupport;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,14 +80,8 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
 
     @BeforeAll
     public static void setup() {
-        KafkaTestContainer.startContainer();
         File apiContract = new File("src/main/resources/oas/orders-api.yaml");
         System.setProperty("contractPaths", apiContract.getAbsolutePath());
-    }
-
-    @AfterAll
-    public static void stop() {
-        KafkaTestContainer.stopContainer();
     }
 
     @DynamicPropertySource

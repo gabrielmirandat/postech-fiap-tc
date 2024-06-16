@@ -1,7 +1,5 @@
 package utils.com.gabriel.orders.adapter.container;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.KafkaContainer;
@@ -11,20 +9,14 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 public class KafkaTestContainer {
 
-    // Declare the KafkaContainer but do not start it immediately
-    private static final KafkaContainer KAFKA_CONTAINER =
-        new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.2.2"));
+    private static final KafkaContainer KAFKA_CONTAINER;
 
-    @BeforeAll
-    public static void startContainer() {
-        // Start the container before any tests run in the class
+    static {
+        KAFKA_CONTAINER = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.2.2"));
         KAFKA_CONTAINER.start();
-    }
 
-    @AfterAll
-    public static void stopContainer() {
-        // Stop the container after all tests in the class have run
-        KAFKA_CONTAINER.stop();
+        // Ensure the container is stopped when the JVM exits
+        Runtime.getRuntime().addShutdownHook(new Thread(KAFKA_CONTAINER::stop));
     }
 
     @DynamicPropertySource

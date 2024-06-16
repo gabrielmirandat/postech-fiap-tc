@@ -46,17 +46,11 @@ public class OrderKafkaPublisherIntegrationTest {
     private ObjectMapper objectMapper;
     private Order order;
 
-    @BeforeAll
-    public static void startContainer() {
-        KafkaTestContainer.startContainer();
-    }
-
     @AfterAll
     public static void stopContainer() {
         if (consumer != null) {
             consumer.close();
         }
-        KafkaTestContainer.stopContainer();
     }
 
     @DynamicPropertySource
