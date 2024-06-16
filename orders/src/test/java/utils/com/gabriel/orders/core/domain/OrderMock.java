@@ -24,8 +24,8 @@ public class OrderMock {
         OrderItem item1 = validOrderItem(false);
         OrderItem item2 = validOrderItem(true);
 
-        Address shippingAddress = new Address("Street", "City", "SP", "13011-300");
-        Notification notification = new Notification(NotificationType.CELLPHONE, "(19) 99644-3590");
+        Address shippingAddress = new Address("Street", "City", "SP", "41710-450");
+        Notification notification = new Notification(NotificationType.CELLPHONE, "(19) 12345-5555");
         CPF customer = new CPF("123.456.789-00");
         return new Order(Arrays.asList(item1, item2), customer, shippingAddress, notification);
     }
