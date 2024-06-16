@@ -23,4 +23,4 @@ target
 .secrets
 
 ### PERMISSIONS ###
-**/*/permissions.properties
+permissions.properties
