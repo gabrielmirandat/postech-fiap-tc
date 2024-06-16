@@ -12,8 +12,6 @@ import com.gabriel.orders.infra.kafka.KafkaConfig;
 import com.gabriel.orders.infra.serializer.SerializerConfig;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -56,7 +54,7 @@ public class MenuKafkaSubscriberIntegrationTest {
     @Autowired
     private MenuKafkaSubscriber menuKafkaSubscriber;
     @MockBean
-    private MenuRepository menuRepository; // Mocking the repository instead of the use case
+    private MenuRepository menuRepository;
     @Captor
     private ArgumentCaptor<Product> productCaptor;
     @Captor
@@ -67,16 +65,6 @@ public class MenuKafkaSubscriberIntegrationTest {
     private Product product;
 
     private Extra extra;
-
-    @BeforeAll
-    public static void startContainer() {
-        KafkaTestContainer.startContainer();
-    }
-
-    @AfterAll
-    public static void stopContainer() {
-        KafkaTestContainer.stopContainer();
-    }
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
