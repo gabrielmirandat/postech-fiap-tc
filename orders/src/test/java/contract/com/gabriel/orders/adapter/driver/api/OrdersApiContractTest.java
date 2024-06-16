@@ -1,4 +1,4 @@
-package contract.com.gabriel.orders;
+package contract.com.gabriel.orders.adapter.driver.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gabriel.adapter.api.exceptions.NotFound;
