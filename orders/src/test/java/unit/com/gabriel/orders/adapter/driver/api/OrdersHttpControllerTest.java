@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +50,7 @@ public class OrdersHttpControllerTest {
 
     @BeforeEach
     public void setUp() {
-        order = OrderMock.generateBasic();
+        order = OrderMock.validBasicOrder();
         openMocks(this);
 
         // Set up MockHttpServletRequest

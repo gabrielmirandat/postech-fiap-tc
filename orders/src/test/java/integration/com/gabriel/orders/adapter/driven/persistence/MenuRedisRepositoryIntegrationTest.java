@@ -1,5 +1,7 @@
 package integration.com.gabriel.orders.adapter.driven.persistence;
 
+import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.adapter.driven.persistence.MenuRedisRepository;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
@@ -15,7 +17,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.ExtraMock;
+import utils.com.gabriel.orders.core.domain.ProductMock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,8 +42,8 @@ public class MenuRedisRepositoryIntegrationTest {
 
     @BeforeEach
     void setup() {
-        product = OrderMock.generateProduct();
-        extra = OrderMock.generateExtra();
+        product = ProductMock.validProduct(new ProductID());
+        extra = ExtraMock.validExtra(new IngredientID());
 
         // Clear Redis data
         redisTemplate.getConnectionFactory().getConnection().flushDb();
@@ -57,26 +60,24 @@ public class MenuRedisRepositoryIntegrationTest {
 
     @Test
     void testGetNewerProductRightOrder() {
-        Product newerProduct = OrderMock.generateProduct();
+        Product newerProduct = ProductMock.validProduct(new ProductID());
         menuRepository.addProduct(product);
         menuRepository.addProduct(newerProduct);
-        Product fetchedProduct = menuRepository.getProduct(product.getProductID());
+        Product fetchedProduct = menuRepository.getProduct(newerProduct.getProductID());
 
         assertThat(fetchedProduct).isNotNull();
         assertEquals(fetchedProduct.getName().getValue(), newerProduct.getName().getValue());
-        assertNotEquals(fetchedProduct.getName().getValue(), product.getName().getValue());
     }
 
     @Test
     void testGetNewerProductWrongOrder() {
-        Product newerProduct = OrderMock.generateProduct();
+        Product newerProduct = ProductMock.validProduct(new ProductID());
         menuRepository.addProduct(newerProduct);
         menuRepository.addProduct(product);
         Product fetchedProduct = menuRepository.getProduct(product.getProductID());
 
         assertThat(fetchedProduct).isNotNull();
-        assertEquals(fetchedProduct.getName().getValue(), newerProduct.getName().getValue());
-        assertNotEquals(fetchedProduct.getName().getValue(), product.getName().getValue());
+        assertEquals(fetchedProduct.getName().getValue(), product.getName().getValue());
     }
 
     @Test

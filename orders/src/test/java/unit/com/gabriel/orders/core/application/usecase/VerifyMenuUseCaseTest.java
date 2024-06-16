@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.application.CreateOrderCommandMock;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.lenient;
@@ -41,13 +41,13 @@ public class VerifyMenuUseCaseTest {
         // Assuming CreateOrderCommand constructor and methods for setting up test data
         productIdValid = new ProductID();
         ingredientIdValid = new IngredientID();
-        commandWithValidItems = OrderMock.generateCreateOrderCommand(productIdValid, ingredientIdValid);
+        commandWithValidItems = CreateOrderCommandMock.validCommand(productIdValid, ingredientIdValid);
 
         productIdInvalid = new ProductID();
-        commandWithInvalidProduct = OrderMock.generateCreateOrderCommand(productIdInvalid, ingredientIdValid);
+        commandWithInvalidProduct = CreateOrderCommandMock.validCommand(productIdInvalid, ingredientIdValid);
 
         ingredientIdInValid = new IngredientID();
-        commandWithInvalidExtra = OrderMock.generateCreateOrderCommand(productIdValid, ingredientIdInValid);
+        commandWithInvalidExtra = CreateOrderCommandMock.validCommand(productIdValid, ingredientIdInValid);
 
         // Configure mocks
         lenient().when(menuRepository.existsProduct(productIdValid)).thenReturn(true);

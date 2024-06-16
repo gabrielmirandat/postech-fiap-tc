@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +38,7 @@ public class SearchOrderUseCaseTest {
         // Given
         OrderStatus status = OrderStatus.CREATED;
         SearchByOrderStatusQuery query = new SearchByOrderStatusQuery(status);
-        List<Order> expectedOrders = Arrays.asList(OrderMock.generateBasic(), OrderMock.generateBasic());
+        List<Order> expectedOrders = Arrays.asList(OrderMock.validBasicOrder(), OrderMock.validBasicOrder());
 
         when(orderRepository.searchBy(new OrderSearchParameters(status))).thenReturn(expectedOrders);
 

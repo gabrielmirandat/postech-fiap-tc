@@ -9,7 +9,7 @@ import com.gabriel.orders.core.domain.port.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -36,7 +36,7 @@ public class ProcessOrderUseCaseTest {
         OrderStatus status = OrderStatus.PREPARATION;
         ProcessOrderCommand command = new ProcessOrderCommand(id, status);
 
-        Order mockOrder = OrderMock.generateBasic();
+        Order mockOrder = OrderMock.validBasicOrder();
         when(orderRepository.getByTicket(id.getId())).thenReturn(mockOrder);
 
         // When

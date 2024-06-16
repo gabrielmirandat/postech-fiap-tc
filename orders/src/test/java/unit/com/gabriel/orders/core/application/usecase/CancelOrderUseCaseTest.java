@@ -12,7 +12,7 @@ import com.gabriel.orders.core.domain.port.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,7 +43,7 @@ public class CancelOrderUseCaseTest {
     @Test
     public void testCancelOrder() throws JsonProcessingException {
         // Given
-        Order mockOrder = OrderMock.generateBasic();
+        Order mockOrder = OrderMock.validBasicOrder();
 
         // When
         when(orderRepository.getByTicket(any())).thenReturn(mockOrder);

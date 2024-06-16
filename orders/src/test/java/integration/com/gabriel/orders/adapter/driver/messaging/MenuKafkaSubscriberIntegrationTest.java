@@ -1,6 +1,8 @@
 package integration.com.gabriel.orders.adapter.driver.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.adapter.driver.messaging.MenuKafkaSubscriber;
 import com.gabriel.orders.core.application.usecase.UpdateMenuUseCase;
 import com.gabriel.orders.core.domain.model.Extra;
@@ -26,7 +28,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import utils.com.gabriel.orders.adapter.container.KafkaTestContainer;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.ExtraMock;
+import utils.com.gabriel.orders.core.domain.ProductMock;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -82,8 +85,8 @@ public class MenuKafkaSubscriberIntegrationTest {
 
     @BeforeEach
     void setup() {
-        product = OrderMock.generateProduct();
-        extra = OrderMock.generateExtra();
+        product = ProductMock.validProduct(new ProductID());
+        extra = ExtraMock.validExtra(new IngredientID());
         countDownLatch = new CountDownLatch(1);
         menuKafkaSubscriber.setCountDownLatch(countDownLatch);
     }

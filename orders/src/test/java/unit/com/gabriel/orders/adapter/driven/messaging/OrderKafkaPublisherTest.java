@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.kafka.core.KafkaTemplate;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -42,7 +42,7 @@ class OrderKafkaPublisherTest {
     @Test
     void orderCreated_sendsMessageToKafka() throws Exception {
         // Given
-        OrderCreatedEvent event = new OrderCreatedEvent(OrderMock.generateBasic());
+        OrderCreatedEvent event = new OrderCreatedEvent(OrderMock.validBasicOrder());
 
 
         // When
@@ -55,7 +55,7 @@ class OrderKafkaPublisherTest {
     @Test
     void orderCancelled_sendsMessageToKafka() throws Exception {
         // Given
-        OrderDeletedEvent event = new OrderDeletedEvent(OrderMock.generateBasic().getTicketId());
+        OrderDeletedEvent event = new OrderDeletedEvent(OrderMock.validBasicOrder().getTicketId());
 
         // When
         orderKafkaPublisher.orderCanceled(event);
