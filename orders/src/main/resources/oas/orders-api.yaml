@@ -90,13 +90,13 @@ paths:
                       status: "created"
                       price: 20.50
                       customer:
-                        cpf: "038.573.411-57"
+                        cpf: "851.387.800-69"
                       shippingAddress:
-                        street: "Vila Olivo"
-                        city: "Valinhos"
+                        street: "Rua Varginha"
+                        city: "Paracatu"
                         state: "SP"
-                        zip: "13011-300"
-                      notification: "(19) 99644-3590"
+                        zip: "41710-450"
+                      notification: "(19) 12345-5555"
                       items:
                         - itemId: "12345678-ORDI-1009-20-08"
                           product:
@@ -190,13 +190,13 @@ paths:
               CREATE_ORDER_SUCCESS:
                 value:
                   customer:
-                    cpf: "038.573.411-57"
+                    cpf: "851.387.800-69"
                   shippingAddress:
-                    street: "Vila Olivo"
-                    city: "Valinhos"
+                    street: "Rua Varginha"
+                    city: "Paracatu"
                     state: "SP"
-                    zip: "13011-300"
-                  notification: "(19) 99644-3590"
+                    zip: "41710-450"
+                  notification: "(19) 12345-5555"
                   items:
                     - productId: "11111111-PRDC-1111-11-11"
                       extras:
@@ -206,7 +206,7 @@ paths:
               CREATE_ORDER_BAD_REQUEST:
                 value:
                   customer:
-                    govId: "038.573.411-57"
+                    govId: "851.387.800-69"
                   items:
                     - productId: "11111111-PRDC-1111-11-11"
                       extras:
@@ -216,7 +216,7 @@ paths:
               CREATE_ORDER_UNPROCESSABLE_ENTITY:
                 value:
                   customer:
-                    cpf: "038.573.411-57"
+                    cpf: "851.387.800-69"
                   items:
                     - productId: "11111111-PRDC-1111-11-12"
                       extras:
@@ -226,7 +226,7 @@ paths:
               CREATE_ORDER_INTERNAL_SERVER_ERROR:
                 value:
                   customer:
-                    cpf: "038.573.411-57"
+                    cpf: "851.387.800-69"
                   items:
                     - productId: "11111111-PRDC-1111-11-19"
                       extras:
@@ -236,13 +236,13 @@ paths:
               CREATE_ORDER_UNAUTHORIZED:
                 value:
                   customer:
-                    cpf: "038.573.411-57"
+                    cpf: "851.387.800-69"
                   shippingAddress:
-                    street: "Vila Olivo"
-                    city: "Valinhos"
+                    street: "Rua Varginha"
+                    city: "Paracatu"
                     state: "SP"
-                    zip: "13011-300"
-                  notification: "(19) 99644-3590"
+                    zip: "41710-450"
+                  notification: "(19) 12345-5555"
                   items:
                     - productId: "11111111-PRDC-1111-11-11"
                       extras:
@@ -252,13 +252,13 @@ paths:
               CREATE_ORDER_FORBIDDEN:
                 value:
                   customer:
-                    cpf: "038.573.411-57"
+                    cpf: "851.387.800-69"
                   shippingAddress:
-                    street: "Vila Olivo"
-                    city: "Valinhos"
+                    street: "Rua Varginha"
+                    city: "Paracatu"
                     state: "SP"
-                    zip: "13011-300"
-                  notification: "(19) 99644-3590"
+                    zip: "41710-450"
+                  notification: "(19) 12345-5555"
                   items:
                     - productId: "11111111-PRDC-1111-11-11"
                       extras:
@@ -394,13 +394,13 @@ paths:
                     status: "created"
                     price: 20.50
                     customer:
-                      cpf: "038.573.411-57"
+                      cpf: "851.387.800-69"
                     shippingAddress:
-                      street: "Vila Olivo"
-                      city: "Valinhos"
+                      street: "Rua Varginha"
+                      city: "Paracatu"
                       state: "SP"
-                      zip: "13011-300"
-                    notification: "(19) 99644-3590"
+                      zip: "41710-450"
+                    notification: "(19) 12345-5555"
                     items:
                       - itemId: "11111111-ORDI-1111-11-11"
                         product:
