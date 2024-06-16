@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.application.CreateOrderCommandMock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,7 +52,7 @@ public class CreateOrderUseCaseTest {
         // Given
         ProductID productId = new ProductID();
         IngredientID ingredientId = new IngredientID();
-        CreateOrderCommand command = OrderMock.generateCreateOrderCommand(productId, ingredientId);
+        CreateOrderCommand command = CreateOrderCommandMock.validCommand(productId, ingredientId);
 
         when(menuRepository.getProduct(any())).thenReturn(new Product(productId, "product", 10.0)); // Customize this as necessary
         when(menuRepository.getExtra(any())).thenReturn(new Extra(ingredientId, "extra", 2.0)); // Customize this as necessary

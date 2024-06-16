@@ -23,7 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import utils.com.gabriel.orders.adapter.container.KafkaTestContainer;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -72,7 +72,7 @@ public class OrderKafkaPublisherIntegrationTest {
 
     @BeforeEach
     void setup() {
-        order = OrderMock.generateBasic();
+        order = OrderMock.validBasicOrder();
     }
 
     @Test

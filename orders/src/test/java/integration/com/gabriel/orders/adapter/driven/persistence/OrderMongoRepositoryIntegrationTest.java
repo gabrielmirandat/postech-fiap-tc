@@ -17,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import utils.com.gabriel.orders.adapter.container.MongoDBTestContainer;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import java.util.List;
 
@@ -42,8 +42,8 @@ public class OrderMongoRepositoryIntegrationTest {
 
     @BeforeEach
     void setup() {
-        basicOrder = OrderMock.generateBasic();
-        fullOrder = OrderMock.generateFull();
+        basicOrder = OrderMock.validBasicOrder();
+        fullOrder = OrderMock.validFullOrder();
     }
 
     @Test

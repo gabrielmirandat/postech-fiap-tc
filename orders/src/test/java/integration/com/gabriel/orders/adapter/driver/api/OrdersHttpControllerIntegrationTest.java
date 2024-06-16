@@ -19,7 +19,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import java.util.List;
 
@@ -72,7 +72,7 @@ public class OrdersHttpControllerIntegrationTest {
                 .quantity(1));
 
         when(createOrderUseCase.createOrder(any(CreateOrderCommand.class)))
-            .thenReturn(OrderMock.generateBasic());
+            .thenReturn(OrderMock.validBasicOrder());
 
         mockMvc.perform(post("/orders")
                 .with(jwt().authorities(new SimpleGrantedAuthority("orders:add")))
@@ -94,7 +94,7 @@ public class OrdersHttpControllerIntegrationTest {
 
     @Test
     public void whenGetRequestToOrderById_thenCorrectResponse() throws Exception {
-        Order order = OrderMock.generateBasic();
+        Order order = OrderMock.validBasicOrder();
         when(retrieveOrderUseCase.getByTicketId(any()))
             .thenReturn(order);
 
@@ -119,7 +119,7 @@ public class OrdersHttpControllerIntegrationTest {
 
     @Test
     public void whenGetRequestToFindOrdersByStatus_thenCorrectResponse() throws Exception {
-        Order order = OrderMock.generateBasic();
+        Order order = OrderMock.validBasicOrder();
         when(searchOrderUseCase.searchBy(any()))
             .thenReturn(List.of(order));
 

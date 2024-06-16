@@ -37,7 +37,9 @@ import utils.com.gabriel.orders.adapter.container.GrpcServerTestContainer;
 import utils.com.gabriel.orders.adapter.container.KafkaTestContainer;
 import utils.com.gabriel.orders.adapter.container.MongoDBTestContainer;
 import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.ExtraMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
+import utils.com.gabriel.orders.core.domain.ProductMock;
 import utils.com.gabriel.orders.infra.SecurityConfig;
 
 import java.io.File;
@@ -101,10 +103,10 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
     public void initialize() throws JsonProcessingException {
         SecurityContextHolder.clearContext();
 
-        orderFull = OrderMock.generateFull();
-        order = OrderMock.generateBasic();
-        product = OrderMock.generateProduct();
-        extra = OrderMock.generateExtra();
+        orderFull = OrderMock.validFullOrder();
+        order = OrderMock.validBasicOrder();
+        product = ProductMock.validProduct(new ProductID("11111111-PRDC-1111-11-11"));
+        extra = ExtraMock.validExtra(new IngredientID("11111111-INGR-1111-11-11"));
 
         when(orderRepository.getByTicket(eq("11111111")))
             .thenReturn(orderFull);

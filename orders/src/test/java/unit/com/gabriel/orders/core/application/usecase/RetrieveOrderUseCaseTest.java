@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -34,7 +34,7 @@ public class RetrieveOrderUseCaseTest {
         // Given
         TicketId ticketId = new TicketId("12345678");
         GetByTicketOrderQuery query = new GetByTicketOrderQuery(ticketId);
-        Order expectedOrder = OrderMock.generateBasic();
+        Order expectedOrder = OrderMock.validBasicOrder();
         // If your Order class requires specific setup, do it here
         when(orderRepository.getByTicket(String.valueOf(ticketId))).thenReturn(expectedOrder);
 

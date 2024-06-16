@@ -8,7 +8,7 @@ import com.gabriel.orders.core.domain.model.OrderStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,8 +20,8 @@ class OrderTest {
 
     @BeforeEach
     void setUp() {
-        basicOrder = OrderMock.generateBasic();
-        fullOrder = OrderMock.generateFull();
+        basicOrder = OrderMock.validBasicOrder();
+        fullOrder = OrderMock.validFullOrder();
     }
 
     public ObjectMapper objectMapper() {

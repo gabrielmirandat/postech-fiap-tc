@@ -16,7 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import utils.com.gabriel.orders.core.OrderMock;
+import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +50,7 @@ public class OrderMongoRepositoryTest {
 
     @Test
     public void saveOrder_Success() {
-        Order order = OrderMock.generateBasic();
+        Order order = OrderMock.validBasicOrder();
         repository.saveOrder(order);
         verify(mongoCollection).insertOne(documentCaptor.capture());
         Document captured = documentCaptor.getValue();
@@ -63,7 +63,7 @@ public class OrderMongoRepositoryTest {
     public void updateOrder_OrderNotFound_ThrowsNotFound() {
         when(updateResult.getMatchedCount()).thenReturn(0L);
         when(mongoCollection.replaceOne(any(), any())).thenReturn(updateResult);
-        Order newOrder = OrderMock.generateBasic();
+        Order newOrder = OrderMock.validBasicOrder();
 
         assertThrows(NotFound.class, () -> repository.updateOrder(newOrder));
     }
@@ -72,7 +72,7 @@ public class OrderMongoRepositoryTest {
     public void updateOrder_Success() {
         when(updateResult.getMatchedCount()).thenReturn(1L);
         when(mongoCollection.replaceOne(any(), any())).thenReturn(updateResult);
-        Order newOrder = OrderMock.generateBasic();
+        Order newOrder = OrderMock.validBasicOrder();
 
         Order updatedOrder = repository.updateOrder(newOrder);
         assertNotNull(updatedOrder);
@@ -88,7 +88,7 @@ public class OrderMongoRepositoryTest {
 
     @Test
     public void getByTicket_Success() {
-        Order order = OrderMock.generateBasic();
+        Order order = OrderMock.validBasicOrder();
         Document document = MongoMapper.orderToDocument(order);
 
         when(mongoCollection.find(any(Bson.class))).thenReturn(findIterable);
@@ -102,8 +102,8 @@ public class OrderMongoRepositoryTest {
     @Test
     public void searchBy_WithStatus_FindsOrders() {
         // Mock orders
-        Order order1 = OrderMock.generateBasic(); // Assume this sets a specific status
-        Order order2 = OrderMock.generateBasic();
+        Order order1 = OrderMock.validBasicOrder(); // Assume this sets a specific status
+        Order order2 = OrderMock.validBasicOrder();
         // Assume MongoMapper can convert documents to orders correctly
         Document doc1 = MongoMapper.orderToDocument(order1);
         Document doc2 = MongoMapper.orderToDocument(order2);
