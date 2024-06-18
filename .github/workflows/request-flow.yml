@@ -85,6 +85,7 @@ jobs:
       - name: Test with Maven
         run: mvn verify -Pintegration-tests
   terraform-plan-local:
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
