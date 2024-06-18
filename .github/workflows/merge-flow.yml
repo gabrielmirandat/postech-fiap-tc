@@ -3,7 +3,7 @@ name: Flow to deploy production artifact
 on:
   push:
     branches:
-     - main
+      - main
 
 env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
@@ -16,6 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2
       - name: Install Protocol Buffers Compiler
         run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
       - name: Check protoc version
@@ -27,48 +35,81 @@ jobs:
           distribution: 'temurin'
       - name: Build with Maven
         run: mvn -B package -Dmaven.test.skip=true
-      - name: Upload orders-api artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: orders-artifact
-          path: |
-            ./orders/target/orders*.jar
-            ./orders/target/newrelic/newrelic.jar
-            ./orders/src/main/resources/newrelic/newrelic.yml
-      - name: Upload menu-api artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: menu-artifact
-          path: ./menu/target/menu*.jar
-  terraform-apply:
+  unit-test:
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Upload Configuration
-        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
-        id: apply-upload
+      - uses: actions/checkout@v2
+      - name: Cache Maven packages
+        uses: actions/cache@v2
         with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          directory: ${{ env.TF_DIR }}
-      - name: Create Apply Run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
-        id: apply-run
+          path: |
+            ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2
+      - name: Install Protocol Buffers Compiler
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Check protoc version
+        run: protoc --version
+      - name: Set up JDK 21
+        uses: actions/setup-java@v2
         with:
-          workspace: ${{ env.TF_WORKSPACE }}
-          configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
-      - name: Apply
-        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
-        if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
-        id: apply
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Test with Maven
+        run: mvn test -Punit-tests
+  integration-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Maven packages
+        uses: actions/cache@v2
         with:
-          run: ${{ steps.apply-run.outputs.run_id }}
-          comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
+          path: |
+            ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2
+      - name: Install Protocol Buffers Compiler
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Check protoc version
+        run: protoc --version
+      - name: Set up JDK 21
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Test with Maven
+        run: mvn verify -Pintegration-tests
+  contract-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2
+      - name: Install Protocol Buffers Compiler
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Check protoc version
+        run: protoc --version
+      - name: Set up JDK 21
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Test with Maven
+        run: mvn verify -Pcontract-tests
+
   publish:
-    needs: terraform-apply
+    needs: [ unit-test, integration-test, contract-test ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -101,7 +142,7 @@ jobs:
           MENU_REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
           GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
-          
+
           docker build -t $ORDERS_REPOSITORY:$GEN_VERSION ./orders
           docker push $ORDERS_REPOSITORY:$GEN_VERSION
           docker build -t $MENU_REPOSITORY:$GEN_VERSION ./menu
@@ -116,7 +157,7 @@ jobs:
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
           GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
           COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
-          
+
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git tag -a $GEN_VERSION -m "Deploying version $GEN_VERSION. Details: $COMMIT_URL"
@@ -135,7 +176,7 @@ jobs:
           GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
           COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           TAG_URL="https://github.com/${{ github.repository }}/releases/tag/$GEN_VERSION"
-          
+
           echo "DISCORD_ARGS=A build ${{ github.run_number }} foi concluída com sucesso! Confira os detalhes no commit: $COMMIT_URL. Veja a tag da versão: $TAG_URL" >> $GITHUB_ENV
       - name: Prepare Failure Message
         if: ${{ needs.publish.result == 'failure' }}
@@ -150,8 +191,100 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
           args: ${{ env.DISCORD_ARGS }}
+
+  terraform-plan-cloud:
+    needs: tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Upload Configuration
+        id: plan-upload
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          directory: ${{ env.TF_DIR }}
+          speculative: true
+      - name: Create Plan Run
+        id: plan-run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+          plan_only: true
+      - name: Get Plan Output
+        id: plan-output
+        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.0.0
+        with:
+          plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
+      - name: Update PR
+        id: plan-comment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.PAT }}
+          script: |
+            // 1. Retrieve existing bot comments for the PR
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const botComment = comments.find(comment => {
+              return comment.user.type === 'Bot' && comment.body.includes('Terraform Cloud Plan Output')
+            });
+            const output = `#### Terraform Cloud Plan Output
+               \`\`\`
+               Plan: ${{ steps.plan-output.outputs.add }} to add, ${{ steps.plan-output.outputs.change }} to change, ${{ steps.plan-output.outputs.destroy }} to destroy.
+               \`\`\`
+               [Terraform Cloud Plan](${{ steps.plan-run.outputs.run_link }})
+               `;
+            // 3. Delete previous comment so PR timeline makes sense
+            if (botComment) {
+              github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+              });
+            }
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            });
+
+  terraform-apply:
+    needs: terraform-plan-cloud
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Upload Configuration
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        id: apply-upload
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          directory: ${{ env.TF_DIR }}
+      - name: Create Apply Run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        id: apply-run
+        with:
+          workspace: ${{ env.TF_WORKSPACE }}
+          configuration_version: ${{ steps.apply-upload.outputs.configuration_version_id }}
+      - name: Apply
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.0
+        if: fromJSON(steps.apply-run.outputs.payload).data.attributes.actions.IsConfirmable
+        id: apply
+        with:
+          run: ${{ steps.apply-run.outputs.run_id }}
+          comment: "Apply Run from GitHub Actions CI ${{ github.sha }}"
   deploy:
-    needs: publish
+    needs: terraform-apply
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -172,7 +305,7 @@ jobs:
           MENU_REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
           GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
-          
+
           sed -i 's|<ORDERS_API_IMAGE>|'"$ORDERS_REPOSITORY:$GEN_VERSION"'|g' .k8s/orders-api-deployment.yaml
           sed -i 's|<MENU_API_IMAGE>|'"$MENU_REPOSITORY:$GEN_VERSION"'|g' .k8s/menu-api-deployment.yaml
       - name: Deploy to EKS
@@ -218,6 +351,7 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
           args: ${{ env.DISCORD_ARGS }}
+  
   cleanup-registry:
     needs: publish
     runs-on: ubuntu-latest
