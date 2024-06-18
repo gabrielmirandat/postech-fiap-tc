@@ -19,11 +19,9 @@ jobs:
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
-          path: |
-            ~/.m2
+          path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2
+          restore-keys: ${{ runner.os }}-m2
       - name: Install Protocol Buffers Compiler
         run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
       - name: Check protoc version
@@ -35,19 +33,17 @@ jobs:
           distribution: 'temurin'
       - name: Build with Maven
         run: mvn -B package -Dmaven.test.skip=true
-  unit-test:
-    needs: build
+
+  test-template: &test-template
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
-          path: |
-            ~/.m2
+          path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2
+          restore-keys: ${{ runner.os }}-m2
       - name: Install Protocol Buffers Compiler
         run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
       - name: Check protoc version
@@ -57,54 +53,22 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+  unit-test:
+    needs: build
+    <<: *test-template
+    steps:
       - name: Test with Maven
         run: mvn test -Punit-tests
   integration-test:
     needs: build
-    runs-on: ubuntu-latest
+    <<: *test-template
     steps:
-      - uses: actions/checkout@v2
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2
-      - name: Install Protocol Buffers Compiler
-        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
-      - name: Check protoc version
-        run: protoc --version
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: '21'
-          distribution: 'temurin'
       - name: Test with Maven
         run: mvn verify -Pintegration-tests
   contract-test:
     needs: build
-    runs-on: ubuntu-latest
+    <<: *test-template
     steps:
-      - uses: actions/checkout@v2
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2
-      - name: Install Protocol Buffers Compiler
-        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
-      - name: Check protoc version
-        run: protoc --version
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: '21'
-          distribution: 'temurin'
       - name: Test with Maven
         run: mvn verify -Pcontract-tests
 
@@ -120,7 +84,6 @@ jobs:
           path: ./temp/orders
       - name: Reorganize orders-api files
         run: |
-          find ./temp/orders -type f -exec printf '%s\n' {} \;
           mkdir -p ./orders/target/newrelic
           mkdir -p ./orders/src/main/resources/newrelic
           mv ./temp/orders/target/newrelic/newrelic.jar ./orders/target/newrelic/newrelic.jar
@@ -142,11 +105,11 @@ jobs:
           MENU_REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
           GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
-
           docker build -t $ORDERS_REPOSITORY:$GEN_VERSION ./orders
           docker push $ORDERS_REPOSITORY:$GEN_VERSION
           docker build -t $MENU_REPOSITORY:$GEN_VERSION ./menu
           docker push $MENU_REPOSITORY:$GEN_VERSION
+
   tag:
     needs: publish
     runs-on: ubuntu-latest
@@ -157,11 +120,11 @@ jobs:
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
           GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
           COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
-
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git tag -a $GEN_VERSION -m "Deploying version $GEN_VERSION. Details: $COMMIT_URL"
           git push origin $GEN_VERSION
+
   notify-publish:
     needs: publish
     if: always()
@@ -176,7 +139,6 @@ jobs:
           GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
           COMMIT_URL="https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
           TAG_URL="https://github.com/${{ github.repository }}/releases/tag/$GEN_VERSION"
-
           echo "DISCORD_ARGS=A build ${{ github.run_number }} foi concluída com sucesso! Confira os detalhes no commit: $COMMIT_URL. Veja a tag da versão: $TAG_URL" >> $GITHUB_ENV
       - name: Prepare Failure Message
         if: ${{ needs.publish.result == 'failure' }}
@@ -226,7 +188,6 @@ jobs:
         with:
           github-token: ${{ secrets.PAT }}
           script: |
-            // 1. Retrieve existing bot comments for the PR
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -241,15 +202,14 @@ jobs:
                \`\`\`
                [Terraform Cloud Plan](${{ steps.plan-run.outputs.run_link }})
                `;
-            // 3. Delete previous comment so PR timeline makes sense
             if (botComment) {
-              github.rest.issues.deleteComment({
+              await github.rest.issues.deleteComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: botComment.id,
               });
             }
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -294,18 +254,16 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{secrets.AWS_SESSION_TOKEN}}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ secrets.AWS_REGION }}
       - name: Update kubeconfig
-        run: |
-          aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.AWS_CLUSTER_NAME }}
+        run: aws eks --region ${{ secrets.AWS_REGION }} update-kubeconfig --name ${{ secrets.AWS_CLUSTER_NAME }}
       - name: Update API versions
         run: |
           ORDERS_REPOSITORY="gabrielmirandat/postech-fiap-tc-orders-api"
           MENU_REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
           SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
           GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
-
           sed -i 's|<ORDERS_API_IMAGE>|'"$ORDERS_REPOSITORY:$GEN_VERSION"'|g' .k8s/orders-api-deployment.yaml
           sed -i 's|<MENU_API_IMAGE>|'"$MENU_REPOSITORY:$GEN_VERSION"'|g' .k8s/menu-api-deployment.yaml
       - name: Deploy to EKS
@@ -323,6 +281,7 @@ jobs:
           kubectl apply -f .k8s/menu-api-service.yaml
           kubectl apply -f .k8s/orders-api-deployment.yaml
           kubectl apply -f .k8s/orders-api-service.yaml
+
   notify-deploy:
     needs: deploy
     if: always()
@@ -351,7 +310,7 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
           args: ${{ env.DISCORD_ARGS }}
-  
+
   cleanup-registry:
     needs: publish
     runs-on: ubuntu-latest
@@ -364,21 +323,16 @@ jobs:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           REPOSITORY="gabrielmirandat/postech-fiap-tc-orders-api"
-          
-          TOKEN_RAW=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"username\": \"${DOCKER_HUB_USERNAME}\", \"password\": \"${DOCKER_HUB_PASSWORD}\"}" https://hub.docker.com/v2/users/login)
-          TOKEN=$(echo $TOKEN_RAW | jq -r .token)
-          
+          TOKEN=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"username\": \"${DOCKER_HUB_USERNAME}\", \"password\": \"${DOCKER_HUB_PASSWORD}\"}" https://hub.docker.com/v2/users/login | jq -r .token)
           if [ -z "$TOKEN" ] || [ "$TOKEN" == "null" ]; then
             echo "Failed to obtain token."
             exit 1
           fi
-          
           TAGS=$(curl -s -H "Authorization: JWT $TOKEN" "https://hub.docker.com/v2/repositories/$REPOSITORY/tags" | jq -r '.results | sort_by(.tag_last_pushed) | .[].name')
           TAGS_ARRAY=($TAGS)
           TOTAL_TAGS=${#TAGS_ARRAY[@]}
           KEEP=5
           DELETE_COUNT=$(($TOTAL_TAGS-$KEEP))
-
           if [ $DELETE_COUNT -gt 0 ]; then
             for ((i=0; i<$DELETE_COUNT; i++)); do
               TAG=${TAGS_ARRAY[$i]}
@@ -399,21 +353,16 @@ jobs:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
           REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
-          
-          TOKEN_RAW=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"username\": \"${DOCKER_HUB_USERNAME}\", \"password\": \"${DOCKER_HUB_PASSWORD}\"}" https://hub.docker.com/v2/users/login)
-          TOKEN=$(echo $TOKEN_RAW | jq -r .token)
-          
+          TOKEN=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"username\": \"${DOCKER_HUB_USERNAME}\", \"password\": \"${DOCKER_HUB_PASSWORD}\"}" https://hub.docker.com/v2/users/login | jq -r .token)
           if [ -z "$TOKEN" ] || [ "$TOKEN" == "null" ]; then
             echo "Failed to obtain token."
             exit 1
           fi
-          
           TAGS=$(curl -s -H "Authorization: JWT $TOKEN" "https://hub.docker.com/v2/repositories/$REPOSITORY/tags" | jq -r '.results | sort_by(.tag_last_pushed) | .[].name')
           TAGS_ARRAY=($TAGS)
           TOTAL_TAGS=${#TAGS_ARRAY[@]}
           KEEP=5
           DELETE_COUNT=$(($TOTAL_TAGS-$KEEP))
-
           if [ $DELETE_COUNT -gt 0 ]; then
             for ((i=0; i<$DELETE_COUNT; i++)); do
               TAG=${TAGS_ARRAY[$i]}
@@ -428,28 +377,25 @@ jobs:
           else
             echo "No tags to delete. Keeping the latest $KEEP tags."
           fi
+
   cleanup-tags:
     needs: tag
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Keep only most recent tags
         env:
           GH_TOKEN: ${{ secrets.PAT }}
         run: |
           TAGS=$(gh api repos/gabrielmirandat/postech-fiap-tc/tags --paginate --jq '.[].name')
-          
           if [ -z "$TAGS" ]; then
             echo "No tags found or failed to list tags."
             exit 1
           fi
-          
           KEEP=5
           TOTAL_TAGS=$(echo "$TAGS" | wc -l)
           echo "Total tags: $TOTAL_TAGS. Tags to potentially delete: $(($TOTAL_TAGS - $KEEP))"
-          
           if [ "$TOTAL_TAGS" -gt "$KEEP" ]; then
             echo "Deleting excess tags..."
             echo "$TAGS" | tail -n +$(($KEEP + 1)) | while read TAG_TO_DELETE; do
