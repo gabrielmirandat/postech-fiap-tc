@@ -3,7 +3,7 @@ name: Flow to deploy production artifact
 on:
   push:
     branches:
-      - feat*
+      - 'feat*'
 
 env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
