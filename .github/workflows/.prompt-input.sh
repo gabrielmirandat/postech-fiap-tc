@@ -12,5 +12,5 @@ if [ -z "$user_input" ]; then
   user_input=$DEFAULT_VALUE
 fi
 
-# Export the result as an environment variable
-echo "USER_INPUT=$user_input" >> $GITHUB_ENV
+# Save the user input to a control file
+echo "$user_input" > user_input.txt
