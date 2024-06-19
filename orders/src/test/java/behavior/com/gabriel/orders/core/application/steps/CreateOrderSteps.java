@@ -1,5 +1,6 @@
 package behavior.com.gabriel.orders.core.application.steps;
 
+import behavior.com.gabriel.orders.core.application.CucumberSpringConfiguration;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gabriel.core.domain.model.id.IngredientID;
 import com.gabriel.core.domain.model.id.ProductID;
@@ -9,6 +10,7 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.spring.CucumberContextConfiguration;
 import utils.com.gabriel.orders.core.application.CreateOrderCommandMock;
 import utils.com.gabriel.orders.core.domain.ExtraMock;
 import utils.com.gabriel.orders.core.domain.ProductMock;
@@ -16,6 +18,7 @@ import utils.com.gabriel.orders.core.domain.ProductMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@CucumberContextConfiguration
 public class CreateOrderSteps extends CucumberSpringConfiguration {
 
     private CreateOrderCommand command;

@@ -1,4 +1,4 @@
-package behavior.com.gabriel.orders.core.application.steps;
+package behavior.com.gabriel.orders.core.application;
 
 import com.gabriel.orders.OrdersApplication;
 import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
