@@ -39,19 +39,10 @@ public class OrderKafkaPublisherIntegrationTest {
 
     private static Consumer<String, CloudEvent> consumer;
     @Autowired
-    ConsumerFactory<String, CloudEvent> consumerFactory;
-    @Autowired
     private OrderKafkaPublisher orderKafkaPublisher;
     @Autowired
     private ObjectMapper objectMapper;
     private Order order;
-
-    @AfterAll
-    public static void stopContainer() {
-        if (consumer != null) {
-            consumer.close();
-        }
-    }
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
@@ -59,9 +50,16 @@ public class OrderKafkaPublisherIntegrationTest {
     }
 
     @BeforeAll
-    static void setupConsumer(@Autowired ConsumerFactory<String, CloudEvent> consumerFactory) {
+    public static void setup(@Autowired ConsumerFactory<String, CloudEvent> consumerFactory) {
         consumer = consumerFactory.createConsumer();
         consumer.subscribe(Collections.singletonList("orders"));
+    }
+
+    @AfterAll
+    public static void collect() {
+        if (consumer != null) {
+            consumer.close();
+        }
     }
 
     @BeforeEach
