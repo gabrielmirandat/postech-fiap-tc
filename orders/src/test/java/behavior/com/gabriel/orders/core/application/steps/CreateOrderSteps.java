@@ -67,6 +67,11 @@ public class CreateOrderSteps extends CucumberSpringConfiguration {
         command = CreateOrderCommandMock.validCommand(new ProductID(), validIngredientID);
     }
 
+    @Given("a create order command with invalid extra id")
+    public void anCreateOrderCommandWithInvalidExtraId() {
+        command = CreateOrderCommandMock.validCommand(validProductID, new IngredientID());
+    }
+
     @When("I create a new order")
     public void iCreateANewOrder() {
         try {
