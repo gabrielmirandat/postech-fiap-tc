@@ -12,8 +12,6 @@
     <artifactId>core</artifactId>
 
     <properties>
-        <junit.jupiter.version>5.10.2</junit.jupiter.version>
-        <assertj.core.version>3.25.3</assertj.core.version>
         <hibernate.jakarta.validations>8.0.1.Final</hibernate.jakarta.validations>
         <glassfish.jakarta.el>5.0.0</glassfish.jakarta.el>
         <grpc.version>1.61.0</grpc.version>
@@ -26,27 +24,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <version>${assertj.core.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
