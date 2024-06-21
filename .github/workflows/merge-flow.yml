@@ -1,7 +1,7 @@
 name: Flow to deploy production artifact
 
 on:
-  push:
+  pull_request:
     branches:
       - develop
 
