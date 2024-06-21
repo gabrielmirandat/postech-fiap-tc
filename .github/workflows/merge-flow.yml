@@ -56,7 +56,6 @@ jobs:
           distribution: 'temurin'
       - name: Test with Maven
         run: mvn test -Punit-tests
-
   integration-test:
     needs: build
     runs-on: ubuntu-latest
@@ -79,7 +78,6 @@ jobs:
           distribution: 'temurin'
       - name: Test with Maven
         run: mvn verify -Pintegration-tests
-
   contract-test:
     needs: build
     runs-on: ubuntu-latest
@@ -102,7 +100,6 @@ jobs:
           distribution: 'temurin'
       - name: Test with Maven
         run: mvn verify -Pcontract-tests
-
   behavior-test:
     needs: build
     runs-on: ubuntu-latest
@@ -132,12 +129,13 @@ jobs:
       publish-continue: ${{ steps.get-input.outputs.result }}
     steps:
       - uses: actions/checkout@v2
+      - name: Verify script existence
+        run: if [ ! -f .github/workflows/.prompt-input.sh ]; then echo "Script not found"; exit 1; fi
       - name: User input for publish
-        run: ./.prompt-input.sh "Do you want to publish a new version?"
+        run: .github/workflows/.prompt-input.sh "Do you want to publish a new version?"
       - name: Get input result
         id: get-input
         run: echo "result=$(cat user_input.txt)" >> $GITHUB_ENV
-
   publish:
     needs: [ user-input-publish, unit-test, integration-test, contract-test, behavior-test ]
     if: needs.user-input-publish.outputs.publish-continue == 'true'
@@ -227,12 +225,13 @@ jobs:
       terraform-continue: ${{ steps.get-input.outputs.result }}
     steps:
       - uses: actions/checkout@v2
+      - name: Verify script existence
+        run: if [ ! -f .github/workflows/.prompt-input.sh ]; then echo "Script not found"; exit 1; fi
       - name: User input for terraform plan
-        run: ./.prompt-input.sh "Do you want to deploy this new version?"
+        run: .github/workflows/.prompt-input.sh "Do you want to deploy this new version?"
       - name: Get input result
         id: get-input
         run: echo "result=$(cat user_input.txt)" >> $GITHUB_ENV
-
   terraform-plan-cloud:
     needs: [ user-input-terraform, tag ]
     if: needs.user-input-terraform.outputs.terraform-continue == 'true'
