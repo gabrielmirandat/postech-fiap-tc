@@ -25,12 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
       - name: Install Protocol Buffers Compiler
         run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
       - name: Check protoc version
@@ -42,6 +36,19 @@ jobs:
           distribution: 'temurin'
       - name: Build with Maven
         run: mvn -B package -Dmaven.test.skip=true
+      - name: Upload orders-api artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: orders-artifact
+          path: |
+            ./orders/target/orders*.jar
+            ./orders/target/newrelic/newrelic.jar
+            ./orders/src/main/resources/newrelic/newrelic.yml
+      - name: Upload menu-api artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: menu-artifact
+          path: ./menu/target/menu*.jar
 
   unit-test:
     needs: build
