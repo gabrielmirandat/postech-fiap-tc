@@ -71,6 +71,12 @@ jobs:
     steps:
       - name: Test with Maven
         run: mvn verify -Pcontract-tests
+  behavior-test:
+    needs: build
+    <<: *test-template
+    steps:
+      - name: Test with Maven
+        run: mvn verify -Pbehavior-tests
 
   user-input-publish:
     runs-on: ubuntu-latest
