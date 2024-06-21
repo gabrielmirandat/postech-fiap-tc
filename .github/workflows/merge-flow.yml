@@ -129,8 +129,8 @@ jobs:
       publish-continue: ${{ steps.get-input.outputs.result }}
     steps:
       - uses: actions/checkout@v2
-      - name: Verify script existence
-        run: if [ ! -f .github/workflows/.prompt-input.sh ]; then echo "Script not found"; exit 1; fi
+      - name: Grant execute permissions for script
+        run: chmod +x .github/workflows/.prompt-input.sh
       - name: User input for publish
         run: .github/workflows/.prompt-input.sh "Do you want to publish a new version?"
       - name: Get input result
@@ -225,8 +225,8 @@ jobs:
       terraform-continue: ${{ steps.get-input.outputs.result }}
     steps:
       - uses: actions/checkout@v2
-      - name: Verify script existence
-        run: if [ ! -f .github/workflows/.prompt-input.sh ]; then echo "Script not found"; exit 1; fi
+      - name: Grant execute permissions for script
+        run: chmod +x .github/workflows/.prompt-input.sh
       - name: User input for terraform plan
         run: .github/workflows/.prompt-input.sh "Do you want to deploy this new version?"
       - name: Get input result
