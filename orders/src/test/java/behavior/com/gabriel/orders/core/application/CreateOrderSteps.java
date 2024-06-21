@@ -1,10 +1,10 @@
-package behavior.com.gabriel.orders.core.application.steps;
+package behavior.com.gabriel.orders.core.application;
 
-import behavior.com.gabriel.orders.core.application.CucumberSpringConfiguration;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gabriel.core.domain.model.id.IngredientID;
 import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
+import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
 import io.cloudevents.CloudEvent;
 import io.cucumber.java.After;
@@ -14,11 +14,13 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import utils.com.gabriel.orders.core.application.CreateOrderCommandMock;
 import utils.com.gabriel.orders.core.domain.ExtraMock;
 import utils.com.gabriel.orders.core.domain.ProductMock;
+import utils.com.gabriel.orders.infra.SpringContextConfiguration;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -30,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CucumberContextConfiguration
 @SpringBootTest
-public class CreateOrderSteps extends CucumberSpringConfiguration {
+public class CreateOrderSteps extends SpringContextConfiguration {
 
     private CreateOrderCommand command;
     private ProductID validProductID;
@@ -38,6 +40,8 @@ public class CreateOrderSteps extends CucumberSpringConfiguration {
     private Order order;
     private Exception exception;
 
+    @Autowired
+    private CreateOrderUseCase createOrderUseCase;
 
     @Before
     public void setup() {
@@ -106,6 +110,5 @@ public class CreateOrderSteps extends CucumberSpringConfiguration {
     public void anExceptionShouldBeThrownWithMessageAndCode(String message) {
         assertNotNull(exception);
         assertEquals(message, exception.getMessage());
-
     }
 }

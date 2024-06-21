@@ -1,9 +1,9 @@
-package behavior.com.gabriel.orders.core.application;
+package utils.com.gabriel.orders.infra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.orders.OrdersApplication;
-import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
 import com.gabriel.orders.core.domain.port.MenuRepository;
+import com.gabriel.orders.core.domain.port.MenuSubscriber;
 import com.gabriel.orders.core.domain.port.OrderPublisher;
 import com.gabriel.orders.core.domain.port.OrderRepository;
 import com.gabriel.orders.infra.grpc.MenuGrpcClientConfig;
@@ -25,30 +25,48 @@ import utils.com.gabriel.orders.adapter.container.GrpcServerTestContainer;
 import utils.com.gabriel.orders.adapter.container.KafkaTestContainer;
 import utils.com.gabriel.orders.adapter.container.MongoDBTestContainer;
 import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
-import utils.com.gabriel.orders.infra.SecurityConfig;
 
-@Import({MongoDbConfig.class, MenuGrpcClientConfig.class, RedisConfig.class, KafkaConfig.class, SerializerConfig.class, SecurityConfig.class})
-@ContextConfiguration(classes = {OrdersApplication.class, MongoDBTestContainer.class, GrpcServerTestContainer.class, RedisTestContainer.class, KafkaTestContainer.class})
-@SpringBootTest
+@Import({
+    MongoDbConfig.class,
+    MenuGrpcClientConfig.class,
+    RedisConfig.class,
+    KafkaConfig.class,
+    SerializerConfig.class,
+    SecurityConfig.class
+})
+@ContextConfiguration(classes = {
+    OrdersApplication.class,
+    MongoDBTestContainer.class,
+    GrpcServerTestContainer.class,
+    RedisTestContainer.class,
+    KafkaTestContainer.class
+})
 @ActiveProfiles("test")
-public class CucumberSpringConfiguration {
+@SpringBootTest
+public class SpringContextConfiguration {
 
     protected static Consumer<String, CloudEvent> consumer;
+
     @Autowired
     protected ConsumerFactory<String, CloudEvent> consumerFactory;
-    @Autowired
-    protected CreateOrderUseCase createOrderUseCase;
+
     @Autowired
     protected OrderPublisher orderPublisher;
+
+    @Autowired
+    protected MenuSubscriber menuSubscriber;
+
     @Autowired
     protected OrderRepository orderRepository;
+
     @Autowired
     protected MenuRepository menuRepository;
+
     @Autowired
     protected ObjectMapper objectMapper;
 
     @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry registry) {
+    public static void setProperties(DynamicPropertyRegistry registry) {
         MongoDBTestContainer.mongoProperties(registry);
         GrpcServerTestContainer.grpcProperties(registry);
         RedisTestContainer.redisProperties(registry);
