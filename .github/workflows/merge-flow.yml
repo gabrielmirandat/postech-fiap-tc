@@ -1,9 +1,18 @@
 name: Flow to deploy production artifact
 
 on:
-  pull_request:
-    branches:
-      - develop
+  workflow_dispatch:
+    inputs:
+      publish-continue:
+        description: 'Continue with the publish step?'
+        required: true
+        default: false
+        type: boolean
+      deploy-continue:
+        description: 'Continue with the deploy step?'
+        required: true
+        default: false
+        type: boolean
 
 env:
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
@@ -123,22 +132,9 @@ jobs:
       - name: Test with Maven
         run: mvn verify -Pbehavior-tests
 
-  user-input-publish:
-    runs-on: ubuntu-latest
-    outputs:
-      publish-continue: ${{ steps.get-input.outputs.result }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Grant execute permissions for script
-        run: chmod +x .github/workflows/.prompt-input.sh
-      - name: User input for publish
-        run: .github/workflows/.prompt-input.sh "Do you want to publish a new version?"
-      - name: Get input result
-        id: get-input
-        run: echo "result=$(cat user_input.txt)" >> $GITHUB_ENV
   publish:
-    needs: [ user-input-publish, unit-test, integration-test, contract-test, behavior-test ]
-    if: needs.user-input-publish.outputs.publish-continue == 'true'
+    needs: [ unit-test, integration-test, contract-test, behavior-test ]
+    if: ${{ github.event.inputs.publish-continue }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -219,22 +215,9 @@ jobs:
         with:
           args: ${{ env.DISCORD_ARGS }}
 
-  user-input-terraform:
-    runs-on: ubuntu-latest
-    outputs:
-      terraform-continue: ${{ steps.get-input.outputs.result }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Grant execute permissions for script
-        run: chmod +x .github/workflows/.prompt-input.sh
-      - name: User input for terraform plan
-        run: .github/workflows/.prompt-input.sh "Do you want to deploy this new version?"
-      - name: Get input result
-        id: get-input
-        run: echo "result=$(cat user_input.txt)" >> $GITHUB_ENV
   terraform-plan-cloud:
-    needs: [ user-input-terraform, tag ]
-    if: needs.user-input-terraform.outputs.terraform-continue == 'true'
+    needs: [ tag ]
+    if: ${{ github.event.inputs.publish-continue && github.event.inputs.deploy-continue }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
