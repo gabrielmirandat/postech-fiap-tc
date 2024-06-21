@@ -90,7 +90,7 @@ jobs:
         id: get-input
         run: echo "result=$(cat user_input.txt)" >> $GITHUB_ENV
   publish:
-    needs: [ user-input-publish, unit-test, integration-test, contract-test ]
+    needs: [ user-input-publish, unit-test, integration-test, contract-test, behavior-test ]
     if: needs.user-input-publish.outputs.publish-continue == 'true'
     runs-on: ubuntu-latest
     steps:
