@@ -10,3 +10,8 @@ Feature: Create Order
     Given a create order command with invalid product id
     When I create a new order
     Then an exception should be thrown with message "Product not found"
+
+  Scenario: Fail to create an order due to invalid menu extra item
+    Given a create order command with invalid extra id
+    When I create a new order
+    Then an exception should be thrown with message "Extra not found"
