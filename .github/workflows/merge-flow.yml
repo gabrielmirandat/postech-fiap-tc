@@ -224,7 +224,7 @@ jobs:
 
   terraform-plan-cloud:
     needs: [ tag ]
-    if: ${{ github.event.inputs.publish-continue && github.event.inputs.deploy-continue }}
+    if: ${{ github.event.inputs.deploy-continue }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
