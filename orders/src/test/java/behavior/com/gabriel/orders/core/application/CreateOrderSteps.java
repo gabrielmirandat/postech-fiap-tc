@@ -6,6 +6,7 @@ import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
+import com.gabriel.specs.orders.models.OrderRequest;
 import io.cloudevents.CloudEvent;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -13,9 +14,11 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
+import io.restassured.response.Response;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import utils.com.gabriel.orders.core.application.CreateOrderCommandMock;
 import utils.com.gabriel.orders.core.domain.ExtraMock;
@@ -26,6 +29,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Objects;
 
+import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,9 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 public class CreateOrderSteps extends SpringContextConfiguration {
 
+    private String authToken;
     private CreateOrderCommand command;
     private ProductID validProductID;
     private IngredientID validIngredientID;
+    private OrderRequest validOrderRequest;
     private Order order;
     private Exception exception;
 
@@ -45,6 +51,7 @@ public class CreateOrderSteps extends SpringContextConfiguration {
 
     @Before
     public void setup() {
+        authToken = null;
         validProductID = new ProductID();
         validIngredientID = new IngredientID();
         menuRepository.addProduct(ProductMock.validProduct(validProductID));
@@ -61,9 +68,20 @@ public class CreateOrderSteps extends SpringContextConfiguration {
         }
     }
 
-    @Given("a valid create order command")
-    public void aValidCreateOrderCommand() {
-        command = CreateOrderCommandMock.validCommand(validProductID, validIngredientID);
+
+    @Given("a logged in customer user")
+    public void aLoggedInCustomerUser() {
+        authToken = "TOKENWITHGROUPORDERSUSER";
+    }
+
+    @When("create a new order")
+    public void createANewOrder() {
+        Response response = given()
+            .auth().oauth2(authToken)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body()
+            .when()
+            .get("/orders");
     }
 
     @Given("a create order command with invalid product id")
@@ -74,15 +92,6 @@ public class CreateOrderSteps extends SpringContextConfiguration {
     @Given("a create order command with invalid extra id")
     public void anCreateOrderCommandWithInvalidExtraId() {
         command = CreateOrderCommandMock.validCommand(validProductID, new IngredientID());
-    }
-
-    @When("I create a new order")
-    public void iCreateANewOrder() {
-        try {
-            order = createOrderUseCase.createOrder(command);
-        } catch (Exception e) {
-            exception = e;
-        }
     }
 
     @Then("the order should be saved in the database")

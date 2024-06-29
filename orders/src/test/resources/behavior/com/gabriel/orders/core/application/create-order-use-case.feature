@@ -1,7 +1,7 @@
 Feature: Create Order
 
   Scenario: Successfully create a new order
-    Given a valid create order command
+    Given a logged in customer user
     When I create a new order
     Then the order should be saved in the database
     And an order created event should be published

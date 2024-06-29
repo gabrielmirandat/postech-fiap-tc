@@ -26,6 +26,11 @@ public class MockAuthenticationFilter extends GenericFilterBean {
     @NotNull
     private static TestingAuthenticationToken getTestingAuthenticationToken(String mockedAuth) {
         List<SimpleGrantedAuthority> authorities = switch (mockedAuth) {
+            case "TOKENWITHGROUPORDERSADMIN" -> List.of(new SimpleGrantedAuthority("orders:cancel"));
+            case "TOKENWITHGROUPORDERSSQUAD" ->
+                List.of(new SimpleGrantedAuthority("orders:list"), new SimpleGrantedAuthority("orders:update"));
+            case "TOKENWITHGROUPORDERSUSER" ->
+                List.of(new SimpleGrantedAuthority("orders:add"), new SimpleGrantedAuthority("orders:view"));
             case "TOKENWITHSCOPEORDERSLIST" -> List.of(new SimpleGrantedAuthority("orders:list"));
             case "TOKENWITHSCOPEORDERSADD" -> List.of(new SimpleGrantedAuthority("orders:add"));
             case "TOKENWITHSCOPEORDERSVIEW" -> List.of(new SimpleGrantedAuthority("orders:view"));
