@@ -1,12 +1,10 @@
 package behavior.com.gabriel.orders.core.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.domain.model.id.IngredientID;
 import com.gabriel.core.domain.model.id.ProductID;
-import com.gabriel.orders.core.application.command.CreateOrderCommand;
-import com.gabriel.orders.core.application.usecase.CreateOrderUseCase;
 import com.gabriel.orders.core.domain.model.Order;
-import com.gabriel.specs.orders.models.OrderRequest;
 import io.cloudevents.CloudEvent;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -14,15 +12,16 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
+import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
-import utils.com.gabriel.orders.core.application.CreateOrderCommandMock;
 import utils.com.gabriel.orders.core.domain.ExtraMock;
 import utils.com.gabriel.orders.core.domain.ProductMock;
+import utils.com.gabriel.orders.infra.OasConverter;
 import utils.com.gabriel.orders.infra.SpringContextConfiguration;
 
 import java.nio.charset.StandardCharsets;
@@ -35,25 +34,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CucumberContextConfiguration
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CreateOrderSteps extends SpringContextConfiguration {
 
     private String authToken;
-    private CreateOrderCommand command;
     private ProductID validProductID;
     private IngredientID validIngredientID;
-    private OrderRequest validOrderRequest;
-    private Order order;
-    private Exception exception;
+    private String validOrderRequest;
+    private String invalidProductOrderRequest;
+    private String invalidExtraOrderRequest;
+    private String generatedTicketId;
+    private Order generatedOrder;
+    private Response response;
 
     @Autowired
-    private CreateOrderUseCase createOrderUseCase;
+    private ObjectMapper objectMapper;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
+        RestAssured.port = port;
+
         authToken = null;
-        validProductID = new ProductID();
-        validIngredientID = new IngredientID();
+        validProductID = new ProductID("11111111-PRDC-1111-11-11");
+        validIngredientID = new IngredientID("11111111-INGR-1111-11-11");
+        validOrderRequest = OasConverter.convertSpecToJson("/oas/orders-api.yaml", "paths:/orders:post:requestBody:content:application/json:examples:CREATE_ORDER_SUCCESS:value");
+        invalidProductOrderRequest = OasConverter.convertSpecToJson("/oas/orders-api.yaml", "paths:/orders:post:requestBody:content:application/json:examples:CREATE_ORDER_INVALID_PRODUCT:value");
+        invalidExtraOrderRequest = OasConverter.convertSpecToJson("/oas/orders-api.yaml", "paths:/orders:post:requestBody:content:application/json:examples:CREATE_ORDER_INVALID_EXTRA:value");
+
         menuRepository.addProduct(ProductMock.validProduct(validProductID));
         menuRepository.addExtra(ExtraMock.validExtra(validIngredientID));
 
@@ -68,7 +75,6 @@ public class CreateOrderSteps extends SpringContextConfiguration {
         }
     }
 
-
     @Given("a logged in customer user")
     public void aLoggedInCustomerUser() {
         authToken = "TOKENWITHGROUPORDERSUSER";
@@ -76,29 +82,25 @@ public class CreateOrderSteps extends SpringContextConfiguration {
 
     @When("create a new order")
     public void createANewOrder() {
-        Response response = given()
+        response = given()
             .auth().oauth2(authToken)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body()
+            .body(validOrderRequest)
             .when()
-            .get("/orders");
-    }
+            .post("/orders")
+            .then()
+            .statusCode(201)
+            .extract()
+            .response();
 
-    @Given("a create order command with invalid product id")
-    public void anCreateOrderCommandWithInvalidProductId() {
-        command = CreateOrderCommandMock.validCommand(new ProductID(), validIngredientID);
-    }
-
-    @Given("a create order command with invalid extra id")
-    public void anCreateOrderCommandWithInvalidExtraId() {
-        command = CreateOrderCommandMock.validCommand(validProductID, new IngredientID());
+        generatedTicketId = response.path("ticketId");
     }
 
     @Then("the order should be saved in the database")
     public void theOrderShouldBeSavedInTheRepository() {
-        assertNotNull(order);
-        Order savedOrder = orderRepository.getByTicket(order.getTicketId());
-        assertEquals(order.getTicketId(), savedOrder.getTicketId());
+        assertNotNull(generatedTicketId);
+        generatedOrder = orderRepository.getByTicket(generatedTicketId);
+        assertEquals(generatedTicketId, generatedOrder.getTicketId());
     }
 
     @Then("an order created event should be published")
@@ -112,12 +114,40 @@ public class CreateOrderSteps extends SpringContextConfiguration {
         byte[] data = Objects.requireNonNull(receivedEvent.getData()).toBytes();
         String json = new String(data, StandardCharsets.UTF_8);
         Order receivedOrder = objectMapper.readValue(json, Order.class);
-        assertEquals(receivedOrder.getOrderId().getId(), order.getOrderId().getId());
+        assertEquals(receivedOrder.getOrderId().getId(), generatedOrder.getOrderId().getId());
     }
 
-    @Then("an exception should be thrown with message {string}")
-    public void anExceptionShouldBeThrownWithMessageAndCode(String message) {
-        assertNotNull(exception);
-        assertEquals(message, exception.getMessage());
+    @When("create a new order with invalid product id")
+    public void createANewOrderWithInvalidProductId() {
+        response = given()
+            .auth().oauth2(authToken)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(invalidProductOrderRequest)
+            .when()
+            .post("/orders")
+            .then()
+            .statusCode(400)
+            .extract()
+            .response();
+    }
+
+    @When("create a new order with invalid extra id")
+    public void createANewOrderWithInvalidExtraId() {
+        response = given()
+            .auth().oauth2(authToken)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(invalidExtraOrderRequest)
+            .when()
+            .post("/orders")
+            .then()
+            .statusCode(400)
+            .extract()
+            .response();
+    }
+
+    @Then("an error response with message {string} should be returned")
+    public void anErrorResponseWithMessageShouldBeReturned(String message) {
+        String errorMessage = response.path("message");
+        assertEquals(message, errorMessage);
     }
 }
