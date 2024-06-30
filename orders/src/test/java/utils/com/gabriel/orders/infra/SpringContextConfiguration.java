@@ -1,6 +1,5 @@
 package utils.com.gabriel.orders.infra;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.orders.OrdersApplication;
 import com.gabriel.orders.core.domain.port.MenuRepository;
 import com.gabriel.orders.core.domain.port.MenuSubscriber;
@@ -15,6 +14,7 @@ import io.cloudevents.CloudEvent;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.test.context.ActiveProfiles;
@@ -32,7 +32,7 @@ import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
     RedisConfig.class,
     KafkaConfig.class,
     SerializerConfig.class,
-    SecurityConfig.class
+    SecurityConfig.class,
 })
 @ContextConfiguration(classes = {
     OrdersApplication.class,
@@ -42,28 +42,23 @@ import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
     KafkaTestContainer.class
 })
 @ActiveProfiles("test")
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SpringContextConfiguration {
 
     protected static Consumer<String, CloudEvent> consumer;
-
     @Autowired
     protected ConsumerFactory<String, CloudEvent> consumerFactory;
-
     @Autowired
     protected OrderPublisher orderPublisher;
-
     @Autowired
     protected MenuSubscriber menuSubscriber;
-
     @Autowired
     protected OrderRepository orderRepository;
-
     @Autowired
     protected MenuRepository menuRepository;
 
-    @Autowired
-    protected ObjectMapper objectMapper;
+    @LocalServerPort
+    protected int port;
 
     @DynamicPropertySource
     public static void setProperties(DynamicPropertyRegistry registry) {

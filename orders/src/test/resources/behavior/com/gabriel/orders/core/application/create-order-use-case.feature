@@ -2,16 +2,16 @@ Feature: Create Order
 
   Scenario: Successfully create a new order
     Given a logged in customer user
-    When I create a new order
+    When create a new order
     Then the order should be saved in the database
     And an order created event should be published
 
-  Scenario: Fail to create an order due to invalid menu product item
-    Given a create order command with invalid product id
-    When I create a new order
-    Then an exception should be thrown with message "Product not found"
+  Scenario: Create order with invalid product id
+    Given a logged in customer user
+    When create a new order with invalid product id
+    Then an error response with message "Invalid product ID" should be returned
 
-  Scenario: Fail to create an order due to invalid menu extra item
-    Given a create order command with invalid extra id
-    When I create a new order
-    Then an exception should be thrown with message "Extra not found"
+  Scenario: Create order with invalid extra id
+    Given a logged in customer user
+    When create a new order with invalid extra id
+    Then an error response with message "Invalid extra ID" should be returned
