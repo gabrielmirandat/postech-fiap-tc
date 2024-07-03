@@ -1,4 +1,4 @@
-package utils.com.gabriel.orders.infra;
+package behavior.com.gabriel.orders.core.application;
 
 import com.gabriel.orders.OrdersApplication;
 import com.gabriel.orders.core.domain.port.MenuRepository;
@@ -11,6 +11,8 @@ import com.gabriel.orders.infra.mongodb.MongoConfiguration;
 import com.gabriel.orders.infra.redis.RedisConfiguration;
 import com.gabriel.orders.infra.serializer.SerializerConfiguration;
 import io.cloudevents.CloudEvent;
+import io.cucumber.spring.CucumberContextConfiguration;
+import io.restassured.response.Response;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,7 @@ import utils.com.gabriel.orders.adapter.container.GrpcServerTestContainer;
 import utils.com.gabriel.orders.adapter.container.KafkaTestContainer;
 import utils.com.gabriel.orders.adapter.container.MongoDBTestContainer;
 import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
+import utils.com.gabriel.orders.infra.TestSecurityConfiguration;
 
 @Import({
     MongoConfiguration.class,
@@ -42,8 +45,9 @@ import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
     KafkaTestContainer.class
 })
 @ActiveProfiles("test")
+@CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TestSpringContextConfiguration {
+public class CucumberSpringContextConfiguration {
 
     protected static Consumer<String, CloudEvent> consumer;
     @Autowired
@@ -56,6 +60,8 @@ public class TestSpringContextConfiguration {
     protected OrderRepository orderRepository;
     @Autowired
     protected MenuRepository menuRepository;
+    protected String authToken = null;
+    protected Response response;
 
     @LocalServerPort
     protected int port;

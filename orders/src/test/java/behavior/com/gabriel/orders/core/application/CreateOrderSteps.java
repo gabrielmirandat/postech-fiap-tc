@@ -8,11 +8,9 @@ import com.gabriel.orders.core.domain.model.Order;
 import io.cloudevents.CloudEvent;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
-import io.restassured.response.Response;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +19,6 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import utils.com.gabriel.orders.core.domain.ExtraMock;
 import utils.com.gabriel.orders.core.domain.ProductMock;
 import utils.com.gabriel.orders.infra.OasConverter;
-import utils.com.gabriel.orders.infra.TestSpringContextConfiguration;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -33,19 +30,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CreateOrderSteps extends TestSpringContextConfiguration {
+public class CreateOrderSteps extends CucumberSpringContextConfiguration {
 
     private final ProductID existingProductID = new ProductID("11111111-PRDC-1111-11-11");
     private final IngredientID existingIngredientID = new IngredientID("11111111-INGR-1111-11-11");
     private final ProductID nonExistentProductID = new ProductID("11111111-PRDC-1111-11-12");
     private final IngredientID nonExistentIngredientID = new IngredientID("11111111-INGR-1111-11-12");
-    private String authToken = null;
     private String validOrderRequest;
     private String invalidProductOrderRequest;
     private String invalidExtraOrderRequest;
     private String generatedTicketId;
     private Order generatedOrder;
-    private Response response;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -73,11 +68,6 @@ public class CreateOrderSteps extends TestSpringContextConfiguration {
         if (consumer != null) {
             consumer.close();
         }
-    }
-
-    @Given("a logged in customer user")
-    public void aLoggedInCustomerUser() {
-        authToken = "TOKENWITHGROUPORDERSUSER";
     }
 
     @When("create a new order")
@@ -143,11 +133,5 @@ public class CreateOrderSteps extends TestSpringContextConfiguration {
         String json = new String(data, StandardCharsets.UTF_8);
         Order receivedOrder = objectMapper.readValue(json, Order.class);
         assertEquals(receivedOrder.getOrderId().getId(), generatedOrder.getOrderId().getId());
-    }
-
-    @Then("an error {string} - {string} should be returned")
-    public void anErrorResponseWithCodeAndMessageShouldBeReturned(String code, String message) {
-        assertEquals(code, response.path("code"));
-        assertEquals(message, response.path("message"));
     }
 }

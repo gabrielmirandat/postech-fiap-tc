@@ -5,7 +5,6 @@ import com.gabriel.core.domain.model.id.IngredientID;
 import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.core.domain.model.Order;
 import io.cucumber.java.Before;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
@@ -16,14 +15,13 @@ import org.springframework.http.MediaType;
 import utils.com.gabriel.orders.core.domain.ExtraMock;
 import utils.com.gabriel.orders.core.domain.ProductMock;
 import utils.com.gabriel.orders.infra.OasConverter;
-import utils.com.gabriel.orders.infra.TestSpringContextConfiguration;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RetrieveOrderSteps extends TestSpringContextConfiguration {
+public class RetrieveOrderSteps extends CucumberSpringContextConfiguration {
 
     private final ProductID existingProductID = new ProductID("11111111-PRDC-1111-11-11");
     private final IngredientID existingIngredientID = new IngredientID("11111111-INGR-1111-11-11");
@@ -44,11 +42,6 @@ public class RetrieveOrderSteps extends TestSpringContextConfiguration {
         menuRepository.addExtra(ExtraMock.validExtra(existingIngredientID));
 
         createValidOrder();
-    }
-
-    @Given("a logged in customer user")
-    public void aLoggedInCustomerUser() {
-        authToken = "TOKENWITHGROUPORDERSUSER";
     }
 
     private void createValidOrder() throws Exception {
@@ -100,11 +93,5 @@ public class RetrieveOrderSteps extends TestSpringContextConfiguration {
     public void theOrderShouldBeRetrievedFromTheDatabase() {
         assertNotNull(generatedOrder);
         assertEquals(generatedTicketId, generatedOrder.getTicketId());
-    }
-
-    @Then("an error {string} - {string} should be returned")
-    public void anErrorResponseWithCodeAndMessageShouldBeReturned(String code, String message) {
-        assertEquals(code, response.path("code"));
-        assertEquals(message, response.path("message"));
     }
 }
