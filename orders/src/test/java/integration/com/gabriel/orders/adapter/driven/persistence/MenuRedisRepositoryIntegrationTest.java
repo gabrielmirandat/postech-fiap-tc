@@ -5,8 +5,8 @@ import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.adapter.driven.persistence.MenuRedisRepository;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
-import com.gabriel.orders.infra.redis.RedisConfig;
-import com.gabriel.orders.infra.serializer.SerializerConfig;
+import com.gabriel.orders.infra.redis.RedisConfiguration;
+import com.gabriel.orders.infra.serializer.SerializerConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Import({RedisConfig.class, SerializerConfig.class})
+@Import({RedisConfiguration.class, SerializerConfiguration.class})
 @ContextConfiguration(classes = {MenuRedisRepository.class, RedisTestContainer.class})
 public class MenuRedisRepositoryIntegrationTest {
 

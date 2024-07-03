@@ -9,7 +9,7 @@ import com.gabriel.orders.core.application.usecase.SetupMenuUseCase;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.MenuRepository;
-import com.gabriel.orders.infra.grpc.MenuGrpcClientConfig;
+import com.gabriel.orders.infra.grpc.MenuGrpcClientConfiguration;
 import com.gabriel.specs.menu.MenuResponse;
 import io.grpc.ManagedChannel;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-@Import({MenuGrpcClientConfig.class})
+@Import({MenuGrpcClientConfiguration.class})
 @ContextConfiguration(classes = {MenuGrpcClient.class, GrpcServerTestContainer.class})
 public class MenuGrpcClientIntegrationTest {
 

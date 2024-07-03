@@ -1,20 +1,20 @@
-package com.gabriel.menu.infra.serializer;
+package com.gabriel.orders.infra.serializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Singleton;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ApplicationScoped
-public class SerializerConfig {
+@Configuration
+public class SerializerConfiguration {
 
-    @Produces
-    @Singleton
+    @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         // Register the JavaTimeModule to handle Java 8 date/time types
         mapper.registerModule(new JavaTimeModule());
         return mapper;
     }
+
+
 }

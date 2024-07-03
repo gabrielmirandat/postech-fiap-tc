@@ -11,7 +11,6 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.spring.CucumberContextConfiguration;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -22,7 +21,7 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import utils.com.gabriel.orders.core.domain.ExtraMock;
 import utils.com.gabriel.orders.core.domain.ProductMock;
 import utils.com.gabriel.orders.infra.OasConverter;
-import utils.com.gabriel.orders.infra.SpringContextConfiguration;
+import utils.com.gabriel.orders.infra.TestSpringContextConfiguration;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -33,9 +32,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CreateOrderSteps extends SpringContextConfiguration {
+public class CreateOrderSteps extends TestSpringContextConfiguration {
 
     private final ProductID existingProductID = new ProductID("11111111-PRDC-1111-11-11");
     private final IngredientID existingIngredientID = new IngredientID("11111111-INGR-1111-11-11");

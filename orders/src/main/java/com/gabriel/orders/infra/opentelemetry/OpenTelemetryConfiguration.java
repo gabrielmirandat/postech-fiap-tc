@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class OpenTelemetryConfig {
+public class OpenTelemetryConfiguration {
 
     @Value("${newrelic.otlp.url}")
     private String newRelicOtlpUrl;

@@ -5,8 +5,8 @@ import com.gabriel.orders.adapter.driven.messaging.OrderKafkaPublisher;
 import com.gabriel.orders.core.domain.event.OrderCreatedEvent;
 import com.gabriel.orders.core.domain.event.OrderDeletedEvent;
 import com.gabriel.orders.core.domain.model.Order;
-import com.gabriel.orders.infra.kafka.KafkaConfig;
-import com.gabriel.orders.infra.serializer.SerializerConfig;
+import com.gabriel.orders.infra.kafka.KafkaConfiguration;
+import com.gabriel.orders.infra.serializer.SerializerConfiguration;
 import io.cloudevents.CloudEvent;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@Import({KafkaConfig.class, SerializerConfig.class})
+@Import({KafkaConfiguration.class, SerializerConfiguration.class})
 @ContextConfiguration(classes = {OrderKafkaPublisher.class, KafkaTestContainer.class})
 public class OrderKafkaPublisherIntegrationTest {
 

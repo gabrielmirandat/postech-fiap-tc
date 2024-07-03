@@ -11,11 +11,11 @@ import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.*;
-import com.gabriel.orders.infra.grpc.MenuGrpcClientConfig;
-import com.gabriel.orders.infra.kafka.KafkaConfig;
-import com.gabriel.orders.infra.mongodb.MongoDbConfig;
-import com.gabriel.orders.infra.redis.RedisConfig;
-import com.gabriel.orders.infra.serializer.SerializerConfig;
+import com.gabriel.orders.infra.grpc.MenuGrpcClientConfiguration;
+import com.gabriel.orders.infra.kafka.KafkaConfiguration;
+import com.gabriel.orders.infra.mongodb.MongoConfiguration;
+import com.gabriel.orders.infra.redis.RedisConfiguration;
+import com.gabriel.orders.infra.serializer.SerializerConfiguration;
 import in.specmatic.test.SpecmaticJUnitSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,7 +39,7 @@ import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
 import utils.com.gabriel.orders.core.domain.ExtraMock;
 import utils.com.gabriel.orders.core.domain.OrderMock;
 import utils.com.gabriel.orders.core.domain.ProductMock;
-import utils.com.gabriel.orders.infra.SecurityConfig;
+import utils.com.gabriel.orders.infra.TestSecurityConfiguration;
 
 import java.io.File;
 import java.util.List;
@@ -48,8 +48,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // This will start the server on a random port
-@Import({MongoDbConfig.class, MenuGrpcClientConfig.class, RedisConfig.class,
-    KafkaConfig.class, SerializerConfig.class, SecurityConfig.class})
+@Import({MongoConfiguration.class, MenuGrpcClientConfiguration.class, RedisConfiguration.class,
+    KafkaConfiguration.class, SerializerConfiguration.class, TestSecurityConfiguration.class})
 @ContextConfiguration(classes =
     {OrdersApplication.class, MongoDBTestContainer.class, GrpcServerTestContainer.class,
         RedisTestContainer.class, KafkaTestContainer.class}
