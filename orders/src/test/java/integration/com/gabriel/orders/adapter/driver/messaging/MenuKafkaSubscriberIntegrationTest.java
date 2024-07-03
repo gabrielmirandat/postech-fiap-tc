@@ -8,8 +8,8 @@ import com.gabriel.orders.core.application.usecase.UpdateMenuUseCase;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.MenuRepository;
-import com.gabriel.orders.infra.kafka.KafkaConfig;
-import com.gabriel.orders.infra.serializer.SerializerConfig;
+import com.gabriel.orders.infra.kafka.KafkaConfiguration;
+import com.gabriel.orders.infra.serializer.SerializerConfiguration;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-@Import({KafkaConfig.class, SerializerConfig.class})
+@Import({KafkaConfiguration.class, SerializerConfiguration.class})
 @ContextConfiguration(classes = {MenuKafkaSubscriber.class, KafkaTestContainer.class})
 public class MenuKafkaSubscriberIntegrationTest {
 

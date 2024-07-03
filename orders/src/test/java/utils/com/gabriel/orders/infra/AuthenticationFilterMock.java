@@ -21,7 +21,7 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 import java.util.List;
 
-public class MockAuthenticationFilter extends GenericFilterBean {
+public class AuthenticationFilterMock extends GenericFilterBean {
 
     @NotNull
     private static TestingAuthenticationToken getTestingAuthenticationToken(String mockedAuth) {

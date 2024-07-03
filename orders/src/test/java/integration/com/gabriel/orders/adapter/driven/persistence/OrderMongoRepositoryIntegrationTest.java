@@ -7,11 +7,10 @@ import com.gabriel.orders.adapter.driven.persistence.OrderMongoRepository;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
 import com.gabriel.orders.core.domain.port.OrderSearchParameters;
-import com.gabriel.orders.infra.mongodb.MongoDbConfig;
+import com.gabriel.orders.infra.mongodb.MongoConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-@Import({MongoDbConfig.class})
+@Import({MongoConfiguration.class})
 @ContextConfiguration(classes = {OrderMongoRepository.class, MongoDBTestContainer.class})
 public class OrderMongoRepositoryIntegrationTest {
 

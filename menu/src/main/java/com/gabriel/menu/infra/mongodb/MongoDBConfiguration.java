@@ -15,7 +15,7 @@ import org.bson.Document;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
-public class MongoDBConfig {
+public class MongoDBConfiguration {
 
     @Inject
     MongoClient mongoClient;

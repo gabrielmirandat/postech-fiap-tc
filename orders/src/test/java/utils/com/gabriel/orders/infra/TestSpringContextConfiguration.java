@@ -5,11 +5,11 @@ import com.gabriel.orders.core.domain.port.MenuRepository;
 import com.gabriel.orders.core.domain.port.MenuSubscriber;
 import com.gabriel.orders.core.domain.port.OrderPublisher;
 import com.gabriel.orders.core.domain.port.OrderRepository;
-import com.gabriel.orders.infra.grpc.MenuGrpcClientConfig;
-import com.gabriel.orders.infra.kafka.KafkaConfig;
-import com.gabriel.orders.infra.mongodb.MongoDbConfig;
-import com.gabriel.orders.infra.redis.RedisConfig;
-import com.gabriel.orders.infra.serializer.SerializerConfig;
+import com.gabriel.orders.infra.grpc.MenuGrpcClientConfiguration;
+import com.gabriel.orders.infra.kafka.KafkaConfiguration;
+import com.gabriel.orders.infra.mongodb.MongoConfiguration;
+import com.gabriel.orders.infra.redis.RedisConfiguration;
+import com.gabriel.orders.infra.serializer.SerializerConfiguration;
 import io.cloudevents.CloudEvent;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +27,12 @@ import utils.com.gabriel.orders.adapter.container.MongoDBTestContainer;
 import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
 
 @Import({
-    MongoDbConfig.class,
-    MenuGrpcClientConfig.class,
-    RedisConfig.class,
-    KafkaConfig.class,
-    SerializerConfig.class,
-    SecurityConfig.class,
+    MongoConfiguration.class,
+    MenuGrpcClientConfiguration.class,
+    RedisConfiguration.class,
+    KafkaConfiguration.class,
+    SerializerConfiguration.class,
+    TestSecurityConfiguration.class,
 })
 @ContextConfiguration(classes = {
     OrdersApplication.class,
@@ -43,7 +43,7 @@ import utils.com.gabriel.orders.adapter.container.RedisTestContainer;
 })
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SpringContextConfiguration {
+public class TestSpringContextConfiguration {
 
     protected static Consumer<String, CloudEvent> consumer;
     @Autowired

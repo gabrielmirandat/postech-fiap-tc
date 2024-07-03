@@ -1,6 +1,6 @@
-package com.gabriel.permissions.infraestructure.security;
+package com.gabriel.orders.infra.security;
 
-import com.gabriel.permissions.application.service.PermissionService;
+import com.gabriel.orders.core.domain.port.PermissionRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,23 +26,21 @@ import java.util.stream.Collectors;
 @EnableWebSecurity
 @EnableMethodSecurity
 @Profile("!test")
-public class SecurityConfig {
+public class SecurityConfiguration {
 
-    private final PermissionService permissionService;
-    private final String issuer;
+    private final PermissionRepository permissionRepository;
+    private final String authEndpointUrl;
 
-    public SecurityConfig(PermissionService permissionService, @Value("${auth0.issuer}") String issuer) {
-        this.permissionService = permissionService;
-        this.issuer = issuer;
+    public SecurityConfiguration(PermissionRepository permissionRepository, @Value("${auth.endpoint.url}") String authEndpointUrl) {
+        this.permissionRepository = permissionRepository;
+        this.authEndpointUrl = authEndpointUrl;
     }
 
     @Bean
     SecurityFilterChain web(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/users/login", "/users/register").permitAll()
-                .anyRequest().authenticated())
+            .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
             );
@@ -55,9 +53,10 @@ public class SecurityConfig {
         JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
         jwtConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
             final List<String> roles = Optional.ofNullable(jwt.getClaimAsStringList("postech_roles")).orElse(List.of());
-            final Set<GrantedAuthority> roleAuthorities = roles.isEmpty()
-                ? Set.of()
-                : permissionService.retrieveRolesGrantedAuthoritiesByName(roles);
+            final Set<GrantedAuthority> allRolesAuthorities = permissionRepository.allPermissions().stream()
+                .filter(item -> roles.contains(item.getRoleName().getValue()))
+                .map(item -> new SimpleGrantedAuthority(item.getAuthorityName().getValue()))
+                .collect(Collectors.toSet());
 
             final List<String> scopes = Optional.ofNullable(jwt.getClaimAsStringList("scope")).orElse(List.of());
             final Set<GrantedAuthority> scopeAuthorities = scopes.stream()
@@ -65,7 +64,7 @@ public class SecurityConfig {
                 .collect(Collectors.toSet());
 
             final Set<GrantedAuthority> combinedAuthorities = new HashSet<>();
-            combinedAuthorities.addAll(roleAuthorities);
+            combinedAuthorities.addAll(allRolesAuthorities);
             combinedAuthorities.addAll(scopeAuthorities);
 
             return combinedAuthorities;
@@ -74,9 +73,8 @@ public class SecurityConfig {
         return jwtConverter;
     }
 
-
     @Bean
     public JwtDecoder jwtDecoder() {
-        return JwtDecoders.fromOidcIssuerLocation("https://" + issuer + "/");
+        return JwtDecoders.fromOidcIssuerLocation(authEndpointUrl);
     }
 }

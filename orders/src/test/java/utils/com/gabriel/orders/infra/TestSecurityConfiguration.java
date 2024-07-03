@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 @Profile("test")
-public class SecurityConfig {
+public class TestSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain web(HttpSecurity http) throws Exception {
@@ -27,7 +27,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public MockAuthenticationFilter mockAuthenticationFilter() {
-        return new MockAuthenticationFilter();
+    public AuthenticationFilterMock mockAuthenticationFilter() {
+        return new AuthenticationFilterMock();
     }
 }
