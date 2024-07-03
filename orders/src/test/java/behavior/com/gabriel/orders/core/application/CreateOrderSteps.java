@@ -37,9 +37,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CreateOrderSteps extends SpringContextConfiguration {
 
-    private String authToken;
-    private ProductID validProductID;
-    private IngredientID validIngredientID;
+    private final ProductID existingProductID = new ProductID("11111111-PRDC-1111-11-11");
+    private final IngredientID existingIngredientID = new IngredientID("11111111-INGR-1111-11-11");
+    private final ProductID nonExistentProductID = new ProductID("11111111-PRDC-1111-11-12");
+    private final IngredientID nonExistentIngredientID = new IngredientID("11111111-INGR-1111-11-12");
+    private String authToken = null;
     private String validOrderRequest;
     private String invalidProductOrderRequest;
     private String invalidExtraOrderRequest;
@@ -54,15 +56,15 @@ public class CreateOrderSteps extends SpringContextConfiguration {
     public void setup() throws Exception {
         RestAssured.port = port;
 
-        authToken = null;
-        validProductID = new ProductID("11111111-PRDC-1111-11-11");
-        validIngredientID = new IngredientID("11111111-INGR-1111-11-11");
-        validOrderRequest = OasConverter.convertSpecToJson("/oas/orders-api.yaml", "paths:/orders:post:requestBody:content:application/json:examples:CREATE_ORDER_SUCCESS:value");
-        invalidProductOrderRequest = OasConverter.convertSpecToJson("/oas/orders-api.yaml", "paths:/orders:post:requestBody:content:application/json:examples:CREATE_ORDER_INVALID_PRODUCT:value");
-        invalidExtraOrderRequest = OasConverter.convertSpecToJson("/oas/orders-api.yaml", "paths:/orders:post:requestBody:content:application/json:examples:CREATE_ORDER_INVALID_EXTRA:value");
+        validOrderRequest = OasConverter.convertSpecToJson("/oas/orders-api.yaml",
+            "paths:/orders:post:requestBody:content:application/json:examples:CREATE_ORDER_SUCCESS:value");
 
-        menuRepository.addProduct(ProductMock.validProduct(validProductID));
-        menuRepository.addExtra(ExtraMock.validExtra(validIngredientID));
+        invalidProductOrderRequest = validOrderRequest.replaceAll(existingProductID.getId(), nonExistentProductID.getId());
+
+        invalidExtraOrderRequest = validOrderRequest.replaceAll(existingIngredientID.getId(), nonExistentIngredientID.getId());
+
+        menuRepository.addProduct(ProductMock.validProduct(existingProductID));
+        menuRepository.addExtra(ExtraMock.validExtra(existingIngredientID));
 
         consumer = consumerFactory.createConsumer();
         consumer.subscribe(Collections.singletonList("orders"));
@@ -96,6 +98,34 @@ public class CreateOrderSteps extends SpringContextConfiguration {
         generatedTicketId = response.path("ticketId");
     }
 
+    @When("create a new order with non-existing product")
+    public void createANewOrderWithNonExistingProductId() {
+        response = given()
+            .auth().oauth2(authToken)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(invalidProductOrderRequest)
+            .when()
+            .post("/orders")
+            .then()
+            .statusCode(422)
+            .extract()
+            .response();
+    }
+
+    @When("create a new order with non-existing extra")
+    public void createANewOrderWithNonExistingExtraId() {
+        response = given()
+            .auth().oauth2(authToken)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(invalidExtraOrderRequest)
+            .when()
+            .post("/orders")
+            .then()
+            .statusCode(422)
+            .extract()
+            .response();
+    }
+
     @Then("the order should be saved in the database")
     public void theOrderShouldBeSavedInTheRepository() {
         assertNotNull(generatedTicketId);
@@ -117,37 +147,9 @@ public class CreateOrderSteps extends SpringContextConfiguration {
         assertEquals(receivedOrder.getOrderId().getId(), generatedOrder.getOrderId().getId());
     }
 
-    @When("create a new order with invalid product id")
-    public void createANewOrderWithInvalidProductId() {
-        response = given()
-            .auth().oauth2(authToken)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(invalidProductOrderRequest)
-            .when()
-            .post("/orders")
-            .then()
-            .statusCode(400)
-            .extract()
-            .response();
-    }
-
-    @When("create a new order with invalid extra id")
-    public void createANewOrderWithInvalidExtraId() {
-        response = given()
-            .auth().oauth2(authToken)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(invalidExtraOrderRequest)
-            .when()
-            .post("/orders")
-            .then()
-            .statusCode(400)
-            .extract()
-            .response();
-    }
-
-    @Then("an error response with message {string} should be returned")
-    public void anErrorResponseWithMessageShouldBeReturned(String message) {
-        String errorMessage = response.path("message");
-        assertEquals(message, errorMessage);
+    @Then("an error {string} - {string} should be returned")
+    public void anErrorResponseWithCodeAndMessageShouldBeReturned(String code, String message) {
+        assertEquals(code, response.path("code"));
+        assertEquals(message, response.path("message"));
     }
 }
