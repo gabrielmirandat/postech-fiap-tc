@@ -4,10 +4,10 @@ import io.cucumber.java.en.Given;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AuthorizationSteps extends CucumberSpringContextConfiguration {
+public class AuthorizationSteps extends SpringStepsContext {
 
     @Given("a logged in customer user")
     public void aLoggedInCustomerUser() {
-        authToken = "TOKENWITHGROUPORDERSUSER";
+        stateManager.set("AUTH_TOKEN", "TOKENWITHGROUPORDERSUSER");
     }
 }
