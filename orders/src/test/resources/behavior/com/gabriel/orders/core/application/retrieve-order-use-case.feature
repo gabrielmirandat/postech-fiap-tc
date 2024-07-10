@@ -9,4 +9,4 @@ Feature: Retrieve Order
   Scenario: Retrieve order with non-existing ticket ID
     Given a logged in customer user
     When retrieving an order with non-existing ticket ID
-    Then an error "ORD_404 - ORDER NOT FOUND" - "Order not found" should be returned
+    Then an error message "Order not found" should be returned

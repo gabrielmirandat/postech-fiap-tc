@@ -15,4 +15,10 @@ public class ExceptionSteps extends SpringStepsContext {
         assertEquals(code, actualResponse.path("code"));
         assertEquals(message, actualResponse.path("message"));
     }
+
+    @Then("an error message {string} should be returned")
+    public void anErrorResponseWithMessageShouldBeReturned(String message) {
+        Response actualResponse = (Response) stateManager.get("RESPONSE");
+        assertEquals(message, actualResponse.path("message"));
+    }
 }

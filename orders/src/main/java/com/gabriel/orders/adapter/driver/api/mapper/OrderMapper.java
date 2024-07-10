@@ -2,11 +2,12 @@ package com.gabriel.orders.adapter.driver.api.mapper;
 
 import com.gabriel.adapter.api.exceptions.BaseHttpException;
 import com.gabriel.core.domain.model.*;
+import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.core.domain.model.id.OrderID;
+import com.gabriel.core.domain.model.id.OrderItemID;
+import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
-import com.gabriel.orders.core.domain.model.Extra;
-import com.gabriel.orders.core.domain.model.Order;
-import com.gabriel.orders.core.domain.model.OrderItem;
-import com.gabriel.orders.core.domain.model.OrderItemRef;
+import com.gabriel.orders.core.domain.model.*;
 import com.gabriel.orders.core.domain.port.MenuRepository;
 import com.gabriel.specs.orders.models.*;
 
@@ -132,10 +133,73 @@ public class OrderMapper {
         return orders.stream().map(OrderMapper::toResponse).collect(Collectors.toList());
     }
 
+
     public static ErrorResponse toErrorResponse(BaseHttpException exception) {
         return new ErrorResponse()
             .status(exception.getStatus())
             .message(exception.getMessage())
             .code(exception.getCode() != null ? exception.getCode() : "");
+    }
+
+    public static Order toOrder(OrderResponse orderResponse) {
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        for (OrderItemResponse itemResponse : orderResponse.getItems()) {
+            Product product = new Product(
+                new ProductID(itemResponse.getProduct().getId()),
+                new Name(itemResponse.getProduct().getName()),
+                new Price(itemResponse.getProduct().getPrice())
+            );
+
+            List<Extra> extras = null;
+            if (itemResponse.getExtras() != null) {
+                extras = itemResponse.getExtras().stream().map(extraResponse -> new Extra(
+                    new IngredientID(extraResponse.getIngredient().getId()),
+                    new Name(extraResponse.getIngredient().getName()),
+                    new Price(extraResponse.getIngredient().getPrice())
+                )).collect(Collectors.toList());
+            }
+
+            OrderItem orderItem = OrderItem.copy(
+                new OrderItemID(itemResponse.getItemId()),
+                product,
+                extras
+            );
+
+            orderItems.add(orderItem);
+        }
+
+        CPF customer = null;
+        if (orderResponse.getCustomer() != null) {
+            customer = new CPF(orderResponse.getCustomer().getCpf());
+        }
+
+        Address shippingAddress = null;
+        if (orderResponse.getShippingAddress() != null) {
+            shippingAddress = new Address(
+                orderResponse.getShippingAddress().getStreet(),
+                orderResponse.getShippingAddress().getCity(),
+                orderResponse.getShippingAddress().getState(),
+                orderResponse.getShippingAddress().getZip()
+            );
+        }
+
+        Notification notification = null;
+        if (orderResponse.getNotification() != null) {
+            notification = new Notification(NotificationType.CELLPHONE, orderResponse.getNotification());
+        }
+
+        return Order.copy(
+            new OrderID(orderResponse.getId()),
+            orderItems,
+            customer,
+            shippingAddress,
+            notification,
+            new Price(orderResponse.getPrice()),
+            orderResponse.getTicketId(),
+            OrderStatus.valueOf(orderResponse.getStatus().toString().toUpperCase()),
+            null,
+            null
+        );
     }
 }
