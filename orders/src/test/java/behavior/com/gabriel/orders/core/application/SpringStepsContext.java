@@ -1,5 +1,6 @@
 package behavior.com.gabriel.orders.core.application;
 
+import behavior.com.gabriel.orders.core.application.StateConfiguration.StateManager;
 import com.gabriel.orders.OrdersApplication;
 import com.gabriel.orders.core.domain.port.MenuRepository;
 import com.gabriel.orders.core.domain.port.MenuSubscriber;
@@ -12,7 +13,6 @@ import com.gabriel.orders.infra.redis.RedisConfiguration;
 import com.gabriel.orders.infra.serializer.SerializerConfiguration;
 import io.cloudevents.CloudEvent;
 import io.cucumber.spring.CucumberContextConfiguration;
-import io.restassured.response.Response;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +36,7 @@ import utils.com.gabriel.orders.infra.TestSecurityConfiguration;
     KafkaConfiguration.class,
     SerializerConfiguration.class,
     TestSecurityConfiguration.class,
+    StateConfiguration.class
 })
 @ContextConfiguration(classes = {
     OrdersApplication.class,
@@ -47,9 +48,9 @@ import utils.com.gabriel.orders.infra.TestSecurityConfiguration;
 @ActiveProfiles("test")
 @CucumberContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CucumberSpringContextConfiguration {
+public class SpringStepsContext {
 
-    protected static Consumer<String, CloudEvent> consumer;
+    protected Consumer<String, CloudEvent> consumer;
     @Autowired
     protected ConsumerFactory<String, CloudEvent> consumerFactory;
     @Autowired
@@ -60,8 +61,8 @@ public class CucumberSpringContextConfiguration {
     protected OrderRepository orderRepository;
     @Autowired
     protected MenuRepository menuRepository;
-    protected String authToken = null;
-    protected Response response;
+    @Autowired
+    protected StateManager stateManager;
 
     @LocalServerPort
     protected int port;

@@ -11,26 +11,19 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import utils.com.gabriel.orders.core.domain.ExtraMock;
 import utils.com.gabriel.orders.core.domain.ProductMock;
-import utils.com.gabriel.orders.infra.OasConverter;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RetrieveOrderSteps extends CucumberSpringContextConfiguration {
+public class RetrieveOrderSteps extends SpringStepsContext {
 
     private final ProductID existingProductID = new ProductID("11111111-PRDC-1111-11-11");
     private final IngredientID existingIngredientID = new IngredientID("11111111-INGR-1111-11-11");
-    private String authToken = null;
     private String validOrderRequest;
-    private String generatedTicketId;
-    private Order generatedOrder;
-    private Response response;
-
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -40,58 +33,46 @@ public class RetrieveOrderSteps extends CucumberSpringContextConfiguration {
 
         menuRepository.addProduct(ProductMock.validProduct(existingProductID));
         menuRepository.addExtra(ExtraMock.validExtra(existingIngredientID));
-
-        createValidOrder();
     }
 
-    private void createValidOrder() throws Exception {
-        validOrderRequest = OasConverter.convertSpecToJson("/oas/orders-api.yaml",
-            "paths:/orders:post:requestBody:content:application/json:examples:CREATE_ORDER_SUCCESS:value");
-
-        response = given()
-            .auth().oauth2(authToken)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(validOrderRequest)
-            .when()
-            .post("/orders")
-            .then()
-            .statusCode(201)
-            .extract()
-            .response();
-
-        generatedTicketId = response.path("ticketId");
-    }
-
-    @When("retrieve an existing order")
+    @When("retrieving an existing order")
     public void retrieveAnExistingOrder() {
-        response = given()
-            .auth().oauth2(authToken)
+        String actualTicketId = (String) stateManager.get("GENERATED_TICKET_ID");
+        Response actualResponse = given()
+            .auth().oauth2((String) stateManager.get("AUTH_TOKEN"))
             .when()
-            .get("/orders/" + generatedTicketId)
+            .get("/orders/" + actualTicketId)
             .then()
             .statusCode(200)
             .extract()
             .response();
 
-        generatedOrder = response.as(Order.class);
+        stateManager.set("RESPONSE", actualResponse);
+
+        Order actualOrder = actualResponse.as(Order.class);
+        stateManager.set("GENERATED_ORDER", actualOrder);
     }
 
-    @When("retrieve an order with non-existing ticket ID")
+    @When("retrieving an order with non-existing ticket ID")
     public void retrieveAnOrderWithNonExistingTicketID() {
         String nonExistentTicketId = "12345678";
-        response = given()
-            .auth().oauth2(authToken)
+        Response actualResponse = given()
+            .auth().oauth2((String) stateManager.get("AUTH_TOKEN"))
             .when()
             .get("/orders/" + nonExistentTicketId)
             .then()
             .statusCode(404)
             .extract()
             .response();
+
+        stateManager.set("RESPONSE", actualResponse);
     }
 
     @Then("the order should be retrieved from the database")
     public void theOrderShouldBeRetrievedFromTheDatabase() {
-        assertNotNull(generatedOrder);
-        assertEquals(generatedTicketId, generatedOrder.getTicketId());
+        String actualTicketId = (String) stateManager.get("GENERATED_TICKET_ID");
+        Order actualOrder = (Order) stateManager.get("GENERATED_ORDER");
+        assertNotNull(actualOrder);
+        assertEquals(actualTicketId, actualOrder.getTicketId());
     }
 }
