@@ -3,7 +3,9 @@ package behavior.com.gabriel.orders.core.application;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.domain.model.id.IngredientID;
 import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
 import com.gabriel.orders.core.domain.model.Order;
+import com.gabriel.specs.orders.models.OrderResponse;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -49,7 +51,7 @@ public class RetrieveOrderSteps extends SpringStepsContext {
 
         stateManager.set("RESPONSE", actualResponse);
 
-        Order actualOrder = actualResponse.as(Order.class);
+        Order actualOrder = OrderMapper.toOrder(actualResponse.as(OrderResponse.class));
         stateManager.set("GENERATED_ORDER", actualOrder);
     }
 
