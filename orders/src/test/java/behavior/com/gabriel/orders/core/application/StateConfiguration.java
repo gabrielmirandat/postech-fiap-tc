@@ -1,7 +1,9 @@
 package behavior.com.gabriel.orders.core.application;
 
 import com.gabriel.orders.core.domain.model.Order;
+import io.cloudevents.CloudEvent;
 import io.restassured.response.Response;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,6 +23,7 @@ public class StateConfiguration {
         private Response RESPONSE;
         private String GENERATED_TICKET_ID;
         private Order GENERATED_ORDER;
+        private ConsumerRecord<String, CloudEvent> RECORDED_EVENT;
 
         public Object get(String variableName) {
             try {

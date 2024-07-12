@@ -10,4 +10,14 @@ public class AuthorizationSteps extends SpringStepsContext {
     public void aLoggedInCustomerUser() {
         stateManager.set("AUTH_TOKEN", "TOKENWITHGROUPORDERSUSER");
     }
+
+    @Given("a logged in squad orders user")
+    public void aLoggedInSquadOrdersUser() {
+        stateManager.set("AUTH_TOKEN", "TOKENWITHGROUPORDERSSQUAD");
+    }
+
+    @Given("a logged in admin orders user")
+    public void aLoggedInAdminOrdersUser() {
+        stateManager.set("AUTH_TOKEN", "TOKENWITHGROUPORDERSADMIN");
+    }
 }
