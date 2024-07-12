@@ -1,8 +1,5 @@
 package behavior.com.gabriel.orders.core.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.specs.orders.models.OrderResponse;
@@ -11,10 +8,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import utils.com.gabriel.orders.core.domain.ExtraMock;
-import utils.com.gabriel.orders.core.domain.ProductMock;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,18 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RetrieveOrderSteps extends SpringStepsContext {
 
-    private final ProductID existingProductID = new ProductID("11111111-PRDC-1111-11-11");
-    private final IngredientID existingIngredientID = new IngredientID("11111111-INGR-1111-11-11");
-    private String validOrderRequest;
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Before
     public void setup() throws Exception {
         RestAssured.port = port;
-
-        menuRepository.addProduct(ProductMock.validProduct(existingProductID));
-        menuRepository.addExtra(ExtraMock.validExtra(existingIngredientID));
     }
 
     @When("retrieving an existing order")

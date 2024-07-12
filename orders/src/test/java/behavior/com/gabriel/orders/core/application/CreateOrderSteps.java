@@ -71,7 +71,6 @@ public class CreateOrderSteps extends SpringStepsContext {
     }
 
     @When("create a new order")
-    @Given("an order was created")
     public void createANewOrder() {
         Response actualResponse = given()
             .auth().oauth2((String) stateManager.get("AUTH_TOKEN"))
@@ -86,7 +85,15 @@ public class CreateOrderSteps extends SpringStepsContext {
 
         stateManager.set("RESPONSE", actualResponse);
         stateManager.set("GENERATED_TICKET_ID", actualResponse.path("ticketId"));
+        stateManager.set("RECORDED_EVENT", KafkaTestUtils.getSingleRecord(consumer, "orders"));
     }
+
+    @Given("an already created order")
+    public void anAlreadyCreatedOrder() {
+        stateManager.set("AUTH_TOKEN", "TOKENWITHGROUPORDERSUSER");
+        createANewOrder();
+    }
+
 
     @When("create a new order with non-existing product")
     public void createANewOrderWithNonExistingProductId() {
@@ -131,10 +138,11 @@ public class CreateOrderSteps extends SpringStepsContext {
 
     @Then("an order created event should be published")
     public void anOrderCreatedEventShouldBePublished() throws JsonProcessingException {
-        ConsumerRecord<String, CloudEvent> record = KafkaTestUtils.getSingleRecord(consumer, "orders");
+        ConsumerRecord<String, CloudEvent> actualEvent =
+            (ConsumerRecord<String, CloudEvent>) stateManager.get("RECORDED_EVENT");
 
-        assertThat(record).isNotNull();
-        CloudEvent receivedEvent = record.value();
+        assertThat(actualEvent).isNotNull();
+        CloudEvent receivedEvent = actualEvent.value();
         assertThat(receivedEvent).isNotNull();
 
         byte[] data = Objects.requireNonNull(receivedEvent.getData()).toBytes();
