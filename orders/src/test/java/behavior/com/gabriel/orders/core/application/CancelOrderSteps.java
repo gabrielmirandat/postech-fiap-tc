@@ -3,7 +3,6 @@ package behavior.com.gabriel.orders.core.application;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cloudevents.CloudEvent;
-import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -16,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Objects;
 
 import static io.restassured.RestAssured.given;
@@ -32,16 +30,6 @@ public class CancelOrderSteps extends SpringStepsContext {
     @Before
     public void setup() throws Exception {
         RestAssured.port = port;
-
-        consumer = consumerFactory.createConsumer();
-        consumer.subscribe(Collections.singletonList("orders"));
-    }
-
-    @After
-    public void collect() {
-        if (consumer != null) {
-            consumer.close();
-        }
     }
 
     @When("canceling the order")

@@ -3,6 +3,7 @@ package com.gabriel.orders.infra.kafka;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.kafka.CloudEventDeserializer;
 import io.cloudevents.kafka.CloudEventSerializer;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -14,6 +15,8 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 
+import javax.annotation.PreDestroy;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +30,8 @@ public class KafkaConfiguration {
     @Value("${kafka.group.id}")
     private String kafkaGroupId;
 
+    private Consumer<String, CloudEvent> consumer;
+
     @Bean
     public ConsumerFactory<String, CloudEvent> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
@@ -36,14 +41,12 @@ public class KafkaConfiguration {
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, CloudEventDeserializer.class);
         config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(),
-            new CloudEventDeserializer());
+        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new CloudEventDeserializer());
     }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, CloudEvent> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, CloudEvent> factory =
-            new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<String, CloudEvent> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
@@ -59,7 +62,25 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public KafkaTemplate<String, CloudEvent> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, CloudEvent> kafkaTemplate(
+        ProducerFactory<String, CloudEvent> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
+    }
+
+    @Bean
+    public Consumer<String, CloudEvent> kafkaConsumer(
+        ConsumerFactory<String, CloudEvent> consumerFactory) {
+        if (consumer == null) {
+            consumer = consumerFactory.createConsumer();
+            consumer.subscribe(Collections.singletonList("orders"));
+        }
+        return consumer;
+    }
+
+    @PreDestroy
+    public void stopConsumer() {
+        if (consumer != null) {
+            consumer.close();
+        }
     }
 }

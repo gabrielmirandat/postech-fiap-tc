@@ -50,6 +50,7 @@ import utils.com.gabriel.orders.infra.TestSecurityConfiguration;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SpringStepsContext {
 
+    @Autowired
     protected Consumer<String, CloudEvent> consumer;
     @Autowired
     protected ConsumerFactory<String, CloudEvent> consumerFactory;
