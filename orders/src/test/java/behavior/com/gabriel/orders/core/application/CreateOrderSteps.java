@@ -6,7 +6,6 @@ import com.gabriel.core.domain.model.id.IngredientID;
 import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.orders.core.domain.model.Order;
 import io.cloudevents.CloudEvent;
-import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -23,7 +22,6 @@ import utils.com.gabriel.orders.core.domain.ProductMock;
 import utils.com.gabriel.orders.infra.OasConverter;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Objects;
 
 import static io.restassured.RestAssured.given;
@@ -58,16 +56,6 @@ public class CreateOrderSteps extends SpringStepsContext {
 
         menuRepository.addProduct(ProductMock.validProduct(existingProductID));
         menuRepository.addExtra(ExtraMock.validExtra(existingIngredientID));
-
-        consumer = consumerFactory.createConsumer();
-        consumer.subscribe(Collections.singletonList("orders"));
-    }
-
-    @After
-    public void collect() {
-        if (consumer != null) {
-            consumer.close();
-        }
     }
 
     @When("create a new order")

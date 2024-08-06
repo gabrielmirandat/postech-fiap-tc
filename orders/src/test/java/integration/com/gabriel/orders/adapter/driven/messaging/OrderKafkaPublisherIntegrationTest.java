@@ -10,14 +10,11 @@ import com.gabriel.orders.infra.serializer.SerializerConfiguration;
 import io.cloudevents.CloudEvent;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -26,7 +23,6 @@ import utils.com.gabriel.orders.adapter.container.KafkaTestContainer;
 import utils.com.gabriel.orders.core.domain.OrderMock;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = {OrderKafkaPublisher.class, KafkaTestContainer.class})
 public class OrderKafkaPublisherIntegrationTest {
 
-    private static Consumer<String, CloudEvent> consumer;
+    @Autowired
+    private Consumer<String, CloudEvent> consumer;
     @Autowired
     private OrderKafkaPublisher orderKafkaPublisher;
     @Autowired
@@ -47,19 +44,6 @@ public class OrderKafkaPublisherIntegrationTest {
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
         KafkaTestContainer.kafkaProperties(registry);
-    }
-
-    @BeforeAll
-    public static void setup(@Autowired ConsumerFactory<String, CloudEvent> consumerFactory) {
-        consumer = consumerFactory.createConsumer();
-        consumer.subscribe(Collections.singletonList("orders"));
-    }
-
-    @AfterAll
-    public static void collect() {
-        if (consumer != null) {
-            consumer.close();
-        }
     }
 
     @BeforeEach
