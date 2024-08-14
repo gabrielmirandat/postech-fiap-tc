@@ -28,3 +28,8 @@ Feature: Process Order
       | COMPLETED |
       | DELIVERY  |
     Then an error "422" - "ORD_001 - INVALID ORDER STATUS CHANGE" - "Order must be in balcony to be delivered" should be returned
+
+  Scenario: Fail to process non-existing order
+    Given a logged in squad orders user
+    When process a non-existing order
+    Then an error "404" - "Order not found" should be returned

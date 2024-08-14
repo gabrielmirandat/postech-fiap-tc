@@ -53,6 +53,22 @@ public class ProcessOrderSteps extends SpringStepsContext {
         }
     }
 
+    @When("process a non-existing order")
+    public void processNonExistingOrder() {
+        String authToken = (String) stateManager.get("AUTH_TOKEN");
+
+        Response actualResponse = given()
+            .auth().oauth2(authToken)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+            .post("/orders/11111113/status/CREATED")
+            .then()
+            .extract()
+            .response();
+
+        stateManager.set("RESPONSE", actualResponse);
+    }
+
     @When("finishing the order")
     public void finishingOrder() {
         processOrderThroughStatuses(List.of("COMPLETED"));

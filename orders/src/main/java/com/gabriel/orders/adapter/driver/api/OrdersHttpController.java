@@ -74,14 +74,14 @@ public class OrdersHttpController implements OrdersApi {
     }
 
     @PreAuthorize("hasAuthority('orders:update')")
-    public ResponseEntity<OrderUpdated> changeOrderStatus(String id, OrderStatusDTO status) throws Exception {
+    public ResponseEntity<OrderUpdated> changeOrderStatus(String id, OrderStatusDTO status) {
         processOrderUseCase.processOrder(
             new ProcessOrderCommand(new TicketId(id), OrderStatus.valueOf(status.name().toUpperCase())));
         return ResponseEntity.ok(new OrderUpdated(id, status));
     }
 
     @PreAuthorize("hasAuthority('orders:list')")
-    public ResponseEntity<List<OrderResponse>> findOrdersByQuery(Optional<OrderStatusDTO> status) throws Exception {
+    public ResponseEntity<List<OrderResponse>> findOrdersByQuery(Optional<OrderStatusDTO> status) {
         List<Order> orders = searchOrderUseCase.searchBy(
             new SearchByOrderStatusQuery(
                 status.map(orderStatusDTO -> OrderStatus.valueOf(orderStatusDTO.name().toUpperCase()))
