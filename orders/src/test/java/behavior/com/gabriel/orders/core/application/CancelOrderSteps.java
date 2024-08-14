@@ -50,6 +50,22 @@ public class CancelOrderSteps extends SpringStepsContext {
         stateManager.set("RECORDED_EVENT", KafkaTestUtils.getSingleRecord(consumer, "orders"));
     }
 
+    @When("canceling a non-existing order")
+    public void cancelingNonExistingOrder() {
+        String authToken = (String) stateManager.get("AUTH_TOKEN");
+
+        Response actualResponse = given()
+            .auth().oauth2(authToken)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+            .delete("/orders/11111113")
+            .then()
+            .extract()
+            .response();
+
+        stateManager.set("RESPONSE", actualResponse);
+    }
+
     @Then("an order canceled event should be published")
     public void anOrderCreatedEventShouldBePublished() throws JsonProcessingException {
         ConsumerRecord<String, CloudEvent> actualEvent =
