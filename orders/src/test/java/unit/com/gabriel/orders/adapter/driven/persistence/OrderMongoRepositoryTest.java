@@ -101,24 +101,31 @@ public class OrderMongoRepositoryTest {
 
     @Test
     public void searchBy_WithStatus_FindsOrders() {
-        // Mock orders
-        Order order1 = OrderMock.validBasicOrder(); // Assume this sets a specific status
+        // Prepare mock data
+        Order order1 = OrderMock.validBasicOrder();
         Order order2 = OrderMock.validBasicOrder();
-        // Assume MongoMapper can convert documents to orders correctly
+
         Document doc1 = MongoMapper.orderToDocument(order1);
         Document doc2 = MongoMapper.orderToDocument(order2);
         List<Document> documents = Arrays.asList(doc1, doc2);
 
-        // Mock the behavior of the findIterable to simulate database operation
+        // Ensure findIterable is returned when mongoCollection.find() is called
         when(mongoCollection.find(any(Bson.class))).thenReturn(findIterable);
-        // Use thenAnswer to simulate forEach operation on findIterable
+
+        // Ensure findIterable.sort() returns the same findIterable (chaining)
+        when(findIterable.sort(any(Bson.class))).thenReturn(findIterable);
+
+        // Mock findIterable's behavior
         doAnswer(invocation -> {
             Consumer<Document> consumer = invocation.getArgument(0);
             documents.forEach(consumer);
             return null;
         }).when(findIterable).forEach(any(Consumer.class));
 
-        // Create search parameters with the specific status you're testing
+        // Ensure findIterable.first() returns the first document
+        when(findIterable.first()).thenReturn(doc1);
+
+        // Create search parameters
         OrderSearchParameters parameters = new OrderSearchParameters(order1.getStatus());
 
         // Execute the search
@@ -129,9 +136,10 @@ public class OrderMongoRepositoryTest {
         assertEquals(2, foundOrders.size());
         assertTrue(foundOrders.stream().allMatch(order -> order.getStatus().equals(order1.getStatus())));
 
-        // Optionally, verify interactions
+        // Verify forEach was called on findIterable
         verify(findIterable).forEach(any(Consumer.class));
+
+        // Verify sort was called with the correct argument
+        verify(findIterable).sort(any(Bson.class));
     }
-
-
 }

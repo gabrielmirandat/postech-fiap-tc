@@ -21,9 +21,7 @@ public class KafkaTestContainer {
 
     @DynamicPropertySource
     public static void kafkaProperties(DynamicPropertyRegistry registry) {
-        // Dynamic properties to configure Kafka connection for Spring Boot tests
-        registry.add("kafka.domain.topic", () -> "orders");
-        registry.add("kafka.group.id", () -> "orders-group-id");
         registry.add("kafka.server.url", KAFKA_CONTAINER::getBootstrapServers);
+        registry.add("kafka.group.id", () -> "test-group-id-" + System.currentTimeMillis()); // Unique group ID
     }
 }
