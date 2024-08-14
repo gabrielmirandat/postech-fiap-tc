@@ -8,10 +8,14 @@ import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.port.OrderRepository;
 import com.gabriel.orders.core.domain.port.OrderSearchParameters;
 import com.mongodb.MongoWriteException;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.UpdateResult;
+import org.bson.BsonDocument;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -60,12 +64,9 @@ public class OrderMongoRepository implements OrderRepository {
     @Override
     public List<Order> searchBy(OrderSearchParameters parameters) {
         List<Order> orders = new ArrayList<>();
-        if (parameters.status() != null) {
-            orderCollection.find(Filters.eq("status", parameters.status().toString()))
-                .forEach(doc -> orders.add(MongoMapper.documentToOrder(doc)));
-        } else {
-            orderCollection.find().forEach(doc -> orders.add(MongoMapper.documentToOrder(doc)));
-        }
+        Bson filter = parameters.status() != null ? Filters.eq("status", parameters.status().toString()) : new BsonDocument();
+        FindIterable<Document> iterable = orderCollection.find(filter).sort(Sorts.descending("creationTimestamp"));
+        iterable.forEach(doc -> orders.add(MongoMapper.documentToOrder(doc)));
         return orders;
     }
 }

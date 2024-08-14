@@ -9,7 +9,7 @@ Feature: Search Order
   Scenario: Search orders with non-existing status
     Given an already created order
     And a logged in squad orders user
-    When search for orders by status "COMPLETED"
+    When search for orders by status "PREPARATION"
     Then the order should not be in the search results
 
   Scenario: Search orders with invalid status
