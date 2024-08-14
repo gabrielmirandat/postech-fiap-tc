@@ -19,6 +19,7 @@ import javax.annotation.PreDestroy;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Configuration
 @EnableKafka
@@ -36,7 +37,7 @@ public class KafkaConfiguration {
     public ConsumerFactory<String, CloudEvent> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServerUrl);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaGroupId);
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, "unique-group-id-" + UUID.randomUUID().toString());
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, CloudEventDeserializer.class);
         config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
