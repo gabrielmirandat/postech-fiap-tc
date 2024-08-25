@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 import '../env_config.dart';
+import '../provider/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -37,12 +39,9 @@ class _LoginScreenState extends State<LoginScreen> {
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        setState(() {
-          _message = 'Login successful';
-        });
-
-        // Redirect to home screen
-        Navigator.of(context).pushReplacementNamed('/home');
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        authProvider.login(username);
+        Navigator.of(context).pushReplacementNamed('/');
       } else {
         setState(() {
           _message = 'Login failed: ${response.reasonPhrase}';

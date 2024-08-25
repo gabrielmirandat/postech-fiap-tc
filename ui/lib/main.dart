@@ -1,36 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 
 import 'pages/home.dart';
 import 'pages/login.dart';
+import 'pages/profile.dart'; // Adicione a importação do ProfileScreen
+import 'provider/auth_provider.dart';
+import 'theme.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Carregar o arquivo de ambiente
-  try {
-    await dotenv.load(
-        fileName: '.env.devl'); // Atualize aqui para o nome correto do arquivo
-    print('Loaded environment file: .env.devl');
-  } catch (e) {
-    print('Error loading environment file: $e');
-  }
-
+void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'My App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (context) => AuthProvider(),
+      child: MaterialApp(
+        title: 'Restaurant Orders App',
+        theme: AppTheme.theme, // Usando o tema definido
+        initialRoute: '/',
+        routes: {
+          '/': (context) => HomeScreen(),
+          '/login': (context) => LoginScreen(),
+          '/profile': (context) => ProfileScreen(),
+          // Adicione a rota para o perfil
+        },
       ),
-      home: LoginScreen(), // Tela inicial do app
-      routes: {
-        '/home': (context) => HomeScreen(), // Rota para a tela inicial
-      },
     );
   }
 }
