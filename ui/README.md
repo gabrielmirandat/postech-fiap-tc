@@ -1,16 +1,11 @@
-# ui
+# Flutter/Dart: Basic User Authentication Code Sample
 
-A new Flutter project.
+This Dart code sample demonstrates **how to implement user authentication** in Flutter mobile applications using Auth0.
 
-## Getting Started
+This code sample is part of the ["Auth0 Developer Resources"](https://developer.auth0.com/resources), a place where you can explore the authentication and authorization features of the Auth0 Identity Platform.
 
-This project is a starting point for a Flutter application.
+Visit the ["Flutter Authentication By Example"](https://developer.auth0.com/resources/gyudes/mobile/flutter/basic-authentication) page for instructions on how to configure and run this code sample and how to integrate it with an external API server of your choice.
 
-A few resources to get you started if this is your first Flutter project:
+## Why Use Auth0?
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Auth0 is a flexible drop-in solution to add authentication and authorization services to your applications. Your team and organization can avoid the cost, time, and risk that come with building your own solution to authenticate and authorize users. We offer tons of guidance and SDKs for you to get started and [integrate Auth0 into your stack easily](https://developer.auth0.com/resources/code-samples/full-stack).
