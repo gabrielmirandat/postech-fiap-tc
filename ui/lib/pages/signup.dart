@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import '../services/api_service.dart';
+import '../services/permission-service.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -14,7 +14,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final String _baseUrl = dotenv.env['BASE_URL'] ?? '';
 
   Future<void> _signUp() async {
-    final response = await ApiService.signUp(
+    final response = await PermissionService.signUp(
         _baseUrl, _usernameController.text, _passwordController.text);
 
     if (response.statusCode == 201) {
