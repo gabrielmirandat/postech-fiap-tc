@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:http/http.dart' as http;
 
-class ApiService {
+class PermissionService {
   static String get baseUrl =>
       'https://api.example.com'; // Use o valor de env para Web
 

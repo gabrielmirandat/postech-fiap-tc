@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'pages/home.dart';
 import 'pages/login.dart';
 import 'pages/profile.dart'; // Adicione a importação do ProfileScreen
-import 'provider/auth_provider.dart';
+import 'provider/permission_provider.dart';
 import 'theme.dart';
 
 void main() {
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => AuthProvider(),
+      create: (context) => PermissionProvider(),
       child: MaterialApp(
         title: 'Restaurant Orders App',
         theme: AppTheme.theme, // Usando o tema definido
