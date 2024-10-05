@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 import '../services/permission-service.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -12,15 +11,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final String _baseUrl = dotenv.env['BASE_URL'] ?? '';
+  bool _isLoading = false;
+  String? _errorMessage;
 
   Future<void> _signUp() async {
-    final response = await PermissionService.signUp(
-        _baseUrl, _usernameController.text, _passwordController.text);
+    setState(() {
+      _isLoading = true; // Start loading
+      _errorMessage = null; // Reset error message
+    });
 
-    if (response.statusCode == 201) {
-      print('Cadastro bem-sucedido');
-    } else {
-      print('Falha no cadastro');
+    try {
+      final response = await PermissionService.signUp(
+          _baseUrl, _usernameController.text, _passwordController.text);
+
+      if (response.statusCode == 201) {
+        print('Cadastro bem-sucedido');
+        // Optionally navigate to another screen or show a success message
+        // Navigator.pushReplacement(...);
+      } else {
+        print('Falha no cadastro');
+        setState(() {
+          _errorMessage = 'Falha no cadastro: ${response.body}';
+        });
+      }
+    } catch (error) {
+      print('Erro: $error');
+      setState(() {
+        _errorMessage = 'Erro ao cadastrar: $error';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false; // Stop loading
+      });
     }
   }
 
@@ -43,10 +65,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
               obscureText: true,
               decoration: InputDecoration(labelText: 'Password'),
             ),
+            if (_errorMessage != null) // Show error message if exists
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _signUp,
-              child: Text('Sign Up'),
+              onPressed: _isLoading ? null : _signUp, // Disable button while loading
+              child: _isLoading
+                  ? CircularProgressIndicator()
+                  : Text('Sign Up'),
             ),
           ],
         ),

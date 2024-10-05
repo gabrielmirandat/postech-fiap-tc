@@ -6,12 +6,15 @@ import '../provider/permission_provider.dart';
 class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(seconds: 2), () {
-      final isAuthenticated =
-          Provider.of<PermissionProvider>(context, listen: false)
-              .isAuthenticated;
-      Navigator.of(context)
-          .pushReplacementNamed(isAuthenticated ? '/home' : '/login');
+    // Schedule a callback to run after the current frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(Duration(seconds: 2), () {
+        final isAuthenticated =
+            Provider.of<PermissionProvider>(context, listen: false)
+                .isAuthenticated;
+        Navigator.of(context)
+            .pushReplacementNamed(isAuthenticated ? '/home' : '/login');
+      });
     });
 
     return Scaffold(
