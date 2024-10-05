@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../provider/permission_provider.dart'; // Ensure this is the correct path
 
-import '../provider/permission_provider.dart';
+// Create the permissionServiceProvider
+final permissionServiceProvider = ChangeNotifierProvider<PermissionProvider>((ref) {
+  return PermissionProvider();
+});
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    final authProvider = Provider.of<PermissionProvider>(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Access the PermissionProvider using ref.watch
+    final authProvider = ref.watch(permissionServiceProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -19,7 +24,7 @@ class HomeScreen extends StatelessWidget {
               icon: Icon(Icons.exit_to_app),
               onPressed: () {
                 authProvider.logout();
-                Navigator.of(context).pushReplacementNamed('/');
+                Navigator.of(context).pushReplacementNamed('/'); // Return to home
               },
             ),
         ],
@@ -41,21 +46,24 @@ class HomeScreen extends StatelessWidget {
               ListTile(
                 title: Text('Login'),
                 onTap: () {
-                  Navigator.of(context).pushNamed('/login');
+                  Navigator.of(context).pushNamed('/login'); // Navigate to login
                 },
               ),
             if (authProvider.isAuthenticated)
               ListTile(
                 title: Text('Place an Identified Order'),
                 onTap: () {
-                  // Navigate to the order page or similar
+                  // Navigate to the order page
+                  Navigator.of(context).pushNamed('/order');
                 },
               ),
           ],
         ),
       ),
       body: Center(
-        child: Text('Welcome to Our Restaurant!'),
+        child: authProvider.isAuthenticated
+            ? Text('Welcome to Our Restaurant!')
+            : Text('Please log in to access the menu.'),
       ),
     );
   }

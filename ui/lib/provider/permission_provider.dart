@@ -1,15 +1,21 @@
-import 'package:provider/provider.dart';
+import 'package:flutter/material.dart';
 
-import '../services/permission-service.dart';
+class PermissionProvider extends ChangeNotifier {
+  bool _isAuthenticated = false;
+  String _username = '';
 
-final permissionServiceProvider = Provider<PermissionService>((ref) {
-  return PermissionService();
-});
+  bool get isAuthenticated => _isAuthenticated;
+  String get username => _username;
 
-final loginProvider = FutureProvider.family<String, Map<String, String>>(
-    (ref, credentials) async {
-  final permissionService = ref.watch(permissionServiceProvider);
-  final username = credentials['username']!;
-  final password = credentials['password']!;
-  return await permissionService.login(username, password);
-});
+  void login(String username) {
+    _isAuthenticated = true;
+    _username = username;
+    notifyListeners();
+  }
+
+  void logout() {
+    _isAuthenticated = false;
+    _username = '';
+    notifyListeners();
+  }
+}
