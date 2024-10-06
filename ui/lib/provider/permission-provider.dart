@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/cupertino.dart';
+
 import '../services/permission-service.dart';
 
 class PermissionProvider extends ChangeNotifier {
@@ -15,12 +15,12 @@ class PermissionProvider extends ChangeNotifier {
 
   Future<void> login(String username, String password) async {
     _loading = true;
-    notifyListeners();
+    notifyListeners(); // Notificar que o carregamento começou
 
     try {
       final token = await PermissionService.login(username, password);
       _isAuthenticated = true;
-      _username = username; // Ou extraído da resposta, dependendo da API
+      _username = username;
       _error = null;
     } catch (e) {
       _isAuthenticated = false;
@@ -28,14 +28,13 @@ class PermissionProvider extends ChangeNotifier {
       _error = e.toString();
     } finally {
       _loading = false;
-      notifyListeners();
+      notifyListeners(); // Notificar que o estado mudou (sucesso ou falha)
     }
   }
 
   void logout() {
     _isAuthenticated = false;
     _username = '';
-    notifyListeners();
-    // Chamar PermissionService.logout() se necessário
+    notifyListeners(); // Notificar que o usuário foi deslogado
   }
 }
