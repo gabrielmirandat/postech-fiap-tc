@@ -1,13 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:helloworld/provider/login-provider.dart';
 
-import '../models/login-state.dart';
+import '../provider/permission-provider.dart';
 
-// Define the loginProvider
-final loginProvider = StateNotifierProvider<LoginProvider, LoginState>((ref) {
-  return LoginProvider();
+// Criação do permissionServiceProvider
+final permissionServiceProvider = ChangeNotifierProvider<PermissionProvider>((ref) {
+  return PermissionProvider();
 });
 
 class LoginScreen extends ConsumerWidget {
@@ -16,7 +14,14 @@ class LoginScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final loginState = ref.watch(loginProvider);
+    final authProvider = ref.watch(permissionServiceProvider);
+
+    // Verifique se o login foi bem-sucedido e redirecione para a Home
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (authProvider.isAuthenticated) {
+        Navigator.of(context).pushReplacementNamed('/');
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(title: Text('Login')),
@@ -35,7 +40,7 @@ class LoginScreen extends ConsumerWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                ref.read(loginProvider.notifier).login(
+                ref.read(permissionServiceProvider).login(
                   usernameController.text,
                   passwordController.text,
                 );
@@ -43,13 +48,12 @@ class LoginScreen extends ConsumerWidget {
               child: Text('Login'),
             ),
             SizedBox(height: 16),
-            // Check login state
-            if (loginState.loading)
+            if (authProvider.loading)
               CircularProgressIndicator()
-            else if (loginState.error != null)
-              Text('Error: ${loginState.error}')
-            else
-              Text('Login Success!'),
+            else if (authProvider.error != null)
+              Text('Error: ${authProvider.error}')
+            else if (authProvider.isAuthenticated)
+                Text('Login Success! Welcome ${authProvider.username}'),
           ],
         ),
       ),

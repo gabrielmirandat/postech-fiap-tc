@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../provider/permission_provider.dart'; // Ensure this is the correct path
+import '../provider/menu-provider.dart';
+import '../provider/permission-provider.dart';
+import '../models/menu.dart';
 
 // Create the permissionServiceProvider
 final permissionServiceProvider = ChangeNotifierProvider<PermissionProvider>((ref) {
@@ -10,59 +12,43 @@ final permissionServiceProvider = ChangeNotifierProvider<PermissionProvider>((re
 class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Access the PermissionProvider using ref.watch
-    final authProvider = ref.watch(permissionServiceProvider);
+    final permissionProvider = ref.watch(permissionServiceProvider);
+    final menuAsyncValue = ref.watch(menuProvider); // Busca o menu
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(authProvider.isAuthenticated
-            ? 'Welcome, ${authProvider.username}'
+        title: Text(permissionProvider.isAuthenticated
+            ? 'Welcome, ${permissionProvider.username}'
             : 'Restaurant Menu'),
         actions: [
-          if (authProvider.isAuthenticated)
+          if (permissionProvider.isAuthenticated)
             IconButton(
               icon: Icon(Icons.exit_to_app),
               onPressed: () {
-                authProvider.logout();
-                Navigator.of(context).pushReplacementNamed('/'); // Return to home
+                permissionProvider.logout();
+                Navigator.of(context).pushReplacementNamed('/'); // Retorna à tela inicial
               },
             ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blueGrey,
-              ),
-              child: Text(
-                'Restaurant App',
-                style: TextStyle(color: Colors.white, fontSize: 24),
-              ),
-            ),
-            if (!authProvider.isAuthenticated)
-              ListTile(
-                title: Text('Login'),
-                onTap: () {
-                  Navigator.of(context).pushNamed('/login'); // Navigate to login
-                },
-              ),
-            if (authProvider.isAuthenticated)
-              ListTile(
-                title: Text('Place an Identified Order'),
-                onTap: () {
-                  // Navigate to the order page
-                  Navigator.of(context).pushNamed('/order');
-                },
-              ),
-          ],
-        ),
-      ),
       body: Center(
-        child: authProvider.isAuthenticated
-            ? Text('Welcome to Our Restaurant!')
+        child: permissionProvider.isAuthenticated
+            ? menuAsyncValue.when(
+          data: (menu) {
+            return ListView.builder(
+              itemCount: menu.items.length,
+              itemBuilder: (context, index) {
+                final item = menu.items[index];
+                return ListTile(
+                  title: Text(item.name),
+                  subtitle: Text('${item.price} USD'),
+                );
+              },
+            );
+          },
+          loading: () => CircularProgressIndicator(),
+          error: (error, stack) => Text('Error: $error'),
+        )
             : Text('Please log in to access the menu.'),
       ),
     );
