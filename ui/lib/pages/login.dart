@@ -16,7 +16,7 @@ class LoginScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authProvider = ref.watch(permissionServiceProvider);
 
-    // Verifique se o login foi bem-sucedido e redirecione para a Home
+    // Redireciona após autenticação
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (authProvider.isAuthenticated) {
         Navigator.of(context).pushReplacementNamed('/');

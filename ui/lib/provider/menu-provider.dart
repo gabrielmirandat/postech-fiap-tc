@@ -10,5 +10,5 @@ final menuServiceProvider = Provider<MenuService>((ref) {
 // FutureProvider for fetching the menu
 final menuProvider = FutureProvider<Menu>((ref) async {
   final menuService = ref.watch(menuServiceProvider);
-  return await menuService.fetchMenu();
+  return await menuService.fetchProducts();
 });
