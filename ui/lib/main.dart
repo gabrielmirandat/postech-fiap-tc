@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'pages/home.dart';
 import 'pages/login.dart';
 import 'pages/profile.dart'; // Add ProfileScreen import
-import 'provider/permission_provider.dart';
+import 'provider/permission-provider.dart';
 import 'theme.dart';
 
 void main() {
@@ -22,7 +22,7 @@ class MyApp extends ConsumerWidget {
       routes: {
         '/': (context) => HomeScreen(),
         '/login': (context) => LoginScreen(),
-        '/profile': (context) => ProfileScreen(), // Add the profile route
+        '/profile': (context) => ProfileScreen()
       },
     );
   }

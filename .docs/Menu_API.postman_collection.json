@@ -1,0 +1,455 @@
+{
+	"info": {
+		"_postman_id": "3e330a96-59a7-41fe-acca-e02c791db3e0",
+		"name": "Menu API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1328011"
+	},
+	"item": [
+		{
+			"name": "Add ingredient",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Costela Meat\",\n  \"category\": \"burger\",\n  \"price\": 2.90,\n  \"weight\": 100,\n  \"isExtra\": true\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{menu_url}}/ingredients",
+					"host": [
+						"{{menu_url}}"
+					],
+					"path": [
+						"ingredients"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Add ingredient",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Costela Meat\",\n  \"category\": \"burger\",\n  \"price\": 2.90,\n  \"weight\": 100,\n  \"isExtra\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{menu_url}}/ingredients",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"ingredients"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"ingredientId\": \"12345678-ingr-10092008\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Add product",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"X-Burguer\",\n  \"description\": \"Carro chefe da casa\",\n  \"category\": \"burger\",\n  \"price\": 10.90,\n  \"image\": \"burguer.png\",\n  \"ingredients\": [\n    {\n      \"ingredientId\": \"12345678-INGR-2022-08-22\",\n      \"quantity\": 2\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{menu_url}}/products",
+					"host": [
+						"{{menu_url}}"
+					],
+					"path": [
+						"products"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Add product",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"X-Burguer\",\n  \"description\": \"Carro chefe da casa\",\n  \"category\": \"burger\",\n  \"price\": 10.90,\n  \"image\": \"burguer.png\",\n  \"ingredients\": [\n    {\n      \"ingredientId\": \"12345678-INGR-2022-08-22\",\n      \"quantity\": 2\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{menu_url}}/products",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"productId\": \"12345678-prdc-10092008\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Search ingredients",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{menu_url}}/ingredients?category=burger",
+					"host": [
+						"{{menu_url}}"
+					],
+					"path": [
+						"ingredients"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "burger"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Search ingredients",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/ingredients?category=burger",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"ingredients"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "burger"
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": \"12345678-INGR-10092008\",\n        \"name\": \"Costela Meat\",\n        \"category\": \"burger\",\n        \"price\": 2.9,\n        \"weight\": 100,\n        \"isExtra\": true\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Search products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{menu_url}}/products?category=burger",
+					"host": [
+						"{{menu_url}}"
+					],
+					"path": [
+						"products"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "burger"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Search products",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/products?category=burger",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "burger"
+								}
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "[\n    {\n        \"id\": \"12345678-prdc-10092008\",\n        \"name\": \"X-Burger\",\n        \"description\": \"Carro chefe\",\n        \"category\": \"burger\",\n        \"price\": 10.9,\n        \"image\": \"burguer.png\",\n        \"ingredients\": [\n            {\n                \"id\": \"12345678-INGR-10092008\",\n                \"name\": \"Costela Meat\",\n                \"category\": \"burger\",\n                \"price\": 2.9,\n                \"weight\": 100,\n                \"isExtra\": true\n            }\n        ]\n    }\n]"
+				}
+			]
+		},
+		{
+			"name": "Get ingredient",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{menu_url}}/ingredients/307a50b3-INGR-2024-02-11",
+					"host": [
+						"{{menu_url}}"
+					],
+					"path": [
+						"ingredients",
+						"307a50b3-INGR-2024-02-11"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get ingredient",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/ingredients/307a50b3-INGR-2024-02-11",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"ingredients",
+								"307a50b3-INGR-2024-02-11"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"12345678-INGR-10092008\",\n    \"name\": \"Costela Meat\",\n    \"category\": \"burger\",\n    \"price\": 2.9,\n    \"weight\": 100,\n    \"isExtra\": true\n}"
+				}
+			]
+		},
+		{
+			"name": "Get product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{menu_url}}/products/5e47c51a-PRDC-2024-04-07",
+					"host": [
+						"{{menu_url}}"
+					],
+					"path": [
+						"products",
+						"5e47c51a-PRDC-2024-04-07"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get product",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/products/5e47c51a-PRDC-2024-04-07",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"products",
+								"5e47c51a-PRDC-2024-04-07"
+							]
+						}
+					},
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"12345678-prdc-10092008\",\n    \"name\": \"X-Burger\",\n    \"description\": \"Carro chefe\",\n    \"category\": \"burger\",\n    \"price\": 10.9,\n    \"image\": \"burguer.png\",\n    \"ingredients\": [\n        {\n            \"id\": \"12345678-INGR-10092008\",\n            \"name\": \"Costela Meat\",\n            \"category\": \"burger\",\n            \"price\": 2.9,\n            \"weight\": 100,\n            \"isExtra\": true\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Delete ingredient",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{menu_url}}/ingredients/d7a95ea3-INGR-2024-02-10",
+					"host": [
+						"{{menu_url}}"
+					],
+					"path": [
+						"ingredients",
+						"d7a95ea3-INGR-2024-02-10"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Delete ingredient",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/ingredients/d7a95ea3-INGR-2024-02-10",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"ingredients",
+								"d7a95ea3-INGR-2024-02-10"
+							]
+						}
+					},
+					"_postman_previewlanguage": null,
+					"header": null,
+					"cookie": [],
+					"body": "204 No Content"
+				}
+			]
+		},
+		{
+			"name": "Delete product",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{menu_url}}/products/e1f84cac-PRDC-2024-02-12",
+					"host": [
+						"{{menu_url}}"
+					],
+					"path": [
+						"products",
+						"e1f84cac-PRDC-2024-02-12"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Delete product",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/products/e1f84cac-PRDC-2024-02-12",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"products",
+								"e1f84cac-PRDC-2024-02-12"
+							]
+						}
+					},
+					"_postman_previewlanguage": "text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "",
+							"type": "text"
+						}
+					],
+					"cookie": [],
+					"body": "204 No Content"
+				}
+			]
+		}
+	]
+}

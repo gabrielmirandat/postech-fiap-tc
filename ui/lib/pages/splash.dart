@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../provider/permission_provider.dart';
+import '../provider/permission-provider.dart';
 
 class SplashScreen extends StatelessWidget {
   @override

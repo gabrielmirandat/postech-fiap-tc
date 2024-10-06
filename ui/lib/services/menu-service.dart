@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 
 class MenuService {
   static String get baseUrl =>
-      'https://api.example.com'; // You can replace this with your env variable
+      'https://0e6b3bb3-58a1-4d45-927c-56712eb2740a.mock.pstmn.io/'; // You can replace this with your env variable
 
   Future<Menu> fetchMenu() async {
     try {
