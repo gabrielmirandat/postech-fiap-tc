@@ -11,20 +11,20 @@ final permissionServiceProvider = ChangeNotifierProvider<PermissionProvider>((re
 class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final permissionProvider = ref.watch(permissionServiceProvider);
+    final authProvider = ref.watch(permissionServiceProvider);
     final menuAsyncValue = ref.watch(menuProvider); // Busca o menu
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(permissionProvider.isAuthenticated
-            ? 'Welcome, ${permissionProvider.username}'
+        title: Text(authProvider.isAuthenticated
+            ? 'Welcome, ${authProvider.username}'
             : 'Restaurant Menu'),
         actions: [
-          if (permissionProvider.isAuthenticated)
+          if (authProvider.isAuthenticated)
             IconButton(
               icon: Icon(Icons.exit_to_app),
               onPressed: () {
-                permissionProvider.logout();
+                authProvider.logout();
                 Navigator.of(context).pushReplacementNamed('/'); // Retorna à tela inicial
               },
             ),
@@ -38,15 +38,15 @@ class HomeScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text(permissionProvider.isAuthenticated
-                  ? 'Hello, ${permissionProvider.username}'
+              child: Text(authProvider.isAuthenticated
+                  ? 'Hello, ${authProvider.username}'
                   : 'Welcome!'),
             ),
             ListTile(
               leading: Icon(Icons.login),
               title: Text('Login'),
               onTap: () {
-                if (!permissionProvider.isAuthenticated) {
+                if (!authProvider.isAuthenticated) {
                   Navigator.of(context).pushNamed('/login'); // Vai para a tela de login
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -54,12 +54,12 @@ class HomeScreen extends ConsumerWidget {
                 }
               },
             ),
-            if (permissionProvider.isAuthenticated)
+            if (authProvider.isAuthenticated)
               ListTile(
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Logout'),
                 onTap: () {
-                  permissionProvider.logout();
+                  authProvider.logout();
                   Navigator.of(context).pushReplacementNamed('/'); // Retorna à tela inicial
                 },
               ),
@@ -67,7 +67,7 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
       body: Center(
-        child: permissionProvider.isAuthenticated
+        child: authProvider.isAuthenticated
             ? menuAsyncValue.when(
           data: (menu) {
             return ListView.builder(

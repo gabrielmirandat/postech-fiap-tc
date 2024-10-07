@@ -19,7 +19,10 @@ class LoginScreen extends ConsumerWidget {
     // Redireciona após autenticação
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (authProvider.isAuthenticated) {
-        Navigator.of(context).pushReplacementNamed('/');
+        // Atraso de 2 segundos (2000 milissegundos) antes de redirecionar
+        Future.delayed(Duration(seconds: 2), () {
+          Navigator.of(context).pushReplacementNamed('/');
+        });
       }
     });
 
