@@ -9,7 +9,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final permissionState = ref.watch(permissionProvider);
-    final menuState = ref.watch(menuProvider); // Busca o menu
+    final productState = ref.watch(productProvider); // Busca o menu
 
     return Scaffold(
       appBar: AppBar(
@@ -65,12 +65,12 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: Center(
         child: permissionState.isAuthenticated
-            ? menuState.when(
-          data: (menu) {
+            ? productState.when(
+          data: (productList) {
             return ListView.builder(
-              itemCount: menu.length,
+              itemCount: productList.length,
               itemBuilder: (context, index) {
-                final item = menu[index];
+                final item = productList[index];
                 return ListTile(
                   title: Text(item.name),
                   subtitle: Text('${item.price} USD'),

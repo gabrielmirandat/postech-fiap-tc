@@ -3,31 +3,28 @@ import 'supplier.dart';
 class Ingredient {
   late String id;
   late String name;
-  late double quantity;
-  late String unit;
-  late Supplier supplier;
-  late double cost;
-  late bool isAvailable;
+  late String category;
+  late double price;
+  late double weight;
+  late bool isExtra;
 
   Ingredient({
     required this.id,
     required this.name,
-    required this.quantity,
-    required this.unit,
-    required this.supplier,
-    required this.cost,
-    required this.isAvailable,
+    required this.category,
+    required this.price,
+    required this.weight,
+    required this.isExtra,
   });
 
   static fromJson(Map<String, dynamic> json) {
     return Ingredient(
       id: json['id'],
       name: json['name'],
-      quantity: json['quantity'],
-      unit: json['unit'],
-      supplier: Supplier.fromJson(json['supplier']),
-      cost: json['cost'],
-      isAvailable: json['isAvailable'],
+      category: json['category'],
+      price: json['price'],
+      weight: json['weight'],
+      isExtra: json['isExtra'],
     );
   }
 }
