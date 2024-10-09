@@ -1,30 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../provider/permission-provider.dart';
-
-// Criação do permissionServiceProvider
-final permissionServiceProvider = ChangeNotifierProvider<PermissionProvider>((ref) {
-  return PermissionProvider();
-});
+import '../providers/permission_state_provider.dart';
+import 'home.dart';
 
 class LoginScreen extends ConsumerWidget {
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authProvider = ref.watch(permissionServiceProvider);
-
-    // Redireciona após autenticação
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (authProvider.isAuthenticated) {
-        // Atraso de 2 segundos (2000 milissegundos) antes de redirecionar
-        Future.delayed(Duration(seconds: 2), () {
-          Navigator.of(context).pushReplacementNamed('/');
-        });
-      }
-    });
+    final permission = ref.watch(permissionProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text('Login')),
@@ -33,30 +19,33 @@ class LoginScreen extends ConsumerWidget {
         child: Column(
           children: [
             TextField(
-              controller: usernameController,
+              controller: _usernameController,
               decoration: InputDecoration(labelText: 'Username'),
             ),
             TextField(
-              controller: passwordController,
+              controller: _passwordController,
               decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
+            SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                ref.read(permissionServiceProvider).login(
-                  usernameController.text,
-                  passwordController.text,
-                );
+              onPressed: () async {
+                await ref
+                    .read(permissionProvider)
+                    .login(_usernameController.text, _passwordController.text);
+                if (permission.isAuthenticated) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Login falhou')),
+                  );
+                }
               },
               child: Text('Login'),
             ),
-            SizedBox(height: 16),
-            if (authProvider.loading)
-              CircularProgressIndicator()
-            else if (authProvider.error != null)
-              Text('Error: ${authProvider.error}')
-            else if (authProvider.isAuthenticated)
-                Text('Login Success! Welcome ${authProvider.username}'),
           ],
         ),
       ),

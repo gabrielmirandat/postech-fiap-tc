@@ -10,19 +10,27 @@ class Product {
   late bool isAvailable;
   late String imageUrl;
 
-  void addIngredient(Ingredient ingredient) {
-    /* Implementation */
-  }
+  Product({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.category,
+    required this.ingredients,
+    required this.isAvailable,
+    required this.imageUrl,
+  });
 
-  void removeIngredient(Ingredient ingredient) {
-    /* Implementation */
-  }
-
-  void updatePrice(double newPrice) {
-    /* Implementation */
-  }
-
-  void toggleAvailability() {
-    /* Implementation */
+  static fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['id'],
+      name: json['name'],
+      description: json['description'],
+      price: json['price'],
+      category: json['category'],
+      ingredients: json['ingredients'].map<Ingredient>((item) => Ingredient.fromJson(item)).toList(),
+      isAvailable: json['isAvailable'],
+      imageUrl: json['imageUrl'],
+    );
   }
 }

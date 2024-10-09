@@ -1,30 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../provider/menu-provider.dart';
-import '../provider/permission-provider.dart';
-import '../models/menu.dart';
 
-final permissionServiceProvider = ChangeNotifierProvider<PermissionProvider>((ref) {
-  return PermissionProvider();
-});
+import '../providers/permission_state_provider.dart';
+import '../providers/menu-provider.dart';
+
 
 class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authProvider = ref.watch(permissionServiceProvider);
-    final menuAsyncValue = ref.watch(menuProvider); // Busca o menu
+    final permissionState = ref.watch(permissionProvider);
+    final menuState = ref.watch(menuProvider); // Busca o menu
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(authProvider.isAuthenticated
-            ? 'Welcome, ${authProvider.username}'
+        title: Text(permissionState.isAuthenticated
+            ? 'Welcome, BundaMole'
             : 'Restaurant Menu'),
         actions: [
-          if (authProvider.isAuthenticated)
+          if (permissionState.isAuthenticated)
             IconButton(
               icon: Icon(Icons.exit_to_app),
               onPressed: () {
-                authProvider.logout();
+                permissionState.logout();
                 Navigator.of(context).pushReplacementNamed('/'); // Retorna à tela inicial
               },
             ),
@@ -38,15 +35,15 @@ class HomeScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text(authProvider.isAuthenticated
-                  ? 'Hello, ${authProvider.username}'
+              child: Text(permissionState.isAuthenticated
+                  ? 'Hello, BundaMole'
                   : 'Welcome!'),
             ),
             ListTile(
               leading: Icon(Icons.login),
               title: Text('Login'),
               onTap: () {
-                if (!authProvider.isAuthenticated) {
+                if (!permissionState.isAuthenticated) {
                   Navigator.of(context).pushNamed('/login'); // Vai para a tela de login
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -54,12 +51,12 @@ class HomeScreen extends ConsumerWidget {
                 }
               },
             ),
-            if (authProvider.isAuthenticated)
+            if (permissionState.isAuthenticated)
               ListTile(
                 leading: Icon(Icons.exit_to_app),
                 title: Text('Logout'),
                 onTap: () {
-                  authProvider.logout();
+                  permissionState.logout();
                   Navigator.of(context).pushReplacementNamed('/'); // Retorna à tela inicial
                 },
               ),
@@ -67,13 +64,13 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
       body: Center(
-        child: authProvider.isAuthenticated
-            ? menuAsyncValue.when(
+        child: permissionState.isAuthenticated
+            ? menuState.when(
           data: (menu) {
             return ListView.builder(
-              itemCount: menu.items.length,
+              itemCount: menu.length,
               itemBuilder: (context, index) {
-                final item = menu.items[index];
+                final item = menu[index];
                 return ListTile(
                   title: Text(item.name),
                   subtitle: Text('${item.price} USD'),
