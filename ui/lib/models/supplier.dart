@@ -6,11 +6,19 @@ class Supplier {
   late String contactInfo;
   late List<Ingredient> productsSupplied;
 
-  void addProduct(Ingredient ingredient) {
-    /* Implementation */
-  }
+  Supplier({
+    required this.id,
+    required this.name,
+    required this.contactInfo,
+    required this.productsSupplied,
+  });
 
-  void removeProduct(Ingredient ingredient) {
-    /* Implementation */
+  static fromJson(Map<String, dynamic> json) {
+    return Supplier(
+      id: json['id'],
+      name: json['name'],
+      contactInfo: json['contactInfo'],
+      productsSupplied: json['productsSupplied'].map<Ingredient>((product) => Ingredient.fromJson(product)).toList(),
+    );
   }
 }

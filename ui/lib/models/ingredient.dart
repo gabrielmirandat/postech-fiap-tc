@@ -9,15 +9,25 @@ class Ingredient {
   late double cost;
   late bool isAvailable;
 
-  void updateQuantity(double newQuantity) {
-    /* Implementation */
-  }
+  Ingredient({
+    required this.id,
+    required this.name,
+    required this.quantity,
+    required this.unit,
+    required this.supplier,
+    required this.cost,
+    required this.isAvailable,
+  });
 
-  void updateCost(double newCost) {
-    /* Implementation */
-  }
-
-  void toggleAvailability() {
-    /* Implementation */
+  static fromJson(Map<String, dynamic> json) {
+    return Ingredient(
+      id: json['id'],
+      name: json['name'],
+      quantity: json['quantity'],
+      unit: json['unit'],
+      supplier: Supplier.fromJson(json['supplier']),
+      cost: json['cost'],
+      isAvailable: json['isAvailable'],
+    );
   }
 }

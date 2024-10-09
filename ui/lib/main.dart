@@ -7,7 +7,9 @@ import 'pages/profile.dart';
 import 'theme.dart';
 
 void main() {
-  runApp(ProviderScope(child: MyApp())); // Use Riverpod's ProviderScope
+  runApp(ProviderScope(
+      child: MyApp()
+  )); // Use Riverpod's ProviderScope
 }
 
 class MyApp extends ConsumerWidget {
