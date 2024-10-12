@@ -1,35 +1,39 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ReviewOrderStep extends StatelessWidget {
-  final VoidCallback nextPage;
+import '../../providers/cart-provider.dart';
+
+class ReviewOrderStep extends ConsumerWidget {
   final VoidCallback previousPage;
+  final VoidCallback nextPage;
 
-  ReviewOrderStep({required this.nextPage, required this.previousPage});
+  ReviewOrderStep({required this.previousPage, required this.nextPage});
 
   @override
-  Widget build(BuildContext context) {
-    // Exibir os itens adicionados ao carrinho para revisão
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cart = ref.watch(cartProvider);
+
     return Column(
       children: [
         Expanded(
-          child: ListView(
-            children: [
-              // Adicione aqui os detalhes do pedido/carrinho
-              ListTile(
-                title: Text('X-Big'),
-                subtitle: Text('10.90 USD'),
-              ),
-              // Outros itens...
-            ],
+          child: ListView.builder(
+            itemCount: cart.items.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(cart.items[index].product.name),
+                subtitle: Text('Quantidade: ${cart.items[index].quantity}'),
+                trailing: Text('R\$ ${cart.items[index].totalPrice.toStringAsFixed(2)}'),
+              );
+            },
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ElevatedButton(onPressed: previousPage, child: Text('Voltar')),
-            ElevatedButton(onPressed: nextPage, child: Text('Finalizar Pedido')),
-          ],
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ElevatedButton(
+            onPressed: nextPage,
+            child: Text('Finalizar Pedido'),
+          ),
         ),
       ],
     );
