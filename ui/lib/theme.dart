@@ -7,6 +7,7 @@ class AppTheme {
       primaryColor: Colors.black,
       hintColor: Colors.white,
       scaffoldBackgroundColor: Colors.black,
+      cardColor: Colors.grey[900],
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
@@ -20,8 +21,8 @@ class AppTheme {
       textTheme: TextTheme(
         bodyLarge: TextStyle(color: Colors.white),
         bodyMedium: TextStyle(color: Colors.grey[400]),
-        headlineLarge:
-            TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        headlineLarge: TextStyle(
+            color: Colors.white, fontWeight: FontWeight.bold),
       ),
     );
   }
