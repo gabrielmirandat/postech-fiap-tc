@@ -1,15 +1,15 @@
 import 'menu-item.dart';
 
-class Menu {
-  final List<MenuItem> items;
+class MenuModel {
+  final List<MenuItemModel> items;
 
-  Menu({
+  MenuModel({
     required this.items
   });
 
   static fromJson(Map<String, dynamic> json) {
-    return Menu(
-      items: json['items'].map<MenuItem>((item) => MenuItem.fromJson(item)).toList()
+    return MenuModel(
+      items: json['items'].map<MenuItemModel>((item) => MenuItemModel.fromJson(item)).toList()
     );
   }
 }

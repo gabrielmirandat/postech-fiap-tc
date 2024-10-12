@@ -7,12 +7,12 @@ final menuServiceProvider = Provider<MenuService>((ref) {
   return MenuService();
 });
 
-final productProvider = FutureProvider<List<Product>>((ref) async {
+final productProvider = FutureProvider.family<List<ProductModel>, String>((ref, category) async {
   final menuService = ref.watch(menuServiceProvider);
-  return await menuService.fetchProducts();
+  return await menuService.fetchProducts(category);
 });
 
-final ingredientProvider = FutureProvider<List<Ingredient>>((ref) async {
+final ingredientProvider = FutureProvider.family<List<IngredientModel>, String>((ref, category) async {
   final menuService = ref.watch(menuServiceProvider);
-  return await menuService.fetchIngredients();
+  return await menuService.fetchExtras(category);
 });

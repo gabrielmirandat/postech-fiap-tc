@@ -7,10 +7,10 @@ import '../models/product.dart';
 import '../models/ingredient.dart';
 
 class MenuService {
-  Future<List<Product>> fetchProducts() async {
+  Future<List<ProductModel>> fetchProducts(String category) async {
     try {
       final response = await http.get(
-        Uri.parse('https://03277fc5-a4e8-4351-b0f5-349dd0511f19.mock.pstmn.io/products?category=burger'),
+        Uri.parse('https://03277fc5-a4e8-4351-b0f5-349dd0511f19.mock.pstmn.io/products?category=$category'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -20,7 +20,7 @@ class MenuService {
         List<dynamic> jsonResponse = json.decode(response.body);
         developer.log('jsonResponse: $jsonResponse');
 
-        var mappedProducts = jsonResponse.map<Product>((data) => Product.fromJson(data)).toList();
+        var mappedProducts = jsonResponse.map<ProductModel>((data) => ProductModel.fromJson(data)).toList();
         developer.log('mappedProducts: $mappedProducts');
 
         return mappedProducts;
@@ -32,10 +32,10 @@ class MenuService {
     }
   }
 
-  Future<List<Ingredient>> fetchIngredients() async {
+  Future<List<IngredientModel>> fetchExtras(String category) async {
     try {
       final response = await http.get(
-        Uri.parse('https://03277fc5-a4e8-4351-b0f5-349dd0511f19.mock.pstmn.io/ingredients?category=burger'),
+        Uri.parse('https://03277fc5-a4e8-4351-b0f5-349dd0511f19.mock.pstmn.io/ingredients?category=$category'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -45,7 +45,7 @@ class MenuService {
         List<dynamic> jsonResponse = json.decode(response.body);
         developer.log('jsonResponse: $jsonResponse');
 
-        var mappedIngredients = jsonResponse.map<Ingredient>((data) => Ingredient.fromJson(data)).toList();
+        var mappedIngredients = jsonResponse.map<IngredientModel>((data) => IngredientModel.fromJson(data)).toList();
         developer.log('mappedIngredients: $mappedIngredients');
 
         return mappedIngredients;

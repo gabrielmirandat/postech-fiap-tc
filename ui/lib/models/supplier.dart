@@ -1,12 +1,12 @@
 import 'ingredient.dart';
 
-class Supplier {
+class SupplierModel {
   late String id;
   late String name;
   late String contactInfo;
-  late List<Ingredient> productsSupplied;
+  late List<IngredientModel> productsSupplied;
 
-  Supplier({
+  SupplierModel({
     required this.id,
     required this.name,
     required this.contactInfo,
@@ -14,11 +14,11 @@ class Supplier {
   });
 
   static fromJson(Map<String, dynamic> json) {
-    return Supplier(
+    return SupplierModel(
       id: json['id'],
       name: json['name'],
       contactInfo: json['contactInfo'],
-      productsSupplied: json['productsSupplied'].map<Ingredient>((product) => Ingredient.fromJson(product)).toList(),
+      productsSupplied: json['productsSupplied'].map<IngredientModel>((product) => IngredientModel.fromJson(product)).toList(),
     );
   }
 }

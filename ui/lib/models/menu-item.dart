@@ -1,14 +1,14 @@
-class MenuItem {
+class MenuItemModel {
   final String name;
   final double price;
 
-  MenuItem({
+  MenuItemModel({
     required this.name,
     required this.price
   });
 
   static fromJson(Map<String, dynamic> json) {
-    return MenuItem(
+    return MenuItemModel(
       name: json['name'],
       price: json['price']
     );

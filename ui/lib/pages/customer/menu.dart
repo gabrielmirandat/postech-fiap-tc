@@ -1,18 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/menu-provider.dart';
+import '../../models/product.dart';
+import '../../providers/cart-provider.dart';
+import '../../providers/menu-provider.dart';
 
-class Menu extends ConsumerWidget {
+class MenuPage extends ConsumerWidget {
+  final String category;
+  final VoidCallback onItemSelected;
+
+  MenuPage({required this.category, required this.onItemSelected});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final productState = ref.watch(productProvider); // Busca o menu
+    final productState = ref.watch(productProvider(category));
+    final cart = ref.watch(cartProvider); // Observa o carrinho
 
     return productState.when(
       data: (productList) {
+        final filteredItems = productList.where((item) => item.category == category).toList();
+
         return ListView.builder(
-          itemCount: productList.length,
+          itemCount: filteredItems.length,
           itemBuilder: (context, index) {
-            final item = productList[index];
+            final item = filteredItems[index];
             return Card(
               margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               child: ListTile(
@@ -26,18 +36,17 @@ class Menu extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(item.description),
-                    Text('${item.price.toStringAsFixed(2)} USD',
-                        style: TextStyle(color: Colors.green)),
+                    Text('${item.price.toStringAsFixed(2)} USD', style: TextStyle(color: Colors.green)),
                   ],
                 ),
                 trailing: ElevatedButton(
                   onPressed: () {
-                    // Adicionar ao carrinho
+                    // Adiciona o item ao carrinho
+                    cart.addItem(item);
+                    onItemSelected(); // Próxima etapa
                   },
                   child: Icon(Icons.add_shopping_cart),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey,
-                  ),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
                 ),
               ),
             );

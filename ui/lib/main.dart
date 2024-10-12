@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'pages/home.dart';
 import 'pages/login.dart';
-import 'pages/profile.dart';
 import 'theme.dart';
 
 void main() {
@@ -22,8 +21,7 @@ class MyApp extends ConsumerWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomeScreen(),
-        '/login': (context) => LoginScreen(),
-        '/profile': (context) => ProfileScreen()
+        '/login': (context) => LoginScreen()
       },
     );
   }
