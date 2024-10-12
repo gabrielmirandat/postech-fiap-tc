@@ -3,33 +3,42 @@ import 'package:flutter/cupertino.dart';
 import '../product.dart';
 import 'cart-item.dart';
 
-class CartModel extends ChangeNotifier { // Extende ChangeNotifier
-  final List<CartItemModel> items = [];
+class CartModel extends ChangeNotifier {
+  final List<CartItemModel> _items = [];
 
-  // Adiciona item ao carrinho
+  List<CartItemModel> get items => _items;
+
   void addItem(ProductModel product) {
-    // Verifica se o item já está no carrinho
-    final index = items.indexWhere((item) => item.product.id == product.id);
+    final index = _items.indexWhere((item) => item.product.id == product.id);
     if (index >= 0) {
-      items[index].quantity += 1; // Aumenta a quantidade
+      _items[index].quantity += 1;
     } else {
-      items.add(CartItemModel(product: product));
+      _items.add(CartItemModel(product: product, quantity: 1));
     }
-    notifyListeners(); // Notifica ouvintes sobre a mudança
+    notifyListeners();
   }
 
-  // Remove um item
   void removeItem(ProductModel product) {
-    items.removeWhere((item) => item.product.id == product.id);
-    notifyListeners(); // Notifica ouvintes sobre a mudança
+    _items.removeWhere((item) => item.product.id == product.id);
+    notifyListeners();
   }
 
-  // Limpa o carrinho
+  void updateQuantity(ProductModel product, int quantity) {
+    final index = _items.indexWhere((item) => item.product.id == product.id);
+    if (index >= 0 && quantity > 0) {
+      _items[index].quantity = quantity;
+    } else if (index >= 0 && quantity == 0) {
+      removeItem(product);
+    }
+    notifyListeners();
+  }
+
   void clearCart() {
-    items.clear();
-    notifyListeners(); // Notifica ouvintes sobre a mudança
+    _items.clear();
+    notifyListeners();
   }
 
-  // Calcula o preço total do carrinho
-  double get totalPrice => items.fold(0, (total, item) => total + item.totalPrice);
+  double get totalPrice {
+    return _items.fold(0, (total, current) => total + current.totalPrice);
+  }
 }

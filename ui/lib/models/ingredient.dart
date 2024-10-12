@@ -1,5 +1,3 @@
-import 'supplier.dart';
-
 class IngredientModel {
   late String id;
   late String name;
