@@ -1,6 +1,6 @@
 import 'supplier.dart';
 
-class Ingredient {
+class IngredientModel {
   late String id;
   late String name;
   late String category;
@@ -8,7 +8,7 @@ class Ingredient {
   late double weight;
   late bool isExtra;
 
-  Ingredient({
+  IngredientModel({
     required this.id,
     required this.name,
     required this.category,
@@ -18,7 +18,7 @@ class Ingredient {
   });
 
   static fromJson(Map<String, dynamic> json) {
-    return Ingredient(
+    return IngredientModel(
       id: json['id'],
       name: json['name'],
       category: json['category'],

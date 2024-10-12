@@ -1,6 +1,6 @@
 import 'ingredient.dart';
 
-class Product {
+class ProductModel {
   late String id;
   late String name;
   late String description;
@@ -8,7 +8,7 @@ class Product {
   late double price;
   late String image;
 
-  Product({
+  ProductModel({
     required this.id,
     required this.name,
     required this.description,
@@ -18,8 +18,8 @@ class Product {
   });
 
   // Método fromJson corrigido
-  static Product fromJson(Map<String, dynamic> json) {
-    return Product(
+  static ProductModel fromJson(Map<String, dynamic> json) {
+    return ProductModel(
       id: json['id'],
       name: json['name'],
       description: json['description'],

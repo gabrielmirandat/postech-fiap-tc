@@ -1,4 +1,4 @@
-class LoginState {
+class LoginStateModel {
   final bool loading;
   final String? error;
   final bool isAuthenticated;
@@ -6,7 +6,7 @@ class LoginState {
   final String token;
   final num expiresIn;
 
-  LoginState({
+  LoginStateModel({
     this.loading = false,
     this.error,
     this.isAuthenticated = false,

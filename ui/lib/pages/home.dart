@@ -1,28 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/permission_state_provider.dart';
-import 'menu.dart';
+import 'customer/order-step-process.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final permissionState = ref.watch(permissionProvider);
-
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(permissionState.isAuthenticated
-            ? 'Welcome, ${permissionState.username}'
-            : 'Restaurant Menu'),
-        actions: [
-          if (permissionState.isAuthenticated)
-            IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () {
-                permissionState.logout();
-                Navigator.of(context).pushReplacementNamed('/'); // Retorna à tela inicial
-              },
-            ),
-        ],
+        title: Text('Restaurante - Faça seu pedido'),
       ),
       drawer: Drawer(
         child: ListView(
@@ -32,51 +16,26 @@ class HomeScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text(permissionState.isAuthenticated
-                  ? 'Hello, ${permissionState.username}'
-                  : 'Welcome!'),
+              child: Text('Menu do Restaurante'),
             ),
             ListTile(
-              leading: Icon(Icons.login),
-              title: Text('Login'),
+              leading: Icon(Icons.menu),
+              title: Text('Cardápio'),
               onTap: () {
-                if (!permissionState.isAuthenticated) {
-                  Navigator.of(context).pushNamed('/login'); // Vai para a tela de login
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('You are already logged in')));
-                }
+                Navigator.of(context).pop();
               },
             ),
-            if (permissionState.isAuthenticated)
-              ListTile(
-                leading: Icon(Icons.exit_to_app),
-                title: Text('Logout'),
-                onTap: () {
-                  permissionState.logout();
-                  Navigator.of(context).pushReplacementNamed('/'); // Retorna à tela inicial
-                },
-              ),
-          ],
-        ),
-      ),
-      body: Center(
-        child: permissionState.isAuthenticated
-            ? Menu() // Use o novo widget Menu aqui
-            : Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Please log in to access the menu.'),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('/login'); // Navega para a tela de login
+            ListTile(
+              leading: Icon(Icons.info),
+              title: Text('Sobre'),
+              onTap: () {
+                // Aqui você pode implementar uma rota para tela de informações
               },
-              child: Text('Login'),
             ),
           ],
         ),
       ),
+      body: OrderStepProcess()
     );
   }
 }
