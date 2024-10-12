@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../providers/permission_state_provider.dart';
-import '../providers/menu-provider.dart';
-
+import 'menu.dart';
 
 class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final permissionState = ref.watch(permissionProvider);
-    final productState = ref.watch(productProvider); // Busca o menu
 
     return Scaffold(
       appBar: AppBar(
         title: Text(permissionState.isAuthenticated
-            ? 'Welcome, BundaMole'
+            ? 'Welcome, ${permissionState.username}'
             : 'Restaurant Menu'),
         actions: [
           if (permissionState.isAuthenticated)
@@ -36,7 +33,7 @@ class HomeScreen extends ConsumerWidget {
                 color: Colors.blue,
               ),
               child: Text(permissionState.isAuthenticated
-                  ? 'Hello, BundaMole'
+                  ? 'Hello, ${permissionState.username}'
                   : 'Welcome!'),
             ),
             ListTile(
@@ -65,22 +62,7 @@ class HomeScreen extends ConsumerWidget {
       ),
       body: Center(
         child: permissionState.isAuthenticated
-            ? productState.when(
-          data: (productList) {
-            return ListView.builder(
-              itemCount: productList.length,
-              itemBuilder: (context, index) {
-                final item = productList[index];
-                return ListTile(
-                  title: Text(item.name),
-                  subtitle: Text('${item.price} USD'),
-                );
-              },
-            );
-          },
-          loading: () => CircularProgressIndicator(),
-          error: (error, stack) => Text('Error: $error'),
-        )
+            ? Menu() // Use o novo widget Menu aqui
             : Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

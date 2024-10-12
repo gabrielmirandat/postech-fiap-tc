@@ -23,7 +23,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
@@ -31,3 +31,7 @@ flutter:
     - assets/auth0-logo.svg
     - assets/.env.devl
     - assets/.env.prod
+    - assets/images/burger/
+    - assets/images/accompaniment/
+    - assets/images/dessert/
+    - assets/images/drink/
