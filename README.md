@@ -1,6 +1,7 @@
-# postech-fiap-tc
+# gabsrell restaurant
 
-PosTech Software Architecture Tech Challenge
+Based on the software architecture specialization tech challenge, 
+this project is a restaurant management system.
 
 ## Modules
 
