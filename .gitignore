@@ -25,5 +25,8 @@ target
 ### PERMISSIONS ###
 permissions.properties
 
+### UI ###
+.env.*
+
 ### MACOS ###
 .DS_Store
