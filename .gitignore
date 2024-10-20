@@ -24,3 +24,6 @@ target
 
 ### PERMISSIONS ###
 permissions.properties
+
+### MACOS ###
+.DS_Store
