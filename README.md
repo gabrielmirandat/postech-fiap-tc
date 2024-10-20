@@ -4,9 +4,12 @@ PosTech Software Architecture Tech Challenge
 
 ## Modules
 
-- Order: DDD & Hexagonal [Spring boot, kafka, grpc, mongodb%TODO: change to Event Sourcing with EventStoreDB / CQRS%]
-- Menu: DDD & Hexagonal [Quarkus, kafka, grpc, mongodb]
-- Permissions: DDD%TODO% & MVC [Spring boot, kafka%TODO%, grpc, postgree]
+- infra (compose, kubernetes, terraform, aws academy, dockerhub, gitHub actions, SAGA [**TODO**])
+- orders (ddd, hexagonal, springboot, kafka, grpc, mongodb [**TODO: change to Event Sourcing with EventStoreDB  + CQRS**])
+- menu (ddd, hexagonal, quarkus, kafka, grpc, mongodb)
+- permissions with auth0 (ddd, mvc, springboot, postgree + audit table [**TODO**], kafka [**TODO**])
+- customers [**TODO**] (ddd, clean arq, python, edgeDB, kafka)
+- payments with stripe [**TODO**] (ddd, clean arq, dotnet, cassandra, kafka)
 
 ## Docs
 
