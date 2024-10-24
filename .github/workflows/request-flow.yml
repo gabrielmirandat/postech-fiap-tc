@@ -53,10 +53,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y wget unzip
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v4.28.2/protoc-4.28.2-linux-x86_64.zip
-          unzip protoc-4.28.2-linux-x86_64.zip -d protoc-4.28.2
-          sudo mv protoc-4.28.2/bin/protoc /usr/local/bin/
-          sudo mv protoc-4.28.2/include/* /usr/local/include/
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
+          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
+          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
+          sudo mv protoc-28.2/include/* /usr/local/include/
       - name: Check protoc version
         run: protoc --version
       - name: Set up JDK 21
