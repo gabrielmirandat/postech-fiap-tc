@@ -16,7 +16,6 @@
         <mongodb.version>5.0.1</mongodb.version>
         <mongock.version>5.4.1</mongock.version>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
-        <grpc.version>1.63.0</grpc.version>
     </properties>
 
     <dependencyManagement>
