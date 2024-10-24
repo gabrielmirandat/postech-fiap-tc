@@ -37,17 +37,21 @@ jobs:
       - name: Build with Maven
         run: mvn -B package -Dmaven.test.skip=true
       - name: Upload orders-api artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: orders-artifact
+          overwrite: true
+          retention-days: 1
           path: |
             ./orders/target/orders*.jar
             ./orders/target/newrelic/newrelic.jar
             ./orders/src/main/resources/newrelic/newrelic.yml
       - name: Upload menu-api artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: menu-artifact
+          overwrite: true
+          retention-days: 1
           path: ./menu/target/menu*.jar
 
   unit-test:
@@ -152,7 +156,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Download orders-api artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: orders-artifact
           path: ./temp/orders
@@ -164,7 +168,7 @@ jobs:
           mv ./temp/orders/src/main/resources/newrelic/newrelic.yml ./orders/src/main/resources/newrelic/newrelic.yml
           mv ./temp/orders/target/orders-0.0.1-SNAPSHOT.jar ./orders/target/
       - name: Download menu-api artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: menu-artifact
           path: ./menu/target
