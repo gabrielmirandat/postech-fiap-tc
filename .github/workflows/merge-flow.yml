@@ -25,8 +25,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Protocol Buffers Compiler
-        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Install Protocol Buffers Compiler 4.28.2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
+          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
+          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
+          sudo mv protoc-28.2/include/* /usr/local/include/
       - name: Check protoc version
         run: protoc --version
       - name: Set up JDK 21
@@ -93,8 +99,14 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Install Protocol Buffers Compiler
-        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Install Protocol Buffers Compiler 4.28.2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
+          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
+          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
+          sudo mv protoc-28.2/include/* /usr/local/include/
       - name: Check protoc version
         run: protoc --version
       - name: Set up JDK 21
@@ -115,8 +127,14 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Install Protocol Buffers Compiler
-        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Install Protocol Buffers Compiler 4.28.2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
+          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
+          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
+          sudo mv protoc-28.2/include/* /usr/local/include/
       - name: Check protoc version
         run: protoc --version
       - name: Set up JDK 21
@@ -137,8 +155,14 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Install Protocol Buffers Compiler
-        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Install Protocol Buffers Compiler 4.28.2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
+          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
+          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
+          sudo mv protoc-28.2/include/* /usr/local/include/
       - name: Check protoc version
         run: protoc --version
       - name: Set up JDK 21
