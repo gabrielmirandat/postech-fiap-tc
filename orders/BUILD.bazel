@@ -1,0 +1,36 @@
+# orders/BUILD
+
+load("@rules_jvm_external//:defs.bzl", "artifact")
+
+java_library(
+    name = "order_service",
+    srcs = glob(["src/main/java/**/*.java"]),
+    resources = glob(["src/main/resources/**"]),
+    deps = [
+        "//core:core_lib",
+        "@maven//:org_springframework_boot_spring_boot_starter_web",
+        "@maven//:org_springframework_boot_spring_boot_starter_validation",
+        "@maven//:org_springframework_boot_spring_boot_starter_oauth2_client",
+        "@maven//:org_springframework_boot_spring_boot_starter_security",
+        "@maven//:org_mongodb_mongodb_driver_sync",
+        "@maven//:org_liquibase_liquibase_core",
+        "@maven//:org_liquibase_ext_liquibase_mongodb",
+        "@maven//:org_springframework_boot_spring_boot_starter_data_redis",
+        "@maven//:org_springframework_kafka_spring_kafka",
+        "@maven//:com_newrelic_agent_java_newrelic_java",
+        "@maven//:io_grpc_grpc_netty_shaded",
+    ],
+)
+
+java_test(
+    name = "order_tests",
+    srcs = glob(["src/test/java/**/*.java"]),
+    deps = [
+        ":orders_lib",
+        "@maven//:org_springframework_boot_spring_boot_starter_test",
+        "@maven//:org_testcontainers_kafka",
+        "@maven//:org_testcontainers_mongodb",
+        "@maven//:io_grpc_grpc_testing",
+        "@maven//:org_mockito_mockito_inline",
+    ],
+)
