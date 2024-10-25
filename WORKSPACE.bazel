@@ -1,0 +1,110 @@
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+RULES_JVM_EXTERNAL_TAG = "6.4"
+RULES_JVM_EXTERNAL_SHA = "85776be6d8fe64abf26f463a8e12cd4c15be927348397180a01693610da7ec90"
+
+http_archive(
+    name = "rules_jvm_external",
+    strip_prefix = "rules_jvm_external-%s" % RULES_JVM_EXTERNAL_TAG,
+    sha256 = RULES_JVM_EXTERNAL_SHA,
+    url = "https://github.com/bazel-contrib/rules_jvm_external/releases/download/%s/rules_jvm_external-%s.tar.gz" % (RULES_JVM_EXTERNAL_TAG, RULES_JVM_EXTERNAL_TAG)
+)
+
+load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
+
+rules_jvm_external_deps()
+
+load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
+
+rules_jvm_external_setup()
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+
+LOMBOK_VERSION = "1.18.22"
+JACKSON_VERSION = "2.17.0"
+SWAGGER_VERSION = "2.2.21"
+OPENAPI_GENERATOR_VERSION = "7.0.1"
+MAPPER_VERSION = "3.2.0"
+REST_ASSURED_VERSION = "5.4.0"
+CLOUDEVENTS_VERSION = "2.5.0"
+OPENTELEMETRY_VERSION = "1.36.0"
+TESTCONTAINER_VERSION = "1.19.7"
+ASSERTJ_CORE_VERSION = "3.25.3"
+JUNIT_JUPITER_VERSION = "5.10.2"
+CUCUMBER_VERSION = "7.18.0"
+JAKARTA_VALIDATION_VERSION = "3.1.0-M1"
+JAKARTA_ANNOTATION_VERSION = "3.0.0-M1"
+JAKARTA_PERSISTENCE_VERSION = "3.1.0"
+GRPC_VERSION = "1.63.0"
+PROTOBUF_VERSION = "4.28.2"
+GRPC_SPRING_BOOT_VERSION = "3.0.0.RELEASE"
+MONGODB_DRIVER_VERSION = "5.0.1"
+LIQUIBASE_VERSION = "4.24.0"
+SPRING_KAFKA_VERSION = "3.2.4"
+SNAKEYAML_VERSION = "2.2"
+SPRING_BOOT_VERSION = "3.2.4"
+HIBERNATE_JAKARTA_VALIDATIONS_VERSION = "8.0.1.Final"
+GLASSFISH_JAKARTA_PERSISTENCE_VERSION = "5.0.0"
+
+maven_install(
+    artifacts = [
+        # Parent dependencies
+        "org.projectlombok:lombok:%s" % LOMBOK_VERSION,
+        "io.swagger.core.v3:swagger-annotations:%s" % SWAGGER_VERSION,
+        "org.modelmapper:modelmapper:%s" % MAPPER_VERSION,
+        "io.cloudevents:cloudevents-core:%s" % CLOUDEVENTS_VERSION,
+        "io.cloudevents:cloudevents-kafka:%s" % CLOUDEVENTS_VERSION,
+        "io.cloudevents:cloudevents-json-jackson:%s" % CLOUDEVENTS_VERSION,
+        "jakarta.validation:jakarta.validation-api:%s" % JAKARTA_VALIDATION_VERSION,
+        "jakarta.annotation:jakarta.annotation-api:%s" % JAKARTA_ANNOTATION_VERSION,
+        "jakarta.persistence:jakarta.persistence-api:%s" % JAKARTA_PERSISTENCE_VERSION,
+        "io.opentelemetry:opentelemetry-api:%s" % OPENTELEMETRY_VERSION,
+        "io.opentelemetry:opentelemetry-sdk:%s" % OPENTELEMETRY_VERSION,
+        "io.opentelemetry:opentelemetry-exporter-otlp:%s" % OPENTELEMETRY_VERSION,
+        "org.yaml:snakeyaml:%s" % SNAKEYAML_VERSION,
+        "com.fasterxml.jackson.core:jackson-core:%s" % JACKSON_VERSION,
+        "com.fasterxml.jackson.core:jackson-databind:%s" % JACKSON_VERSION,
+        "com.fasterxml.jackson.core:jackson-annotations:%s" % JACKSON_VERSION,
+        "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:%s" % JACKSON_VERSION,
+        "com.fasterxml.jackson.module:jackson-module-scala_2.13:%s" % JACKSON_VERSION,
+        "io.cucumber:cucumber-java:%s" % CUCUMBER_VERSION,
+        "io.cucumber:cucumber-junit-platform-engine:%s" % CUCUMBER_VERSION,
+        "org.junit.platform:junit-platform-suite:1.11.0-M2",
+        "org.junit.jupiter:junit-jupiter:%s" % JUNIT_JUPITER_VERSION,
+        "org.junit.jupiter:junit-jupiter-api:%s" % JUNIT_JUPITER_VERSION,
+        "org.junit.jupiter:junit-jupiter-engine:%s" % JUNIT_JUPITER_VERSION,
+        "org.assertj:assertj-core:%s" % ASSERTJ_CORE_VERSION,
+        "io.rest-assured:rest-assured:%s" % REST_ASSURED_VERSION,
+        "io.rest-assured:json-path:%s" % REST_ASSURED_VERSION,
+        "io.rest-assured:json-schema-validator:%s" % REST_ASSURED_VERSION,
+        "org.mockito:mockito-core:5.0.0",
+        "org.mockito:mockito-junit-jupiter:5.0.0",
+
+        # Core dependencies
+        "org.springframework.boot:spring-boot-starter-web:%s" % SPRING_BOOT_VERSION,
+        "org.hibernate.validator:hibernate-validator:%s" % HIBERNATE_JAKARTA_VALIDATIONS_VERSION,
+        "org.glassfish.expressly:expressly:%s" % GLASSFISH_JAKARTA_PERSISTENCE_VERSION,
+        "org.hibernate.validator:hibernate-validator-cdi:%s" % HIBERNATE_JAKARTA_VALIDATIONS_VERSION,
+        "javax.annotation:javax.annotation-api:1.3.2",
+        "io.grpc:grpc-protobuf:%s" % GRPC_VERSION,
+        "io.grpc:grpc-stub:%s" % GRPC_VERSION,
+        "com.google.protobuf:protobuf-java:%s" % PROTOBUF_VERSION,
+        "com.google.protobuf:protobuf-java-util:%s" % PROTOBUF_VERSION,
+
+        # Other dependencies
+        "org.springframework.boot:spring-boot-starter:%s" % SPRING_BOOT_VERSION,
+        "org.springframework.boot:spring-boot-starter-data-jpa:%s" % SPRING_BOOT_VERSION,
+        "org.springframework.kafka:spring-kafka:%s" % SPRING_KAFKA_VERSION,
+        "org.springframework.boot:spring-boot-starter-validation:%s" % SPRING_BOOT_VERSION,
+        "org.springframework.boot:spring-boot-starter-actuator:%s" % SPRING_BOOT_VERSION,
+        "org.springframework.boot:spring-boot-starter-test:%s" % SPRING_BOOT_VERSION,
+        "org.testcontainers:testcontainers:%s" % TESTCONTAINER_VERSION,
+        "org.testcontainers:junit-jupiter:%s" % TESTCONTAINER_VERSION,
+        "org.mongodb:mongodb-driver-sync:%s" % MONGODB_DRIVER_VERSION,
+        "org.liquibase:liquibase-core:%s" % LIQUIBASE_VERSION,
+        "io.grpc:grpc-netty:%s" % GRPC_VERSION,
+    ],
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+    ],
+)
