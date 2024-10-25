@@ -30,3 +30,6 @@ permissions.properties
 
 ### MACOS ###
 .DS_Store
+
+### BAZEL ###
+bazel-*
