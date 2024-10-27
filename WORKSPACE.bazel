@@ -6,9 +6,6 @@ MAPPER_VERSION = "3.2.0"
 REST_ASSURED_VERSION = "5.4.0"
 CLOUDEVENTS_VERSION = "2.5.0"
 OPENTELEMETRY_VERSION = "1.36.0"
-TESTCONTAINER_VERSION = "1.19.7"
-ASSERTJ_CORE_VERSION = "3.25.3"
-JUNIT_JUPITER_VERSION = "5.10.2"
 CUCUMBER_VERSION = "7.18.0"
 JAKARTA_VALIDATION_VERSION = "3.1.0-M1"
 JAKARTA_ANNOTATION_VERSION = "3.0.0-M1"
@@ -23,6 +20,10 @@ SNAKEYAML_VERSION = "2.2"
 SPRING_BOOT_VERSION = "3.2.4"
 HIBERNATE_JAKARTA_VALIDATIONS_VERSION = "8.0.1.Final"
 GLASSFISH_JAKARTA_PERSISTENCE_VERSION = "5.0.0"
+TESTCONTAINER_VERSION = "1.19.7"
+ASSERTJ_CORE_VERSION = "3.25.3"
+JUNIT_JUPITER_VERSION = "5.11.3"
+JUNIT_PLATFORM_VERSION = "1.11.3"
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
@@ -47,6 +48,40 @@ load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_jav
 rules_java_dependencies()
 rules_java_toolchains()
 
+http_archive(
+    name = "contrib_rules_jvm",
+    sha256 = "e6cd8f54b7491fb3caea1e78c2c740b88c73c7a43150ec8a826ae347cc332fc7",
+    strip_prefix = "rules_jvm-0.27.0",
+    url = "https://github.com/bazel-contrib/rules_jvm/releases/download/v0.27.0/rules_jvm-v0.27.0.tar.gz",
+)
+
+load("@contrib_rules_jvm//:repositories.bzl", "contrib_rules_jvm_deps")
+contrib_rules_jvm_deps()
+load("@contrib_rules_jvm//:setup.bzl", "contrib_rules_jvm_setup")
+contrib_rules_jvm_setup()
+
+http_archive(
+    name = "rules_proto",
+    sha256 = "2490dca4f249b8a9a3ab07bd1ba6eca085aaf8e45a734af92aad0c42d9dc7aaf",
+    strip_prefix = "rules_proto-218ffa7dfa5408492dc86c01ee637614f8695c45",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz",
+        "https://github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz",
+    ],
+)
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
+rules_proto_dependencies()
+rules_proto_toolchains()
+
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "0b7ef3506fc40ad840add138d37d443c4a9f5b0b307c25d516dbbef4dc0bc5ca",
+    strip_prefix = "protobuf-28.2",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v28.2.zip"],
+)
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+protobuf_deps()
+
 load("@rules_jvm_external//:defs.bzl", "maven_install")
 maven_install(
     artifacts = [
@@ -69,18 +104,6 @@ maven_install(
         "com.fasterxml.jackson.core:jackson-annotations:%s" % JACKSON_VERSION,
         "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:%s" % JACKSON_VERSION,
         "com.fasterxml.jackson.module:jackson-module-scala_2.13:%s" % JACKSON_VERSION,
-        "io.cucumber:cucumber-java:%s" % CUCUMBER_VERSION,
-        "io.cucumber:cucumber-junit-platform-engine:%s" % CUCUMBER_VERSION,
-        "org.junit.platform:junit-platform-suite:1.11.0-M2",
-        "org.junit.jupiter:junit-jupiter:%s" % JUNIT_JUPITER_VERSION,
-        "org.junit.jupiter:junit-jupiter-api:%s" % JUNIT_JUPITER_VERSION,
-        "org.junit.jupiter:junit-jupiter-engine:%s" % JUNIT_JUPITER_VERSION,
-        "org.assertj:assertj-core:%s" % ASSERTJ_CORE_VERSION,
-        "io.rest-assured:rest-assured:%s" % REST_ASSURED_VERSION,
-        "io.rest-assured:json-path:%s" % REST_ASSURED_VERSION,
-        "io.rest-assured:json-schema-validator:%s" % REST_ASSURED_VERSION,
-        "org.mockito:mockito-core:5.0.0",
-        "org.mockito:mockito-junit-jupiter:5.0.0",
 
         # Core dependencies
         "org.springframework.boot:spring-boot-starter-web:%s" % SPRING_BOOT_VERSION,
@@ -99,51 +122,31 @@ maven_install(
         "org.springframework.kafka:spring-kafka:%s" % SPRING_KAFKA_VERSION,
         "org.springframework.boot:spring-boot-starter-validation:%s" % SPRING_BOOT_VERSION,
         "org.springframework.boot:spring-boot-starter-actuator:%s" % SPRING_BOOT_VERSION,
-        "org.springframework.boot:spring-boot-starter-test:%s" % SPRING_BOOT_VERSION,
-        "org.testcontainers:testcontainers:%s" % TESTCONTAINER_VERSION,
-        "org.testcontainers:junit-jupiter:%s" % TESTCONTAINER_VERSION,
         "org.mongodb:mongodb-driver-sync:%s" % MONGODB_DRIVER_VERSION,
         "org.liquibase:liquibase-core:%s" % LIQUIBASE_VERSION,
         "io.grpc:grpc-netty:%s" % GRPC_VERSION,
+
+        # Testing dependencies
+        "org.springframework.boot:spring-boot-starter-test:%s" % SPRING_BOOT_VERSION,
+        "org.testcontainers:testcontainers:%s" % TESTCONTAINER_VERSION,
+        "org.testcontainers:junit-jupiter:%s" % TESTCONTAINER_VERSION,
+        "io.cucumber:cucumber-java:%s" % CUCUMBER_VERSION,
+        "io.cucumber:cucumber-junit-platform-engine:%s" % CUCUMBER_VERSION,
+        "org.junit.platform:junit-platform-suite:1.11.0-M2",
+        "org.junit.jupiter:junit-jupiter:%s" % JUNIT_JUPITER_VERSION,
+        "org.junit.jupiter:junit-jupiter-api:%s" % JUNIT_JUPITER_VERSION,
+        "org.junit.jupiter:junit-jupiter-engine:%s" % JUNIT_JUPITER_VERSION,
+        "org.junit.platform:junit-platform-launcher:%s" % JUNIT_PLATFORM_VERSION,
+        "org.junit.platform:junit-platform-reporting:%s" % JUNIT_PLATFORM_VERSION,
+        "org.junit.jupiter:junit-jupiter-params:%s" % JUNIT_JUPITER_VERSION,
+        "org.assertj:assertj-core:%s" % ASSERTJ_CORE_VERSION,
+        "io.rest-assured:rest-assured:%s" % REST_ASSURED_VERSION,
+        "io.rest-assured:json-path:%s" % REST_ASSURED_VERSION,
+        "io.rest-assured:json-schema-validator:%s" % REST_ASSURED_VERSION,
+        "org.mockito:mockito-core:5.0.0",
+        "org.mockito:mockito-junit-jupiter:5.0.0",
     ],
     repositories = [
         "https://repo.maven.apache.org/maven2",
     ],
 )
-
-http_archive(
-    name = "rules_java",
-    sha256 = "ccf00372878d141f7d5568cedc4c42ad4811ba367ea3e26bc7c43445bbc52895",
-    strip_prefix = "rules_java-d7bf804c8731edd232cb061cb2a9fe003a85d8ee",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_java/archive/d7bf804c8731edd232cb061cb2a9fe003a85d8ee.tar.gz",
-        "https://github.com/bazelbuild/rules_java/archive/d7bf804c8731edd232cb061cb2a9fe003a85d8ee.tar.gz",
-    ],
-)
-
-http_archive(
-    name = "rules_proto",
-    sha256 = "2490dca4f249b8a9a3ab07bd1ba6eca085aaf8e45a734af92aad0c42d9dc7aaf",
-    strip_prefix = "rules_proto-218ffa7dfa5408492dc86c01ee637614f8695c45",
-    urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz",
-        "https://github.com/bazelbuild/rules_proto/archive/218ffa7dfa5408492dc86c01ee637614f8695c45.tar.gz",
-    ],
-)
-
-load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_java_toolchains")
-rules_java_dependencies()
-rules_java_toolchains()
-
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
-rules_proto_dependencies()
-rules_proto_toolchains()
-
-http_archive(
-    name = "com_google_protobuf",
-    sha256 = "0b7ef3506fc40ad840add138d37d443c4a9f5b0b307c25d516dbbef4dc0bc5ca",
-    strip_prefix = "protobuf-28.2",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/refs/tags/v28.2.zip"],
-)
-load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
-protobuf_deps()

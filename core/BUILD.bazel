@@ -23,7 +23,7 @@ java_library(
         "@maven//:io_cloudevents_cloudevents_kafka",
         "@maven//:io_cloudevents_cloudevents_json_jackson",
         "@maven//:jakarta_validation_jakarta_validation_api",
-        "@maven//:jakarta_annotation_jakarta_annotation_api",  # Remova se `javax.annotation` for necessário
+        "@maven//:jakarta_annotation_jakarta_annotation_api",
         "@maven//:jakarta_persistence_jakarta_persistence_api",
         "@maven//:io_opentelemetry_opentelemetry_api",
         "@maven//:io_opentelemetry_opentelemetry_sdk",
@@ -35,7 +35,33 @@ java_library(
         "@maven//:com_fasterxml_jackson_dataformat_jackson_dataformat_yaml",
         "@maven//:com_fasterxml_jackson_module_jackson_module_scala_2_13",
 
-        # Test dependencies (remover se não forem usadas no src principal)
+        # Core dependencies
+        "@maven//:org_springframework_boot_spring_boot_starter_web",
+        "@maven//:org_hibernate_validator_hibernate_validator",
+        "@maven//:org_glassfish_expressly_expressly",
+        "@maven//:org_hibernate_validator_hibernate_validator_cdi",
+        "@maven//:io_grpc_grpc_protobuf",
+        "@maven//:io_grpc_grpc_stub",
+        "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:com_google_protobuf_protobuf_java_util",
+    ],
+)
+
+load("@rules_jvm_external//:defs.bzl", "artifact")
+load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
+
+java_test_suite(
+    name = "core_test",
+    size = "small",
+    visibility = ["//visibility:public"],
+    srcs = glob(["src/test/java/**/*.java"]),
+    runner = "junit5",
+    test_suffixes = ["Test.java"],
+    runtime_deps = JUNIT5_DEPS,
+    javacopts = ["-source", "21", "-target", "21"],
+    plugins = [":lombok_plugin"],
+    deps = [
+        ":core_lib",
         "@maven//:io_cucumber_cucumber_java",
         "@maven//:io_cucumber_cucumber_junit_platform_engine",
         "@maven//:org_junit_platform_junit_platform_suite",
@@ -48,16 +74,6 @@ java_library(
         "@maven//:io_rest_assured_json_schema_validator",
         "@maven//:org_mockito_mockito_core",
         "@maven//:org_mockito_mockito_junit_jupiter",
-
-        # Core dependencies
-        "@maven//:org_springframework_boot_spring_boot_starter_web",
-        "@maven//:org_hibernate_validator_hibernate_validator",
-        "@maven//:org_glassfish_expressly_expressly",
-        "@maven//:org_hibernate_validator_hibernate_validator_cdi",
-        "@maven//:io_grpc_grpc_protobuf",
-        "@maven//:io_grpc_grpc_stub",
-        "@maven//:com_google_protobuf_protobuf_java",
-        "@maven//:com_google_protobuf_protobuf_java_util",
     ],
 )
 
