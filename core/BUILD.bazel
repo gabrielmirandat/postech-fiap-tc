@@ -60,3 +60,34 @@ java_library(
         "@maven//:com_google_protobuf_protobuf_java_util",
     ],
 )
+
+load("@rules_java//java:defs.bzl", "java_proto_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
+proto_library(
+    name = "menu_api_proto",
+    srcs = ["src/main/java/com/gabriel/specs/menu/menu-api.proto"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_protobuf//:timestamp_proto"
+    ],
+)
+
+java_proto_library(
+    name = "menu_api_java_proto",
+    deps = [":menu_api_proto"],
+)
+
+proto_library(
+    name = "permissions_api_proto",
+    srcs = ["src/main/java/com/gabriel/specs/permissions/permissions-api.proto"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_protobuf//:timestamp_proto"
+    ],
+)
+
+java_proto_library(
+    name = "permissions_api_java_proto",
+    deps = [":permissions_api_proto"],
+)
