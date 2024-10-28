@@ -5,9 +5,7 @@ import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
 
-@Getter
 public class TicketId extends ValueObject {
 
     @JsonValue
@@ -45,5 +43,9 @@ public class TicketId extends ValueObject {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    public String getId() {
+        return id;
     }
 }

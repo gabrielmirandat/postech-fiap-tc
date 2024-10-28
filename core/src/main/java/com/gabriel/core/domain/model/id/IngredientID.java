@@ -3,9 +3,7 @@ package com.gabriel.core.domain.model.id;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.gabriel.core.domain.EntityType;
 import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
 
-@Getter
 public class IngredientID extends EntityID {
 
     @JsonValue
@@ -21,5 +19,10 @@ public class IngredientID extends EntityID {
     public IngredientID(String id) {
         this.id = id;
         validate();
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 }

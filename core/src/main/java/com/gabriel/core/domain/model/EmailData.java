@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
 
-@Getter
 public class EmailData extends ValueObject implements Notifiable {
 
     @JsonValue
@@ -18,7 +16,6 @@ public class EmailData extends ValueObject implements Notifiable {
         this.email = email;
         validate();
     }
-
 
     @Override
     public String getValue() {

@@ -15,13 +15,11 @@ import com.gabriel.core.domain.model.id.OrderID;
 import com.gabriel.orders.core.domain.exception.OrderDomainError;
 import com.gabriel.orders.core.domain.exception.OrderDomainException;
 import jakarta.validation.Valid;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 
-@Getter
 public class Order extends AggregateRoot {
 
     @Valid
@@ -228,5 +226,37 @@ public class Order extends AggregateRoot {
         } catch (JsonProcessingException e) {
             throw new ApplicationException("Error serializing order", ApplicationError.APP_OO3);
         }
+    }
+
+    public OrderID getOrderId() {
+        return orderId;
+    }
+
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
+    public String getTicketId() {
+        return ticketId;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public CPF getCustomer() {
+        return customer;
+    }
+
+    public Address getShippingAddress() {
+        return shippingAddress;
+    }
+
+    public Notification getNotification() {
+        return notification;
     }
 }

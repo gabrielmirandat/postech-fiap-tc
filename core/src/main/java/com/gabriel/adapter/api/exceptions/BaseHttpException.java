@@ -1,10 +1,5 @@
 package com.gabriel.adapter.api.exceptions;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public abstract class BaseHttpException extends RuntimeException {
 
     private Integer status;
@@ -15,5 +10,23 @@ public abstract class BaseHttpException extends RuntimeException {
         this.status = status;
         this.message = message;
         this.code = null;
+    }
+
+    public BaseHttpException(Integer status, String message, String code) {
+        this.status = status;
+        this.message = message;
+        this.code = code;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getCode() {
+        return code;
     }
 }

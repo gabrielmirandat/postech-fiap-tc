@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
 
-@Getter
 public class CPF extends ValueObject {
 
     @JsonValue
@@ -17,5 +15,9 @@ public class CPF extends ValueObject {
     public CPF(String id) {
         this.id = id;
         validate();
+    }
+
+    public String getId() {
+        return id;
     }
 }

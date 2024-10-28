@@ -123,7 +123,7 @@ public class OrderMapper {
 
         if (order.getNotification() != null) {
             Cellphone phone = (Cellphone) order.getNotification().getRepr();
-            response.setNotification(phone.getNumber());
+            response.setNotification(phone.getValue());
         }
 
         return response;

@@ -1,22 +1,12 @@
 load("@rules_java//java:defs.bzl", "java_library")
 
-java_plugin(
-    name = "lombok_plugin",
-    processor_class = "lombok.launch.AnnotationProcessorHider$AnnotationProcessor",
-    deps = [
-        "@maven//:org_projectlombok_lombok",
-    ],
-)
-
 java_library(
     name = "core_lib",
     visibility = ["//visibility:public"],
     srcs = glob(["src/main/java/**/*.java"]),
     javacopts = ["-source", "21", "-target", "21"],
-    plugins = [":lombok_plugin"],
     deps = [
         # Parent dependencies
-        "@maven//:org_projectlombok_lombok",
         "@maven//:io_swagger_core_v3_swagger_annotations",
         "@maven//:org_modelmapper_modelmapper",
         "@maven//:io_cloudevents_cloudevents_core",
@@ -59,7 +49,6 @@ java_test_suite(
     test_suffixes = ["Test.java"],
     runtime_deps = JUNIT5_DEPS,
     javacopts = ["-source", "21", "-target", "21"],
-    plugins = [":lombok_plugin"],
     deps = [
         ":core_lib",
         "@maven//:io_cucumber_cucumber_java",

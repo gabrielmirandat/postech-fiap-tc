@@ -7,12 +7,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.domain.ValueObject;
 import com.gabriel.core.domain.model.id.PermissionID;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.time.Instant;
 
-@Getter
 public class Permission extends ValueObject {
 
     private final PermissionID permissionID;
@@ -48,5 +46,21 @@ public class Permission extends ValueObject {
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Error serializing permission");
         }
+    }
+
+    public PermissionID getPermissionID() {
+        return permissionID;
+    }
+
+    public Name getRoleName() {
+        return roleName;
+    }
+
+    public Name getAuthorityName() {
+        return authorityName;
+    }
+
+    public Instant getTimestamp() {
+        return timestamp;
     }
 }
