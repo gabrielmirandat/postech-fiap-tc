@@ -3,9 +3,7 @@ package com.gabriel.orders.core.domain.event;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.domain.DomainEvent;
-import lombok.Getter;
 
-@Getter
 public class OrderDeletedEvent implements DomainEvent {
 
     private final String ticketId;
@@ -35,5 +33,9 @@ public class OrderDeletedEvent implements DomainEvent {
             throw new IllegalStateException("Order is null");
         }
         return serializer.writeValueAsBytes(ticketId);
+    }
+
+    public String getTicketId() {
+        return ticketId;
     }
 }

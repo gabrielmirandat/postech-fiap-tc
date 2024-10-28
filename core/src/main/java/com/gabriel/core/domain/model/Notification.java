@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
 
-@Getter
 public class Notification extends ValueObject {
 
     @NotNull(message = "Notification type cannot be null")
@@ -30,5 +28,13 @@ public class Notification extends ValueObject {
             case EMAIL -> new EmailData(repr);
             case CUSTOM -> new CustomNotification(repr);
         };
+    }
+
+    public NotificationType getType() {
+        return type;
+    }
+
+    public Notifiable getRepr() {
+        return repr;
     }
 }

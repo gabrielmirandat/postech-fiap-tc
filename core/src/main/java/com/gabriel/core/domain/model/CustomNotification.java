@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
 
-@Getter
 public class CustomNotification extends ValueObject implements Notifiable {
 
     @JsonValue

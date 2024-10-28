@@ -1,10 +1,5 @@
 package com.gabriel.core.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
 public enum EntityType {
     PERMISSION("PERM"),
     CUSTOMER("CUST"),
@@ -14,4 +9,12 @@ public enum EntityType {
     INGREDIENT("INGR");
 
     private final String code;
+
+    EntityType(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
 }

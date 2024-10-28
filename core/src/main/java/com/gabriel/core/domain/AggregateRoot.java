@@ -1,12 +1,10 @@
 package com.gabriel.core.domain;
 
 import jakarta.persistence.MappedSuperclass;
-import lombok.Getter;
 
 import java.time.Instant;
 
 @MappedSuperclass
-@Getter
 public abstract class AggregateRoot extends Entity {
 
     protected Instant updateTimestamp;
@@ -15,5 +13,13 @@ public abstract class AggregateRoot extends Entity {
     public AggregateRoot() {
         this.creationTimestamp = Instant.now();
         this.updateTimestamp = Instant.now();
+    }
+
+    public Instant getUpdateTimestamp() {
+        return updateTimestamp;
+    }
+
+    public Instant getCreationTimestamp() {
+        return creationTimestamp;
     }
 }

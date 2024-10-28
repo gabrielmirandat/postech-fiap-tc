@@ -7,12 +7,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.domain.model.Name;
 import com.gabriel.core.domain.model.Price;
 import com.gabriel.core.domain.model.id.IngredientID;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.time.Instant;
 
-@Getter
 public class Ingredient extends Menu {
 
     private final IngredientID ingredientID;
@@ -87,5 +85,29 @@ public class Ingredient extends Menu {
     @Override
     public String getMenuId() {
         return ingredientID.getId();
+    }
+
+    public IngredientID getIngredientID() {
+        return ingredientID;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public Weight getWeight() {
+        return weight;
+    }
+
+    public boolean isExtra() {
+        return isExtra;
     }
 }

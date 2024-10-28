@@ -13,14 +13,12 @@ import com.gabriel.core.domain.model.id.IngredientID;
 import com.gabriel.core.domain.model.id.ProductID;
 import com.gabriel.menu.core.domain.exception.MenuDomainError;
 import com.gabriel.menu.core.domain.exception.MenuDomainException;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 
-@Getter
 public class Product extends Menu {
 
     private final ProductID productID;
@@ -103,5 +101,33 @@ public class Product extends Menu {
         } catch (JsonProcessingException e) {
             throw new ApplicationException("Error serializing product", ApplicationError.APP_OO2);
         }
+    }
+
+    public ProductID getProductID() {
+        return productID;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public Description getDescription() {
+        return description;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public List<IngredientID> getIngredients() {
+        return ingredients;
     }
 }

@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
 
-@Getter
 public class Image extends ValueObject {
 
     @JsonValue
@@ -17,5 +15,9 @@ public class Image extends ValueObject {
     public Image(String url) {
         this.url = url;
         validate();
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

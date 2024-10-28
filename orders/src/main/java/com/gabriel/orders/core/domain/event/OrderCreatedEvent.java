@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.core.domain.DomainEvent;
 import com.gabriel.orders.core.domain.model.Order;
-import lombok.Getter;
 
-@Getter
 public class OrderCreatedEvent implements DomainEvent {
 
     Order orderCreated;
@@ -36,5 +34,9 @@ public class OrderCreatedEvent implements DomainEvent {
             throw new IllegalStateException("Order is null");
         }
         return serializer.writeValueAsBytes(orderCreated);
+    }
+
+    public Order getOrderCreated() {
+        return orderCreated;
     }
 }

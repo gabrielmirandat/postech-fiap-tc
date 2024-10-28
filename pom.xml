@@ -85,13 +85,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- LOMBOK -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
         <!-- API -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>

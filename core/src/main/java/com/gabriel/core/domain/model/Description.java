@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
 
-@Getter
 public class Description extends ValueObject {
 
     @JsonValue
@@ -19,5 +17,9 @@ public class Description extends ValueObject {
     public Description(String value) {
         this.value = value;
         validate();
+    }
+
+    public String getValue() {
+        return value;
     }
 }

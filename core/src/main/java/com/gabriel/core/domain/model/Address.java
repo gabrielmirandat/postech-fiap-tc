@@ -6,9 +6,7 @@ import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
 
-@Getter
 public class Address extends ValueObject {
 
     @NotBlank(message = "Street cannot be blank")
@@ -35,5 +33,21 @@ public class Address extends ValueObject {
         this.state = state;
         this.zip = zip;
         validate();
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getZip() {
+        return zip;
     }
 }

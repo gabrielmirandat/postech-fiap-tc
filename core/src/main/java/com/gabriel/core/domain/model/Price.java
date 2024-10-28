@@ -6,9 +6,7 @@ import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
 
-@Getter
 public class Price extends ValueObject {
 
     @JsonValue
@@ -21,5 +19,9 @@ public class Price extends ValueObject {
     public Price(double value) {
         this.value = value;
         validate();
+    }
+
+    public double getValue() {
+        return value;
     }
 }

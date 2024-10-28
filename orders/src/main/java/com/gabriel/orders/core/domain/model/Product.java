@@ -9,12 +9,10 @@ import com.gabriel.core.domain.ValueObject;
 import com.gabriel.core.domain.model.Name;
 import com.gabriel.core.domain.model.Price;
 import com.gabriel.core.domain.model.id.ProductID;
-import lombok.Getter;
 
 import java.io.IOException;
 import java.time.Instant;
 
-@Getter
 public class Product extends ValueObject {
 
     private final ProductID productID;
@@ -62,5 +60,21 @@ public class Product extends ValueObject {
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Error serializing product");
         }
+    }
+
+    public ProductID getProductID() {
+        return productID;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public Price getPrice() {
+        return price;
+    }
+
+    public Instant getTimestamp() {
+        return timestamp;
     }
 }

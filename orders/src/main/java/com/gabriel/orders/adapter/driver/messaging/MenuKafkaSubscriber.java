@@ -6,7 +6,6 @@ import com.gabriel.orders.core.application.event.*;
 import com.gabriel.orders.core.application.usecase.UpdateMenuUseCase;
 import com.gabriel.orders.core.domain.port.MenuSubscriber;
 import io.cloudevents.CloudEvent;
-import lombok.Setter;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -22,7 +21,6 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
 
     private final UpdateMenuUseCase updateMenuUseCase;
 
-    @Setter
     private CountDownLatch countDownLatch;
 
     public MenuKafkaSubscriber(ObjectMapper mapper, UpdateMenuUseCase updateMenuUseCase) {
@@ -88,5 +86,9 @@ public class MenuKafkaSubscriber implements MenuSubscriber {
     @Override
     public void listenExtraDeleted(MenuExtraDeletedEvent event) {
         updateMenuUseCase.handleExtraDeleted(event.extraDeleted());
+    }
+
+    public void setCountDownLatch(CountDownLatch countDownLatch) {
+        this.countDownLatch = countDownLatch;
     }
 }

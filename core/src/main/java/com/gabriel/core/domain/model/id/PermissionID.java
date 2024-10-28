@@ -3,9 +3,7 @@ package com.gabriel.core.domain.model.id;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.gabriel.core.domain.EntityType;
 import jakarta.validation.constraints.Pattern;
-import lombok.Getter;
 
-@Getter
 public class PermissionID extends EntityID {
 
     @JsonValue
@@ -21,5 +19,9 @@ public class PermissionID extends EntityID {
     public PermissionID(String id) {
         this.id = id;
         validate();
+    }
+
+    public String getId() {
+        return id;
     }
 }
