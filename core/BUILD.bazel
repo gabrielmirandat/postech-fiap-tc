@@ -4,6 +4,7 @@ java_library(
     name = "core_lib",
     visibility = ["//visibility:public"],
     srcs = glob(["src/main/java/**/*.java"]),
+    resources = glob(["src/main/resources/**"]),
     javacopts = ["-source", "21", "-target", "21"],
     deps = [
         # Parent dependencies
@@ -42,27 +43,23 @@ load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
 
 java_test_suite(
     name = "core_test",
-    size = "small",
     visibility = ["//visibility:public"],
     srcs = glob(["src/test/java/**/*.java"]),
     runner = "junit5",
-    test_suffixes = ["Test.java"],
-    runtime_deps = JUNIT5_DEPS,
     javacopts = ["-source", "21", "-target", "21"],
+    resources = glob(["src/test/resources/**"]),
+    runtime_deps = JUNIT5_DEPS,
     deps = [
         ":core_lib",
-        "@maven//:io_cucumber_cucumber_java",
-        "@maven//:io_cucumber_cucumber_junit_platform_engine",
-        "@maven//:org_junit_platform_junit_platform_suite",
-        "@maven//:org_junit_jupiter_junit_jupiter",
-        "@maven//:org_junit_jupiter_junit_jupiter_api",
-        "@maven//:org_junit_jupiter_junit_jupiter_engine",
-        "@maven//:org_assertj_assertj_core",
-        "@maven//:io_rest_assured_rest_assured",
-        "@maven//:io_rest_assured_json_path",
-        "@maven//:io_rest_assured_json_schema_validator",
+        "@maven//:org_springframework_boot_spring_boot_starter_test",
         "@maven//:org_mockito_mockito_core",
         "@maven//:org_mockito_mockito_junit_jupiter",
+        "@maven//:org_assertj_assertj_core",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_junit_jupiter_junit_jupiter",
+        "@maven//:org_junit_platform_junit_platform_launcher",
+        "@maven//:org_junit_platform_junit_platform_reporting",
+        "@maven//:org_junit_platform_junit_platform_suite"
     ],
 )
 
