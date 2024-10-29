@@ -21,8 +21,10 @@ HIBERNATE_JAKARTA_VALIDATIONS_VERSION = "8.0.1.Final"
 GLASSFISH_JAKARTA_PERSISTENCE_VERSION = "5.0.0"
 TESTCONTAINER_VERSION = "1.19.7"
 ASSERTJ_CORE_VERSION = "3.25.3"
+JUNIT_PLATFORM_SUITE_VERSION = "1.11.0-M2"
 JUNIT_JUPITER_VERSION = "5.11.3"
 JUNIT_PLATFORM_VERSION = "1.11.3"
+MOCKITO_VERSION = "5.14.1"
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
@@ -130,7 +132,7 @@ maven_install(
         "org.testcontainers:junit-jupiter:%s" % TESTCONTAINER_VERSION,
         "io.cucumber:cucumber-java:%s" % CUCUMBER_VERSION,
         "io.cucumber:cucumber-junit-platform-engine:%s" % CUCUMBER_VERSION,
-        "org.junit.platform:junit-platform-suite:1.11.0-M2",
+        "org.junit.platform:junit-platform-suite:%s" % JUNIT_PLATFORM_SUITE_VERSION,
         "org.junit.jupiter:junit-jupiter:%s" % JUNIT_JUPITER_VERSION,
         "org.junit.jupiter:junit-jupiter-api:%s" % JUNIT_JUPITER_VERSION,
         "org.junit.jupiter:junit-jupiter-engine:%s" % JUNIT_JUPITER_VERSION,
@@ -141,8 +143,8 @@ maven_install(
         "io.rest-assured:rest-assured:%s" % REST_ASSURED_VERSION,
         "io.rest-assured:json-path:%s" % REST_ASSURED_VERSION,
         "io.rest-assured:json-schema-validator:%s" % REST_ASSURED_VERSION,
-        "org.mockito:mockito-core:5.0.0",
-        "org.mockito:mockito-junit-jupiter:5.0.0",
+        "org.mockito:mockito-core:%s" % MOCKITO_VERSION,
+        "org.mockito:mockito-junit-jupiter:%s" % MOCKITO_VERSION
     ],
     repositories = [
         "https://repo.maven.apache.org/maven2",
