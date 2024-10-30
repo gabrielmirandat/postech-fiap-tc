@@ -1,3 +1,5 @@
+# core/BUILD
+
 load("@rules_java//java:defs.bzl", "java_library")
 
 java_library(
@@ -7,34 +9,11 @@ java_library(
     resources = glob(["src/main/resources/**"]),
     javacopts = ["-source", "21", "-target", "21"],
     deps = [
-        # Parent dependencies
-        "@maven//:io_swagger_core_v3_swagger_annotations",
-        "@maven//:org_modelmapper_modelmapper",
-        "@maven//:io_cloudevents_cloudevents_core",
-        "@maven//:io_cloudevents_cloudevents_kafka",
-        "@maven//:io_cloudevents_cloudevents_json_jackson",
         "@maven//:jakarta_validation_jakarta_validation_api",
-        "@maven//:jakarta_annotation_jakarta_annotation_api",
         "@maven//:jakarta_persistence_jakarta_persistence_api",
-        "@maven//:io_opentelemetry_opentelemetry_api",
-        "@maven//:io_opentelemetry_opentelemetry_sdk",
-        "@maven//:io_opentelemetry_opentelemetry_exporter_otlp",
-        "@maven//:org_yaml_snakeyaml",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_fasterxml_jackson_core_jackson_annotations",
-        "@maven//:com_fasterxml_jackson_dataformat_jackson_dataformat_yaml",
-        "@maven//:com_fasterxml_jackson_module_jackson_module_scala_2_13",
-
-        # Core dependencies
-        "@maven//:org_springframework_boot_spring_boot_starter_web",
-        "@maven//:org_hibernate_validator_hibernate_validator",
-        "@maven//:org_glassfish_expressly_expressly",
-        "@maven//:org_hibernate_validator_hibernate_validator_cdi",
-        "@maven//:io_grpc_grpc_protobuf",
-        "@maven//:io_grpc_grpc_stub",
-        "@maven//:com_google_protobuf_protobuf_java",
-        "@maven//:com_google_protobuf_protobuf_java_util",
     ],
 )
 
@@ -51,15 +30,10 @@ java_test_suite(
     runtime_deps = JUNIT5_DEPS,
     deps = [
         ":core_lib",
-        "@maven//:org_springframework_boot_spring_boot_starter_test",
-        "@maven//:org_mockito_mockito_core",
-        "@maven//:org_mockito_mockito_junit_jupiter",
+        "@maven//:org_glassfish_expressly_expressly",
+        "@maven//:org_hibernate_validator_hibernate_validator_cdi",
         "@maven//:org_assertj_assertj_core",
         "@maven//:org_junit_jupiter_junit_jupiter_api",
-        "@maven//:org_junit_jupiter_junit_jupiter",
-        "@maven//:org_junit_platform_junit_platform_launcher",
-        "@maven//:org_junit_platform_junit_platform_reporting",
-        "@maven//:org_junit_platform_junit_platform_suite"
     ],
 )
 
