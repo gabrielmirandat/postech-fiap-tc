@@ -17,8 +17,7 @@ this project is a restaurant management system.
 https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
 
 bazel clean --expunge
-bazel build //core:core_lib --sandbox_debug
-bazel build //core:menu_api_java_proto --sandbox_debug
-bazel build //core:permissions_api_java_proto --sandbox_debug
-
-bazel test //core:core_test --sandbox_debug --verbose_failures
+bazel build //core:core_lib
+bazel build //core:menu_api_java_proto
+bazel build //core:permissions_api_java_proto
+bazel test  //core:core_unit_test
