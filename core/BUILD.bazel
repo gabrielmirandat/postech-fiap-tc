@@ -42,9 +42,9 @@ load("@rules_jvm_external//:defs.bzl", "artifact")
 load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
 
 java_test_suite(
-    name = "core_test",
+    name = "core_unit_test",
     visibility = ["//visibility:public"],
-    srcs = glob(["src/test/java/**/*.java"]),
+    srcs = glob(["src/test/unit/java/**/*.java"]),
     runner = "junit5",
     javacopts = ["-source", "21", "-target", "21"],
     resources = glob(["src/test/resources/**"]),
