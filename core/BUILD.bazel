@@ -9,6 +9,8 @@ java_library(
     resources = glob(["src/main/resources/**"]),
     javacopts = ["-source", "21", "-target", "21"],
     deps = [
+        ":proto_menu",
+        ":proto_permissions",
         "@maven//:jakarta_validation_jakarta_validation_api",
         "@maven//:jakarta_persistence_jakarta_persistence_api",
         "@maven//:com_fasterxml_jackson_core_jackson_core",

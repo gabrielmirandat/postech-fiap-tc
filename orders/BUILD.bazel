@@ -2,18 +2,20 @@
 
 load("@rules_jvm_external//:defs.bzl", "artifact")
 
-java_library(
-    name = "newrelic",
-    srcs = ["@newrelic_java//:lib/newrelic-agent.jar"]
+java_import(
+    name = "newrelic_files",
+    jars = ["@newrelic_java//:newrelic.jar"],
+    visibility = ["//visibility:public"],
 )
 
 java_library(
     name = "artifact",
     srcs = glob(["src/main/java/**/*.java"]),
-    resources = glob(["src/main/resources/**"]),
+    resources = glob(["src/main/resources/**"]) + ["@newrelic_java//:newrelic.yml"],  # Inclui o arquivo .yml no resources
+    javacopts = ["-source", "21", "-target", "21"],
     deps = [
         "//core:artifact",
-        ":newrelic",
+        ":newrelic_files",
         "@maven//:org_springframework_boot_spring_boot_starter",
         "@maven//:org_springframework_boot_spring_boot_starter_validation",
         "@maven//:org_springframework_boot_spring_boot_starter_oauth2_client",
@@ -30,7 +32,6 @@ java_library(
         "@maven//:io_grpc_grpc_netty",
         "@maven//:io_grpc_grpc_netty_shaded",
         "@maven//:org_springframework_boot_spring_boot_starter_web",
-        "@maven//:com_newrelic_agent_java_newrelic_java"
     ],
 )
 
@@ -39,7 +40,6 @@ java_test(
     srcs = glob(["src/test/java/**/*.java"]),
     deps = [
         ":artifact",
-        "@maven//:org_springframework_boot_spring_boot_starter_test",
         "@maven//:org_testcontainers_kafka",
         "@maven//:org_testcontainers_mongodb",
         "@maven//:io_grpc_grpc_testing",
