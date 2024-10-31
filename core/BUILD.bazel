@@ -22,7 +22,6 @@ load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
 
 java_test_suite(
     name = "unit",
-    visibility = ["//visibility:public"],
     srcs = glob(["src/test/unit/java/**/*.java"]),
     runner = "junit5",
     javacopts = ["-source", "21", "-target", "21"],
@@ -43,7 +42,6 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 proto_library(
     name = "proto_menu_deps",
     srcs = ["src/main/java/com/gabriel/specs/menu/menu-api.proto"],
-    visibility = ["//visibility:public"],
     deps = [
         "@com_google_protobuf//:timestamp_proto"
     ],
@@ -51,13 +49,13 @@ proto_library(
 
 java_proto_library(
     name = "proto_menu",
+    visibility = ["//visibility:public"],
     deps = [":proto_menu_deps"],
 )
 
 proto_library(
     name = "proto_permissions_deps",
     srcs = ["src/main/java/com/gabriel/specs/permissions/permissions-api.proto"],
-    visibility = ["//visibility:public"],
     deps = [
         "@com_google_protobuf//:timestamp_proto"
     ],
@@ -65,5 +63,6 @@ proto_library(
 
 java_proto_library(
     name = "proto_permissions",
+    visibility = ["//visibility:public"],
     deps = [":proto_permissions_deps"],
 )
