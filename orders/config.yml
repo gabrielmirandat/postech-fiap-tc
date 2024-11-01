@@ -1,0 +1,12 @@
+openApiNullable: false
+interfaceOnly: true
+skipDefaultInterface: true
+unhandledException: true
+useBeanValidation: true
+useSpringBoot3: true
+useOptional: true
+useSwaggerUI: true
+documentationProvider: springdoc
+apiPackage: com.gabriel.specs.orders
+modelPackage: com.gabriel.specs.orders.models
+implicitHeaders: true

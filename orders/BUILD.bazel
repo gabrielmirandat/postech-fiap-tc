@@ -1,21 +1,54 @@
-# orders/BUILD
-
 load("@rules_jvm_external//:defs.bzl", "artifact")
+load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
 
+# Importa o New Relic como biblioteca Java
 java_import(
-    name = "newrelic_files",
+    name = "newrelic",
     jars = ["@newrelic_java//:newrelic.jar"],
     visibility = ["//visibility:public"],
 )
 
+# Gera o código a partir do OpenAPI
+openapi_generator(
+    name = "orders_api_codegen",
+    spec = "src/main/resources/oas/orders-api.yaml",
+    generator = "spring",
+    config = "config.yml",
+)
+
+# Cópia dos arquivos gerados para o diretório apropriado
+genrule(
+    name = "copy_orders_api",
+    srcs = [":orders_api_codegen"],
+    outs = ["generated_orders_api/com/gabriel/specs/orders/OrdersApi.java"],  # Especifique um arquivo de saída
+    cmd = """
+    rm -rf $(OUTS) && mkdir -p $(dirname $(OUTS)) && cp -r $(SRCS)/* $(dirname $(OUTS))
+    """,
+    visibility = ["//visibility:public"],
+)
+
+# Define a biblioteca Java com o código gerado
+java_library(
+    name = "orders_api",
+    srcs = glob(["generated_orders_api/**/*.java"]),
+    visibility = ["//visibility:public"],
+    deps = [":copy_orders_api"],  # Adiciona a dependência para garantir a cópia
+    runtime_deps = [
+        "@maven//:org_springframework_boot_spring_boot_starter",
+        "@maven//:org_springframework_boot_spring_boot_starter_web"
+    ],
+)
+
+# Define a biblioteca principal que depende do orders_api
 java_library(
     name = "artifact",
     srcs = glob(["src/main/java/**/*.java"]),
-    resources = glob(["src/main/resources/**"]) + ["@newrelic_java//:newrelic.yml"],  # Inclui o arquivo .yml no resources
+    resources = glob(["src/main/resources/**"]) + ["@newrelic_java//:newrelic.yml"],
     javacopts = ["-source", "21", "-target", "21"],
     deps = [
         "//core:artifact",
-        ":newrelic_files",
+        ":newrelic",
+        ":orders_api",
         "@maven//:org_springframework_boot_spring_boot_starter",
         "@maven//:org_springframework_boot_spring_boot_starter_validation",
         "@maven//:org_springframework_boot_spring_boot_starter_oauth2_client",
@@ -35,6 +68,7 @@ java_library(
     ],
 )
 
+# Configuração para testes unitários
 java_test(
     name = "unit",
     srcs = glob(["src/test/java/**/*.java"]),
