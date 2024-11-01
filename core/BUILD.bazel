@@ -1,5 +1,36 @@
 # core/BUILD
 
+load("@rules_java//java:defs.bzl", "java_proto_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
+proto_library(
+    name = "proto_menu_deps",
+    srcs = ["src/main/java/com/gabriel/specs/menu/menu-api.proto"],
+    deps = [
+        "@com_google_protobuf//:timestamp_proto"
+    ],
+)
+
+java_proto_library(
+    name = "proto_menu",
+    visibility = ["//visibility:public"],
+    deps = [":proto_menu_deps"],
+)
+
+proto_library(
+    name = "proto_permissions_deps",
+    srcs = ["src/main/java/com/gabriel/specs/permissions/permissions-api.proto"],
+    deps = [
+        "@com_google_protobuf//:timestamp_proto"
+    ],
+)
+
+java_proto_library(
+    name = "proto_permissions",
+    visibility = ["//visibility:public"],
+    deps = [":proto_permissions_deps"],
+)
+
 load("@rules_java//java:defs.bzl", "java_library")
 
 java_library(
@@ -36,35 +67,4 @@ java_test_suite(
         "@maven//:org_assertj_assertj_core",
         "@maven//:org_junit_jupiter_junit_jupiter_api",
     ],
-)
-
-load("@rules_java//java:defs.bzl", "java_proto_library")
-load("@rules_proto//proto:defs.bzl", "proto_library")
-
-proto_library(
-    name = "proto_menu_deps",
-    srcs = ["src/main/java/com/gabriel/specs/menu/menu-api.proto"],
-    deps = [
-        "@com_google_protobuf//:timestamp_proto"
-    ],
-)
-
-java_proto_library(
-    name = "proto_menu",
-    visibility = ["//visibility:public"],
-    deps = [":proto_menu_deps"],
-)
-
-proto_library(
-    name = "proto_permissions_deps",
-    srcs = ["src/main/java/com/gabriel/specs/permissions/permissions-api.proto"],
-    deps = [
-        "@com_google_protobuf//:timestamp_proto"
-    ],
-)
-
-java_proto_library(
-    name = "proto_permissions",
-    visibility = ["//visibility:public"],
-    deps = [":proto_permissions_deps"],
 )
