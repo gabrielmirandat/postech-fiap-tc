@@ -13,13 +13,36 @@ openapi_generator(
     name = "orders_api_files",
     spec = "src/main/resources/oas/orders-api.yaml",
     generator = "spring",
-    config = "config.yml",
+    config = "config.yml"
 )
 
-java_binary(
+genrule(
+    name = "orders_api_jar",
+    srcs = [":orders_api_files"],
+    outs = ["orders_api.srcjar"],
+    tools = ["@bazel_tools//tools/zip:zipper"],
+    cmd = """
+    files=$$(find -L $(location :orders_api_files)/src/main/java -type f)
+    zipper_args=()
+    for f in $${files[@]}; do
+    path_in_zip="$${f/bazel-out\\/k8-fastbuild\\/bin\\/orders_api_files\\/src\\/main\\/java\\//}"
+    zipper_args+=("$$path_in_zip=$$f")
+    done
+    $(location @bazel_tools//tools/zip:zipper) c $@ $${zipper_args[@]}
+    """,
+)
+
+java_library(
     name = "orders_api",
-    srcs = [
-        ":orders_api_files",
+    srcs = [":orders_api.srcjar"],
+    deps = [
+        "@maven//:io_swagger_core_v3_swagger_annotations",
+        "@maven//:jakarta_validation_jakarta_validation_api",
+        "@maven//:jakarta_annotation_jakarta_annotation_api",
+        "@maven//:org_apache_tomcat_embed_tomcat_embed_core",
+        "@maven//:org_springframework_spring_context",
+        "@maven//:org_springframework_spring_web",
+        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
     ],
 )
 
@@ -30,8 +53,26 @@ java_library(
     javacopts = ["-source", "21", "-target", "21"],
     deps = [
         "//core:artifact",
+        "//core:proto_permissions",
+        "//core:proto_menu",
         ":orders_api",
-        "@maven//:org_springframework_boot_spring_boot_starter",
+        "@maven//:io_swagger_core_v3_swagger_annotations",
+        "@maven//:io_cloudevents_cloudevents_core",
+        "@maven//:io_cloudevents_cloudevents_kafka",
+        "@maven//:io_cloudevents_cloudevents_json_jackson",
+        "@maven//:jakarta_validation_jakarta_validation_api",
+        "@maven//:jakarta_annotation_jakarta_annotation_api",
+        "@maven//:jakarta_persistence_jakarta_persistence_api",
+        "@maven//:io_opentelemetry_opentelemetry_api",
+        "@maven//:io_opentelemetry_opentelemetry_sdk",
+        "@maven//:io_opentelemetry_opentelemetry_exporter_otlp",
+        "@maven//:org_yaml_snakeyaml",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
+        "@maven//:com_fasterxml_jackson_dataformat_jackson_dataformat_yaml",
+        "@maven//:com_fasterxml_jackson_module_jackson_module_scala_2_13",
+        "@maven//:org_springframework_boot_spring_boot_starter_web",
         "@maven//:org_springframework_boot_spring_boot_starter_validation",
         "@maven//:org_springframework_boot_spring_boot_starter_oauth2_client",
         "@maven//:org_springframework_boot_spring_boot_starter_oauth2_resource_server",
@@ -46,7 +87,6 @@ java_library(
         "@maven//:org_liquibase_ext_liquibase_mongodb",
         "@maven//:io_grpc_grpc_netty",
         "@maven//:io_grpc_grpc_netty_shaded",
-        "@maven//:org_springframework_boot_spring_boot_starter_web",
     ],
 )
 
