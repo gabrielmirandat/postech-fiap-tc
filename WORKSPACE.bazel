@@ -6,6 +6,7 @@ REST_ASSURED_VERSION = "5.4.0"
 CLOUDEVENTS_VERSION = "2.5.0"
 OPENTELEMETRY_VERSION = "1.36.0"
 CUCUMBER_VERSION = "7.18.0"
+JAVAX_ANNOTATION_VERSION = "1.3.2"
 JAKARTA_VALIDATION_VERSION = "3.1.0-M1"
 JAKARTA_ANNOTATION_VERSION = "3.0.0-M1"
 JAKARTA_PERSISTENCE_VERSION = "3.1.0"
@@ -123,6 +124,7 @@ maven_install(
         "io.cloudevents:cloudevents-core:%s" % CLOUDEVENTS_VERSION,
         "io.cloudevents:cloudevents-kafka:%s" % CLOUDEVENTS_VERSION,
         "io.cloudevents:cloudevents-json-jackson:%s" % CLOUDEVENTS_VERSION,
+        "javax.annotation:javax.annotation-api:%s" % JAVAX_ANNOTATION_VERSION,
         "jakarta.validation:jakarta.validation-api:%s" % JAKARTA_VALIDATION_VERSION,
         "jakarta.annotation:jakarta.annotation-api:%s" % JAKARTA_ANNOTATION_VERSION,
         "jakarta.persistence:jakarta.persistence-api:%s" % JAKARTA_PERSISTENCE_VERSION,

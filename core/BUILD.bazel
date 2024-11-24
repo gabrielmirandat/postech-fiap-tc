@@ -2,9 +2,10 @@
 
 load("@rules_java//java:defs.bzl", "java_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_java//java:defs.bzl", "java_library")
 
 proto_library(
-    name = "proto_menu_deps",
+    name = "menu_proto_deps",
     srcs = ["src/main/java/com/gabriel/specs/menu/menu-api.proto"],
     deps = [
         "@com_google_protobuf//:timestamp_proto"
@@ -12,13 +13,27 @@ proto_library(
 )
 
 java_proto_library(
-    name = "proto_menu",
+    name = "menu_proto_api_deps",
     visibility = ["//visibility:public"],
-    deps = [":proto_menu_deps"],
+    deps = [":menu_proto_deps"],
+)
+
+genrule(
+    name = "menu_proto_api_jar",
+    srcs = [":menu_proto_api_deps"],
+    outs = ["menu_proto_api.srcjar"],
+    cmd = "cp $(RULEDIR)/menu_proto_deps-speed-src.jar $(location menu_proto_api.srcjar)",
+)
+
+java_library(
+    name = "menu_proto_api",
+    srcs = [":menu_proto_api.srcjar"],
+    deps = ["@maven//:com_google_protobuf_protobuf_java"],
+    visibility = ["//visibility:public"],
 )
 
 proto_library(
-    name = "proto_permissions_deps",
+    name = "permissions_proto_deps",
     srcs = ["src/main/java/com/gabriel/specs/permissions/permissions-api.proto"],
     deps = [
         "@com_google_protobuf//:timestamp_proto"
@@ -26,12 +41,24 @@ proto_library(
 )
 
 java_proto_library(
-    name = "proto_permissions",
+    name = "permissions_proto_api_deps",
     visibility = ["//visibility:public"],
-    deps = [":proto_permissions_deps"],
+    deps = [":permissions_proto_deps"],
 )
 
-load("@rules_java//java:defs.bzl", "java_library")
+genrule(
+    name = "permissions_proto_api_jar",
+    srcs = [":permissions_proto_api_deps"],
+    outs = ["permissions_proto_api.srcjar"],
+    cmd = "cp $(RULEDIR)/permissions_proto_deps-speed-src.jar $(location permissions_proto_api.srcjar)",
+)
+
+java_library(
+    name = "permissions_proto_api",
+    srcs = [":permissions_proto_api.srcjar"],
+    deps = ["@maven//:com_google_protobuf_protobuf_java"],
+    visibility = ["//visibility:public"],
+)
 
 java_library(
     name = "artifact",
