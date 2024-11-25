@@ -1,5 +1,6 @@
-load("@rules_jvm_external//:defs.bzl", "artifact")
+load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
 load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
+load("@rules_jvm_external//:defs.bzl", "artifact")
 
 java_import(
     name = "newrelic",
@@ -9,16 +10,15 @@ java_import(
 
 openapi_generator(
     name = "orders_api_files",
-    spec = "src/main/resources/oas/orders-api.yaml",
+    config = "config.yml",
     generator = "spring",
-    config = "config.yml"
+    spec = "src/main/resources/oas/orders-api.yaml",
 )
 
 genrule(
     name = "orders_api_jar",
     srcs = [":orders_api_files"],
     outs = ["orders_api.srcjar"],
-    tools = ["@bazel_tools//tools/zip:zipper"],
     cmd = """
     files=$$(find -L $(location :orders_api_files)/src/main/java -type f)
     zipper_args=()
@@ -28,27 +28,33 @@ genrule(
     done
     $(location @bazel_tools//tools/zip:zipper) c $@ $${zipper_args[@]}
     """,
+    tools = ["@bazel_tools//tools/zip:zipper"],
 )
 
 java_library(
     name = "orders_api",
     srcs = [":orders_api.srcjar"],
     deps = [
+        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
         "@maven//:io_swagger_core_v3_swagger_annotations",
-        "@maven//:jakarta_validation_jakarta_validation_api",
         "@maven//:jakarta_annotation_jakarta_annotation_api",
+        "@maven//:jakarta_validation_jakarta_validation_api",
         "@maven//:org_apache_tomcat_embed_tomcat_embed_core",
         "@maven//:org_springframework_spring_context",
         "@maven//:org_springframework_spring_web",
-        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
     ],
 )
 
 java_library(
     name = "artifact",
     srcs = glob(["src/main/java/**/*.java"]),
+    javacopts = [
+        "-source",
+        "21",
+        "-target",
+        "21",
+    ],
     resources = glob(["src/main/resources/**"]) + ["@newrelic_java//:newrelic.yml"],
-    javacopts = ["-source", "21", "-target", "21"],
     deps = [
         "//core:artifact",
         "//core:menu_java_proto",
@@ -78,7 +84,7 @@ java_library(
         "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
         "@maven//:org_springframework_boot_spring_boot_starter_web",
         "@maven//:org_springframework_boot_spring_boot_starter_validation",
-#        "@maven//:org_springframework_boot_spring_boot_starter_oauth2_client",
+        #        "@maven//:org_springframework_boot_spring_boot_starter_oauth2_client",
         "@maven//:org_springframework_boot_spring_boot_starter_oauth2_resource_server",
         "@maven//:org_springframework_boot_spring_boot_starter_security",
         "@maven//:org_springframework_boot_spring_boot_starter_data_jpa",
@@ -114,29 +120,78 @@ java_library(
     ],
 )
 
-load("@rules_jvm_external//:defs.bzl", "artifact")
-load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
+java_library(
+    name = "test_utility",
+    srcs = glob([
+        "src/test/utils/**/*.java",
+    ]),
+    javacopts = [
+        "-source",
+        "21",
+        "-target",
+        "21",
+    ],
+    deps = [
+        ":artifact",
+        ":orders_api",
+        "//core:artifact",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+        "@maven//:org_apache_tomcat_embed_tomcat_embed_core",
+        "@maven//:org_jetbrains_annotations",
+        "@maven//:org_springframework_data_spring_data_redis",
+        "@maven//:org_springframework_security_spring_security_config",
+        "@maven//:org_springframework_security_spring_security_core",
+        "@maven//:org_springframework_security_spring_security_web",
+        "@maven//:org_springframework_spring_context",
+        "@maven//:org_springframework_spring_test",
+        "@maven//:org_springframework_spring_web",
+        "@maven//:org_testcontainers_junit_jupiter",
+        "@maven//:org_testcontainers_kafka",
+        "@maven//:org_testcontainers_mongodb",
+        "@maven//:org_testcontainers_testcontainers",
+        "@maven//:org_yaml_snakeyaml",
+    ],
+)
 
 java_test_suite(
     name = "unit",
-    srcs = glob(["src/test/unit/java/**/*.java",
-                 "src/test/utils/java/**/*.java"]),
-    runner = "junit5",
-    javacopts = ["-source", "21", "-target", "21"],
+    srcs = glob([
+        "src/test/unit/java/**/*.java",
+    ]),
+    javacopts = [
+        "-source",
+        "21",
+        "-target",
+        "21",
+    ],
     resources = glob(["src/test/resources/**"]),
+    runner = "junit5",
     runtime_deps = JUNIT5_DEPS,
     deps = [
         ":artifact",
+        ":orders_api",
+        ":test_utility",
         "//core:artifact",
-        "@maven//:org_testcontainers_testcontainers",
-        "@maven//:org_testcontainers_junit_jupiter",
-        "@maven//:org_springframework_spring_context",
-        "@maven//:org_springframework_boot_spring_boot_test",
-        "@maven//:org_springframework_data_spring_data_redis",
+        "//core:menu_java_grpc",
+        "//core:menu_java_proto",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
-        "@maven//:org_mockito_mockito_core",
-        "@maven//:org_mockito_mockito_inline",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+        "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:io_cloudevents_cloudevents_api",
+        "@maven//:io_cloudevents_cloudevents_core",
+        "@maven//:io_grpc_grpc_api",
         "@maven//:org_assertj_assertj_core",
-        "@maven//:org_junit_jupiter_junit_jupiter_api"
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_mockito_mockito_core",
+        "@maven//:org_mockito_mockito_junit_jupiter",
+        "@maven//:org_mongodb_bson",
+        "@maven//:org_mongodb_mongodb_driver_core",
+        "@maven//:org_mongodb_mongodb_driver_sync",
+        "@maven//:org_springframework_data_spring_data_redis",
+        "@maven//:org_springframework_kafka_spring_kafka",
+        "@maven//:org_springframework_spring_test",
+        "@maven//:org_springframework_spring_web",
     ],
 )
