@@ -21,9 +21,9 @@ public class MenuMapper {
             new ProductID(menuItem.getId()),
             new Name(menuItem.getName()),
             new Price(menuItem.getPrice()),
-            Instant.from(Instant.ofEpochSecond(
+            Instant.ofEpochSecond(
                 menuItem.getLastUpdated().getSeconds(),
-                menuItem.getLastUpdated().getNanos())));
+                menuItem.getLastUpdated().getNanos()));
     }
 
     public static Extra toExtra(MenuItem menuItem) {
@@ -31,9 +31,9 @@ public class MenuMapper {
             new IngredientID(menuItem.getId()),
             new Name(menuItem.getName()),
             new Price(menuItem.getPrice()),
-            Instant.from(Instant.ofEpochSecond(
+            Instant.ofEpochSecond(
                 menuItem.getLastUpdated().getSeconds(),
-                menuItem.getLastUpdated().getNanos()))
+                menuItem.getLastUpdated().getNanos())
         );
     }
 
