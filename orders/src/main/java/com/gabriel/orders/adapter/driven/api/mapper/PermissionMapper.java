@@ -16,9 +16,9 @@ public class PermissionMapper {
                 new PermissionID(item.getId()),
                 new Name(item.getRole()),
                 new Name(item.getAuthority()),
-                Instant.from(Instant.ofEpochSecond(
+                Instant.ofEpochSecond(
                     item.getLastUpdated().getSeconds(),
-                    item.getLastUpdated().getNanos()))
+                    item.getLastUpdated().getNanos())
             ))
             .collect(Collectors.toList());
     }

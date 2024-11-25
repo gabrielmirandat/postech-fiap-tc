@@ -19,8 +19,8 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
 ```
     bazel clean --expunge
     bazel build //core:artifact
-    // bazel build //core:proto_menu
-    // bazel build //core:proto_permissions
+    // bazel build //core:menu_java_grpc
+    // bazel build //core:permissions_java_grpc
     bazel test  //core:unit
     
     bazel build //orders:artifact

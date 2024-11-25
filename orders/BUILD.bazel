@@ -51,8 +51,10 @@ java_library(
     javacopts = ["-source", "21", "-target", "21"],
     deps = [
         "//core:artifact",
-        "//core:menu_proto_api",
-        "//core:permissions_proto_api",
+        "//core:menu_java_proto",
+        "//core:menu_java_grpc",
+        "//core:permissions_java_proto",
+        "//core:permissions_java_grpc",
         ":orders_api",
         "@maven//:io_swagger_core_v3_swagger_annotations",
         "@maven//:io_cloudevents_cloudevents_core",

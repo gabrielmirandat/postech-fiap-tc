@@ -89,6 +89,12 @@ load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
 protobuf_deps()
 
 http_archive(
+    name = "io_grpc_grpc_java",
+    url = "https://github.com/grpc/grpc-java/archive/refs/tags/v1.68.1.zip",
+    strip_prefix = "grpc-java-1.68.1",
+)
+
+http_archive(
     name = "newrelic_java",
     urls = ["https://repo1.maven.org/maven2/com/newrelic/agent/java/newrelic-java/8.10.0/newrelic-java-8.10.0.zip"],
     strip_prefix = "newrelic",
@@ -165,6 +171,7 @@ maven_install(
         "org.liquibase.ext:liquibase-mongodb:%s" % LIQUIBASE_VERSION,
         "io.grpc:grpc-netty:%s" % GRPC_VERSION,
         "io.grpc:grpc-netty-shaded:%s" % GRPC_VERSION,
+        "org.apache.tomcat:annotations-api:6.0.53",
 
         # Testing dependencies
         "org.springframework.kafka:spring-kafka-test:%s" % SPRING_KAFKA_VERSION,

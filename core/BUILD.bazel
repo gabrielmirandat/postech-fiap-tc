@@ -1,11 +1,11 @@
 # core/BUILD
 
-load("@rules_java//java:defs.bzl", "java_proto_library")
+load("@rules_java//java:defs.bzl", "java_proto_library", "java_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
-load("@rules_java//java:defs.bzl", "java_library")
+load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
 
 proto_library(
-    name = "menu_proto_deps",
+    name = "menu_proto",
     srcs = ["src/main/java/com/gabriel/specs/menu/menu-api.proto"],
     deps = [
         "@com_google_protobuf//:timestamp_proto"
@@ -13,27 +13,20 @@ proto_library(
 )
 
 java_proto_library(
-    name = "menu_proto_api_deps",
+    name = "menu_java_proto",
     visibility = ["//visibility:public"],
-    deps = [":menu_proto_deps"],
+    deps = [":menu_proto"],
 )
 
-genrule(
-    name = "menu_proto_api_jar",
-    srcs = [":menu_proto_api_deps"],
-    outs = ["menu_proto_api.srcjar"],
-    cmd = "cp $(RULEDIR)/menu_proto_deps-speed-src.jar $(location menu_proto_api.srcjar)",
-)
-
-java_library(
-    name = "menu_proto_api",
-    srcs = [":menu_proto_api.srcjar"],
-    deps = ["@maven//:com_google_protobuf_protobuf_java"],
+java_grpc_library(
+    name = "menu_java_grpc",
+    srcs = [":menu_proto"],
     visibility = ["//visibility:public"],
+    deps = [":menu_java_proto"]
 )
 
 proto_library(
-    name = "permissions_proto_deps",
+    name = "permissions_proto",
     srcs = ["src/main/java/com/gabriel/specs/permissions/permissions-api.proto"],
     deps = [
         "@com_google_protobuf//:timestamp_proto"
@@ -41,23 +34,16 @@ proto_library(
 )
 
 java_proto_library(
-    name = "permissions_proto_api_deps",
+    name = "permissions_java_proto",
     visibility = ["//visibility:public"],
-    deps = [":permissions_proto_deps"],
+    deps = [":permissions_proto"],
 )
 
-genrule(
-    name = "permissions_proto_api_jar",
-    srcs = [":permissions_proto_api_deps"],
-    outs = ["permissions_proto_api.srcjar"],
-    cmd = "cp $(RULEDIR)/permissions_proto_deps-speed-src.jar $(location permissions_proto_api.srcjar)",
-)
-
-java_library(
-    name = "permissions_proto_api",
-    srcs = [":permissions_proto_api.srcjar"],
-    deps = ["@maven//:com_google_protobuf_protobuf_java"],
+java_grpc_library(
+    name = "permissions_java_grpc",
+    srcs = [":permissions_proto"],
     visibility = ["//visibility:public"],
+    deps = [":permissions_java_proto"],
 )
 
 java_library(
