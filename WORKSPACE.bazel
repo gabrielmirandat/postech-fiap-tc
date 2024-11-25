@@ -158,7 +158,7 @@ maven_install(
         # Order dependencies
         "org.springframework.boot:spring-boot-starter:%s" % SPRING_BOOT_VERSION,
         "org.springframework.boot:spring-boot-starter-validation:%s" % SPRING_BOOT_VERSION,
-        "org.springframework.boot:spring-boot-starter-oauth2-client:%s" % SPRING_BOOT_VERSION,
+#        "org.springframework.boot:spring-boot-starter-oauth2-client:%s" % SPRING_BOOT_VERSION,
         "org.springframework.boot:spring-boot-starter-oauth2-resource-server:%s" % SPRING_BOOT_VERSION,
         "org.springframework.boot:spring-boot-starter-security:%s" % SPRING_BOOT_VERSION,
         "org.springframework.boot:spring-boot-starter-data-jpa:%s" % SPRING_BOOT_VERSION,
@@ -174,6 +174,7 @@ maven_install(
         "org.apache.tomcat:annotations-api:6.0.53",
 
         # Testing dependencies
+        "org.springframework.boot:spring-boot-starter-test:%s" % SPRING_BOOT_VERSION,
         "org.springframework.kafka:spring-kafka-test:%s" % SPRING_KAFKA_VERSION,
         "org.springframework.security:spring-security-test:%s" % SPRING_SECURITY_VERSION,
         "org.testcontainers:testcontainers:%s" % TESTCONTAINER_VERSION,
