@@ -78,7 +78,7 @@ java_library(
         "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
         "@maven//:org_springframework_boot_spring_boot_starter_web",
         "@maven//:org_springframework_boot_spring_boot_starter_validation",
-        "@maven//:org_springframework_boot_spring_boot_starter_oauth2_client",
+#        "@maven//:org_springframework_boot_spring_boot_starter_oauth2_client",
         "@maven//:org_springframework_boot_spring_boot_starter_oauth2_resource_server",
         "@maven//:org_springframework_boot_spring_boot_starter_security",
         "@maven//:org_springframework_boot_spring_boot_starter_data_jpa",
@@ -114,17 +114,29 @@ java_library(
     ],
 )
 
-java_test(
+load("@rules_jvm_external//:defs.bzl", "artifact")
+load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
+
+java_test_suite(
     name = "unit",
-    srcs = glob(["src/test/java/**/*.java"]),
+    srcs = glob(["src/test/unit/java/**/*.java",
+                 "src/test/utils/java/**/*.java"]),
+    runner = "junit5",
+    javacopts = ["-source", "21", "-target", "21"],
+    resources = glob(["src/test/resources/**"]),
+    runtime_deps = JUNIT5_DEPS,
     deps = [
         ":artifact",
-        "@maven//:org_testcontainers_kafka",
-        "@maven//:org_testcontainers_mongodb",
-        "@maven//:io_grpc_grpc_testing",
+        "//core:artifact",
+        "@maven//:org_testcontainers_testcontainers",
+        "@maven//:org_testcontainers_junit_jupiter",
+        "@maven//:org_springframework_spring_context",
+        "@maven//:org_springframework_boot_spring_boot_test",
+        "@maven//:org_springframework_data_spring_data_redis",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:org_mockito_mockito_core",
         "@maven//:org_mockito_mockito_inline",
-        "@maven//:org_springframework_boot_spring_boot_starter_test",
-        "@maven//:org_springframework_security_spring_security_test",
-        "@maven//:specmatic_specmatic",
+        "@maven//:org_assertj_assertj_core",
+        "@maven//:org_junit_jupiter_junit_jupiter_api"
     ],
 )
