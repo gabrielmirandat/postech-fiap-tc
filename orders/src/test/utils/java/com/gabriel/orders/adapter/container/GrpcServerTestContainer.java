@@ -12,12 +12,10 @@ import java.time.Duration;
 @Testcontainers
 public class GrpcServerTestContainer {
 
-    private static final String PROJECT_ROOT = System.getProperty("user.dir");
-    private static final String PROTO_RELATIVE_PATH = "/../core/src/main/java/com/gabriel/specs/menu";
-    private static final String STUB_RELATIVE_PATH = "/src/test/java/utils/com/gabriel/orders/adapter/container/stubs";
-    private static final String GRIPMOCK_IMAGE = "tkpd/gripmock:latest"; // gabrielmirandat/gripmock:latest
-    private static final GenericContainer GRPC_CONTAINER;
-
+    private static final String GRIPMOCK_IMAGE = "tkpd/gripmock:latest";
+    private static final String PROTO_RESOURCE_PATH = "specs/menu-api.proto";
+    private static final String STUB_RESOURCE_PATH = "stubs/menu-stub.json";
+    private static final GenericContainer<?> GRPC_CONTAINER;
 
     static {
         GRPC_CONTAINER = new GenericContainer<>(GRIPMOCK_IMAGE)
@@ -28,17 +26,34 @@ public class GrpcServerTestContainer {
                     .withRegEx(".*Serving gRPC on tcp://:4770.*")
                     .withTimes(1)
                     .withStartupTimeout(Duration.ofSeconds(30))
-            )
-            .withCopyFileToContainer(
-                MountableFile.forHostPath(PROJECT_ROOT + PROTO_RELATIVE_PATH), "/proto")
-            .withCopyFileToContainer(
-                MountableFile.forHostPath(PROJECT_ROOT + STUB_RELATIVE_PATH), "/stub")
-            .withCommand("--stub=/stub /proto/menu-api.proto");
+            );
 
-        GRPC_CONTAINER.start();
+        try {
+            // Copy the proto file from resources
+            GRPC_CONTAINER.withCopyFileToContainer(
+                MountableFile.forClasspathResource(PROTO_RESOURCE_PATH),
+                "/proto/menu-api.proto"
+            );
 
-        // Ensure the container is stopped when the JVM exits
-        Runtime.getRuntime().addShutdownHook(new Thread(GRPC_CONTAINER::stop));
+            // Copy the stub file from resources
+            GRPC_CONTAINER.withCopyFileToContainer(
+                MountableFile.forClasspathResource(STUB_RESOURCE_PATH),
+                "/stub/menu-stub.json"
+            );
+
+            GRPC_CONTAINER.withCommand("--stub=/stub /proto/menu-api.proto");
+            GRPC_CONTAINER.start();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize GripMock container: " + e.getMessage(), e);
+        }
+
+        // Add shutdown hook to stop the container
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (GRPC_CONTAINER.isRunning()) {
+                GRPC_CONTAINER.stop();
+            }
+        }));
     }
 
     @DynamicPropertySource
