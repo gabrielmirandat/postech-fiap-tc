@@ -25,4 +25,5 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel build //orders:artifact
     bazel test //orders:unit
     bazel test //orders:integration
+    bazel test //orders:contract
 ```

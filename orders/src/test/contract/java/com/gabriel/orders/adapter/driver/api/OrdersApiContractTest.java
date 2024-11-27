@@ -80,7 +80,7 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
 
     @BeforeAll
     public static void setup() {
-        File apiContract = new File("src/main/resources/oas/orders-api.yaml");
+        File apiContract = new File("oas/orders-api.yaml");
         System.setProperty("contractPaths", apiContract.getAbsolutePath());
     }
 
