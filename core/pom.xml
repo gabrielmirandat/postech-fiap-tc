@@ -106,7 +106,7 @@
                     <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
                     </pluginArtifact>
                     <protocExecutable>protoc</protocExecutable>
-                    <protoSourceRoot>${project.basedir}/src/main/java/com/gabriel/specs</protoSourceRoot>
+                    <protoSourceRoot>src/main/resources/specs</protoSourceRoot>
                 </configuration>
                 <executions>
                     <execution>
