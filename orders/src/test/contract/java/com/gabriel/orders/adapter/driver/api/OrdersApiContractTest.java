@@ -41,13 +41,18 @@ import com.gabriel.orders.core.domain.OrderMock;
 import com.gabriel.orders.core.domain.ProductMock;
 import com.gabriel.orders.infra.TestSecurityConfiguration;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Properties;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // This will start the server on a random port
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import({MongoConfiguration.class, MenuGrpcClientConfiguration.class, RedisConfiguration.class,
     KafkaConfiguration.class, SerializerConfiguration.class, TestSecurityConfiguration.class})
 @ContextConfiguration(classes =
@@ -80,8 +85,43 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
 
     @BeforeAll
     public static void setup() {
-        File apiContract = new File("oas/orders-api.yaml");
-        System.setProperty("contractPaths", apiContract.getAbsolutePath());
+        // Load the OAS file
+        ClassLoader classLoader = OrdersApiContractTest.class.getClassLoader();
+        try (InputStream oasInputStream = classLoader.getResourceAsStream("oas/orders-api.yaml")) {
+            if (oasInputStream == null) {
+                throw new IllegalStateException("Contract not found in classpath: oas/orders-api.yaml");
+            }
+
+            // Optionally, if the test framework requires a physical file path:
+            Path tempFile = Files.createTempFile("orders-api", ".yaml");
+            Files.copy(oasInputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+            System.setProperty("Contract path:", tempFile.toAbsolutePath().toString());
+            System.out.println("Contract temporarily copied to: " + tempFile.toAbsolutePath());
+        } catch (IOException e) {
+            throw new IllegalStateException("Error loading contract file", e);
+        }
+
+        // Load application-test.properties
+        try (InputStream propertiesInputStream = classLoader.getResourceAsStream("application-test.properties")) {
+            if (propertiesInputStream == null) {
+                throw new IllegalStateException("application-test.properties not found in classpath.");
+            }
+
+            // Load properties
+            Properties properties = new Properties();
+            properties.load(propertiesInputStream);
+
+            // Optionally log or set properties
+            properties.forEach((key, value) -> System.out.println("Loaded property: " + key + " = " + value));
+
+            // Example: Setting a system property for later use in tests
+            String testProperty = properties.getProperty("some.property.key");
+            if (testProperty != null) {
+                System.setProperty("some.property.key", testProperty);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Error loading application-test.properties file", e);
+        }
     }
 
     @DynamicPropertySource
