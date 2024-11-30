@@ -85,42 +85,18 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
 
     @BeforeAll
     public static void setup() {
-        // Load the OAS file
         ClassLoader classLoader = OrdersApiContractTest.class.getClassLoader();
         try (InputStream oasInputStream = classLoader.getResourceAsStream("oas/orders-api.yaml")) {
             if (oasInputStream == null) {
                 throw new IllegalStateException("Contract not found in classpath: oas/orders-api.yaml");
             }
 
-            // Optionally, if the test framework requires a physical file path:
             Path tempFile = Files.createTempFile("orders-api", ".yaml");
             Files.copy(oasInputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
-            System.setProperty("Contract path:", tempFile.toAbsolutePath().toString());
+            System.setProperty("contractPaths", tempFile.toAbsolutePath().toString());
             System.out.println("Contract temporarily copied to: " + tempFile.toAbsolutePath());
         } catch (IOException e) {
             throw new IllegalStateException("Error loading contract file", e);
-        }
-
-        // Load application-test.properties
-        try (InputStream propertiesInputStream = classLoader.getResourceAsStream("application-test.properties")) {
-            if (propertiesInputStream == null) {
-                throw new IllegalStateException("application-test.properties not found in classpath.");
-            }
-
-            // Load properties
-            Properties properties = new Properties();
-            properties.load(propertiesInputStream);
-
-            // Optionally log or set properties
-            properties.forEach((key, value) -> System.out.println("Loaded property: " + key + " = " + value));
-
-            // Example: Setting a system property for later use in tests
-            String testProperty = properties.getProperty("some.property.key");
-            if (testProperty != null) {
-                System.setProperty("some.property.key", testProperty);
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Error loading application-test.properties file", e);
         }
     }
 
@@ -168,6 +144,6 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
 
     @AfterEach
     public void cleanup() {
-        Mockito.reset(); // Correctly clears all mocks
+        Mockito.reset();
     }
 }

@@ -261,11 +261,6 @@ java_test_suite(
         "-target",
         "21",
     ],
-    jvm_flags = [
-        "-Dspring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration," +
-        "org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration," +
-        "org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration",
-    ],
     resources = glob([
         "src/test/resources/**",
     ]),
