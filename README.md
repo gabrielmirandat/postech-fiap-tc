@@ -16,6 +16,8 @@ this project is a restaurant management system.
 
 https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
 
+## Bazel
+
 ```
     bazel clean --expunge
     
@@ -26,4 +28,7 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel test //orders:unit
     bazel test //orders:integration
     bazel test //orders:contract
+    bazel test //orders:behavior
 ```
+
+https://www.reddit.com/r/bazel/comments/jb2fow/options_for_cicd_integration_with_bazel/
