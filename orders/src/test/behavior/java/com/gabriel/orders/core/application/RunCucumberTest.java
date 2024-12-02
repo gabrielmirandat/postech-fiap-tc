@@ -11,9 +11,8 @@ import static io.cucumber.junit.platform.engine.Constants.FEATURES_PROPERTY_NAME
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectPackages("com.gabriel.orders.core.application")
+@SelectPackages("features")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, html:target/cucumber")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.gabriel.orders.core.application")
-@ConfigurationParameter(key = FEATURES_PROPERTY_NAME, value = "classpath:resources/features")
 public class RunCucumberTest {
 }
