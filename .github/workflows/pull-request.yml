@@ -1,0 +1,124 @@
+name: Pull Request Flow
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+env:
+  TF_LOG: DEBUG
+  TF_DIR: ".terraform/"
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Bazelisk
+        uses: actions/cache@v2
+        with:
+          path: ~/.bazelisk
+          key: bazelisk-${{ runner.os }}-${{ hashFiles('WORKSPACE', 'BUILD.bazel') }}
+          restore-keys: bazelisk-${{ runner.os }}
+      - name: Install Bazelisk
+        run: |
+          if [ ! -f ~/.bazelisk/bazelisk ]; then
+            mkdir -p ~/.bazelisk
+            curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -o ~/.bazelisk/bazelisk
+            chmod +x ~/.bazelisk/bazelisk
+          fi
+          sudo ln -sf ~/.bazelisk/bazelisk /usr/local/bin/bazel
+      - name: Verify Bazel version
+        run: bazel version
+      - name: Build with Bazel
+        run: bazel build //...
+
+  unit-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Bazelisk
+        uses: actions/cache@v2
+        with:
+          path: ~/.bazelisk
+          key: bazelisk-${{ runner.os }}-${{ hashFiles('WORKSPACE', 'BUILD.bazel') }}
+          restore-keys: bazelisk-${{ runner.os }}
+      - name: Install Bazelisk
+        run: |
+          if [ ! -f ~/.bazelisk/bazelisk ]; then
+            mkdir -p ~/.bazelisk
+            curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -o ~/.bazelisk/bazelisk
+            chmod +x ~/.bazelisk/bazelisk
+          fi
+          sudo ln -sf ~/.bazelisk/bazelisk /usr/local/bin/bazel
+      - name: Test with Bazel
+        run: bazel test //:unit_tests
+
+  integration-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Bazelisk
+        uses: actions/cache@v2
+        with:
+          path: ~/.bazelisk
+          key: bazelisk-${{ runner.os }}-${{ hashFiles('WORKSPACE', 'BUILD.bazel') }}
+          restore-keys: bazelisk-${{ runner.os }}
+      - name: Install Bazelisk
+        run: |
+          if [ ! -f ~/.bazelisk/bazelisk ]; then
+            mkdir -p ~/.bazelisk
+            curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -o ~/.bazelisk/bazelisk
+            chmod +x ~/.bazelisk/bazelisk
+          fi
+          sudo ln -sf ~/.bazelisk/bazelisk /usr/local/bin/bazel
+      - name: Test with Bazel
+        run: bazel test //:integration_tests
+
+  behavior-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache Bazelisk
+        uses: actions/cache@v2
+        with:
+          path: ~/.bazelisk
+          key: bazelisk-${{ runner.os }}-${{ hashFiles('WORKSPACE', 'BUILD.bazel') }}
+          restore-keys: bazelisk-${{ runner.os }}
+      - name: Install Bazelisk
+        run: |
+          if [ ! -f ~/.bazelisk/bazelisk ]; then
+            mkdir -p ~/.bazelisk
+            curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -o ~/.bazelisk/bazelisk
+            chmod +x ~/.bazelisk/bazelisk
+          fi
+          sudo ln -sf ~/.bazelisk/bazelisk /usr/local/bin/bazel
+      - name: Test with Bazel
+        run: bazel test //:behavior_tests
+
+  terraform-validate:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup to run Terraform
+        uses: hashicorp/setup-terraform@v3
+      - name: Format Terraform files
+        id: fmt
+        run: terraform fmt -check
+        working-directory: ${{ env.TF_DIR }}
+      - name: Init configuration
+        id: init
+        run: terraform init
+        working-directory: ${{ env.TF_DIR }}
+      - name: Validate Terraform script
+        id: validate
+        run: terraform validate -no-color
+        working-directory: ${{ env.TF_DIR }}
