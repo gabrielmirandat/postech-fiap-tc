@@ -70,8 +70,25 @@ jobs:
             chmod +x ~/.bazelisk/bazelisk
           fi
           sudo ln -sf ~/.bazelisk/bazelisk /usr/local/bin/bazel
+      - name: Verify Bazel version
+        run: bazel version
+      - name: Install Protocol Buffers Compiler 4.28.2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
+          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
+          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
+          sudo mv protoc-28.2/include/* /usr/local/include/
+      - name: Check protoc version
+        run: protoc --version
+      - name: Set up JDK 21
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'temurin'
       - name: Test with Bazel
-        run: bazel test //:unit_tests
+        run: bazel test //:unit
 
   integration-test:
     needs: build
@@ -92,8 +109,25 @@ jobs:
             chmod +x ~/.bazelisk/bazelisk
           fi
           sudo ln -sf ~/.bazelisk/bazelisk /usr/local/bin/bazel
+      - name: Verify Bazel version
+        run: bazel version
+      - name: Install Protocol Buffers Compiler 4.28.2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
+          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
+          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
+          sudo mv protoc-28.2/include/* /usr/local/include/
+      - name: Check protoc version
+        run: protoc --version
+      - name: Set up JDK 21
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'temurin'
       - name: Test with Bazel
-        run: bazel test //:integration_tests
+        run: bazel test //:integration
 
   behavior-test:
     needs: build
@@ -114,8 +148,25 @@ jobs:
             chmod +x ~/.bazelisk/bazelisk
           fi
           sudo ln -sf ~/.bazelisk/bazelisk /usr/local/bin/bazel
+      - name: Verify Bazel version
+        run: bazel version
+      - name: Install Protocol Buffers Compiler 4.28.2
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
+          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
+          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
+          sudo mv protoc-28.2/include/* /usr/local/include/
+      - name: Check protoc version
+        run: protoc --version
+      - name: Set up JDK 21
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'temurin'
       - name: Test with Bazel
-        run: bazel test //:behavior_tests
+        run: bazel test //:behavior
 
   terraform-validate:
     needs: build
