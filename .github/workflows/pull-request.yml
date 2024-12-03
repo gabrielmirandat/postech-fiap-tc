@@ -17,12 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache Bazelisk
-        uses: actions/cache@v2
-        with:
-          path: ~/.bazelisk
-          key: bazelisk-${{ runner.os }}-${{ hashFiles('WORKSPACE', 'BUILD.bazel') }}
-          restore-keys: bazelisk-${{ runner.os }}
       - name: Install Bazelisk
         run: |
           if [ ! -f ~/.bazelisk/bazelisk ]; then
@@ -56,37 +50,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache Bazelisk
+      - name: Cache Bazel build output
         uses: actions/cache@v2
         with:
-          path: ~/.bazelisk
-          key: bazelisk-${{ runner.os }}-${{ hashFiles('WORKSPACE', 'BUILD.bazel') }}
-          restore-keys: bazelisk-${{ runner.os }}
-      - name: Install Bazelisk
-        run: |
-          if [ ! -f ~/.bazelisk/bazelisk ]; then
-            mkdir -p ~/.bazelisk
-            curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -o ~/.bazelisk/bazelisk
-            chmod +x ~/.bazelisk/bazelisk
-          fi
-          sudo ln -sf ~/.bazelisk/bazelisk /usr/local/bin/bazel
-      - name: Verify Bazel version
-        run: bazel version
-      - name: Install Protocol Buffers Compiler 4.28.2
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
-          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
-          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
-          sudo mv protoc-28.2/include/* /usr/local/include/
-      - name: Check protoc version
-        run: protoc --version
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+          path: |
+            ~/.cache/bazel
+            bazel-bin
+            bazel-out
+          key: bazel-build-${{ runner.os }}-${{ hashFiles('WORKSPACE', 'BUILD.bazel') }}
+          restore-keys: bazel-build-${{ runner.os }}
       - name: Test with Bazel
         run: bazel test $(bazel query 'filter(":unit", //...:*)')
 
@@ -95,37 +67,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache Bazelisk
+      - name: Cache Bazel build output
         uses: actions/cache@v2
         with:
-          path: ~/.bazelisk
-          key: bazelisk-${{ runner.os }}-${{ hashFiles('WORKSPACE', 'BUILD.bazel') }}
-          restore-keys: bazelisk-${{ runner.os }}
-      - name: Install Bazelisk
-        run: |
-          if [ ! -f ~/.bazelisk/bazelisk ]; then
-            mkdir -p ~/.bazelisk
-            curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -o ~/.bazelisk/bazelisk
-            chmod +x ~/.bazelisk/bazelisk
-          fi
-          sudo ln -sf ~/.bazelisk/bazelisk /usr/local/bin/bazel
-      - name: Verify Bazel version
-        run: bazel version
-      - name: Install Protocol Buffers Compiler 4.28.2
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
-          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
-          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
-          sudo mv protoc-28.2/include/* /usr/local/include/
-      - name: Check protoc version
-        run: protoc --version
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+          path: |
+            ~/.cache/bazel
+            bazel-bin
+            bazel-out
+          key: bazel-build-${{ runner.os }}-${{ hashFiles('WORKSPACE', 'BUILD.bazel') }}
+          restore-keys: bazel-build-${{ runner.os }}
       - name: Test with Bazel
         run: bazel test $(bazel query 'filter(":integration", //...:*)')
 
@@ -134,37 +84,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache Bazelisk
+      - name: Cache Bazel build output
         uses: actions/cache@v2
         with:
-          path: ~/.bazelisk
-          key: bazelisk-${{ runner.os }}-${{ hashFiles('WORKSPACE', 'BUILD.bazel') }}
-          restore-keys: bazelisk-${{ runner.os }}
-      - name: Install Bazelisk
-        run: |
-          if [ ! -f ~/.bazelisk/bazelisk ]; then
-            mkdir -p ~/.bazelisk
-            curl -L https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 -o ~/.bazelisk/bazelisk
-            chmod +x ~/.bazelisk/bazelisk
-          fi
-          sudo ln -sf ~/.bazelisk/bazelisk /usr/local/bin/bazel
-      - name: Verify Bazel version
-        run: bazel version
-      - name: Install Protocol Buffers Compiler 4.28.2
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
-          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
-          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
-          sudo mv protoc-28.2/include/* /usr/local/include/
-      - name: Check protoc version
-        run: protoc --version
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+          path: |
+            ~/.cache/bazel
+            bazel-bin
+            bazel-out
+          key: bazel-build-${{ runner.os }}-${{ hashFiles('WORKSPACE', 'BUILD.bazel') }}
+          restore-keys: bazel-build-${{ runner.os }}
       - name: Test with Bazel
         run: bazel test $(bazel query 'filter(":behavior", //...:*)')
 
