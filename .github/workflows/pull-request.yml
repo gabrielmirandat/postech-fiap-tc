@@ -88,7 +88,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Test with Bazel
-        run: bazel test //:unit
+        run: bazel test $(bazel query 'filter(":unit", //...:*)')
 
   integration-test:
     needs: build
@@ -127,7 +127,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Test with Bazel
-        run: bazel test //:integration
+        run: bazel test $(bazel query 'filter(":integration", //...:*)')
 
   behavior-test:
     needs: build
@@ -166,7 +166,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Test with Bazel
-        run: bazel test //:behavior
+        run: bazel test $(bazel query 'filter(":behavior", //...:*)')
 
   terraform-validate:
     needs: build
