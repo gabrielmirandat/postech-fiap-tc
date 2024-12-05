@@ -1,6 +1,8 @@
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
 load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
 load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
 load("@rules_jvm_external//:defs.bzl", "artifact")
+load("@rules_oci//oci:defs.bzl", "oci_image")
 
 java_import(
     name = "newrelic",
@@ -345,4 +347,20 @@ java_test_suite(
         "@maven//:org_testcontainers_kafka",
         "@maven//:org_testcontainers_testcontainers",
     ],
+)
+
+tar(
+    name = "layer",
+    srcs = ["orders/libartifact.jar"],
+)
+
+oci_image(
+    name = "image",
+    base = "@amazoncorretto_base",
+    entrypoint = [
+        "java",
+        "-jar",
+        "/libartifact.jar",
+    ],
+    tars = [":layer"],
 )
