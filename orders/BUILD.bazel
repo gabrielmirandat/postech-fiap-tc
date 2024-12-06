@@ -2,7 +2,7 @@ load("@aspect_bazel_lib//lib:tar.bzl", "tar")
 load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
 load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
 load("@rules_jvm_external//:defs.bzl", "artifact")
-load("@rules_oci//oci:defs.bzl", "oci_image")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 
 java_import(
     name = "newrelic",
@@ -351,16 +351,23 @@ java_test_suite(
 
 tar(
     name = "layer",
-    srcs = ["orders/libartifact.jar"],
+    srcs = ["libartifact.jar"],
 )
 
 oci_image(
     name = "image",
-    base = "@amazoncorretto_base",
+    base = "@amazon_corretto_image",
     entrypoint = [
         "java",
         "-jar",
-        "/libartifact.jar",
+        "libartifact.jar",
     ],
     tars = [":layer"],
+)
+
+oci_push(
+    name = "push",
+    image = ":image",
+    remote_tags = ["latest"],
+    repository = "index.docker.io/gabrielmirandat/orders",
 )

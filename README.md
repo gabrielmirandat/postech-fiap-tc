@@ -29,6 +29,8 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel test //orders:integration
     bazel test //orders:contract
     bazel test //orders:behavior
+    bazel build //orders:image
+    bazel run //orders:push
 ```
 
 https://www.reddit.com/r/bazel/comments/jb2fow/options_for_cicd_integration_with_bazel/
