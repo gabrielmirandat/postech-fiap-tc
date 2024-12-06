@@ -187,9 +187,11 @@ oci_register_toolchains(name = "oci")
 load("@rules_oci//oci:pull.bzl", "oci_pull")
 
 oci_pull(
-    name = "amazoncorretto_base",
-    image = "docker.io/amazoncorretto@sha256:a0734dc544ec5b57062071e867df9d31fd5f3e7550b8e8a5bd3c9a50729bc977",
+    name = "amazon_corretto_image",
+    digest = "sha256:a0734dc544ec5b57062071e867df9d31fd5f3e7550b8e8a5bd3c9a50729bc977",
+    image = "docker.io/library/amazoncorretto:21",
     platforms = [
+        "linux/arm64/v8",
         "linux/amd64",
     ],
 )
