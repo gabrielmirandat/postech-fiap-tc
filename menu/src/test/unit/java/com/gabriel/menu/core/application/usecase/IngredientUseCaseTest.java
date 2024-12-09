@@ -1,7 +1,7 @@
-package unit.com.gabriel.menu.core.application.usecase;
+package com.gabriel.menu.core.application.usecase;
 
 import com.gabriel.core.domain.model.id.IngredientID;
-import unit.com.gabriel.menu.core.MenuMock;
+import com.gabriel.menu.core.MenuMock;
 import com.gabriel.menu.core.application.command.CreateIngredientCommand;
 import com.gabriel.menu.core.application.query.GetByIngredientIdQuery;
 import com.gabriel.menu.core.application.query.GetByIngredientIdsQuery;

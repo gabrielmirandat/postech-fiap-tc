@@ -1,0 +1,141 @@
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
+load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
+load("@rules_jvm_external//:defs.bzl", "artifact")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
+
+openapi_generator(
+    name = "menu_api_files",
+    config = "config.yml",
+    generator = "jaxrs-spec",
+    spec = "src/main/resources/oas/menu-api.yaml",
+)
+
+genrule(
+    name = "menu_api_jar",
+    srcs = [":menu_api_files"],
+    outs = ["menu_api.srcjar"],
+    cmd = """
+    files=$$(find -L $(location :menu_api_files)/src/gen/java -type f)
+    zipper_args=()
+    for f in $${files[@]}; do
+    path_in_zip="$${f/bazel-out\\/k8-fastbuild\\/bin\\/menu_api_files\\/src\\/gen\\/java\\//}"
+    zipper_args+=("$$path_in_zip=$$f")
+    done
+    $(location @bazel_tools//tools/zip:zipper) c $@ $${zipper_args[@]}
+    """,
+    tools = ["@bazel_tools//tools/zip:zipper"],
+)
+
+java_library(
+    name = "menu_api",
+    srcs = [":menu_api.srcjar"],
+    deps = [
+        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+        "@maven//:io_quarkus_quarkus_resteasy",
+        "@maven//:io_quarkus_quarkus_resteasy_jackson",
+        "@maven//:io_swagger_core_v3_swagger_annotations",
+        "@maven//:jakarta_annotation_jakarta_annotation_api",
+        "@maven//:jakarta_validation_jakarta_validation_api",
+        "@maven//:jakarta_ws_rs_jakarta_ws_rs_api",
+    ],
+)
+
+java_library(
+    name = "artifact",
+    srcs = glob(["src/main/java/**/*.java"]),
+    javacopts = [
+        "-source",
+        "21",
+        "-target",
+        "21",
+    ],
+    resources = glob(["src/main/resources/**"]),
+    deps = [
+        ":menu_api",
+        "//core:artifact",
+        "//core:menu_java_grpc",
+        "//core:menu_java_proto",
+        "//core:permissions_java_grpc",
+        "//core:permissions_java_proto",
+        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+        "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:io_grpc_grpc_api",
+        "@maven//:io_grpc_grpc_stub",
+        "@maven//:io_mongock_mongock_api",
+        "@maven//:io_mongock_mongock_standalone",
+        "@maven//:io_mongock_mongodb_sync_v4_driver",
+        "@maven//:io_quarkus_quarkus_core",
+        "@maven//:io_quarkus_quarkus_grpc_api",
+        "@maven//:io_smallrye_common_smallrye_common_annotation",
+        "@maven//:io_smallrye_reactive_smallrye_reactive_messaging_api",
+        "@maven//:jakarta_enterprise_jakarta_enterprise_cdi_api",
+        "@maven//:jakarta_inject_jakarta_inject_api",
+        "@maven//:jakarta_validation_jakarta_validation_api",
+        "@maven//:jakarta_ws_rs_jakarta_ws_rs_api",
+        "@maven//:org_eclipse_microprofile_config_microprofile_config_api",
+        "@maven//:org_eclipse_microprofile_health_microprofile_health_api",
+        "@maven//:org_jboss_logging_jboss_logging",
+        "@maven//:org_mongodb_bson",
+        "@maven//:org_mongodb_mongodb_driver_core",
+        "@maven//:org_mongodb_mongodb_driver_sync",
+    ],
+)
+
+java_test_suite(
+    name = "unit",
+    srcs = glob([
+        "src/test/unit/java/**/*.java",
+    ]),
+    javacopts = [
+        "-source",
+        "21",
+        "-target",
+        "21",
+    ],
+    resources = glob(["src/test/resources/**"]),
+    runner = "junit5",
+    runtime_deps = JUNIT5_DEPS,
+    deps = [
+        ":artifact",
+        ":menu_api",
+        "//core:artifact",
+        "//core:menu_java_grpc",
+        "//core:menu_java_proto",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+        "@maven//:org_glassfish_jakarta_el",
+        "@maven//:org_hibernate_validator_hibernate_validator",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_mockito_mockito_core",
+        "@maven//:org_mockito_mockito_junit_jupiter",
+    ],
+)
+
+tar(
+    name = "layer",
+    srcs = ["libartifact.jar"],
+)
+
+oci_image(
+    name = "image",
+    base = "@amazon_corretto_image",
+    entrypoint = [
+        "java",
+        "-jar",
+        "libartifact.jar",
+    ],
+    tars = [":layer"],
+)
+
+oci_push(
+    name = "push",
+    image = ":image",
+    remote_tags = ["latest"],
+    repository = "index.docker.io/gabrielmirandat/menu",
+)

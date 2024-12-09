@@ -1,6 +1,6 @@
-package unit.com.gabriel.menu.core.application.usecase;
+package com.gabriel.menu.core.application.usecase;
 
-import unit.com.gabriel.menu.core.MenuMock;
+import com.gabriel.menu.core.MenuMock;
 import com.gabriel.menu.core.application.command.CreateProductCommand;
 import com.gabriel.menu.core.application.command.DeleteProductCommand;
 import com.gabriel.menu.core.application.query.*;

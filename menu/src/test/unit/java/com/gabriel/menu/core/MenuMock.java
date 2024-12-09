@@ -1,4 +1,4 @@
-package unit.com.gabriel.menu.core;
+package com.gabriel.menu.core;
 
 import com.gabriel.menu.core.domain.model.Category;
 import com.gabriel.menu.core.domain.model.Ingredient;
