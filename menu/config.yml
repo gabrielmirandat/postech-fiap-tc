@@ -1,0 +1,13 @@
+openApiNullable: false
+interfaceOnly: true
+useBeanValidation: true
+useOptional: true
+apiPackage: com.gabriel.specs.menu
+modelPackage: com.gabriel.specs.menu.models
+library: quarkus
+useJakartaEe: true
+skipDefaultInterface: true
+useSwaggerAnnotations: false
+documentationProvider: springdoc
+useSpringBoot3: false
+implicitHeaders: true

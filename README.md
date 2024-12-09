@@ -31,6 +31,11 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel test //orders:behavior
     bazel build //orders:image
     bazel run //orders:push
+    
+    bazel build //menu:artifact
+    bazel test //menu:unit
+    bazel build //menu:image
+    bazel run //menu:push
 ```
 
 https://www.reddit.com/r/bazel/comments/jb2fow/options_for_cicd_integration_with_bazel/

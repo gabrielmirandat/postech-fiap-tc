@@ -1,8 +1,8 @@
-package unit.com.gabriel.menu.core.domain.model;
+package com.gabriel.menu.core.domain.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import unit.com.gabriel.menu.core.MenuMock;
+import com.gabriel.menu.core.MenuMock;
 import com.gabriel.menu.core.domain.model.Category;
 import com.gabriel.menu.core.domain.model.Product;
 import org.junit.jupiter.api.Assertions;
