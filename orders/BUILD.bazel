@@ -349,9 +349,15 @@ java_test_suite(
     ],
 )
 
+java_binary(
+    name = "uber",
+    main_class = "com.gabriel.orders.OrdersApplication",
+    runtime_deps = [":artifact"],
+)
+
 tar(
     name = "layer",
-    srcs = ["libartifact.jar"],
+    srcs = [":uber"],
 )
 
 oci_image(
@@ -360,7 +366,7 @@ oci_image(
     entrypoint = [
         "java",
         "-jar",
-        "libartifact.jar",
+        "orders/uber_deploy.jar",
     ],
     tars = [":layer"],
 )

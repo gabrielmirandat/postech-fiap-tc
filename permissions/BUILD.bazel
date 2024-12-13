@@ -1,0 +1,84 @@
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@rules_jvm_external//:defs.bzl", "artifact")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
+
+java_library(
+    name = "artifact",
+    srcs = glob(["src/main/java/**/*.java"]),
+    javacopts = [
+        "-source",
+        "21",
+        "-target",
+        "21",
+    ],
+    resources = glob(["src/main/resources/**"]),
+    deps = [
+        "//core:artifact",
+        "//core:permissions_java_grpc",
+        "//core:permissions_java_proto",
+        "@maven//:com_auth0_auth0_spring_security_api",
+        "@maven//:com_konghq_unirest_java_core",
+        "@maven//:com_konghq_unirest_modules_jackson",
+        "@maven//:io_grpc_grpc_netty_shaded",
+        "@maven//:io_grpc_grpc_protobuf",
+        "@maven//:io_grpc_grpc_stub",
+        "@maven//:net_devh_grpc_spring_boot_starter",
+        "@maven//:org_liquibase_liquibase_core",
+        "@maven//:org_postgresql_postgresql",
+        "@maven//:org_springframework_boot_spring_boot_starter_data_jpa",
+        # "@maven//:org_springframework_boot_spring_boot_starter_oauth2_client",
+        "@maven//:org_springframework_security_spring_security_oauth2_resource_server",
+        "@maven//:org_springframework_boot_spring_boot_starter_security",
+        "@maven//:org_springframework_boot_spring_boot_starter_web",
+        "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:io_grpc_grpc_api",
+        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:jakarta_persistence_jakarta_persistence_api",
+        "@maven//:jakarta_transaction_jakarta_transaction_api",
+        "@maven//:net_devh_grpc_server_spring_boot_starter",
+        "@maven//:org_apache_tomcat_embed_tomcat_embed_core",
+        "@maven//:org_hibernate_orm_hibernate_core",
+        "@maven//:org_springframework_boot_spring_boot",
+        "@maven//:org_springframework_boot_spring_boot_autoconfigure",
+        "@maven//:org_springframework_data_spring_data_jpa",
+        "@maven//:org_springframework_security_spring_security_config",
+        "@maven//:org_springframework_security_spring_security_core",
+        "@maven//:org_springframework_security_spring_security_web",
+        "@maven//:org_springframework_spring_beans",
+        "@maven//:org_springframework_spring_context",
+        "@maven//:org_springframework_spring_tx",
+        "@maven//:org_springframework_spring_web",
+        "@maven//:org_springframework_security_spring_security_oauth2_jose",
+    ],
+)
+
+java_binary(
+    name = "uber",
+    main_class = "com.gabriel.permissions.PermissionsApplication",
+    runtime_deps = [":artifact"],
+)
+
+tar(
+    name = "layer",
+    srcs = [":uber"],
+)
+
+oci_image(
+    name = "image",
+    base = "@amazon_corretto_image",
+    entrypoint = [
+        "java",
+        "-jar",
+        "permissions/uber_deploy.jar",
+    ],
+    tars = [":layer"],
+)
+
+oci_push(
+    name = "push",
+    image = ":image",
+    remote_tags = ["latest"],
+    repository = "index.docker.io/gabrielmirandat/permissions",
+)
