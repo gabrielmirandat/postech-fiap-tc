@@ -119,7 +119,7 @@ java_test_suite(
 
 tar(
     name = "layer",
-    srcs = ["libartifact.jar"],
+    srcs = [":uber_deploy.jar"],
 )
 
 oci_image(
@@ -128,7 +128,7 @@ oci_image(
     entrypoint = [
         "java",
         "-jar",
-        "libartifact.jar",
+        "menu/uber_deploy.jar",
     ],
     tars = [":layer"],
 )
