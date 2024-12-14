@@ -62,7 +62,7 @@ java_binary(
 
 tar(
     name = "layer",
-    srcs = [":uber"],
+    srcs = [":uber_deploy.jar"],
 )
 
 oci_image(

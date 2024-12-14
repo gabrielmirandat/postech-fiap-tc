@@ -25,6 +25,11 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel build //core:artifact
     bazel test //core:unit
     
+    bazel build //permissions:artifact
+    bazel build //permissions:uber_deploy.jar
+    bazel build //permissions:image
+    bazel run //permissions:push
+    
     bazel build //orders:artifact
     bazel test //orders:unit
     bazel test //orders:integration
@@ -36,16 +41,13 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     
     bazel build //menu:artifact
     bazel test //menu:unit
+    bazel build //menu:uber_deploy.jar
     bazel build //menu:image
     bazel run //menu:push
-    
-    bazel build //permissions:artifact
-    bazel build //permissions:image
-    bazel run //permissions:push
 ```
 
-docker run --name orders-container -p 8001:8001 --entrypoint "java -jar -Dspring.profiles.active=local \
-orders/uber_deploy.jar > /dev/stdout 2> \
-&1" -it gabrielmirandat/orders:latest
+docker run --name permissions-container -p 8000:8000 -it gabrielmirandat/permissions:latest
+docker run --name orders-container -p 8001:8001 -it gabrielmirandat/orders:latest
+docker run --name menu-container -p 8002:8002 -it gabrielmirandat/menu:latest
 
 https://www.reddit.com/r/bazel/comments/jb2fow/options_for_cicd_integration_with_bazel/
