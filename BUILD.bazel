@@ -1,0 +1,8 @@
+java_library(
+    name = "global_artifact",
+    runtime_deps = [
+        "//menu:artifact",
+        "//orders:artifact",
+        "//permissions:artifact",
+    ],
+)

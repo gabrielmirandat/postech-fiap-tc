@@ -12,6 +12,7 @@ java_library(
         "21",
     ],
     resources = glob(["src/main/resources/**"]),
+    visibility = ["//visibility:public"],
     deps = [
         "//core:artifact",
         "//core:permissions_java_grpc",
