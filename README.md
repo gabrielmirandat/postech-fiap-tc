@@ -36,6 +36,7 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel test //orders:contract
     bazel test //orders:behavior
     bazel build //orders:uber_deploy.jar
+    bazel build //orders:uber
     bazel build //orders:image
     bazel run //orders:push
     
@@ -45,6 +46,9 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel build //menu:image
     bazel run //menu:push
 ```
+
+java -jar -Dspring.profiles.active=local  bazel-bin/orders/uber_deploy.jar
+java -jar bazel-bin/orders/uber_deploy.jar --spring.profiles.active=local
 
 docker run --name permissions-container -p 8000:8000 -it gabrielmirandat/permissions:latest
 docker run --name orders-container -p 8001:8001 -it gabrielmirandat/orders:latest

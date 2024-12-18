@@ -53,6 +53,7 @@ java_library(
         "21",
     ],
     resources = glob(["src/main/resources/**"]),
+    visibility = ["//visibility:public"],
     deps = [
         ":menu_api",
         "//core:artifact",
