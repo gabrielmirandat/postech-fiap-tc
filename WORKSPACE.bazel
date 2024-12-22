@@ -97,9 +97,8 @@ rules_jvm_external_setup()
 
 http_archive(
     name = "rules_java",
-    sha256 = "c86a51fb2baf3cfd60c4f7c158df8f7a4c2066b3908107c181f2c7e8aa413a3e",
-    strip_prefix = "rules_java-8.2.0",
-    url = "https://github.com/bazelbuild/rules_java/releases/download/8.2.0/rules_java-8.2.0.tar.gz",
+    strip_prefix = "rules_java-8.6.3",
+    url = "https://github.com/bazelbuild/rules_java/releases/download/8.6.3/rules_java-8.6.3.tar.gz",
 )
 
 load("@rules_java//java:repositories.bzl", "rules_java_dependencies", "rules_java_toolchains")

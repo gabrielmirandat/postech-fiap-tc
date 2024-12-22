@@ -56,7 +56,6 @@ java_library(
         "-target",
         "21",
     ],
-    resources = glob(["src/main/resources/**"]) + ["@newrelic_java//:newrelic.yml"],
     visibility = ["//visibility:public"],
     deps = [
         ":orders_api",
@@ -357,7 +356,10 @@ java_binary(
 
 tar(
     name = "layer",
-    srcs = [":uber_deploy.jar"],
+    srcs = [
+        ":uber_deploy.jar",
+        "@newrelic_java//:newrelic.jar",
+    ] + glob(["src/main/resources/**"]),
 )
 
 oci_image(
@@ -365,13 +367,11 @@ oci_image(
     base = "@amazon_corretto_image",
     entrypoint = [
         "java",
-        "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}",
+        "-javaagent:orders/newrelic.jar",
+        "-Dexternal.properties.path=orders/src/main/resources/application-local.properties",
         "-jar",
         "orders/uber_deploy.jar",
     ],
-    env = {
-        "SPRING_PROFILES_ACTIVE": "local",
-    },
     tars = [":layer"],
 )
 
