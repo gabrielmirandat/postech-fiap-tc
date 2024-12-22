@@ -1,5 +1,17 @@
 services:
 
+  orders-service:
+    container_name: postech_orders_service
+    #    build: ./orders
+    image: gabrielmirandat/orders:latest
+    depends_on:
+      - mongo
+      - kafka
+    ports:
+      - "8001:8001"
+    networks:
+      - postech_network
+
   postgres:
     container_name: postech_postgres
     image: postgres:15.3
