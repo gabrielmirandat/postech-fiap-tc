@@ -1,5 +1,18 @@
 services:
 
+  permissions-service:
+    container_name: postech_permissions_service
+    #    build: ./opermissions
+    image: gabrielmirandat/permissions:latest
+    entrypoint: tail -f /dev/null
+    depends_on:
+      - postgres
+      - kafka
+    ports:
+      - "8000:8000"
+    networks:
+      - postech_network
+
   orders-service:
     container_name: postech_orders_service
     #    build: ./orders
@@ -7,6 +20,7 @@ services:
     depends_on:
       - mongo
       - kafka
+      - permissions-service
     ports:
       - "8001:8001"
     networks:
@@ -14,7 +28,7 @@ services:
 
   postgres:
     container_name: postech_postgres
-    image: postgres:15.3
+    image: postgres:17.2
     ports:
       - "5432:5432"
     environment:

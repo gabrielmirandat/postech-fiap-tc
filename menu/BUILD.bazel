@@ -52,7 +52,6 @@ java_library(
         "-target",
         "21",
     ],
-    resources = glob(["src/main/resources/**"]),
     visibility = ["//visibility:public"],
     deps = [
         ":menu_api",
@@ -71,7 +70,10 @@ java_library(
         "@maven//:io_mongock_mongock_api",
         "@maven//:io_mongock_mongock_standalone",
         "@maven//:io_mongock_mongodb_sync_v4_driver",
+        "@maven//:io_quarkus_quarkus_bootstrap_core",
         "@maven//:io_quarkus_quarkus_core",
+        "@maven//:io_quarkus_quarkus_core_deployment",
+        "@maven//:io_quarkus_quarkus_devtools_common",
         "@maven//:io_quarkus_quarkus_grpc_api",
         "@maven//:io_smallrye_common_smallrye_common_annotation",
         "@maven//:io_smallrye_reactive_smallrye_reactive_messaging_api",
@@ -79,6 +81,8 @@ java_library(
         "@maven//:jakarta_inject_jakarta_inject_api",
         "@maven//:jakarta_validation_jakarta_validation_api",
         "@maven//:jakarta_ws_rs_jakarta_ws_rs_api",
+        "@maven//:org_codehaus_plexus_plexus_utils",
+        "@maven//:org_codehaus_plexus_plexus_xml",
         "@maven//:org_eclipse_microprofile_config_microprofile_config_api",
         "@maven//:org_eclipse_microprofile_health_microprofile_health_api",
         "@maven//:org_jboss_logging_jboss_logging",
@@ -118,9 +122,18 @@ java_test_suite(
     ],
 )
 
+java_binary(
+    name = "uber",
+    main_class = "com.gabriel.menu.ProductsApplication",
+    resources = glob(["src/main/resources/**"]),
+    runtime_deps = [":artifact"],
+)
+
 tar(
     name = "layer",
-    srcs = [":uber_deploy.jar"],
+    srcs = [
+        ":uber_deploy.jar",
+    ] + glob(["src/main/resources/**"]),
 )
 
 oci_image(
@@ -128,6 +141,7 @@ oci_image(
     base = "@amazon_corretto_image",
     entrypoint = [
         "java",
+        "-Dexternal.properties.path=menu/src/main/resources/application-local.properties",
         "-jar",
         "menu/uber_deploy.jar",
     ],

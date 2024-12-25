@@ -351,6 +351,7 @@ java_test_suite(
 java_binary(
     name = "uber",
     main_class = "com.gabriel.orders.OrdersApplication",
+    resources = glob(["src/main/resources/**"]),
     runtime_deps = [":artifact"],
 )
 
@@ -368,6 +369,8 @@ oci_image(
     entrypoint = [
         "java",
         "-javaagent:orders/newrelic.jar",
+        "-Dnewrelic.config.file=orders/src/main/resources/newrelic/newrelic.yml",
+        "-Dliquibase.changeLogFile=orders/src/main/resources/db.changelog/db.changelog-master.yaml",
         "-Dexternal.properties.path=orders/src/main/resources/application-local.properties",
         "-jar",
         "orders/uber_deploy.jar",

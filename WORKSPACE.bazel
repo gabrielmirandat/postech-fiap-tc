@@ -76,7 +76,9 @@ POSTGRESQL_VERSION = "42.7.3"
 
 UNIREST_VERSION = "4.3.1"
 
-TOMCAT_ANNOTATION_API = "6.0.53"
+TOMCAT_ANNOTATION_API_VERSION = "6.0.53"
+
+PLEXUS_UTILS_VERSION = "4.0.2"
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
@@ -254,7 +256,8 @@ maven_install(
         "org.liquibase.ext:liquibase-mongodb:%s" % LIQUIBASE_VERSION,
         "io.grpc:grpc-netty:%s" % GRPC_VERSION,
         "io.grpc:grpc-netty-shaded:%s" % GRPC_VERSION,
-        "org.apache.tomcat:annotations-api:%s" % TOMCAT_ANNOTATION_API,
+        "org.apache.tomcat:annotations-api:%s" % TOMCAT_ANNOTATION_API_VERSION,
+        "io.quarkus:quarkus-core:%s" % QUARKUS_VERSION,
         "io.quarkus:quarkus-resteasy:%s" % QUARKUS_VERSION,
         "io.quarkus:quarkus-hibernate-validator:%s" % QUARKUS_VERSION,
         "io.quarkus:quarkus-resteasy-jackson:%s" % QUARKUS_VERSION,
@@ -262,6 +265,9 @@ maven_install(
         "io.quarkus:quarkus-messaging-kafka:%s" % QUARKUS_VERSION,
         "io.quarkus:quarkus-grpc:%s" % QUARKUS_VERSION,
         "io.quarkus:quarkus-smallrye-health:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-core-deployment:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-bootstrap-core:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-devtools-common:%s" % QUARKUS_VERSION,
         "io.smallrye.reactive:smallrye-reactive-messaging-api:%s" % SMALLRYE_MESSAGE,
         "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:%s" % JACKSON_VERSION,
         "io.mongock:mongock-standalone:%s" % MONGOCK_VERSION,
@@ -297,7 +303,6 @@ maven_install(
         "org.mockito:mockito-junit-jupiter:%s" % MOCKITO_VERSION,
         "io.quarkus:quarkus-junit5:%s" % QUARKUS_VERSION,
         "org.glassfish:jakarta.el:4.0.2",
-        #        "org.springframework.boot:spring-boot-starter-oauth2-client:%s" % SPRING_BOOT_VERSION,
         "org.springframework.boot:spring-boot-starter-oauth2-resource-server:%s" % SPRING_BOOT_VERSION,
         "org.springframework.boot:spring-boot-starter-data-jpa:%s" % SPRING_BOOT_VERSION,
         "net.devh:grpc-spring-boot-starter:%s" % GRPC_SPRING_BOOT_VERSION,
@@ -305,6 +310,8 @@ maven_install(
         "org.postgresql:postgresql:%s" % POSTGRESQL_VERSION,
         "com.konghq:unirest-java-core:%s" % UNIREST_VERSION,
         "com.konghq:unirest-modules-jackson:%s" % UNIREST_VERSION,
+        "org.codehaus.plexus:plexus-utils:%s" % PLEXUS_UTILS_VERSION,
+        "org.codehaus.plexus:plexus-xml:%s" % PLEXUS_UTILS_VERSION,
     ],
     repositories = [
         "https://repo.maven.apache.org/maven2",
