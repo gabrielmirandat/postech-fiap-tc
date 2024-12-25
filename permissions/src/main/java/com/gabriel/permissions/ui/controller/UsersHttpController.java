@@ -23,15 +23,15 @@ import java.security.Principal;
 @RequestMapping("/users")
 public class UsersHttpController {
 
-    private String issuer;
-    private String clientId;
-    private String clientSecret;
-    private String audience;
-    private String scope;
-    private String logoutRedirectUrl;
-    private ObjectMapper objectMapper;
+    private final String issuer;
+    private final String clientId;
+    private final String clientSecret;
+    private final String audience;
+    private final String scope;
+    private final String logoutRedirectUrl;
+    private final ObjectMapper objectMapper;
 
-    private Auth0Provider auth0Provider;
+    private final Auth0Provider auth0Provider;
 
     public UsersHttpController(
         @Value("${auth0.issuer}") String issuer,
