@@ -3,6 +3,7 @@ load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
 load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
 load("@rules_jvm_external//:defs.bzl", "artifact")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
+load("@rules_spring//springboot:springboot.bzl", "springboot")
 
 java_import(
     name = "newrelic",
@@ -56,6 +57,7 @@ java_library(
         "-target",
         "21",
     ],
+    resources = glob(["src/main/resources/**"]),
     visibility = ["//visibility:public"],
     deps = [
         ":orders_api",
@@ -118,6 +120,7 @@ java_library(
         "@maven//:org_springframework_spring_web",
         "@maven//:org_springframework_spring_webmvc",
         "@maven//:org_yaml_snakeyaml",
+        "@rules_spring//springboot/import_bundles:springboot_required_deps",
     ],
 )
 
@@ -348,19 +351,25 @@ java_test_suite(
     ],
 )
 
-java_binary(
+#java_binary(
+#    name = "uber",
+#    main_class = "com.gabriel.orders.OrdersApplication",
+#    runtime_deps = [":artifact"],
+#)
+
+springboot(
     name = "uber",
-    main_class = "com.gabriel.orders.OrdersApplication",
-    resources = glob(["src/main/resources/**"]),
-    runtime_deps = [":artifact"],
+    boot_app_class = "com.gabriel.orders.OrdersApplication",
+    boot_launcher_class = "org.springframework.boot.loader.launch.JarLauncher",
+    java_library = ":artifact",
 )
 
 tar(
     name = "layer",
     srcs = [
-        ":uber_deploy.jar",
+        ":uber.jar",
         "@newrelic_java//:newrelic.jar",
-    ] + glob(["src/main/resources/**"]),
+    ],
 )
 
 oci_image(
@@ -369,11 +378,9 @@ oci_image(
     entrypoint = [
         "java",
         "-javaagent:orders/newrelic.jar",
-        "-Dnewrelic.config.file=orders/src/main/resources/newrelic/newrelic.yml",
-        "-Dliquibase.changeLogFile=orders/src/main/resources/db.changelog/db.changelog-master.yaml",
-        "-Dexternal.properties.path=orders/src/main/resources/application-local.properties",
         "-jar",
-        "orders/uber_deploy.jar",
+        "-Dspring.profiles.active=prod",
+        "orders/uber.jar",
     ],
     tars = [":layer"],
 )
