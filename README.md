@@ -47,11 +47,8 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel run //menu:push
 ```
 
-java -jar -Dspring.profiles.active=local bazel-bin/orders/uber_deploy.jar
-java -jar bazel-bin/orders/uber_deploy.jar --spring.profiles.active=local
-
-docker run --name permissions-container --network postech_network -p 8000:8000 -it gabrielmirandat/permissions:latest
-docker run --name orders-container --network postech_network -p 8001:8001 -it gabrielmirandat/orders:latest
-docker run --name menu-container --network postech_network -p 8002:8002 -it gabrielmirandat/menu:latest
+java -javaagent:orders/newrelic.jar -Dnewrelic.config.file=orders/src/main/resources/newrelic/newrelic.yml -jar
+-Dspring.profiles.active=local orders/uber_deploy.jar
+java -jar -Dspring.profiles.active=local bazel-bin/permissions/uber.jar
 
 https://www.reddit.com/r/bazel/comments/jb2fow/options_for_cicd_integration_with_bazel/
