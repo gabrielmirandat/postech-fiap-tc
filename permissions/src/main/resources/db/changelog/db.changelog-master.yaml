@@ -1,7 +1,3 @@
 databaseChangeLog:
   - includeAll:
-      path: changes/
-  - includeAll:
       path: db/changelog/changes/
-  - includeAll:
-      path: permissions/src/main/resources/db/changelog/changes/

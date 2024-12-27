@@ -1,6 +1,7 @@
 load("@aspect_bazel_lib//lib:tar.bzl", "tar")
 load("@rules_jvm_external//:defs.bzl", "artifact")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
+load("@rules_spring//springboot:springboot.bzl", "springboot")
 
 java_library(
     name = "artifact",
@@ -11,6 +12,7 @@ java_library(
         "-target",
         "21",
     ],
+    resources = glob(["src/main/resources/**"]),
     visibility = ["//visibility:public"],
     deps = [
         "//core:artifact",
@@ -27,6 +29,8 @@ java_library(
         "@maven//:io_grpc_grpc_netty_shaded",
         "@maven//:io_grpc_grpc_protobuf",
         "@maven//:io_grpc_grpc_stub",
+        "@maven//:io_micrometer_micrometer_core",
+        "@maven//:io_micrometer_micrometer_tracing_bridge_brave",
         "@maven//:jakarta_persistence_jakarta_persistence_api",
         "@maven//:jakarta_transaction_jakarta_transaction_api",
         "@maven//:net_devh_grpc_server_spring_boot_starter",
@@ -52,21 +56,28 @@ java_library(
         "@maven//:org_springframework_spring_core",
         "@maven//:org_springframework_spring_tx",
         "@maven//:org_springframework_spring_web",
+        "@rules_spring//springboot/import_bundles:springboot_required_deps",
     ],
 )
 
-java_binary(
+#java_binary(
+#    name = "uber",
+#    main_class = "com.gabriel.permissions.PermissionsApplication",
+#    runtime_deps = [":artifact"],
+#)
+
+springboot(
     name = "uber",
-    main_class = "com.gabriel.permissions.PermissionsApplication",
-    resources = glob(["src/main/resources/**"]),
-    runtime_deps = [":artifact"],
+    boot_app_class = "com.gabriel.permissions.PermissionsApplication",
+    boot_launcher_class = "org.springframework.boot.loader.launch.JarLauncher",
+    java_library = ":artifact",
 )
 
 tar(
     name = "layer",
     srcs = [
-        ":uber_deploy.jar",
-    ] + glob(["src/main/resources/**"]),
+        ":uber.jar",
+    ],
 )
 
 oci_image(
@@ -74,10 +85,9 @@ oci_image(
     base = "@amazon_corretto_image",
     entrypoint = [
         "java",
-        "-Dliquibase.changelogFile=permissions/src/main/resources/db/changelog/db.changelog-master.yaml",
-        "-Dexternal.properties.path=permissions/src/main/resources/application-local.properties",
         "-jar",
-        "permissions/uber_deploy.jar",
+        "-Dspring.profiles.active=prod",
+        "permissions/uber.jar",
     ],
     tars = [":layer"],
 )
