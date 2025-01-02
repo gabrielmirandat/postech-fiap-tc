@@ -26,7 +26,7 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel test //core:unit
     
     bazel build //permissions:artifact
-    bazel build //permissions:uber_deploy.jar
+    bazel build //permissions:uber
     bazel build //permissions:image
     bazel run //permissions:push
     
@@ -35,14 +35,13 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel test //orders:integration
     bazel test //orders:contract
     bazel test //orders:behavior
-    bazel build //orders:uber_deploy.jar
-    bazel run //orders:uber
+    bazel build //orders:uber
     bazel build //orders:image
     bazel run //orders:push
     
     bazel build //menu:artifact
     bazel test //menu:unit
-    bazel build //menu:uber_deploy.jar
+    bazel build //menu:uber
     bazel build //menu:image
     bazel run //menu:push
 ```
