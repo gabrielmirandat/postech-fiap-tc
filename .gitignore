@@ -33,3 +33,9 @@ permissions.properties
 
 ### BAZEL ###
 bazel-*
+
+### GRADLE ###
+.gradle/
+build/
+gradle-wrapper.jar
+gradle-wrapper.properties
