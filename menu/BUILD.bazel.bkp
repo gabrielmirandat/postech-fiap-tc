@@ -1,0 +1,28 @@
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@rules_gradle//:rules_gradle.bzl", "directory_select", "gradle_build")
+
+filegroup(
+    name = "gradle-build-metadata",
+    srcs = glob([
+        "build.gradle.kts",
+        "settings.gradle.kts",
+        "gradle.properties",
+    ]),
+)
+
+gradle_build(
+    name = "artifact",
+    srcs = [":gradle-build-metadata"] + glob(["src/**"]),
+    gradle = "@rules_gradle//:gradle",
+)
+
+directory_select(
+    name = "get_build_quarkus_app_dir",
+    srcs = [":artifact"],
+    source_path = "",
+)
+
+tar(
+    name = "layer",
+    srcs = [":get_build_quarkus_app_dir"],
+)
