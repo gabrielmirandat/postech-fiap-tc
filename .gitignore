@@ -39,3 +39,4 @@ bazel-*
 build/
 gradle-wrapper.jar
 gradle-wrapper.properties
+.fake

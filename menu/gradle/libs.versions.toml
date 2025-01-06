@@ -15,6 +15,7 @@ io-cloudevents-cloudevents-json-jackson = "2.5.0"
 io-cloudevents-cloudevents-kafka = "2.5.0"
 io-cucumber-cucumber-java = "7.18.0"
 io-cucumber-cucumber-junit-platform-engine = "7.18.0"
+io-grpc-grpc-api = "1.63.0"
 io-grpc-grpc-protobuf = "1.63.0"
 io-grpc-grpc-services = "1.63.0"
 io-grpc-grpc-stub = "1.63.0"
@@ -67,6 +68,7 @@ io-cloudevents-cloudevents-json-jackson = { module = "io.cloudevents:cloudevents
 io-cloudevents-cloudevents-kafka = { module = "io.cloudevents:cloudevents-kafka", version.ref = "io-cloudevents-cloudevents-kafka" }
 io-cucumber-cucumber-java = { module = "io.cucumber:cucumber-java", version.ref = "io-cucumber-cucumber-java" }
 io-cucumber-cucumber-junit-platform-engine = { module = "io.cucumber:cucumber-junit-platform-engine", version.ref = "io-cucumber-cucumber-junit-platform-engine" }
+io-grpc-grpc-api = { module = "io.grpc:grpc-api", version.ref = "io-grpc-grpc-api" }
 io-grpc-grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "io-grpc-grpc-protobuf" }
 io-grpc-grpc-services = { module = "io.grpc:grpc-services", version.ref = "io-grpc-grpc-services" }
 io-grpc-grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "io-grpc-grpc-stub" }

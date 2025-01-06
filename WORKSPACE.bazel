@@ -330,3 +330,17 @@ maven_install(
         "https://repo.maven.apache.org/maven2",
     ],
 )
+
+http_archive(
+    name = "rules_gradle",
+    sha256 = "1bfa34271793980c9709fc49561450f97f659c4bf3c8404028b740dff1a2a669",
+    strip_prefix = "rules_gradle-0.3",
+    url = "https://github.com/carolosf/rules_gradle/archive/refs/tags/0.3.zip",
+)
+
+http_archive(
+    name = "gradle",
+    build_file = "@rules_gradle//:BUILD",
+    strip_prefix = "gradle-8.12",
+    url = "https://services.gradle.org/distributions/gradle-8.12-bin.zip",
+)

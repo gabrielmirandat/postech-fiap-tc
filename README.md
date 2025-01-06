@@ -45,9 +45,3 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel build //menu:image
     bazel run //menu:push
 ```
-
-java -javaagent:orders/newrelic.jar -Dnewrelic.config.file=orders/src/main/resources/newrelic/newrelic.yml -jar
--Dspring.profiles.active=local orders/uber_deploy.jar
-java -jar -Dspring.profiles.active=local bazel-bin/permissions/uber.jar
-
-https://www.reddit.com/r/bazel/comments/jb2fow/options_for_cicd_integration_with_bazel/

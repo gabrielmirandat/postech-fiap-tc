@@ -1,0 +1,5 @@
+{
+    "java.compile.nullAnalysis.mode": "automatic",
+    "problems.autoReveal": false,
+    "problems.filter": "error"
+}
