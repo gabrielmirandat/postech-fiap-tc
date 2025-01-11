@@ -12,7 +12,7 @@
     <artifactId>menu</artifactId>
 
     <properties>
-        <quarkus.version>3.9.2</quarkus.version>
+        <quarkus.version>3.17.6</quarkus.version>
         <mongodb.version>5.0.1</mongodb.version>
         <mongock.version>5.4.1</mongock.version>
         <compiler-plugin.version>3.13.0</compiler-plugin.version>
