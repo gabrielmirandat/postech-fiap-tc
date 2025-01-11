@@ -6,7 +6,7 @@ plugins {
     `kotlin-dsl`
     java
     idea
-    id("io.quarkus") version "3.9.2"
+    id("io.quarkus") version "3.17.6"
     id("org.openapi.generator") version "7.0.1"
 }
 
