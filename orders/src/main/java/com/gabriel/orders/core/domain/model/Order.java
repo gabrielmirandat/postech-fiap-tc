@@ -139,10 +139,13 @@ public class Order extends AggregateRoot {
             case PICKUP -> pickup_order();
             case DELIVERY -> deliver_order();
             case COMPLETED -> finish_order();
+            case CANCELED -> throw new UnsupportedOperationException("Unimplemented case: " + toStatus);
+            case CREATED -> throw new UnsupportedOperationException("Unimplemented case: " + toStatus);
+            default -> throw new IllegalArgumentException("Unexpected value: " + toStatus);
         }
     }
 
-    // TODO: add methods for redoing order
+    // add methods for redoing order
     public void rollback() {
         if (status == OrderStatus.COMPLETED) {
             throw new OrderDomainException("Order is already finished and cant be rolled back", OrderDomainError.ORD_001);
@@ -161,6 +164,10 @@ public class Order extends AggregateRoot {
             case PACKAGING -> this.status = OrderStatus.PREPARATION;
             case PICKUP -> this.status = OrderStatus.PACKAGING;
             case DELIVERY -> this.status = OrderStatus.PICKUP;
+            case CANCELED -> throw new UnsupportedOperationException("Unimplemented case: " + status);
+            case COMPLETED -> throw new UnsupportedOperationException("Unimplemented case: " + status);
+            case CREATED -> throw new UnsupportedOperationException("Unimplemented case: " + status);
+            default -> throw new IllegalArgumentException("Unexpected value: " + status);
         }
     }
 
