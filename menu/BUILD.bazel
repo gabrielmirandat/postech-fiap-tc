@@ -123,24 +123,24 @@ java_test_suite(
 )
 
 # does not work
-#java_binary(
-#    name = "uber",
-#    main_class = "com.gabriel.menu.ProductsApplication",
-#    runtime_deps = [":artifact"],
-#)
-
-genrule(
+java_binary(
     name = "uber",
-    srcs = [":artifact"],
-    outs = ["uber.jar"],
-    cmd = """
-    mkdir -p maven_workspace && \
-    cp $(location :artifact) maven_workspace/artifact.jar && \
-    cd maven_workspace && \
-    mvn clean compile quarkus:build && \
-    cp target/quarkus-app/quarkus-run.jar $(@D)/uber.jar
-    """,
+    main_class = "com.gabriel.menu.ProductsApplication",
+    runtime_deps = [":artifact"],
 )
+
+#genrule(
+#    name = "uber",
+#    srcs = [":artifact"],
+#    outs = ["uber.jar"],
+#    cmd = """
+#    mkdir -p maven_workspace && \
+#    cp $(location :artifact) maven_workspace/artifact.jar && \
+#    cd maven_workspace && \
+#    mvn clean compile quarkus:build && \
+#    cp target/quarkus-app/quarkus-run.jar $(@D)/uber.jar
+#    """,
+#)
 
 tar(
     name = "layer",
