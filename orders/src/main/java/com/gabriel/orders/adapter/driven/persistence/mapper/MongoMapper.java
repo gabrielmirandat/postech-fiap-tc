@@ -34,7 +34,9 @@ public class MongoMapper {
 
     public static Order documentToOrder(Document doc) {
         OrderID orderId = new OrderID(doc.getString("_id"));
-        List<OrderItem> items = ((List<Document>) doc.get("items")).stream()
+
+        List<Document> itemsList = doc.getList("items", Document.class);
+        List<OrderItem> items = itemsList.stream()
             .map(MongoMapper::documentToOrderItem)
             .collect(Collectors.toList());
         CPF customer = Objects.nonNull(doc.getString("customer")) ? new CPF(doc.getString("customer")) : null;
@@ -63,7 +65,9 @@ public class MongoMapper {
     private static OrderItem documentToOrderItem(Document doc) {
         OrderItemID itemID = new OrderItemID(doc.getString("itemID"));
         Product product = documentToProduct((Document) doc.get("product"));
-        List<Extra> extras = ((List<Document>) doc.get("extras")).stream()
+
+        List<Document> extrasList = doc.getList("extras", Document.class);
+        List<Extra> extras = extrasList.stream()
             .map(MongoMapper::documentToExtra)
             .collect(Collectors.toList());
         return OrderItem.copy(itemID, product, extras);
