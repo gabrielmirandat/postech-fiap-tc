@@ -1,5 +1,6 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
     "problems.autoReveal": false,
-    "problems.filter": "error"
+    "problems.filter": "error",
+    "java.configuration.updateBuildConfiguration": "automatic"
 }
