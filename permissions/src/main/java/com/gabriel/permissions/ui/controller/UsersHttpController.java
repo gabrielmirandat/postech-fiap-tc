@@ -35,11 +35,11 @@ public class UsersHttpController {
 
     public UsersHttpController(
         @Value("${auth0.issuer}") String issuer,
-        @Value("${auth0.clientId}") String clientId,
-        @Value("${auth0.clientSecret}") String clientSecret,
+        @Value("${auth0.client-id}") String clientId,
+        @Value("${auth0.client-secret}") String clientSecret,
         @Value("${auth0.audience}") String audience,
         @Value("${auth0.scope}") String scope,
-        @Value("${auth0.logout_url}") String logoutRedirectUrl,
+        @Value("${auth0.logout-url}") String logoutRedirectUrl,
         ObjectMapper objectMapper,
         Auth0Provider auth0Provider
     ) {

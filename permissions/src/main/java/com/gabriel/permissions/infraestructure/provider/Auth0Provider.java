@@ -20,10 +20,10 @@ public class Auth0Provider {
     private final ObjectMapper objectMapper;
 
     public Auth0Provider(@Value("${auth0.issuer}") String issuer,
-                         @Value("${auth0.applicationId}") String applicationId,
-                         @Value("${auth0.applicationSecret}") String applicationSecret,
-                         @Value("${auth0.applicationAudience}") String applicationAudience,
-                         @Value("${auth0.applicationScope}") String applicationScope,
+                         @Value("${auth0.application-id}") String applicationId,
+                         @Value("${auth0.application-secret}") String applicationSecret,
+                         @Value("${auth0.application-audience}") String applicationAudience,
+                         @Value("${auth0.application-scope}") String applicationScope,
                          ObjectMapper objectMapper) {
         this.issuer = issuer;
         this.applicationId = applicationId;
