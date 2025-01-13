@@ -1,7 +1,6 @@
 load("@aspect_bazel_lib//lib:tar.bzl", "tar")
 load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
 load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
-load("@rules_jvm_external//:defs.bzl", "artifact")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 load("@rules_spring//springboot:springboot.bzl", "springboot")
 
