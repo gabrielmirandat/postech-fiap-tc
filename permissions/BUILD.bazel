@@ -1,5 +1,4 @@
 load("@aspect_bazel_lib//lib:tar.bzl", "tar")
-load("@rules_jvm_external//:defs.bzl", "artifact")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 load("@rules_spring//springboot:springboot.bzl", "springboot")
 
