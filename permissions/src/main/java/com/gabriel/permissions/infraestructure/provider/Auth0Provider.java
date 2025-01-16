@@ -1,6 +1,5 @@
 package com.gabriel.permissions.infraestructure.provider;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.Unirest;
 import kong.unirest.core.UnirestException;
@@ -13,24 +12,21 @@ import org.springframework.stereotype.Component;
 public class Auth0Provider {
 
     private final String issuer;
-    private final String applicationId;
-    private final String applicationSecret;
-    private final String applicationAudience;
-    private final String applicationScope;
-    private final ObjectMapper objectMapper;
+    private final String appClientId;
+    private final String appClientSecret;
+    private final String appAudience;
+    private final String appScope;
 
     public Auth0Provider(@Value("${auth0.issuer}") String issuer,
-                         @Value("${auth0.application-id}") String applicationId,
-                         @Value("${auth0.application-secret}") String applicationSecret,
-                         @Value("${auth0.application-audience}") String applicationAudience,
-                         @Value("${auth0.application-scope}") String applicationScope,
-                         ObjectMapper objectMapper) {
+                         @Value("${auth0.app-client-id}") String appClientId,
+                         @Value("${auth0.app-client-secret}") String appClientSecret,
+                         @Value("${auth0.app-audience}") String appAudience,
+                         @Value("${auth0.app-scope}") String appScope) {
         this.issuer = issuer;
-        this.applicationId = applicationId;
-        this.applicationSecret = applicationSecret;
-        this.applicationAudience = applicationAudience;
-        this.applicationScope = applicationScope;
-        this.objectMapper = objectMapper;
+        this.appClientId = appClientId;
+        this.appClientSecret = appClientSecret;
+        this.appAudience = appAudience;
+        this.appScope = appScope;
     }
 
     public static String formatUserId(String userId) {
@@ -42,10 +38,10 @@ public class Auth0Provider {
         HttpResponse<String> response = Unirest.post("https://" + issuer + "/oauth/token")
             .header("Content-Type", "application/x-www-form-urlencoded")
             .field("grant_type", "client_credentials")
-            .field("client_id", applicationId)
-            .field("client_secret", applicationSecret)
-            .field("audience", applicationAudience)
-            .field("scope", applicationScope)
+            .field("client_id", appClientId)
+            .field("client_secret", appClientSecret)
+            .field("audience", appAudience)
+            .field("scope", appScope)
             .asString();
 
         if (response.isSuccess()) {
