@@ -3,22 +3,17 @@ name: Flow to deploy production artifact
 on:
   workflow_dispatch:
     inputs:
-      publish-continue:
-        description: 'Continue with the publish step?'
-        required: true
-        default: false
-        type: boolean
-      deploy-continue:
-        description: 'Continue with the deploy step?'
+      deploy-cloud:
+        description: 'Should deploy to cloud?'
         required: true
         default: false
         type: boolean
 
 env:
+  TF_DIR: ".terraform/"
   TF_API_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_CLOUD_ORGANIZATION: "${{ secrets.TF_CLOUD_ORGANIZATION }}"
   TF_WORKSPACE: "${{ secrets.TF_WORKSPACE }}"
-  TF_DIR: ".terraform/"
 
 jobs:
   build:
@@ -26,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up Bazel
-        uses: bazel-contrib/setup-bazel@0.9.1
+        uses: bazel-contrib/setup-bazel@0.12.1
         with:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
@@ -46,178 +41,9 @@ jobs:
           distribution: 'temurin'
       - name: Build with Bazel
         run: bazel build //...
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: orders-artifact
-          overwrite: true
-          retention-days: 1
-          path: |
-            ./orders/target/orders*.jar
-            ./orders/target/newrelic/newrelic.jar
-            ./orders/src/main/resources/newrelic/newrelic.yml
-      - name: Upload menu-api artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: menu-artifact
-          overwrite: true
-          retention-days: 1
-          path: ./menu/target/menu*.jar
-
-  unit-test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Install Protocol Buffers Compiler 4.28.2
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
-          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
-          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
-          sudo mv protoc-28.2/include/* /usr/local/include/
-      - name: Check protoc version
-        run: protoc --version
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-      - name: Test with Maven
-        run: mvn test -Punit-tests
-  integration-test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Install Protocol Buffers Compiler 4.28.2
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
-          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
-          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
-          sudo mv protoc-28.2/include/* /usr/local/include/
-      - name: Check protoc version
-        run: protoc --version
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-      - name: Test with Maven
-        run: mvn verify -Pintegration-tests
-  contract-test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Install Protocol Buffers Compiler 4.28.2
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
-          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
-          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
-          sudo mv protoc-28.2/include/* /usr/local/include/
-      - name: Check protoc version
-        run: protoc --version
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-      - name: Test with Maven
-        run: mvn verify -Pcontract-tests
-  behavior-test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Install Protocol Buffers Compiler 4.28.2
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v28.2/protoc-28.2-linux-x86_64.zip
-          unzip protoc-28.2-linux-x86_64.zip -d protoc-28.2
-          sudo mv protoc-28.2/bin/protoc /usr/local/bin/
-          sudo mv protoc-28.2/include/* /usr/local/include/
-      - name: Check protoc version
-        run: protoc --version
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-      - name: Test with Maven
-        run: mvn verify -Pbehavior-tests
-
-  publish:
-    needs: [ unit-test, integration-test, contract-test, behavior-test ]
-    if: ${{ github.event.inputs.publish-continue }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Download orders-api artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: orders-artifact
-          path: ./temp/orders
-      - name: Reorganize orders-api files
-        run: |
-          mkdir -p ./orders/target/newrelic
-          mkdir -p ./orders/src/main/resources/newrelic
-          mv ./temp/orders/target/newrelic/newrelic.jar ./orders/target/newrelic/newrelic.jar
-          mv ./temp/orders/src/main/resources/newrelic/newrelic.yml ./orders/src/main/resources/newrelic/newrelic.yml
-          mv ./temp/orders/target/orders-0.0.1-SNAPSHOT.jar ./orders/target/
-      - name: Download menu-api artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: menu-artifact
-          path: ./menu/target
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and push Docker images
-        run: |
-          ORDERS_REPOSITORY="gabrielmirandat/postech-fiap-tc-orders-api"
-          MENU_REPOSITORY="gabrielmirandat/postech-fiap-tc-menu-api"
-          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
-          GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
-          docker build -t $ORDERS_REPOSITORY:$GEN_VERSION ./orders
-          docker push $ORDERS_REPOSITORY:$GEN_VERSION
-          docker build -t $MENU_REPOSITORY:$GEN_VERSION ./menu
-          docker push $MENU_REPOSITORY:$GEN_VERSION
 
   tag:
-    needs: publish
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -230,6 +56,36 @@ jobs:
           git config --global user.email 'github-actions@github.com'
           git tag -a $GEN_VERSION -m "Deploying version $GEN_VERSION. Details: $COMMIT_URL"
           git push origin $GEN_VERSION
+
+  publish:
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Bazel
+        uses: bazel-contrib/setup-bazel@0.12.1
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
+      - name: Set up JDK 21
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push Docker images
+        run: |
+          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
+          GEN_VERSION="v${{ github.run_number }}-$SHORT_SHA"
+          
+          for target in $(bazel query 'kind(oci_push, //...)'); do
+              bazel run "$target" -- --tag test
+          done
 
   notify-publish:
     needs: publish
@@ -260,9 +116,9 @@ jobs:
         with:
           args: ${{ env.DISCORD_ARGS }}
 
-  terraform-plan-cloud:
-    needs: [ tag ]
-    if: ${{ github.event.inputs.deploy-continue }}
+  terraform-plan:
+    needs: [ publish ]
+    if: ${{ github.event.inputs.deploy-cloud }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -324,7 +180,7 @@ jobs:
             });
 
   terraform-apply:
-    needs: terraform-plan-cloud
+    needs: terraform-plan
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -419,7 +275,36 @@ jobs:
         with:
           args: ${{ env.DISCORD_ARGS }}
 
-  cleanup-registry:
+  cleanup-tag:
+    needs: tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Keep only most recent tags
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: |
+          TAGS=$(gh api repos/gabrielmirandat/postech-fiap-tc/tags --paginate --jq '.[].name')
+          if [ -z "$TAGS" ]; then
+            echo "No tags found or failed to list tags."
+            exit 1
+          fi
+          KEEP=5
+          TOTAL_TAGS=$(echo "$TAGS" | wc -l)
+          echo "Total tags: $TOTAL_TAGS. Tags to potentially delete: $(($TOTAL_TAGS - $KEEP))"
+          if [ "$TOTAL_TAGS" -gt "$KEEP" ]; then
+            echo "Deleting excess tags..."
+            echo "$TAGS" | tail -n +$(($KEEP + 1)) | while read TAG_TO_DELETE; do
+              echo "Preparing to delete tag: $TAG_TO_DELETE"
+              gh api -X DELETE repos/gabrielmirandat/postech-fiap-tc/git/refs/tags/$TAG_TO_DELETE
+              echo "$TAG_TO_DELETE deleted."
+            done
+          else
+            echo "No tags to delete. Total tags ($TOTAL_TAGS) is less than or equal to the keep limit ($KEEP)."
+          fi
+        
+  cleanup-publish:
     needs: publish
     runs-on: ubuntu-latest
     steps:
@@ -439,7 +324,7 @@ jobs:
           TAGS=$(curl -s -H "Authorization: JWT $TOKEN" "https://hub.docker.com/v2/repositories/$REPOSITORY/tags" | jq -r '.results | sort_by(.tag_last_pushed) | .[].name')
           TAGS_ARRAY=($TAGS)
           TOTAL_TAGS=${#TAGS_ARRAY[@]}
-          KEEP=5
+          KEEP=6
           DELETE_COUNT=$(($TOTAL_TAGS-$KEEP))
           if [ $DELETE_COUNT -gt 0 ]; then
             for ((i=0; i<$DELETE_COUNT; i++)); do
@@ -484,33 +369,4 @@ jobs:
             done
           else
             echo "No tags to delete. Keeping the latest $KEEP tags."
-          fi
-
-  cleanup-tags:
-    needs: tag
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Keep only most recent tags
-        env:
-          GH_TOKEN: ${{ secrets.PAT }}
-        run: |
-          TAGS=$(gh api repos/gabrielmirandat/postech-fiap-tc/tags --paginate --jq '.[].name')
-          if [ -z "$TAGS" ]; then
-            echo "No tags found or failed to list tags."
-            exit 1
-          fi
-          KEEP=5
-          TOTAL_TAGS=$(echo "$TAGS" | wc -l)
-          echo "Total tags: $TOTAL_TAGS. Tags to potentially delete: $(($TOTAL_TAGS - $KEEP))"
-          if [ "$TOTAL_TAGS" -gt "$KEEP" ]; then
-            echo "Deleting excess tags..."
-            echo "$TAGS" | tail -n +$(($KEEP + 1)) | while read TAG_TO_DELETE; do
-              echo "Preparing to delete tag: $TAG_TO_DELETE"
-              gh api -X DELETE repos/gabrielmirandat/postech-fiap-tc/git/refs/tags/$TAG_TO_DELETE
-              echo "$TAG_TO_DELETE deleted."
-            done
-          else
-            echo "No tags to delete. Total tags ($TOTAL_TAGS) is less than or equal to the keep limit ($KEEP)."
           fi
