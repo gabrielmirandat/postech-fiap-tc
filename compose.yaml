@@ -13,6 +13,19 @@ services:
     networks:
       - postech_network
 
+  menu-service:
+    container_name: postech_menu_service
+    #    build: ./menu
+    image: gabrielmirandat/menu:latest
+    depends_on:
+      - mongo
+      - kafka
+      - permissions-service
+    ports:
+      - "8002:8002"
+    networks:
+      - postech_network
+
   orders-service:
     container_name: postech_orders_service
     #    build: ./orders
@@ -21,6 +34,7 @@ services:
       - mongo
       - kafka
       - permissions-service
+      - menu-service
     ports:
       - "8001:8001"
     networks:
@@ -52,7 +66,7 @@ services:
 
   redis:
     container_name: postech_redis
-    image: redis:7.0.13-alpine
+    image: redis:7.0.13
     ports:
       - "6379:6379"
     networks:

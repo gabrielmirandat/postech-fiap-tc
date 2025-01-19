@@ -12,7 +12,7 @@ public class KafkaTestContainer {
     private static final KafkaContainer KAFKA_CONTAINER;
 
     static {
-        KAFKA_CONTAINER = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.2.2"));
+        KAFKA_CONTAINER = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"));
         KAFKA_CONTAINER.start();
 
         // Ensure the container is stopped when the JVM exits

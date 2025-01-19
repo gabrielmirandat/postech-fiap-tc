@@ -87,6 +87,10 @@ jobs:
               bazel run "$target" -- --tag test
           done
 
+  # deploy to microk8s and smoke test 
+  local-cluster:
+    # TODO: bazel
+
   notify-publish:
     needs: publish
     if: always()
