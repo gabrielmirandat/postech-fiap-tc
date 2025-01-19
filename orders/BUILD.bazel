@@ -387,6 +387,6 @@ oci_image(
 oci_push(
     name = "push",
     image = ":image",
-    remote_tags = ["latest"],
     repository = "index.docker.io/gabrielmirandat/orders",
+    remote_tags = ["latest"],
 )
