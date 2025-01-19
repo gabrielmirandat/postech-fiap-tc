@@ -12,7 +12,7 @@ public class MongoDBTestContainer {
     private static final MongoDBContainer MONGO_DB_CONTAINER;
 
     static {
-        MONGO_DB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:4.4.3"))
+        MONGO_DB_CONTAINER = new MongoDBContainer(DockerImageName.parse("mongo:6.0.6"))
             .withEnv("MONGO_INITDB_DATABASE", "postech_db");
         MONGO_DB_CONTAINER.start();
 

@@ -16,7 +16,7 @@ public class RedisTestContainer {
 
     static {
         // Specify the Redis image to use
-        REDIS_CONTAINER = new GenericContainer<>(DockerImageName.parse("redis:6.2.6"))
+        REDIS_CONTAINER = new GenericContainer<>(DockerImageName.parse("redis:7.0.13"))
             .withExposedPorts(6379); // Redis default port
         REDIS_CONTAINER.start();
 
