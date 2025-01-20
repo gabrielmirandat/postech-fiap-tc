@@ -87,9 +87,36 @@ jobs:
               bazel run "$target" -- --tag test
           done
 
-  # deploy to microk8s and smoke test 
   local-cluster:
-    # TODO: bazel
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Start MicroK8s
+        uses: cilium/github-action-microk8s@v1
+        with:
+          snap-channel: 1.27/stable
+          wait: true
+      - name: Enable MicroK8s Add-ons
+        run: |
+          microk8s status --wait-ready
+          microk8s enable dns
+          microk8s enable storage
+          microk8s kubectl get nodes
+      - name: Apply Kubernetes manifests
+        run: |
+          microk8s kubectl apply -f .k8s/
+          microk8s kubectl wait --for=condition=ready pod --all --timeout=300s
+          microk8s kubectl get pods -A
+      - name: Run Smoke Tests
+        run: |
+          microk8s kubectl get services -A
+          microk8s kubectl port-forward svc/orders-api-service 8080:80 &
+          microk8s kubectl port-forward svc/menu-api-service 8081:80 &
+          sleep 10
+      - name: Stop MicroK8s
+        if: always()
+        run: microk8s stop
 
   notify-publish:
     needs: publish
