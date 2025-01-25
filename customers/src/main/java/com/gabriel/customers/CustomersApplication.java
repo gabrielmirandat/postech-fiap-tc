@@ -1,7 +1,0 @@
-package com.gabriel.customers;
-
-public class CustomersApplication {
-    public static void main(String[] args) {
-        System.out.println("Hello world!");
-    }
-}
