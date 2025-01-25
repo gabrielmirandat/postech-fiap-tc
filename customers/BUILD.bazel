@@ -1,0 +1,53 @@
+load("@io_bazel_rules_python//python:defs.bzl", "py_binary", "py_library")
+load("@rules_foreign_cc//tools/build_defs/make:make.bzl", "make")
+
+# Instalações necessárias (executa EdgeDB CLI e OpenAPI Generator)
+genrule(
+    name = "install_edgedb",
+    outs = ["edgedb_installed"],
+    cmd = "pip install edgedb && touch $@",
+)
+
+genrule(
+    name = "install_openapi_generator",
+    outs = ["openapi_generator_installed"],
+    cmd = "pip install openapi-python-client && touch $@",
+)
+
+# Geração dos objetos OpenAPI
+genrule(
+    name = "generate_openapi_client",
+    srcs = ["openapi.yaml"],
+    outs = ["openapi_client/__init__.py"],
+    cmd = "openapi-python-client generate --path $< --output openapi_client",
+    tools = [":install_openapi_generator"],
+)
+
+# Migração e criação do banco de dados EdgeDB
+genrule(
+    name = "edgedb_migrate",
+    srcs = ["db/migrations/*.esdl"],
+    outs = ["migrations_applied"],
+    cmd = "edgedb project init && edgedb migrate && touch $@",
+    tools = [":install_edgedb"],
+)
+
+py_binary(
+    name = "main",
+    srcs = [
+        "main.py",
+    ],
+    deps = [
+        ":controllers",
+        ":db",
+        ":devices",
+        ":entities",
+        ":external_interfaces",
+        ":gateways",
+        ":presenters",
+        ":use_cases",
+        ":web",
+        ":generate_openapi_client",
+        ":edgedb_migrate",
+    ],
+)
