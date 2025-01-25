@@ -124,9 +124,9 @@ components:
           schema:
             $ref: '#/components/schemas/CustomerDTO'
           example:
-            govId: "03857341157"
-            name: "Gabriel"
-            email: "gabrielmirandatt@gmail.com"
+            govId: "540.267.690-97"
+            name: "Joe"
+            email: "joe@gmail.com"
 
   responses:
     CustomerResponse:
@@ -136,9 +136,9 @@ components:
           schema:
             $ref: '#/components/schemas/CustomerDTO'
           example:
-            govId: "03857341157"
-            name: "Gabriel"
-            email: "gabrielmirandatt@gmail.com"
+            govId: "540.267.690-97"
+            name: "Joe"
+            email: "joe@gmail.com"
     ErrorResponse:
       description: Error response
       content:
