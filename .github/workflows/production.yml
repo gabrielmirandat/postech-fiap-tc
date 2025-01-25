@@ -150,7 +150,7 @@ jobs:
 
   terraform-plan:
     needs: [ publish ]
-    if: ${{ github.event.inputs.deploy-cloud }}
+    if: ${{ github.event.inputs.deploy-cloud == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
