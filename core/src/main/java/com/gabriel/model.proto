@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package com.gabriel.backup;
+
+import "buf/validate/validate.proto";
+
+message Address {
+    // Street: Must be between 1 and 255 characters, not blank
+    string street = 1 [(buf.validate.field).string = {min_len: 1, max_len: 255, pattern: ".*\\S.*"}];
+
+    // City: Must be between 1 and 255 characters, not blank
+    string city = 2 [(buf.validate.field).string = {min_len: 1, max_len: 255, pattern: ".*\\S.*"}];
+
+    // State: Must be exactly 2 characters, not blank
+    string state = 3 [(buf.validate.field).string = {min_len: 2, max_len: 2, pattern: ".*\\S.*"}];
+
+    // Zip: Must follow the pattern "DDDDD-DDD" (e.g., "12345-678")
+    string zip = 4 [(buf.validate.field).string = {pattern: "\\d{5}-\\d{3}"}];
+}
+
+message CPF {
+    // CPF: Must follow the pattern "XXX.XXX.XXX-XX" (e.g., "123.456.789-01") and not be blank
+    string value = 1 [(buf.validate.field).string = {min_len: 1, pattern: "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}"}];
+}
+
+message Name {
+    // Name: Must be between 1 and 255 characters, not blank
+    string value = 1 [(buf.validate.field).string = {min_len: 1, max_len: 255, pattern: ".*\\S.*"}];
+}
+
+message Cellphone {
+    // Cellphone: Must follow the pattern "(XX) XXXX-XXXX" or "(XX) XXXXX-XXXX" and not be blank
+    string value = 1 [(buf.validate.field).string = {min_len: 1, pattern: "\\(\\d{2}\\) \\d{4,5}-\\d{4}"}];
+}
+
+message Email {
+    // Email: Must be a valid email address and not blank
+    string value = 1 [(buf.validate.field).string = {min_len: 1, email: true}];
+}
+
+message Notification {
+    oneof with {
+        Cellphone cellphone = 1;
+        Email email = 2;
+    }
+}
+
+message Price {
+    // Price: Must be between 0.1 and 10000.0, not null
+    double value = 1 [(buf.validate.field).double = {gte: 0.1, lt: 10000.0}, (buf.validate.field).required = true];
+}
+
+message Quantity {
+    // Quantity: Must be between 1 and 10
+    int32 value = 1 [(buf.validate.field).int32 = {gte: 1, lte: 10}];
+}
+
+message Description {
+    // Value: Must be between 1 and 255 characters, not blank
+    string value = 1 [(buf.validate.field).string = {min_len: 1, max_len: 255, pattern: ".*\\S.*"}];
+}
+
+
+
+
+

@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package com.gabriel.exceptions;
+
+enum DomainError {
+  DOM_OO1 = 0; // DOM_OO1 - VALIDATION EXCEPTION
+  DOM_OO2 = 1; // DOM_OO2 - OTHER
+}
+
+enum ApplicationError {
+  APP_OO1 = 0; // APP_OO1 - DATABASE EXCEPTION
+  APP_OO2 = 1; // APP_OO2 - SERIALIZATION EXCEPTION
+  APP_OO3 = 2; // APP_OO3 - DESERIALIZATION EXCEPTION
+}
+
+message ErrorCode {
+  oneof with {
+    DomainError domain_error = 1;
+    ApplicationError application_error = 2;
+  }
+}
+
+message HttpException {
+  int32 status = 1;
+  string message = 2;
+  optional ErrorCode code = 3;
+}
