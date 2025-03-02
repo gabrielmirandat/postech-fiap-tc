@@ -1,4 +1,4 @@
-package com.gabriel.core.domain.model;
+spackage com.gabriel.core.domain.model;
 
 import com.gabriel.core.domain.exception.DomainException;
 import org.junit.jupiter.api.Assertions;

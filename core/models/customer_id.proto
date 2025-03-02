@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.gabriel.models;
+
+import "buf/validate/validate.proto";
+
+// CustomerID: Represents a unique identifier for customers
+message CustomerID {
+    // ID: Must follow the format [8 alphanumeric]-CUST-[YYYY]-[MM]-[DD], exactly 20 characters
+    string value = 1 [(buf.validate.field).string = {min_len: 20, max_len: 20, pattern: "[0-9a-f]{8}-CUST-\\d{4}-\\d{2}-\\d{2}"}];
+}

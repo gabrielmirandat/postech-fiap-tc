@@ -8,7 +8,7 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 
 proto_library(
     name = "menu_proto",
-    srcs = ["src/main/resources/specs/menu-api.proto"],
+    srcs = ["specs/menu-api.proto"],
     deps = [
         "@com_google_protobuf//:timestamp_proto",
     ],
@@ -29,7 +29,7 @@ java_grpc_library(
 
 proto_library(
     name = "permissions_proto",
-    srcs = ["src/main/resources/specs/permissions-api.proto"],
+    srcs = ["specs/permissions-api.proto"],
     deps = [
         "@com_google_protobuf//:timestamp_proto",
     ],
@@ -70,14 +70,13 @@ java_library(
 
 java_test_suite(
     name = "unit",
-    srcs = glob(["src/test/unit/java/**/*.java"]),
+    srcs = glob(["test/java/**/*.java"]),
     javacopts = [
         "-source",
         "21",
         "-target",
         "21",
     ],
-    resources = glob(["src/test/resources/**"]),
     runner = "junit5",
     runtime_deps = JUNIT5_DEPS,
     deps = [

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package com.gabriel.models;
+
+import "buf/validate/validate.proto";
+import "permission_id.proto";
+import "name.proto";
+import "google/protobuf/timestamp.proto";
+
+// Permission: Represents a permission with ID, role, authority, and timestamp
+message Permission {
+    // PermissionID: Unique identifier for the permission
+    PermissionID permission_id = 1;
+
+    // Role name: Name model for the role
+    Name role_name = 2;
+
+    // Authority name: Name model for the authority
+    Name authority_name = 3;
+
+    // Timestamp: Represents the time the permission was created or updated
+    google.protobuf.Timestamp timestamp = 4;
+}

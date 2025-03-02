@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package com.gabriel.models;
+
+import "buf/validate/validate.proto";
+
+message Address {
+    // Street: Must be between 1 and 255 characters, not blank
+    string street = 1 [(buf.validate.field).string = {min_len: 1, max_len: 255, pattern: ".*\\S.*"}];
+
+    // City: Must be between 1 and 255 characters, not blank
+    string city = 2 [(buf.validate.field).string = {min_len: 1, max_len: 255, pattern: ".*\\S.*"}];
+
+    // State: Must be exactly 2 characters, not blank
+    string state = 3 [(buf.validate.field).string = {min_len: 2, max_len: 2, pattern: ".*\\S.*"}];
+
+    // Zip: Must follow the pattern "DDDDD-DDD" (e.g., "12345-678")
+    string zip = 4 [(buf.validate.field).string = {pattern: "\\d{5}-\\d{3}"}];
+}
