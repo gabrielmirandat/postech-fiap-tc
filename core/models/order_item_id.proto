@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package com.gabriel.models;
+
+import "buf/validate/validate.proto";
+
+// OrderItemID: Represents a unique identifier for order items
+message OrderItemID {
+    // ID: Must follow the format [8 alphanumeric]-ORDI-[YYYY]-[MM]-[DD], exactly 20 characters
+    string value = 1 [(buf.validate.field).string = {min_len: 20, max_len: 20, pattern: "[0-9a-f]{8}-ORDI-\\d{4}-\\d{2}-\\d{2}"}];
+}
