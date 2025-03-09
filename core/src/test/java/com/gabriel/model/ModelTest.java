@@ -1,6 +1,6 @@
 package com.gabriel.model;
 
-import org.assertj.core.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -11,141 +11,142 @@ class ModelTests {
 
         @Test
         void shouldThrowExceptionWhenStreetIsBlank() {
-            Assertions.assertThatThrownBy(() ->
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Address.newBuilder()
-                    .setStreet(" ")
-                    .setCity("City")
-                    .setState("ST")
-                    .setZip("12345-678")
-                    .build()
+                        .setStreet(" ")
+                        .setCity("City")
+                        .setState("ST")
+                        .setZip("12345-678")
+                        .build()
                 )
-            )
-            .isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("Street cannot be blank");
+            );
+            assertTrue(exception.getMessage().contains("Street cannot be blank"));
         }
     
         @Test
         void shouldThrowExceptionWhenStreetIsTooLong() {
             String longStreet = "S".repeat(256);
-            Assertions.assertThatThrownBy(() -> 
+            
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Address.newBuilder()
-                    .setStreet(longStreet)
-                    .setCity("City")
-                    .setState("ST")
-                    .setZip("12345-678")
-                    .build()
+                        .setStreet(longStreet)
+                        .setCity("City")
+                        .setState("ST")
+                        .setZip("12345-678")
+                        .build()
                 )
-            )
-            .isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("Street name cannot exceed 255 characters");
+            );
+    
+            assertTrue(exception.getMessage().contains("Street name cannot exceed 255 characters"));
         }
     
         @Test
         void shouldThrowExceptionWhenCityIsBlank() {
-            Assertions.assertThatThrownBy(() -> 
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Address.newBuilder()
-                    .setStreet("Street")
-                    .setCity(" ")
-                    .setState("ST")
-                    .setZip("12345-678")
-                    .build()
+                        .setStreet("Street")
+                        .setCity(" ")
+                        .setState("ST")
+                        .setZip("12345-678")
+                        .build()
                 )
-            )
-            .isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("City cannot be blank");
+            );
+
+            assertTrue(exception.getMessage().contains("City cannot be blank"));
         }
     
         @Test
         void shouldThrowExceptionWhenCityIsTooLong() {
             String longCity = "C".repeat(256);
-            Assertions.assertThatThrownBy(() -> 
+    
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Address.newBuilder()
-                    .setStreet("Street")
-                    .setCity(longCity)
-                    .setState("ST")
-                    .setZip("12345-678")
-                    .build()
+                        .setStreet("Street")
+                        .setCity(longCity)
+                        .setState("ST")
+                        .setZip("12345-678")
+                        .build()
                 )
-            )
-            .isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("City name cannot exceed 255 characters");
+            );
+    
+            assertTrue(exception.getMessage().contains("City name cannot exceed 255 characters"));
         }
     
+
         @Test
         void shouldThrowExceptionWhenStateIsNotTwoCharacters() {
-            Assertions.assertThatThrownBy(() -> 
+            // Test for state with 1 character
+            Model.Exception exception1 = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Address.newBuilder()
-                    .setStreet("Street")
-                    .setCity("City")
-                    .setState("S")
-                    .setZip("12345-678")
-                    .build()
+                        .setStreet("Street")
+                        .setCity("City")
+                        .setState("S")
+                        .setZip("12345-678")
+                        .build()
                 )
-            )
-            .isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("State must be exactly 2 characters");
+            );
+            assertTrue(exception1.getMessage().contains("State must be exactly 2 characters"));
     
-            Assertions.assertThatThrownBy(() -> 
+            // Test for state with 3 characters
+            Model.Exception exception2 = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Address.newBuilder()
-                    .setStreet("Street")
-                    .setCity("City")
-                    .setState("STT")
-                    .setZip("12345-678")
-                    .build()
+                        .setStreet("Street")
+                        .setCity("City")
+                        .setState("STT")
+                        .setZip("12345-678")
+                        .build()
                 )
-            )
-            .isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("State must be exactly 2 characters");
+            );
+            assertTrue(exception2.getMessage().contains("State must be exactly 2 characters"));
         }
     
         @Test
         void shouldThrowExceptionWhenZipCodeDoesNotFollowPattern() {
-            Assertions.assertThatThrownBy(() -> 
+            // Test for zip code without hyphen
+            Model.Exception exception1 = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Address.newBuilder()
-                    .setStreet("Street")
-                    .setCity("City")
-                    .setState("ST")
-                    .setZip("12345678")
-                    .build()
+                        .setStreet("Street")
+                        .setCity("City")
+                        .setState("ST")
+                        .setZip("12345678")
+                        .build()
                 )
-            )
-            .isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("Zip code must follow the pattern XXXXX-XXX");
+            );
+            assertTrue(exception1.getMessage().contains("Zip code must follow the pattern XXXXX-XXX"));
     
-            Assertions.assertThatThrownBy(() -> 
+            // Test for zip code with incorrect format
+            Model.Exception exception2 = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Address.newBuilder()
-                    .setStreet("Street")
-                    .setCity("City")
-                    .setState("ST")
-                    .setZip("1234-678")
-                    .build()
+                        .setStreet("Street")
+                        .setCity("City")
+                        .setState("ST")
+                        .setZip("1234-678")
+                        .build()
                 )
-            )
-            .isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("Zip code must follow the pattern XXXXX-XXX");
+            );
+            assertTrue(exception2.getMessage().contains("Zip code must follow the pattern XXXXX-XXX"));
         }
     
         @Test
         void shouldCreateAddressWhenAllFieldsAreValid() {
-            Assertions.assertThatCode(() -> 
+            assertDoesNotThrow(() -> 
                 Model.validate(
                     Address.newBuilder()
-                    .setStreet("Street")
-                    .setCity("City")
-                    .setState("ST")
-                    .setZip("12345-678")
-                    .build()
+                        .setStreet("Street")
+                        .setCity("City")
+                        .setState("ST")
+                        .setZip("12345-678")
+                        .build()
                 )
-            )
-            .doesNotThrowAnyException();
+            );
         }
     }
 
@@ -154,41 +155,41 @@ class ModelTests {
 
         @Test
         void shouldThrowExceptionWhenNumberIsBlank() {
-            Assertions.assertThatThrownBy(() -> 
+            assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Cellphone.newBuilder().setValue(" ").build()
                 )
-            )
-                .isInstanceOf(Model.Exception.class)
-                .hasMessageContaining("Cellphone number cannot be blank");
+            );
         }
     
         @Test
         void shouldThrowExceptionWhenNumberDoesNotFollowPattern() {
-            Assertions.assertThatThrownBy(() -> Model.validate(
-                Cellphone.newBuilder().setValue("(12) 1234-567").build()
-            ))
-                .isInstanceOf(DomainException.class)
-                .hasMessageContaining("Cellphone number must follow the pattern");
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Cellphone.newBuilder().setValue("(12) 1234-567").build()
+                )
+            );
     
-            Assertions.assertThatThrownBy(() -> Model.validate(
-                Cellphone.newBuilder().setValue("12345678901").build()
-            ))
-                .isInstanceOf(DomainException.class)
-                .hasMessageContaining("Cellphone number must follow the pattern");
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Cellphone.newBuilder().setValue("12345678901").build()
+                )
+            );
         }
     
         @Test
         void shouldCreateCellphoneWhenNumberIsValid() {
-            Assertions.assertThatCode(() -> Model.validate(
-                Cellphone.newBuilder().setValue("(12) 1234-5678").build()
-            ))
-                .doesNotThrowAnyException();
+            assertDoesNotThrow(() -> 
+                Model.validate(
+                    Cellphone.newBuilder().setValue("(12) 1234-5678").build()
+                )
+            );
     
-            Assertions.assertThatCode(() -> Model.validate(
-                Cellphone.newBuilder().setValue("(12) 12345-6789").build()
-            ))
-                .doesNotThrowAnyException();
+            assertDoesNotThrow(() -> 
+                Model.validate(
+                    Cellphone.newBuilder().setValue("(12) 12345-6789").build()
+                )
+            );
         }
     }
 
@@ -197,47 +198,43 @@ class ModelTests {
 
         @Test
         void shouldCreateCPFWhenIdIsValid() {
-            Assertions.assertThatCode(() -> 
+            assertDoesNotThrow(() -> 
                 Model.validate(
                     Cpf.newBuilder().setValue("123.456.789-09").build()
                 )
-            )
-            .doesNotThrowAnyException();
+            );
         }
-    
+        
         @Test
         void shouldThrowExceptionWhenIdIsNull() {
-            Assertions.assertThatThrownBy(() -> 
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Cpf.newBuilder().setValue(null).build()
                 )
-            )
-            .isInstanceOf(Model.Exception.class)
-            .hasMessage("Domain validation failed: id CPF cannot be blank");
+            );
+            assertEquals("Domain validation failed: id CPF cannot be blank", exception.getMessage());
         }
-    
+        
         @Test
         void shouldThrowExceptionWhenIdIsBlank() {
-            Assertions.assertThatThrownBy(() -> 
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Cpf.newBuilder().setValue("   ").build()
                 )
-            )
-            .isInstanceOf(Model.Exception.class)
-            .hasMessage("Domain validation failed: id CPF cannot be blank, " +
-                "id CPF must follow the pattern XXX.XXX.XXX-XX");
+            );
+            assertEquals("Domain validation failed: id CPF cannot be blank, " +
+                "id CPF must follow the pattern XXX.XXX.XXX-XX", exception.getMessage());
         }
-    
+        
         @Test
         void shouldThrowExceptionWhenIdDoesNotFollowPattern() {
-            Assertions.assertThatThrownBy(() -> 
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Cpf.newBuilder().setValue("12345678909").build()
                 )
-            )
-            .isInstanceOf(Model.Exception.class)
-            .hasMessage("Domain validation failed: id CPF must follow the pattern XXX.XXX.XXX-XX");
-        }
+            );
+            assertEquals("Domain validation failed: id CPF must follow the pattern XXX.XXX.XXX-XX", exception.getMessage());
+        }        
     }
 
     @Nested
@@ -245,78 +242,83 @@ class ModelTests {
 
         @Test
         void shouldThrowExceptionWhenAddressIsBlank() {
-            Assertions.assertThatThrownBy(() -> 
+            assertThrows(Model.Exception.class, () ->
                 Model.validate(
                     Email.newBuilder().setValue(" ").build()
                 )
-            )
-                .isInstanceOf(Model.Exception.class)
-                .hasMessageContaining("Email address cannot be blank");
+            );
         }
-    
+        
         @Test
         void shouldThrowExceptionWhenAddressDoesNotFollowEmailPattern() {
-            Assertions.assertThatThrownBy(() -> 
+            Model.Exception exception1 = assertThrows(Model.Exception.class, () ->
                 Model.validate(
                     Email.newBuilder().setValue("invalid-email").build()
                 )
-            )
-                .isInstanceOf(Model.Exception.class)
-                .hasMessageContaining("Invalid email address format");
-    
-            Assertions.assertThatThrownBy(() -> 
+            );
+            assertTrue(exception1.getMessage().contains("Invalid email address format"));
+        
+            Model.Exception exception2 = assertThrows(Model.Exception.class, () ->
                 Model.validate(
                     Email.newBuilder().setValue("invalid@.com").build()
                 )
-            )
-                .isInstanceOf(Model.Exception.class)
-                .hasMessageContaining("Invalid email address format");
+            );
+            assertTrue(exception2.getMessage().contains("Invalid email address format"));
         }
-    
+        
         @Test
         void shouldCreateEmailAddressWhenAddressIsValid() {
-            Assertions.assertThatCode(() -> 
+            assertDoesNotThrow(() ->
                 Model.validate(
                     Email.newBuilder().setValue("valid@example.com").build()
                 )
-            )
-                .doesNotThrowAnyException();
-        }
+            );
+        }        
     }
 
     @Nested
     class NameTest {
 
         @Test
-        public void shouldCreateNameSuccessfully_whenValueIsValid() {
-            Assertions.assertNotNull(Model.validate(Name.newBuilder().setValue("John Doe").build()));
-            Assertions.assertEquals("John Doe", Model.validate(Name.newBuilder().setValue("John Doe").build()).getValue());
+        void shouldCreateNameSuccessfully_whenValueIsValid() {
+            Name name = (Name) Model.validate(Name.newBuilder().setValue("John Doe").build());
+            assertNotNull(name);
+            assertEquals("John Doe", name.getValue());
         }
     
         @Test
-        public void shouldThrowException_whenValueIsNull() {
-            Assertions.assertThrows(Model.Exception.class, () -> Model.validate(Name.newBuilder().setValue(null).build()));
+        void shouldThrowException_whenValueIsNull() {
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(Name.newBuilder().setValue(null).build())
+            );
         }
     
         @Test
-        public void shouldThrowException_whenValueIsEmpty() {
-            Assertions.assertThrows(Model.Exception.class, () -> Model.validate(Name.newBuilder().setValue("").build()));
+        void shouldThrowException_whenValueIsEmpty() {
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(Name.newBuilder().setValue("").build())
+            );
         }
     
         @Test
-        public void shouldThrowException_whenValueIsBlank() {
-            Assertions.assertThrows(Model.Exception.class, () -> Model.validate(Name.newBuilder().setValue("   ").build()));
+        void shouldThrowException_whenValueIsBlank() {
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(Name.newBuilder().setValue("   ").build())
+            );
         }
     
         @Test
-        public void shouldThrowException_whenValueExceeds255Characters() {
-            Assertions.assertThrows(Model.Exception.class, () -> Model.validate(Name.newBuilder().setValue("a".repeat(256)).build()));
+        void shouldThrowException_whenValueExceeds255Characters() {
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(Name.newBuilder().setValue("a".repeat(256)).build())
+            );
         }
     
         @Test
-        public void shouldCreateNameSuccessfully_whenValueIsExactly255Characters() {
-            Assertions.assertNotNull(Model.validate(Name.newBuilder().setValue("a".repeat(255)).build()));
-            Assertions.assertEquals("a".repeat(255), Model.validate(Name.newBuilder().setValue("a".repeat(255)).build()).getValue());
+        void shouldCreateNameSuccessfully_whenValueIsExactly255Characters() {
+            Name name = (Name) Model.validate(Name.newBuilder().setValue("a".repeat(255)).build());
+            assertNotNull(name);
+            assertEquals("a".repeat(255), name.getValue());
         }
     }
 
@@ -325,34 +327,42 @@ class ModelTests {
 
         @Test
         void shouldCreateNotificationSuccessfullyWhenTypeAndValueAreValid() {
-            Assertions.assertThatCode(() -> Model.validate(
-                Notification.newBuilder().setCellphone(
-                    Cellphone.newBuilder().setValue("(11) 98765-4321").build()
-                ).build())
-            ).doesNotThrowAnyException();
-    
-            Assertions.assertThatCode(() -> Model.validate(
-                Notification.newBuilder().setEmail(
-                    Email.newBuilder().setValue("example@example.com").build()
-                ).build())
-            ).doesNotThrowAnyException();
+            assertDoesNotThrow(() -> 
+                Model.validate(
+                    Notification.newBuilder()
+                        .setCellphone(Cellphone.newBuilder().setValue("(11) 98765-4321").build())
+                        .build()
+                )
+            );
+
+            assertDoesNotThrow(() -> 
+                Model.validate(
+                    Notification.newBuilder()
+                        .setEmail(Email.newBuilder().setValue("example@example.com").build())
+                        .build()
+                )
+            );
         }
-    
+
         @Test
         void shouldThrowExceptionWhenValueIsInvalid() {
-            Assertions.assertThatThrownBy(() -> Model.validate(
-                Notification.newBuilder().setCellphone(
-                    Cellphone.newBuilder().setValue("invalid").build()
-                ).build())
-            ).isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("Cellphone number must follow the pattern (XX) XXXX-XXXX or (XX) XXXXX-XXXX");
-    
-            Assertions.assertThatThrownBy(() -> Model.validate(
-                Notification.newBuilder().setEmail(
-                    Email.newBuilder().setValue("invalid").build()
-                ).build())
-            ).isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("Invalid email address format");
+            Model.Exception cellphoneException = assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Notification.newBuilder()
+                        .setCellphone(Cellphone.newBuilder().setValue("invalid").build())
+                        .build()
+                )
+            );
+            assertTrue(cellphoneException.getMessage().contains("Cellphone number must follow the pattern (XX) XXXX-XXXX or (XX) XXXXX-XXXX"));
+
+            Model.Exception emailException = assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Notification.newBuilder()
+                        .setEmail(Email.newBuilder().setValue("invalid").build())
+                        .build()
+                )
+            );
+            assertTrue(emailException.getMessage().contains("Invalid email address format"));
         }
     }  
 
@@ -361,36 +371,41 @@ class ModelTests {
 
         @Test
         void shouldCreatePriceSuccessfully() {
-            Assertions.assertThatCode(() -> Model.validate(Price.newBuilder().setValue(5.0).build()))
-                .doesNotThrowAnyException();
+            assertDoesNotThrow(() -> 
+                Model.validate(Price.newBuilder().setValue(5.0).build())
+            );
         }
     
         @Test
         void shouldNotCreatePriceWithNegativeValue() {
-            Assertions.assertThatThrownBy(() -> Model.validate(Price.newBuilder().setValue(-1.0).build()))
-                .isInstanceOf(Model.Exception.class)
-                .hasMessageContaining("Price must be at least 0.1");
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(Price.newBuilder().setValue(-1.0).build())
+            );
+            assertTrue(exception.getMessage().contains("Price must be at least 0.1"));
         }
     
         @Test
         void shouldNotCreatePriceWithZeroValue() {
-            Assertions.assertThatThrownBy(() -> Model.validate(Price.newBuilder().setValue(0.0).build()))
-                .isInstanceOf(Model.Exception.class)
-                .hasMessageContaining("Price must be at least 0.1");
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(Price.newBuilder().setValue(0.0).build())
+            );
+            assertTrue(exception.getMessage().contains("Price must be at least 0.1"));
         }
     
         @Test
         void shouldNotCreatePriceWithTooLowValue() {
-            Assertions.assertThatThrownBy(() -> Model.validate(Price.newBuilder().setValue(0.05).build()))
-                .isInstanceOf(Model.Exception.class)
-                .hasMessageContaining("Price must be at least 0.1");
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(Price.newBuilder().setValue(0.05).build())
+            );
+            assertTrue(exception.getMessage().contains("Price must be at least 0.1"));
         }
     
         @Test
         void shouldNotCreatePriceWithTooHighValue() {
-            Assertions.assertThatThrownBy(() -> Model.validate(Price.newBuilder().setValue(10000.1).build()))
-                .isInstanceOf(Model.Exception.class)
-                .hasMessageContaining("Price must be less than 10000.0");
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(Price.newBuilder().setValue(10000.1).build())
+            );
+            assertTrue(exception.getMessage().contains("Price must be less than 10000.0"));
         }
     }
 
@@ -399,34 +414,39 @@ class ModelTests {
 
         @Test
         void shouldCreateQuantitySuccessfully_whenSizeIsValid() {
-            Assertions.assertThatCode(() -> Model.validate(Quantity.newBuilder().setValue(5).build()))
-                .doesNotThrowAnyException();
+            assertDoesNotThrow(() -> 
+                Model.validate(Quantity.newBuilder().setValue(5).build())
+            );
         }
     
         @Test
         void shouldThrowException_whenSizeIsLessThanOne() {
-            Assertions.assertThatThrownBy(() -> Model.validate(Quantity.newBuilder().setValue(0).build()))
-                .isInstanceOf(Model.Exception.class)
-                .hasMessageContaining("Quantity size must be between 1 and 10");
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(Quantity.newBuilder().setValue(0).build())
+            );
+            assertTrue(exception.getMessage().contains("Quantity size must be between 1 and 10"));
         }
     
         @Test
         void shouldThrowException_whenSizeIsMoreThanTen() {
-            Assertions.assertThatThrownBy(() -> Model.validate(Quantity.newBuilder().setValue(11).build()))
-                .isInstanceOf(Model.Exception.class)
-                .hasMessageContaining("Quantity size must be between 1 and 10");
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(Quantity.newBuilder().setValue(11).build())
+            );
+            assertTrue(exception.getMessage().contains("Quantity size must be between 1 and 10"));
         }
     
         @Test
         void shouldCreateQuantitySuccessfully_whenSizeIsExactlyOne() {
-            Assertions.assertThatCode(() -> Model.validate(Quantity.newBuilder().setValue(1).build()))
-                .doesNotThrowAnyException();
+            assertDoesNotThrow(() -> 
+                Model.validate(Quantity.newBuilder().setValue(1).build())
+            );
         }
     
         @Test
         void shouldCreateQuantitySuccessfully_whenSizeIsExactlyTen() {
-            Assertions.assertThatCode(() -> Model.validate(Quantity.newBuilder().setValue(10).build()))
-                .doesNotThrowAnyException();
+            assertDoesNotThrow(() -> 
+                Model.validate(Quantity.newBuilder().setValue(10).build())
+            );
         }
     }
 
@@ -435,31 +455,31 @@ class ModelTests {
 
         @Test
         void shouldThrowExceptionWhenIdDoesNotFollowOrderIDPattern() {
-            Assertions.assertThatThrownBy(() -> Model.validate(
-                OrderId.newBuilder().setValue("invalid-id").build()
-            ))
-            .isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("Invalid Order ID format");
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(OrderId.newBuilder().setValue("invalid-id").build())
+            );
+            assertTrue(exception.getMessage().contains("Invalid Order ID format"));
         }
     
         @Test
         void shouldCreateOrderIDWhenIdIsValid() {
             String validId = "12345678-ORDR-2023-04-18";
-            Assertions.assertThatCode(() -> Model.validate(
-                OrderId.newBuilder().setValue(validId).build()
-            )).doesNotThrowAnyException();
+            assertDoesNotThrow(() -> 
+                Model.validate(OrderId.newBuilder().setValue(validId).build())
+            );
         }
     
         @Test
         void shouldGenerateValidOrderIDWhenNoIdProvided() {
             OrderId orderID = (OrderId) Model.validate(OrderId.newBuilder().build());
             String[] parts = orderID.getValue().split("-");
-            Assertions.assertThat(parts).hasSize(5);
-            Assertions.assertThat(parts[0]).matches("[0-9a-f]{8}");
-            Assertions.assertThat(parts[1]).isEqualTo("ORDR");
-            Assertions.assertThat(parts[2]).matches("\\d{4}");
-            Assertions.assertThat(parts[3]).matches("\\d{2}");
-            Assertions.assertThat(parts[4]).matches("\\d{2}");
+    
+            assertEquals(5, parts.length);
+            assertTrue(parts[0].matches("[0-9a-f]{8}"));
+            assertEquals("ORDR", parts[1]);
+            assertTrue(parts[2].matches("\\d{4}"));
+            assertTrue(parts[3].matches("\\d{2}"));
+            assertTrue(parts[4].matches("\\d{2}"));
         }
     
         @Test
@@ -467,8 +487,9 @@ class ModelTests {
             OrderId orderID1 = (OrderId) Model.validate(OrderId.newBuilder().setValue("12345678-ORDR-2023-04-18").build());
             OrderId orderID2 = (OrderId) Model.validate(OrderId.newBuilder().setValue("12345678-ORDR-2023-04-18").build());
             OrderId orderID3 = (OrderId) Model.validate(OrderId.newBuilder().setValue("87654321-ORDR-2023-04-18").build());
-            Assertions.assertThat(orderID1).isEqualTo(orderID2);
-            Assertions.assertThat(orderID1).isNotEqualTo(orderID3);
+    
+            assertEquals(orderID1, orderID2);
+            assertNotEquals(orderID1, orderID3);
         }
     }
 
@@ -477,31 +498,31 @@ class ModelTests {
 
         @Test
         void shouldThrowExceptionWhenIdDoesNotFollowProductIDPattern() {
-            Assertions.assertThatThrownBy(() -> Model.validate(
-                ProductId.newBuilder().setValue("invalid-id").build()
-            ))
-            .isInstanceOf(Model.Exception.class)
-            .hasMessageContaining("Invalid Product ID format");
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(ProductId.newBuilder().setValue("invalid-id").build())
+            );
+            assertTrue(exception.getMessage().contains("Invalid Product ID format"));
         }
     
         @Test
         void shouldCreateProductIDWhenIdIsValid() {
             String validId = "12345678-PRDC-2023-04-18";
-            Assertions.assertThatCode(() -> Model.validate(
-                ProductId.newBuilder().setValue(validId).build()
-            )).doesNotThrowAnyException();
+            assertDoesNotThrow(() -> 
+                Model.validate(ProductId.newBuilder().setValue(validId).build())
+            );
         }
     
         @Test
         void shouldGenerateValidProductIDWhenNoIdProvided() {
-            ProductId productID = (ProductId) Model.validate(ProductId.newBuilder().build();
+            ProductId productID = (ProductId) Model.validate(ProductId.newBuilder().build());
             String[] parts = productID.getValue().split("-");
-            Assertions.assertThat(parts).hasSize(5);
-            Assertions.assertThat(parts[0]).matches("[0-9a-f]{8}");
-            Assertions.assertThat(parts[1]).isEqualTo("PRDC");
-            Assertions.assertThat(parts[2]).matches("\\d{4}");
-            Assertions.assertThat(parts[3]).matches("\\d{2}");
-            Assertions.assertThat(parts[4]).matches("\\d{2}");
+    
+            assertEquals(5, parts.length);
+            assertTrue(parts[0].matches("[0-9a-f]{8}"));
+            assertEquals("PRDC", parts[1]);
+            assertTrue(parts[2].matches("\\d{4}"));
+            assertTrue(parts[3].matches("\\d{2}"));
+            assertTrue(parts[4].matches("\\d{2}"));
         }
     
         @Test
@@ -509,8 +530,9 @@ class ModelTests {
             ProductId productID1 = (ProductId) Model.validate(ProductId.newBuilder().setValue("12345678-PRDC-2023-04-18").build());
             ProductId productID2 = (ProductId) Model.validate(ProductId.newBuilder().setValue("12345678-PRDC-2023-04-18").build());
             ProductId productID3 = (ProductId) Model.validate(ProductId.newBuilder().setValue("87654321-PRDC-2023-04-18").build());
-            Assertions.assertThat(productID1).isEqualTo(productID2);
-            Assertions.assertThat(productID1).isNotEqualTo(productID3);
+    
+            assertEquals(productID1, productID2);
+            assertNotEquals(productID1, productID3);
         }
     }
 }

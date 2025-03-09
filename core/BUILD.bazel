@@ -72,7 +72,7 @@ java_grpc_library(
 
 java_library(
     name = "model_lib",
-    srcs = [":model_java_proto.srcjar"],
+    srcs = [":model_java_proto.srcjar"] + glob(["src/main/java/**/*.java"]),
     javacopts = [
         "-source",
         "21",
@@ -99,7 +99,6 @@ java_test_suite(
     runtime_deps = JUNIT5_DEPS,
     deps = [
         ":model_lib",
-        "@maven//:org_assertj_assertj_core",
         "@maven//:org_glassfish_expressly_expressly",
         "@maven//:org_hibernate_validator_hibernate_validator_cdi",
         "@maven//:org_junit_jupiter_junit_jupiter_api",
