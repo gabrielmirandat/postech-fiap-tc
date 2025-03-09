@@ -1,0 +1,25 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package com.gabriel.model;
+
+enum DomainCode {
+  DOM_OO1 = 0; // DOM_OO1 - VALIDATION EXCEPTION
+  DOM_OO2 = 1; // DOM_OO2 - OTHER
+}
+
+enum ApplicationCode {
+  APP_OO1 = 0; // APP_OO1 - DATABASE EXCEPTION
+  APP_OO2 = 1; // APP_OO2 - SERIALIZATION EXCEPTION
+  APP_OO3 = 2; // APP_OO3 - DESERIALIZATION EXCEPTION
+}
+
+message DomainException {
+  string details = 1;
+  optional DomainCode code = 2;
+}
+
+message ApplicationException {
+  string details = 1;
+  optional ApplicationCode code = 2;
+}

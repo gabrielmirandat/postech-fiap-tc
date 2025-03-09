@@ -7,6 +7,28 @@ load("@rules_jvm_external//:defs.bzl", "artifact")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
 proto_library(
+    name = "model_proto",
+    srcs = glob(["model/*.proto"]),
+    deps = [
+        "@com_google_protobuf//:timestamp_proto",
+        "@buf_validate//proto/protovalidate/buf/validate:validate_proto",
+    ],
+)
+
+java_proto_library(
+    name = "model_java_proto",
+    visibility = ["//visibility:public"],
+    deps = [":model_proto"],
+)
+
+genrule(
+    name = "model_java_jar",
+    srcs = [":model_java_proto"],
+    outs = ["model_java_proto.srcjar"],
+    cmd = "cp $(RULEDIR)/model_proto-speed-src.jar $(location model_java_proto.srcjar)",
+)
+
+proto_library(
     name = "menu_proto",
     srcs = ["specs/menu-api.proto"],
     deps = [
@@ -49,28 +71,24 @@ java_grpc_library(
 )
 
 java_library(
-    name = "artifact",
-    srcs = glob(["src/main/java/**/*.java"]),
+    name = "model_lib",
+    srcs = [":model_java_proto.srcjar"],
     javacopts = [
         "-source",
         "21",
         "-target",
         "21",
     ],
-    resources = glob(["src/main/resources/**"]),
     visibility = ["//visibility:public"],
     deps = [
-        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
-        "@maven//:com_fasterxml_jackson_core_jackson_core",
-        "@maven//:com_fasterxml_jackson_core_jackson_databind",
-        "@maven//:jakarta_persistence_jakarta_persistence_api",
-        "@maven//:jakarta_validation_jakarta_validation_api",
+        "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:build_buf_protovalidate",
     ],
 )
 
 java_test_suite(
     name = "unit",
-    srcs = glob(["test/java/**/*.java"]),
+    srcs = glob(["src/test/java/**/*.java"]),
     javacopts = [
         "-source",
         "21",
@@ -80,7 +98,7 @@ java_test_suite(
     runner = "junit5",
     runtime_deps = JUNIT5_DEPS,
     deps = [
-        ":artifact",
+        ":model_lib",
         "@maven//:org_assertj_assertj_core",
         "@maven//:org_glassfish_expressly_expressly",
         "@maven//:org_hibernate_validator_hibernate_validator_cdi",

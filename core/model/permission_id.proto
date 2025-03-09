@@ -1,0 +1,12 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package com.gabriel.model;
+
+import "buf/validate/validate.proto";
+
+// PermissionId: Represents a unique identifier for permissions
+message PermissionId {
+    // Value: Must follow the format [8 alphanumeric]-PERM-[YYYY]-[MM]-[DD], exactly 20 characters
+    string value = 1 [(buf.validate.field).string = {min_len: 20, max_len: 20, pattern: "[0-9a-f]{8}-PERM-\\d{4}-\\d{2}-\\d{2}"}];
+}

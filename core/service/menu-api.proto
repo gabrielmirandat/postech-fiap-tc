@@ -1,0 +1,30 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_outer_classname = "MenuProtoClient";
+package com.gabriel.service.menu;
+
+import "google/protobuf/timestamp.proto";
+
+// O serviço gRPC
+service Menu {
+  rpc RetrieveMenu (MenuRequest) returns (MenuResponse);
+}
+
+// Mensagem de requisição com opção de filtro por categoria
+message MenuRequest {
+  string category = 1;
+}
+
+// Definindo um item de menu individual
+message MenuItem {
+  string id = 1;
+  string name = 2;
+  double price = 3;
+  string category = 4;
+  google.protobuf.Timestamp lastUpdated = 5;
+}
+
+// Mensagem de resposta
+message MenuResponse {
+  repeated MenuItem items = 1;
+}
