@@ -1,0 +1,23 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package com.gabriel.model;
+
+import "buf/validate/validate.proto";
+import "core/model/order_id.proto";
+import "core/model/order_item_id.proto";
+import "core/model/product_id.proto";
+import "core/model/ingredient_id.proto";
+import "core/model/customer_id.proto";
+import "core/model/permission_id.proto";
+
+message Id {
+    oneof with {
+        OrderId order_id = 1;
+        OrderItemId order_item_id = 2;
+        ProductId product_id = 3;
+        IngredientId ingredient_id = 4;
+        CustomerId customer_id = 5;
+        PermissionId permission_id = 6;
+    }
+}

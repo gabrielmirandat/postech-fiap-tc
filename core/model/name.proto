@@ -1,0 +1,11 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package com.gabriel.model;
+
+import "buf/validate/validate.proto";   
+
+message Name {
+    // Value: Must be between 1 and 255 characters, not blank
+    string value = 1 [(buf.validate.field).string = {min_len: 1, max_len: 255, pattern: ".*\\S.*"}];
+}

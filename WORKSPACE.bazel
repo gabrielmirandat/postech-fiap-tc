@@ -79,6 +79,29 @@ MICROMETER_VERSION = "1.1.0"
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
+    name = "bazel_gazelle",
+    urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/refs/tags/v0.32.0.tar.gz"],
+    strip_prefix = "bazel-gazelle-0.32.0",
+    sha256 = "a79620c4173792b7575d360c4679009e40dc6042d4897279433ff8ba42a6cfe6",
+)
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+
+gazelle_dependencies()
+
+http_archive(
+    name = "io_bazel_rules_go",
+    urls = ["https://github.com/bazelbuild/rules_go/releases/download/v0.41.0/rules_go-v0.41.0.zip"],
+    sha256 = "278b7ff5a826f3dc10f04feaf0b70d48b68748ccd512d7f98bf442077f043fe3",
+)
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains(version = "1.21.1")
+
+http_archive(
     name = "rules_jvm_external",
     sha256 = "85776be6d8fe64abf26f463a8e12cd4c15be927348397180a01693610da7ec90",
     strip_prefix = "rules_jvm_external-6.4",
@@ -143,6 +166,27 @@ load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_
 rules_proto_dependencies()
 
 rules_proto_toolchains()
+
+http_archive(
+    name = "rules_buf",
+    integrity = "sha256-Hr64Q/CaYr0E3ptAjEOgdZd1yc+cBjp7OG1wzuf3DIs=",
+    strip_prefix = "rules_buf-0.3.0",
+    urls = [
+        "https://github.com/bufbuild/rules_buf/archive/refs/tags/v0.3.0.zip",
+    ],
+)
+
+load("@rules_buf//buf:repositories.bzl", "rules_buf_dependencies", "rules_buf_toolchains")
+
+rules_buf_dependencies()
+
+rules_buf_toolchains(version = "v1.50.0")
+
+http_archive(
+    name = "buf_validate",
+    urls = ["https://github.com/bufbuild/protovalidate/archive/refs/tags/v0.10.0.tar.gz"],
+    strip_prefix = "protovalidate-0.10.0",
+)
 
 http_archive(
     name = "com_google_protobuf",
@@ -319,6 +363,7 @@ maven_install(
         "org.testcontainers:mongodb:%s" % TESTCONTAINER_VERSION,
         "org.testcontainers:testcontainers:%s" % TESTCONTAINER_VERSION,
         "org.yaml:snakeyaml:%s" % SNAKEYAML_VERSION,
+        "build.buf:protovalidate:%s" % "0.5.0",
     ],
     repositories = [
         "https://repo.maven.apache.org/maven2",

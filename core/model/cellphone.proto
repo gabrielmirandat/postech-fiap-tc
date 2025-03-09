@@ -1,0 +1,11 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package com.gabriel.model;
+
+import "buf/validate/validate.proto";   
+
+message Cellphone {
+    // Cellphone: Must follow the pattern "(XX) XXXX-XXXX" or "(XX) XXXXX-XXXX" and not be blank
+    string value = 1 [(buf.validate.field).string = {min_len: 1, pattern: "\\(\\d{2}\\) \\d{4,5}-\\d{4}"}];
+}

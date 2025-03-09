@@ -1,0 +1,15 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package com.gabriel.model;
+
+import "buf/validate/validate.proto";
+import "core/model/cellphone.proto";
+import "core/model/email.proto";
+
+message Notification {
+    oneof with {
+        Cellphone cellphone = 1;
+        Email email = 2;
+    }
+}
