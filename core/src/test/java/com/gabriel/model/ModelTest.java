@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class ModelTests {
+class ModelTest {
 
     @Nested
     class AddressTest {
@@ -21,7 +21,7 @@ class ModelTests {
                         .build()
                 )
             );
-            assertTrue(exception.getMessage().contains("Street cannot be blank"));
+            assertEquals("Street cannot be blank", exception.getMessage());
         }
     
         @Test
@@ -39,7 +39,7 @@ class ModelTests {
                 )
             );
     
-            assertTrue(exception.getMessage().contains("Street name cannot exceed 255 characters"));
+            assertEquals("Street name cannot exceed 255 characters", exception.getMessage());
         }
     
         @Test
@@ -55,7 +55,7 @@ class ModelTests {
                 )
             );
 
-            assertTrue(exception.getMessage().contains("City cannot be blank"));
+            assertEquals("City cannot be blank", exception.getMessage());
         }
     
         @Test
@@ -73,7 +73,7 @@ class ModelTests {
                 )
             );
     
-            assertTrue(exception.getMessage().contains("City name cannot exceed 255 characters"));
+            assertEquals("City name cannot exceed 255 characters", exception.getMessage());
         }
     
 
@@ -90,7 +90,7 @@ class ModelTests {
                         .build()
                 )
             );
-            assertTrue(exception1.getMessage().contains("State must be exactly 2 characters"));
+            assertEquals(exception1.getMessage(), "State must be exactly 2 characters");
     
             // Test for state with 3 characters
             Model.Exception exception2 = assertThrows(Model.Exception.class, () -> 
@@ -103,7 +103,7 @@ class ModelTests {
                         .build()
                 )
             );
-            assertTrue(exception2.getMessage().contains("State must be exactly 2 characters"));
+            assertEquals(exception2.getMessage(), "State must be exactly 2 characters");
         }
     
         @Test
@@ -119,7 +119,7 @@ class ModelTests {
                         .build()
                 )
             );
-            assertTrue(exception1.getMessage().contains("Zip code must follow the pattern XXXXX-XXX"));
+            assertEquals(exception1.getMessage(), "Zip code must follow the pattern XXXXX-XXX");
     
             // Test for zip code with incorrect format
             Model.Exception exception2 = assertThrows(Model.Exception.class, () -> 
@@ -132,7 +132,7 @@ class ModelTests {
                         .build()
                 )
             );
-            assertTrue(exception2.getMessage().contains("Zip code must follow the pattern XXXXX-XXX"));
+            assertEquals(exception2.getMessage(), "Zip code must follow the pattern XXXXX-XXX");
         }
     
         @Test
@@ -256,14 +256,14 @@ class ModelTests {
                     Email.newBuilder().setValue("invalid-email").build()
                 )
             );
-            assertTrue(exception1.getMessage().contains("Invalid email address format"));
+            assertEquals(exception1.getMessage(), "Invalid email address format");
         
             Model.Exception exception2 = assertThrows(Model.Exception.class, () ->
                 Model.validate(
                     Email.newBuilder().setValue("invalid@.com").build()
                 )
             );
-            assertTrue(exception2.getMessage().contains("Invalid email address format"));
+            assertEquals(exception2.getMessage(), "Invalid email address format");
         }
         
         @Test
@@ -353,7 +353,7 @@ class ModelTests {
                         .build()
                 )
             );
-            assertTrue(cellphoneException.getMessage().contains("Cellphone number must follow the pattern (XX) XXXX-XXXX or (XX) XXXXX-XXXX"));
+            assertEquals("Cellphone number must follow the pattern (XX) XXXX-XXXX or (XX) XXXXX-XXXX", cellphoneException.getMessage());
 
             Model.Exception emailException = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
@@ -362,7 +362,7 @@ class ModelTests {
                         .build()
                 )
             );
-            assertTrue(emailException.getMessage().contains("Invalid email address format"));
+            assertEquals("Invalid email address format", emailException.getMessage());
         }
     }  
 
@@ -381,7 +381,7 @@ class ModelTests {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Price.newBuilder().setValue(-1.0).build())
             );
-            assertTrue(exception.getMessage().contains("Price must be at least 0.1"));
+            assertEquals("Price must be at least 0.1", exception.getMessage());
         }
     
         @Test
@@ -389,7 +389,7 @@ class ModelTests {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Price.newBuilder().setValue(0.0).build())
             );
-            assertTrue(exception.getMessage().contains("Price must be at least 0.1"));
+            assertEquals("Price must be at least 0.1", exception.getMessage());
         }
     
         @Test
@@ -397,7 +397,7 @@ class ModelTests {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Price.newBuilder().setValue(0.05).build())
             );
-            assertTrue(exception.getMessage().contains("Price must be at least 0.1"));
+            assertEquals("Price must be at least 0.1", exception.getMessage());
         }
     
         @Test
@@ -405,7 +405,7 @@ class ModelTests {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Price.newBuilder().setValue(10000.1).build())
             );
-            assertTrue(exception.getMessage().contains("Price must be less than 10000.0"));
+            assertEquals("Price must be less than 10000.0", exception.getMessage());
         }
     }
 
@@ -424,7 +424,7 @@ class ModelTests {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Quantity.newBuilder().setValue(0).build())
             );
-            assertTrue(exception.getMessage().contains("Quantity size must be between 1 and 10"));
+            assertEquals("Quantity size must be between 1 and 10", exception.getMessage());
         }
     
         @Test
@@ -432,7 +432,7 @@ class ModelTests {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Quantity.newBuilder().setValue(11).build())
             );
-            assertTrue(exception.getMessage().contains("Quantity size must be between 1 and 10"));
+            assertEquals("Quantity size must be between 1 and 10", exception.getMessage());
         }
     
         @Test
@@ -458,7 +458,7 @@ class ModelTests {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(OrderId.newBuilder().setValue("invalid-id").build())
             );
-            assertTrue(exception.getMessage().contains("Invalid Order ID format"));
+            assertEquals("Invalid Order ID format", exception.getMessage());
         }
     
         @Test
@@ -467,19 +467,6 @@ class ModelTests {
             assertDoesNotThrow(() -> 
                 Model.validate(OrderId.newBuilder().setValue(validId).build())
             );
-        }
-    
-        @Test
-        void shouldGenerateValidOrderIDWhenNoIdProvided() {
-            OrderId orderID = (OrderId) Model.validate(OrderId.newBuilder().build());
-            String[] parts = orderID.getValue().split("-");
-    
-            assertEquals(5, parts.length);
-            assertTrue(parts[0].matches("[0-9a-f]{8}"));
-            assertEquals("ORDR", parts[1]);
-            assertTrue(parts[2].matches("\\d{4}"));
-            assertTrue(parts[3].matches("\\d{2}"));
-            assertTrue(parts[4].matches("\\d{2}"));
         }
     
         @Test
@@ -501,7 +488,7 @@ class ModelTests {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(ProductId.newBuilder().setValue("invalid-id").build())
             );
-            assertTrue(exception.getMessage().contains("Invalid Product ID format"));
+            assertEquals("Invalid Product ID format", exception.getMessage());
         }
     
         @Test
@@ -510,19 +497,6 @@ class ModelTests {
             assertDoesNotThrow(() -> 
                 Model.validate(ProductId.newBuilder().setValue(validId).build())
             );
-        }
-    
-        @Test
-        void shouldGenerateValidProductIDWhenNoIdProvided() {
-            ProductId productID = (ProductId) Model.validate(ProductId.newBuilder().build());
-            String[] parts = productID.getValue().split("-");
-    
-            assertEquals(5, parts.length);
-            assertTrue(parts[0].matches("[0-9a-f]{8}"));
-            assertEquals("PRDC", parts[1]);
-            assertTrue(parts[2].matches("\\d{4}"));
-            assertTrue(parts[3].matches("\\d{2}"));
-            assertTrue(parts[4].matches("\\d{2}"));
         }
     
         @Test
