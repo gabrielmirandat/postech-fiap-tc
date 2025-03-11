@@ -3,9 +3,14 @@ option java_multiple_files = true;
 
 package com.gabriel.model;
 
-import "buf/validate/validate.proto";   
+import "buf/validate/validate.proto";
 
+// Quantity: Represents a count of items
 message Quantity {
-    // Value: Must be between 1 and 10
-    int32 value = 1 [(buf.validate.field).int32 = {gte: 1, lte: 10}];
+  // Value: Must be between 1 and 10
+  int32 value = 1 [(buf.validate.field).cel = {
+    id: "quantity.value",
+    message: "Quantity must be between 1 and 10",
+    expression: "this >= 1 && this <= 10"
+  }];
 }

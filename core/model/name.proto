@@ -3,9 +3,14 @@ option java_multiple_files = true;
 
 package com.gabriel.model;
 
-import "buf/validate/validate.proto";   
+import "buf/validate/validate.proto";
 
+// Name: Represents a name with validation rules
 message Name {
-    // Value: Must be between 1 and 255 characters, not blank
-    string value = 1 [(buf.validate.field).string = {min_len: 1, max_len: 255, pattern: ".*\\S.*"}];
+  // Value: Must be between 1 and 255 characters, not blank
+  string value = 1 [(buf.validate.field).cel = {
+    id: "name.value",
+    message: "Name must be between 1 and 255 characters and cannot be blank",
+    expression: "size(this) >= 1 && size(this) <= 255 && this.matches('.*\\\\S.*')"
+  }];
 }

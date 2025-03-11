@@ -3,9 +3,14 @@ option java_multiple_files = true;
 
 package com.gabriel.model;
 
-import "buf/validate/validate.proto";   
+import "buf/validate/validate.proto";
 
+// Price: Represents a monetary value
 message Price {
-    // Value: Must be between 0.1 and 10000.0, not null
-    double value = 1 [(buf.validate.field).double = {gte: 0.1, lt: 10000.0}, (buf.validate.field).required = true];
+  // Value: Must be between 0.1 and 10000.0, not null
+  double value = 1 [(buf.validate.field).cel = {
+    id: "price.value",
+    message: "Price must be between 0.1 and 10000.0",
+    expression: "this >= 0.1 && this < 10000.0"
+  }];
 }
