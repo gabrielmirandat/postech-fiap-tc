@@ -3,9 +3,14 @@ option java_multiple_files = true;
 
 package com.gabriel.model;
 
-import "buf/validate/validate.proto";   
+import "buf/validate/validate.proto";
 
+// Email: Represents a user's email address
 message Email {
-    // Value: Must be a valid email address and not blank
-    string value = 1 [(buf.validate.field).string = {min_len: 1, email: true}];
+  // Value: Must be a valid email address and not blank
+  string value = 1 [(buf.validate.field).cel = {
+    id: "email.value",
+    message: "Invalid email address format",
+    expression: "this.matches('^[\\w\\.-]+@[a-zA-Z\\d\\.-]+\\.[a-zA-Z]{2,}$')"
+  }];
 }

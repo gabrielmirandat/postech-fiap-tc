@@ -7,6 +7,10 @@ import "buf/validate/validate.proto";
 
 // IngredientId: Represents a unique identifier for ingredients
 message IngredientId {
-    // Value: Must follow the format [8 alphanumeric]-INGR-[YYYY]-[MM]-[DD], exactly 20 characters
-    string value = 1 [(buf.validate.field).string = {min_len: 20, max_len: 20, pattern: "[0-9a-f]{8}-INGR-\\d{4}-\\d{2}-\\d{2}"}];
+  // Value: Must follow the format [8 alphanumeric]-INGR-[YYYY]-[MM]-[DD], exactly 20 characters
+  string value = 1 [(buf.validate.field).cel = {
+    id: "ingredient_id.value",
+    message: "Invalid Ingredient ID format",
+    expression: "size(this) == 20 && this.matches(r'[0-9a-f]{8}-INGR-\\d{4}-\\d{2}-\\d{2}')"
+  }];
 }

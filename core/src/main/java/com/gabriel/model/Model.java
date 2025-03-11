@@ -30,12 +30,8 @@ public class Model {
             Validator validator = new Validator();
             ValidationResult result = validator.validate(model);
 
-            if (!result.getViolations().isEmpty()) {
-                // Collect violation messages into a readable format
-                String errorMessages = result.getViolations().stream()
-                .map(violation -> ((ConstraintViolation) violation).toProto().getMessage())
-                .collect(Collectors.joining(", "));
-                throw new ValidationException(errorMessages);
+            if (result.getViolations() != null && !result.getViolations().isEmpty()) {
+                throw new ValidationException(result.toString());
             }
 
             return model;

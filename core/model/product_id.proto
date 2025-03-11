@@ -7,6 +7,10 @@ import "buf/validate/validate.proto";
 
 // ProductId: Represents a unique identifier for products
 message ProductId {
-    // Value: Must follow the format [8 alphanumeric]-PRDC-[YYYY]-[MM]-[DD], exactly 20 characters
-    string value = 1 [(buf.validate.field).string = {min_len: 20, max_len: 20, pattern: "[0-9a-f]{8}-PRDC-\\d{4}-\\d{2}-\\d{2}"}];
+  // Value: Must follow the format [8 alphanumeric]-PRDC-[YYYY]-[MM]-[DD], exactly 20 characters
+  string value = 1 [(buf.validate.field).cel = {
+    id: "product_id.value",
+    message: "Invalid Product ID format",
+    expression: "size(this) == 20 && this.matches(r'[0-9a-f]{8}-PRDC-\\d{4}-\\d{2}-\\d{2}')"
+  }];
 }

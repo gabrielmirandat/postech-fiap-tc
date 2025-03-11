@@ -6,15 +6,31 @@ package com.gabriel.model;
 import "buf/validate/validate.proto";
 
 message Address {
-    // Street: Must be between 1 and 255 characters, not blank
-    string street = 1 [(buf.validate.field).string = {min_len: 1, max_len: 255, pattern: ".*\\S.*"}];
+  // Street: Must be between 1 and 255 characters, not blank
+  string street = 1 [(buf.validate.field).cel = {
+    id: "address.street",
+    message: "Street cannot be blank and must not exceed 255 characters",
+    expression: "size(this) > 0 && size(this) <= 255 && this.matches('.*\\\\S.*')"
+  }];
 
-    // City: Must be between 1 and 255 characters, not blank
-    string city = 2 [(buf.validate.field).string = {min_len: 1, max_len: 255, pattern: ".*\\S.*"}];
+  // City: Must be between 1 and 255 characters, not blank
+  string city = 2 [(buf.validate.field).cel = {
+    id: "address.city",
+    message: "City cannot be blank and must not exceed 255 characters",
+    expression: "size(this) > 0 && size(this) <= 255 && this.matches('.*\\\\S.*')"
+  }];
 
-    // State: Must be exactly 2 characters, not blank
-    string state = 3 [(buf.validate.field).string = {min_len: 2, max_len: 2, pattern: ".*\\S.*"}];
+  // State: Must be exactly 2 characters, not blank
+  string state = 3 [(buf.validate.field).cel = {
+    id: "address.state",
+    message: "State must be exactly 2 characters",
+    expression: "size(this) == 2 && this.matches('.*\\\\S.*')"
+  }];
 
-    // Zip: Must follow the pattern "DDDDD-DDD" (e.g., "12345-678")
-    string zip = 4 [(buf.validate.field).string = {pattern: "\\d{5}-\\d{3}"}];
+  // Zip: Must follow the pattern "DDDDD-DDD"
+  string zip = 4 [(buf.validate.field).cel = {
+    id: "address.zip",
+    message: "Zip code must follow the pattern XXXXX-XXX",
+    expression: "this.matches('\\\\d{5}-\\\\d{3}')"
+  }];
 }

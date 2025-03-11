@@ -381,7 +381,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Price.newBuilder().setValue(-1.0).build())
             );
-            assertEquals("Price must be at least 0.1", exception.getMessage());
+            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
         }
     
         @Test
@@ -389,7 +389,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Price.newBuilder().setValue(0.0).build())
             );
-            assertEquals("Price must be at least 0.1", exception.getMessage());
+            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
         }
     
         @Test
@@ -397,7 +397,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Price.newBuilder().setValue(0.05).build())
             );
-            assertEquals("Price must be at least 0.1", exception.getMessage());
+            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
         }
     
         @Test
@@ -405,7 +405,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Price.newBuilder().setValue(10000.1).build())
             );
-            assertEquals("Price must be less than 10000.0", exception.getMessage());
+            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
         }
     }
 
@@ -424,7 +424,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Quantity.newBuilder().setValue(0).build())
             );
-            assertEquals("Quantity size must be between 1 and 10", exception.getMessage());
+            assertEquals("Validation error:\n - value: Quantity must be between 1 and 10 [quantity.value]", exception.getMessage());
         }
     
         @Test
@@ -432,7 +432,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(Quantity.newBuilder().setValue(11).build())
             );
-            assertEquals("Quantity size must be between 1 and 10", exception.getMessage());
+            assertEquals("Validation error:\n - value: Quantity must be between 1 and 10 [quantity.value]", exception.getMessage());
         }
     
         @Test
@@ -458,7 +458,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(OrderId.newBuilder().setValue("invalid-id").build())
             );
-            assertEquals("Invalid Order ID format", exception.getMessage());
+            assertEquals("Validation error:\n - value: Invalid Order ID format [order_id.value]", exception.getMessage());
         }
     
         @Test
@@ -488,7 +488,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(ProductId.newBuilder().setValue("invalid-id").build())
             );
-            assertEquals("Invalid Product ID format", exception.getMessage());
+            assertEquals("Validation error:\n - value: Invalid Product ID format [product_id.value]", exception.getMessage());
         }
     
         @Test
