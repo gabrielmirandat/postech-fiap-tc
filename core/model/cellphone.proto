@@ -10,6 +10,6 @@ message Cellphone {
   string value = 1 [(buf.validate.field).cel = {
     id: "cellphone.value",
     message: "Cellphone number cannot be blank and must follow the pattern (XX) XXXX-XXXX or (XX) XXXXX-XXXX",
-    expression: "size(this) > 0 && this.matches('\\(\\d{2}\\) \\d{4,5}-\\d{4}')"
+    expression: "size(this) > 0 && this.matches(r'\\(\\d{2}\\) \\d{4,5}-\\d{4}')"
   }];
 }

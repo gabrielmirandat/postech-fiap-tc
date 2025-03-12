@@ -7,7 +7,7 @@ import "buf/validate/validate.proto";
 import "core/model/cellphone.proto";
 import "core/model/email.proto";
 
-message Notification {
+message Contact {
     oneof with {
         Cellphone cellphone = 1;
         Email email = 2;
