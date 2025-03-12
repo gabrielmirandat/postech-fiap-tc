@@ -11,6 +11,6 @@ message OrderId {
   string value = 1 [(buf.validate.field).cel = {
     id: "order_id.value",
     message: "Invalid Order ID format",
-    expression: "size(this) == 20 && this.matches(r'[0-9a-f]{8}-ORDR-\\d{4}-\\d{2}-\\d{2}')"
+    expression: "this.matches(r'[0-9a-f]{8}-ORDR-\\d{4}-\\d{2}-\\d{2}')"
   }];
 }

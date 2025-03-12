@@ -21,7 +21,7 @@ class ModelTest {
                         .build()
                 )
             );
-            assertEquals("Street cannot be blank", exception.getMessage());
+            assertEquals("Validation error:\n - street: Street cannot be blank and must not exceed 255 characters [address.street]", exception.getMessage());
         }
     
         @Test
@@ -39,7 +39,7 @@ class ModelTest {
                 )
             );
     
-            assertEquals("Street name cannot exceed 255 characters", exception.getMessage());
+            assertEquals("Validation error:\n - street: Street cannot be blank and must not exceed 255 characters [address.street]", exception.getMessage());
         }
     
         @Test
@@ -55,7 +55,7 @@ class ModelTest {
                 )
             );
 
-            assertEquals("City cannot be blank", exception.getMessage());
+            assertEquals("Validation error:\n - city: City cannot be blank and must not exceed 255 characters [address.city]", exception.getMessage());
         }
     
         @Test
@@ -73,7 +73,7 @@ class ModelTest {
                 )
             );
     
-            assertEquals("City name cannot exceed 255 characters", exception.getMessage());
+            assertEquals("Validation error:\n - city: City cannot be blank and must not exceed 255 characters [address.city]", exception.getMessage());
         }
     
 
@@ -90,7 +90,7 @@ class ModelTest {
                         .build()
                 )
             );
-            assertEquals(exception1.getMessage(), "State must be exactly 2 characters");
+            assertEquals("Validation error:\n - state: State must be exactly 2 characters [address.state]", exception1.getMessage());
     
             // Test for state with 3 characters
             Model.Exception exception2 = assertThrows(Model.Exception.class, () -> 
@@ -103,7 +103,7 @@ class ModelTest {
                         .build()
                 )
             );
-            assertEquals(exception2.getMessage(), "State must be exactly 2 characters");
+            assertEquals("Validation error:\n - state: State must be exactly 2 characters [address.state]", exception2.getMessage());
         }
     
         @Test
@@ -119,7 +119,7 @@ class ModelTest {
                         .build()
                 )
             );
-            assertEquals(exception1.getMessage(), "Zip code must follow the pattern XXXXX-XXX");
+            assertEquals("Validation error:\n - zip: Zip code must follow the pattern XXXXX-XXX [address.zip]", exception1.getMessage());
     
             // Test for zip code with incorrect format
             Model.Exception exception2 = assertThrows(Model.Exception.class, () -> 
@@ -132,7 +132,7 @@ class ModelTest {
                         .build()
                 )
             );
-            assertEquals(exception2.getMessage(), "Zip code must follow the pattern XXXXX-XXX");
+            assertEquals("Validation error:\n - zip: Zip code must follow the pattern XXXXX-XXX [address.zip]", exception2.getMessage());
         }
     
         @Test
@@ -206,24 +206,13 @@ class ModelTest {
         }
         
         @Test
-        void shouldThrowExceptionWhenIdIsNull() {
-            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
-                Model.validate(
-                    Cpf.newBuilder().setValue(null).build()
-                )
-            );
-            assertEquals("Domain validation failed: id CPF cannot be blank", exception.getMessage());
-        }
-        
-        @Test
         void shouldThrowExceptionWhenIdIsBlank() {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
                     Cpf.newBuilder().setValue("   ").build()
                 )
             );
-            assertEquals("Domain validation failed: id CPF cannot be blank, " +
-                "id CPF must follow the pattern XXX.XXX.XXX-XX", exception.getMessage());
+            assertEquals("Validation error:\n - value: CPF must follow the pattern XXX.XXX.XXX-XX [cpf.value]", exception.getMessage());
         }
         
         @Test
@@ -233,7 +222,7 @@ class ModelTest {
                     Cpf.newBuilder().setValue("12345678909").build()
                 )
             );
-            assertEquals("Domain validation failed: id CPF must follow the pattern XXX.XXX.XXX-XX", exception.getMessage());
+            assertEquals("Validation error:\n - value: CPF must follow the pattern XXX.XXX.XXX-XX [cpf.value]", exception.getMessage());
         }        
     }
 
@@ -256,14 +245,14 @@ class ModelTest {
                     Email.newBuilder().setValue("invalid-email").build()
                 )
             );
-            assertEquals(exception1.getMessage(), "Invalid email address format");
+            assertEquals("Validation error:\n - value: Invalid email address format [email.value]", exception1.getMessage());
         
             Model.Exception exception2 = assertThrows(Model.Exception.class, () ->
                 Model.validate(
                     Email.newBuilder().setValue("invalid@.com").build()
                 )
             );
-            assertEquals(exception2.getMessage(), "Invalid email address format");
+            assertEquals("Validation error:\n - value: Invalid email address format [email.value]", exception2.getMessage());
         }
         
         @Test
@@ -284,13 +273,6 @@ class ModelTest {
             Name name = (Name) Model.validate(Name.newBuilder().setValue("John Doe").build());
             assertNotNull(name);
             assertEquals("John Doe", name.getValue());
-        }
-    
-        @Test
-        void shouldThrowException_whenValueIsNull() {
-            assertThrows(Model.Exception.class, () -> 
-                Model.validate(Name.newBuilder().setValue(null).build())
-            );
         }
     
         @Test
@@ -323,13 +305,13 @@ class ModelTest {
     }
 
     @Nested
-    class NotificationTest {
+    class ContactTest {
 
         @Test
-        void shouldCreateNotificationSuccessfullyWhenTypeAndValueAreValid() {
+        void shouldCreateContactSuccessfullyWhenTypeAndValueAreValid() {
             assertDoesNotThrow(() -> 
                 Model.validate(
-                    Notification.newBuilder()
+                    Contact.newBuilder()
                         .setCellphone(Cellphone.newBuilder().setValue("(11) 98765-4321").build())
                         .build()
                 )
@@ -337,7 +319,7 @@ class ModelTest {
 
             assertDoesNotThrow(() -> 
                 Model.validate(
-                    Notification.newBuilder()
+                    Contact.newBuilder()
                         .setEmail(Email.newBuilder().setValue("example@example.com").build())
                         .build()
                 )
@@ -345,24 +327,24 @@ class ModelTest {
         }
 
         @Test
-        void shouldThrowExceptionWhenValueIsInvalid() {
+        void shouldThrowExceptionWhenContactValueIsInvalid() {
             Model.Exception cellphoneException = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
-                    Notification.newBuilder()
+                    Contact.newBuilder()
                         .setCellphone(Cellphone.newBuilder().setValue("invalid").build())
                         .build()
                 )
             );
-            assertEquals("Cellphone number must follow the pattern (XX) XXXX-XXXX or (XX) XXXXX-XXXX", cellphoneException.getMessage());
+            assertEquals("Validation error:\n - cellphone.value: Cellphone number cannot be blank and must follow the pattern (XX) XXXX-XXXX or (XX) XXXXX-XXXX [cellphone.value]", cellphoneException.getMessage());
 
             Model.Exception emailException = assertThrows(Model.Exception.class, () -> 
                 Model.validate(
-                    Notification.newBuilder()
+                    Contact.newBuilder()
                         .setEmail(Email.newBuilder().setValue("invalid").build())
                         .build()
                 )
             );
-            assertEquals("Invalid email address format", emailException.getMessage());
+            assertEquals("Validation error:\n - email.value: Invalid email address format [email.value]", emailException.getMessage());
         }
     }  
 

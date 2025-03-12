@@ -11,6 +11,6 @@ message Name {
   string value = 1 [(buf.validate.field).cel = {
     id: "name.value",
     message: "Name must be between 1 and 255 characters and cannot be blank",
-    expression: "size(this) >= 1 && size(this) <= 255 && this.matches('.*\\\\S.*')"
+    expression: "size(this) >= 1 && size(this) <= 255 && this.matches(r'.*\\S.*')"
   }];
 }

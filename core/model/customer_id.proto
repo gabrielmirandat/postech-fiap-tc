@@ -11,6 +11,6 @@ message CustomerId {
   string value = 1 [(buf.validate.field).cel = {
     id: "customer_id.value",
     message: "Invalid Customer ID format",
-    expression: "size(this) == 20 && this.matches(r'[0-9a-f]{8}-CUST-\\d{4}-\\d{2}-\\d{2}')"
+    expression: "this.matches(r'[0-9a-f]{8}-CUST-\\d{4}-\\d{2}-\\d{2}')"
   }];
 }
