@@ -194,117 +194,6 @@ class ModelTest {
     }
 
     @Nested
-    class CPFTest {
-
-        @Test
-        void shouldCreateCPFWhenIdIsValid() {
-            assertDoesNotThrow(() -> 
-                Model.validate(
-                    Cpf.newBuilder().setValue("123.456.789-09").build()
-                )
-            );
-        }
-        
-        @Test
-        void shouldThrowExceptionWhenIdIsBlank() {
-            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
-                Model.validate(
-                    Cpf.newBuilder().setValue("   ").build()
-                )
-            );
-            assertEquals("Validation error:\n - value: CPF must follow the pattern XXX.XXX.XXX-XX [cpf.value]", exception.getMessage());
-        }
-        
-        @Test
-        void shouldThrowExceptionWhenIdDoesNotFollowPattern() {
-            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
-                Model.validate(
-                    Cpf.newBuilder().setValue("12345678909").build()
-                )
-            );
-            assertEquals("Validation error:\n - value: CPF must follow the pattern XXX.XXX.XXX-XX [cpf.value]", exception.getMessage());
-        }        
-    }
-
-    @Nested
-    class EmailTest {
-
-        @Test
-        void shouldThrowExceptionWhenAddressIsBlank() {
-            assertThrows(Model.Exception.class, () ->
-                Model.validate(
-                    Email.newBuilder().setValue(" ").build()
-                )
-            );
-        }
-        
-        @Test
-        void shouldThrowExceptionWhenAddressDoesNotFollowEmailPattern() {
-            Model.Exception exception1 = assertThrows(Model.Exception.class, () ->
-                Model.validate(
-                    Email.newBuilder().setValue("invalid-email").build()
-                )
-            );
-            assertEquals("Validation error:\n - value: Invalid email address format [email.value]", exception1.getMessage());
-        
-            Model.Exception exception2 = assertThrows(Model.Exception.class, () ->
-                Model.validate(
-                    Email.newBuilder().setValue("invalid@.com").build()
-                )
-            );
-            assertEquals("Validation error:\n - value: Invalid email address format [email.value]", exception2.getMessage());
-        }
-        
-        @Test
-        void shouldCreateEmailAddressWhenAddressIsValid() {
-            assertDoesNotThrow(() ->
-                Model.validate(
-                    Email.newBuilder().setValue("valid@example.com").build()
-                )
-            );
-        }        
-    }
-
-    @Nested
-    class NameTest {
-
-        @Test
-        void shouldCreateNameSuccessfully_whenValueIsValid() {
-            Name name = (Name) Model.validate(Name.newBuilder().setValue("John Doe").build());
-            assertNotNull(name);
-            assertEquals("John Doe", name.getValue());
-        }
-    
-        @Test
-        void shouldThrowException_whenValueIsEmpty() {
-            assertThrows(Model.Exception.class, () -> 
-                Model.validate(Name.newBuilder().setValue("").build())
-            );
-        }
-    
-        @Test
-        void shouldThrowException_whenValueIsBlank() {
-            assertThrows(Model.Exception.class, () -> 
-                Model.validate(Name.newBuilder().setValue("   ").build())
-            );
-        }
-    
-        @Test
-        void shouldThrowException_whenValueExceeds255Characters() {
-            assertThrows(Model.Exception.class, () -> 
-                Model.validate(Name.newBuilder().setValue("a".repeat(256)).build())
-            );
-        }
-    
-        @Test
-        void shouldCreateNameSuccessfully_whenValueIsExactly255Characters() {
-            Name name = (Name) Model.validate(Name.newBuilder().setValue("a".repeat(255)).build());
-            assertNotNull(name);
-            assertEquals("a".repeat(255), name.getValue());
-        }
-    }
-
-    @Nested
     class ContactTest {
 
         @Test
@@ -349,45 +238,225 @@ class ModelTest {
     }  
 
     @Nested
-    class PriceTest {
+    class CPFTest {
 
         @Test
-        void shouldCreatePriceSuccessfully() {
+        void shouldCreateCPFWhenIdIsValid() {
             assertDoesNotThrow(() -> 
-                Model.validate(Price.newBuilder().setValue(5.0).build())
+                Model.validate(
+                    Cpf.newBuilder().setValue("123.456.789-09").build()
+                )
+            );
+        }
+        
+        @Test
+        void shouldThrowExceptionWhenIdIsBlank() {
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Cpf.newBuilder().setValue("   ").build()
+                )
+            );
+            assertEquals("Validation error:\n - value: CPF must follow the pattern XXX.XXX.XXX-XX [cpf.value]", exception.getMessage());
+        }
+        
+        @Test
+        void shouldThrowExceptionWhenIdDoesNotFollowPattern() {
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Cpf.newBuilder().setValue("12345678909").build()
+                )
+            );
+            assertEquals("Validation error:\n - value: CPF must follow the pattern XXX.XXX.XXX-XX [cpf.value]", exception.getMessage());
+        }        
+    }
+
+    @Nested
+    class DescriptionTest {
+
+        @Test
+        void shouldCreateDescriptionSuccessfully_whenValueIsValid() {
+            Description description = (Description) Model.validate(Description.newBuilder().setValue("Goodies things").build());
+            assertNotNull(description);
+            assertEquals("Goodies things", description.getValue());
+        }
+    
+        @Test
+        void shouldThrowException_whenValueIsEmpty() {
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(Description.newBuilder().setValue("").build())
             );
         }
     
         @Test
-        void shouldNotCreatePriceWithNegativeValue() {
-            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
-                Model.validate(Price.newBuilder().setValue(-1.0).build())
+        void shouldThrowException_whenValueIsBlank() {
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(Description.newBuilder().setValue("   ").build())
             );
-            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
         }
     
         @Test
-        void shouldNotCreatePriceWithZeroValue() {
-            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
-                Model.validate(Price.newBuilder().setValue(0.0).build())
+        void shouldThrowException_whenValueExceeds255Characters() {
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(Description.newBuilder().setValue("a".repeat(256)).build())
             );
-            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
         }
     
         @Test
-        void shouldNotCreatePriceWithTooLowValue() {
-            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
-                Model.validate(Price.newBuilder().setValue(0.05).build())
-            );
-            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
+        void shouldCreateDescriptionSuccessfully_whenValueIsExactly255Characters() {
+            Description description = (Description) Model.validate(Description.newBuilder().setValue("a".repeat(255)).build());
+            assertNotNull(description);
+            assertEquals("a".repeat(255), description.getValue());
         }
-    
+    }
+
+    @Nested
+    class EmailTest {
+
         @Test
-        void shouldNotCreatePriceWithTooHighValue() {
-            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
-                Model.validate(Price.newBuilder().setValue(10000.1).build())
+        void shouldThrowExceptionWhenAddressIsBlank() {
+            assertThrows(Model.Exception.class, () ->
+                Model.validate(
+                    Email.newBuilder().setValue(" ").build()
+                )
             );
-            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
+        }
+        
+        @Test
+        void shouldThrowExceptionWhenAddressDoesNotFollowEmailPattern() {
+            Model.Exception exception1 = assertThrows(Model.Exception.class, () ->
+                Model.validate(
+                    Email.newBuilder().setValue("invalid-email").build()
+                )
+            );
+            assertEquals("Validation error:\n - value: Invalid email address format [email.value]", exception1.getMessage());
+        
+            Model.Exception exception2 = assertThrows(Model.Exception.class, () ->
+                Model.validate(
+                    Email.newBuilder().setValue("invalid@.com").build()
+                )
+            );
+            assertEquals("Validation error:\n - value: Invalid email address format [email.value]", exception2.getMessage());
+        }
+        
+        @Test
+        void shouldCreateEmailAddressWhenAddressIsValid() {
+            assertDoesNotThrow(() ->
+                Model.validate(
+                    Email.newBuilder().setValue("valid@example.com").build()
+                )
+            );
+        }        
+    }
+
+    @Nested
+    class IdTest {
+
+        @Test
+        void shouldCreateIdSuccessfullyWhenTypeAndValueAreValid() {
+            assertDoesNotThrow(() -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setOrderId(OrderId.newBuilder().setValue("12345678-ORDR-2023-04-18").build())
+                        .build()
+                )
+            );
+
+            assertDoesNotThrow(() -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setOrderItemId(OrderItemId.newBuilder().setValue("12345678-ORDI-2023-04-18").build())
+                        .build()
+                )
+            );
+
+            assertDoesNotThrow(() -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setProductId(ProductId.newBuilder().setValue("12345678-PRDC-2023-04-18").build())
+                        .build()
+                )
+            );
+
+            assertDoesNotThrow(() -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setIngredientId(IngredientId.newBuilder().setValue("12345678-INGR-2023-04-18").build())
+                        .build()
+                )
+            );
+
+            assertDoesNotThrow(() -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setCustomerId(CustomerId.newBuilder().setValue("12345678-CUST-2023-04-18").build())
+                        .build()
+                )
+            );
+
+            assertDoesNotThrow(() -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setPermissionId(PermissionId.newBuilder().setValue("12345678-PERM-2023-04-18").build())
+                        .build()
+                )
+            );
+        }
+
+        @Test
+        void shouldThrowExceptionWhenIdValueIsInvalid() {
+            Model.Exception orderIdException = assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setOrderId(OrderId.newBuilder().setValue("").build())
+                        .build()
+                )
+            );
+            assertEquals("Validation error:\n - order_id.value: Invalid Order ID format [order_id.value]", orderIdException.getMessage());
+
+            Model.Exception orderItemIdException = assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setOrderItemId(OrderItemId.newBuilder().setValue(" ").build())
+                        .build()
+                )
+            );
+            assertEquals("Validation error:\n - order_item_id.value: Invalid Order Item ID format [order_item_id.value]", orderItemIdException.getMessage());
+
+            Model.Exception productIdException = assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setProductId(ProductId.newBuilder().setValue("invalid").build())
+                        .build()
+                )
+            );
+            assertEquals("Validation error:\n - product_id.value: Invalid Product ID format [product_id.value]", productIdException.getMessage());
+
+            Model.Exception ingredientIdException = assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setIngredientId(IngredientId.newBuilder().setValue("").build())
+                        .build()
+                )
+            );
+            assertEquals("Validation error:\n - ingredient_id.value: Invalid Ingredient ID format [ingredient_id.value]", ingredientIdException.getMessage());
+
+            Model.Exception customerIdException = assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setCustomerId(CustomerId.newBuilder().setValue(" ").build())
+                        .build()
+                )
+            );
+            assertEquals("Validation error:\n - customer_id.value: Invalid Customer ID format [customer_id.value]", customerIdException.getMessage());
+
+            Model.Exception permissionIdException = assertThrows(Model.Exception.class, () -> 
+                Model.validate(
+                    Id.newBuilder()
+                        .setPermissionId(PermissionId.newBuilder().setValue("invalid").build())
+                        .build()
+                )
+            );
+            assertEquals("Validation error:\n - permission_id.value: Invalid Permission ID format [permission_id.value]", permissionIdException.getMessage());
         }
     }
 
@@ -433,10 +502,100 @@ class ModelTest {
     }
 
     @Nested
-    class OrderIDTest {
+    class CustomerIdTest {
 
         @Test
-        void shouldThrowExceptionWhenIdDoesNotFollowOrderIDPattern() {
+        void shouldThrowExceptionWhenIdDoesNotFollowCustomerIdPattern() {
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(CustomerId.newBuilder().setValue("invalid-id").build())
+            );
+            assertEquals("Validation error:\n - value: Invalid Customer ID format [customer_id.value]", exception.getMessage());
+        }
+    
+        @Test
+        void shouldCreateCustomerIDWhenIdIsValid() {
+            String validId = "12345678-CUST-2023-04-18";
+            assertDoesNotThrow(() -> 
+                Model.validate(CustomerId.newBuilder().setValue(validId).build())
+            );
+        }
+    
+        @Test
+        void shouldCompareCustomerIdsBasedOnId() {
+            CustomerId customerID1 = (CustomerId) Model.validate(CustomerId.newBuilder().setValue("12345678-CUST-2023-04-18").build());
+            CustomerId customerID2 = (CustomerId) Model.validate(CustomerId.newBuilder().setValue("12345678-CUST-2023-04-18").build());
+            CustomerId customerID3 = (CustomerId) Model.validate(CustomerId.newBuilder().setValue("87654321-CUST-2023-04-18").build());
+    
+            assertEquals(customerID1, customerID2);
+            assertNotEquals(customerID1, customerID3);
+        }
+    }
+
+    @Nested
+    class IngredientIdTest {
+
+        @Test
+        void shouldThrowExceptionWhenIdDoesNotFollowIngredientIdPattern() {
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(IngredientId.newBuilder().setValue("invalid-id").build())
+            );
+            assertEquals("Validation error:\n - value: Invalid Ingredient ID format [ingredient_id.value]", exception.getMessage());
+        }
+    
+        @Test
+        void shouldCreateIngredientIdWhenIdIsValid() {
+            String validId = "12345678-INGR-2023-04-18";
+            assertDoesNotThrow(() -> 
+                Model.validate(IngredientId.newBuilder().setValue(validId).build())
+            );
+        }
+    
+        @Test
+        void shouldCompareIngredientIdsBasedOnId() {
+            IngredientId ingredientID1 = (IngredientId) Model.validate(IngredientId.newBuilder().setValue("12345678-INGR-2023-04-18").build());
+            IngredientId ingredientID2 = (IngredientId) Model.validate(IngredientId.newBuilder().setValue("12345678-INGR-2023-04-18").build());
+            IngredientId ingredientID3 = (IngredientId) Model.validate(IngredientId.newBuilder().setValue("87654321-INGR-2023-04-18").build());
+    
+            assertEquals(ingredientID1, ingredientID2);
+            assertNotEquals(ingredientID1, ingredientID3);
+        }
+    }
+
+    @Nested
+    class OrderItemIdTest {
+
+        @Test
+        void shouldThrowExceptionWhenIdDoesNotFollowOrderItemIdPattern() {
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(OrderItemId.newBuilder().setValue("invalid-id").build())
+            );
+            assertEquals("Validation error:\n - value: Invalid Order Item ID format [order_item_id.value]", exception.getMessage());
+        }
+    
+        @Test
+        void shouldCreateOrderItemIdWhenIdIsValid() {
+            String validId = "12345678-ORDI-2023-04-18";
+            assertDoesNotThrow(() -> 
+                Model.validate(OrderItemId.newBuilder().setValue(validId).build())
+            );
+        }
+    
+        @Test
+        void shouldCompareOrderItemIdsBasedOnId() {
+            OrderItemId orderItemID1 = (OrderItemId) Model.validate(OrderItemId.newBuilder().setValue("12345678-ORDI-2023-04-18").build());
+            OrderItemId orderItemID2 = (OrderItemId) Model.validate(OrderItemId.newBuilder().setValue("12345678-ORDI-2023-04-18").build());
+            OrderItemId orderItemID3 = (OrderItemId) Model.validate(OrderItemId.newBuilder().setValue("87654321-ORDI-2023-04-18").build());
+    
+            assertEquals(orderItemID1, orderItemID2);
+            assertNotEquals(orderItemID1, orderItemID3);
+        }
+    }
+
+    @Nested
+    class OrderIdTest {
+
+        @Test
+        void shouldThrowExceptionWhenIdDoesNotFollowOrderIdPattern() {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(OrderId.newBuilder().setValue("invalid-id").build())
             );
@@ -444,7 +603,7 @@ class ModelTest {
         }
     
         @Test
-        void shouldCreateOrderIDWhenIdIsValid() {
+        void shouldCreateOrderIdWhenIdIsValid() {
             String validId = "12345678-ORDR-2023-04-18";
             assertDoesNotThrow(() -> 
                 Model.validate(OrderId.newBuilder().setValue(validId).build())
@@ -452,7 +611,7 @@ class ModelTest {
         }
     
         @Test
-        void shouldCompareOrderIDsBasedOnId() {
+        void shouldCompareOrderIdsBasedOnId() {
             OrderId orderID1 = (OrderId) Model.validate(OrderId.newBuilder().setValue("12345678-ORDR-2023-04-18").build());
             OrderId orderID2 = (OrderId) Model.validate(OrderId.newBuilder().setValue("12345678-ORDR-2023-04-18").build());
             OrderId orderID3 = (OrderId) Model.validate(OrderId.newBuilder().setValue("87654321-ORDR-2023-04-18").build());
@@ -463,10 +622,40 @@ class ModelTest {
     }
 
     @Nested
-    class ProductIDTest {
+    class PermissionIdTest {
 
         @Test
-        void shouldThrowExceptionWhenIdDoesNotFollowProductIDPattern() {
+        void shouldThrowExceptionWhenIdDoesNotFollowPermissionIdPattern() {
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(PermissionId.newBuilder().setValue("invalid-id").build())
+            );
+            assertEquals("Validation error:\n - value: Invalid Permission ID format [permission_id.value]", exception.getMessage());
+        }
+    
+        @Test
+        void shouldCreatePermissionIdWhenIdIsValid() {
+            String validId = "12345678-PERM-2023-04-18";
+            assertDoesNotThrow(() -> 
+                Model.validate(PermissionId.newBuilder().setValue(validId).build())
+            );
+        }
+    
+        @Test
+        void shouldComparePermissionIdsBasedOnId() {
+            PermissionId PermissionID1 = (PermissionId) Model.validate(PermissionId.newBuilder().setValue("12345678-PERM-2023-04-18").build());
+            PermissionId PermissionID2 = (PermissionId) Model.validate(PermissionId.newBuilder().setValue("12345678-PERM-2023-04-18").build());
+            PermissionId PermissionID3 = (PermissionId) Model.validate(PermissionId.newBuilder().setValue("87654321-PERM-2023-04-18").build());
+    
+            assertEquals(PermissionID1, PermissionID2);
+            assertNotEquals(PermissionID1, PermissionID3);
+        }
+    }
+
+    @Nested
+    class ProductIdTest {
+
+        @Test
+        void shouldThrowExceptionWhenIdDoesNotFollowProductIdPattern() {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(ProductId.newBuilder().setValue("invalid-id").build())
             );
@@ -474,7 +663,7 @@ class ModelTest {
         }
     
         @Test
-        void shouldCreateProductIDWhenIdIsValid() {
+        void shouldCreateProductIdWhenIdIsValid() {
             String validId = "12345678-PRDC-2023-04-18";
             assertDoesNotThrow(() -> 
                 Model.validate(ProductId.newBuilder().setValue(validId).build())
@@ -482,13 +671,95 @@ class ModelTest {
         }
     
         @Test
-        void shouldCompareProductIDsBasedOnId() {
+        void shouldCompareProductIdsBasedOnId() {
             ProductId productID1 = (ProductId) Model.validate(ProductId.newBuilder().setValue("12345678-PRDC-2023-04-18").build());
             ProductId productID2 = (ProductId) Model.validate(ProductId.newBuilder().setValue("12345678-PRDC-2023-04-18").build());
             ProductId productID3 = (ProductId) Model.validate(ProductId.newBuilder().setValue("87654321-PRDC-2023-04-18").build());
     
             assertEquals(productID1, productID2);
             assertNotEquals(productID1, productID3);
+        }
+    }
+
+    @Nested
+    class NameTest {
+
+        @Test
+        void shouldCreateNameSuccessfully_whenValueIsValid() {
+            Name name = (Name) Model.validate(Name.newBuilder().setValue("John Doe").build());
+            assertNotNull(name);
+            assertEquals("John Doe", name.getValue());
+        }
+    
+        @Test
+        void shouldThrowException_whenValueIsEmpty() {
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(Name.newBuilder().setValue("").build())
+            );
+        }
+    
+        @Test
+        void shouldThrowException_whenValueIsBlank() {
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(Name.newBuilder().setValue("   ").build())
+            );
+        }
+    
+        @Test
+        void shouldThrowException_whenValueExceeds255Characters() {
+            assertThrows(Model.Exception.class, () -> 
+                Model.validate(Name.newBuilder().setValue("a".repeat(256)).build())
+            );
+        }
+    
+        @Test
+        void shouldCreateNameSuccessfully_whenValueIsExactly255Characters() {
+            Name name = (Name) Model.validate(Name.newBuilder().setValue("a".repeat(255)).build());
+            assertNotNull(name);
+            assertEquals("a".repeat(255), name.getValue());
+        }
+    }
+
+    @Nested
+    class PriceTest {
+
+        @Test
+        void shouldCreatePriceSuccessfully() {
+            assertDoesNotThrow(() -> 
+                Model.validate(Price.newBuilder().setValue(5.0).build())
+            );
+        }
+    
+        @Test
+        void shouldNotCreatePriceWithNegativeValue() {
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(Price.newBuilder().setValue(-1.0).build())
+            );
+            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
+        }
+    
+        @Test
+        void shouldNotCreatePriceWithZeroValue() {
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(Price.newBuilder().setValue(0.0).build())
+            );
+            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
+        }
+    
+        @Test
+        void shouldNotCreatePriceWithTooLowValue() {
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(Price.newBuilder().setValue(0.05).build())
+            );
+            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
+        }
+    
+        @Test
+        void shouldNotCreatePriceWithTooHighValue() {
+            Model.Exception exception = assertThrows(Model.Exception.class, () -> 
+                Model.validate(Price.newBuilder().setValue(10000.1).build())
+            );
+            assertEquals("Validation error:\n - value: Price must be between 0.1 and 10000.0 [price.value]", exception.getMessage());
         }
     }
 }
