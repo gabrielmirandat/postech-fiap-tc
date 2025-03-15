@@ -1,0 +1,35 @@
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
+# bazel build //core/src/main/proto:model_proto
+proto_library(
+    name = "model_proto",
+    srcs = glob(["com/gabriel/model/*.proto"]),
+    strip_import_prefix = "",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_protobuf//:timestamp_proto",
+        "@buf_validate//proto/protovalidate/buf/validate:validate_proto",
+    ],
+)
+
+# bazel build //core/src/main/proto:menu_proto
+proto_library(
+    name = "menu_proto",
+    srcs = ["com/gabriel/service/menu-api.proto"],
+    strip_import_prefix = "",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_protobuf//:timestamp_proto",
+    ],
+)
+
+# bazel build //core/src/main/proto:permissions_proto
+proto_library(
+    name = "permissions_proto",
+    srcs = ["com/gabriel/service/permissions-api.proto"],
+    strip_import_prefix = "",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_protobuf//:timestamp_proto",
+    ],
+)

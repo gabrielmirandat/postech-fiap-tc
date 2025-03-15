@@ -54,6 +54,7 @@
         <jakarta.persistence.version>3.1.0</jakarta.persistence.version>
         <grpc.version>1.63.0</grpc.version>
         <protobuf.version>4.28.2</protobuf.version>
+        <protovalidate.version>0.5.0</protovalidate.version>
         <protobuf.maven.plugin.version>0.6.1</protobuf.maven.plugin.version>
         <grpc.spring.boot.version>3.1.0.RELEASE</grpc.spring.boot.version>
     </properties>

@@ -1,0 +1,22 @@
+load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
+
+# bazel test //core/src/main/java:unit
+java_test_suite(
+    name = "unit",
+    srcs = ["com/gabriel/model/Model.java"],
+    javacopts = [
+        "-source",
+        "21",
+        "-target",
+        "21",
+    ],
+    runner = "junit5",
+    runtime_deps = JUNIT5_DEPS,
+    deps = [
+        "//core/src/main/java:model_lib",
+        "@maven//:org_glassfish_expressly_expressly",
+        "@maven//:org_hibernate_validator_hibernate_validator_cdi",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_junit_jupiter_junit_jupiter_engine",
+    ],
+)

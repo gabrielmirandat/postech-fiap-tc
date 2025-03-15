@@ -1,0 +1,63 @@
+load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
+load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
+
+# bazel build //core/src/main/java:model_java_proto
+java_proto_library(
+    name = "model_java_proto",
+    deps = ["//core/src/main/proto:model_proto"],
+)
+
+# bazel build //core/src/main/java:model_java_jar
+genrule(
+    name = "model_java_jar",
+    srcs = [":model_java_proto"],
+    outs = ["model_proto.srcjar"],
+    cmd = "cp $(location :model_java_proto.srcjar) $@",
+)
+
+# bazel build //core/src/main/java:model_lib
+java_library(
+    name = "model_lib",
+    srcs = [":model_java_proto.srcjar", "com/gabriel/model/Model.java"],
+    javacopts = [
+        "-source",
+        "21",
+        "-target",
+        "21",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@maven//:com_google_protobuf_protobuf_java",
+        "@maven//:build_buf_protovalidate",
+    ],
+)
+
+# bazel build //core/src/main/java:menu_java_proto
+java_proto_library(
+    name = "menu_java_proto",
+    visibility = ["//visibility:public"],
+    deps = ["//core/src/main/proto:menu_proto"],
+)
+
+# bazel build //core/src/main/java:menu_java_grpc
+java_grpc_library(
+    name = "menu_java_grpc",
+    srcs = ["//core/src/main/proto:menu_proto"],
+    visibility = ["//visibility:public"],
+    deps = [":menu_java_proto"],
+)
+
+# bazel build //core/src/main/java:permissions_java_proto
+java_proto_library(
+    name = "permissions_java_proto",
+    visibility = ["//visibility:public"],
+    deps = ["//core/src/main/proto:permissions_proto"],
+)
+
+# bazel build //core/src/main/java:permissions_java_grpc
+java_grpc_library(
+    name = "permissions_java_grpc",
+    srcs = ["//core/src/main/proto:permissions_proto"],
+    visibility = ["//visibility:public"],
+    deps = [":permissions_java_proto"],
+)

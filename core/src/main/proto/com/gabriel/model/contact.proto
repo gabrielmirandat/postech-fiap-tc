@@ -3,9 +3,8 @@ option java_multiple_files = true;
 
 package com.gabriel.model;
 
-import "buf/validate/validate.proto";
-import "core/model/cellphone.proto";
-import "core/model/email.proto";
+import "com/gabriel/model/cellphone.proto";
+import "com/gabriel/model/email.proto";
 
 message Contact {
     oneof with {
