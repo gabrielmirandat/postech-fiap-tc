@@ -3,9 +3,8 @@ option java_multiple_files = true;
 
 package com.gabriel.model;
 
-import "buf/validate/validate.proto";
-import "core/model/permission_id.proto";
-import "core/model/name.proto";
+import "com/gabriel/model/permission_id.proto";
+import "com/gabriel/model/name.proto";
 import "google/protobuf/timestamp.proto";
 
 // Permission: Represents a permission with ID, role, authority, and timestamp
