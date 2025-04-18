@@ -1,9 +1,9 @@
 load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
 
-# bazel test //core/src/main/java:unit
+# bazel test //core/src/test/java:unit
 java_test_suite(
     name = "unit",
-    srcs = ["com/gabriel/model/Model.java"],
+    srcs = ["com/gabriel/model/ModelTest.java"],
     javacopts = [
         "-source",
         "21",

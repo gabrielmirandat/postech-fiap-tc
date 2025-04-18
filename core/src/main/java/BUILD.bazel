@@ -12,13 +12,13 @@ genrule(
     name = "model_java_jar",
     srcs = [":model_java_proto"],
     outs = ["model_proto.srcjar"],
-    cmd = "cp $(location :model_java_proto.srcjar) $@",
+    cmd = "for f in $(locations :model_java_proto); do if [[ $$f == *model_proto-speed-src.jar ]]; then cp $$f $@; break; fi; done",
 )
 
 # bazel build //core/src/main/java:model_lib
 java_library(
     name = "model_lib",
-    srcs = [":model_java_proto.srcjar", "com/gabriel/model/Model.java"],
+    srcs = ["model_proto.srcjar", "com/gabriel/model/Model.java"],
     javacopts = [
         "-source",
         "21",
