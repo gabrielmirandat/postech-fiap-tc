@@ -7,8 +7,11 @@ from src.gateways.customer_gateway import CustomerGateway
 from src.use_cases.customer_use_case import CustomerUseCase
 
 class AppContainer(containers.DeclarativeContainer):
+    config = providers.Configuration()
+
     db_client = providers.Singleton(EdgeDBClient)
     kafka_producer = providers.Singleton(KafkaProducerDevice, bootstrap_servers="localhost:9092")
+
     customer_gateway = providers.Factory(CustomerGateway, db_client=db_client)
     customer_use_case = providers.Factory(CustomerUseCase, gateway=customer_gateway, kafka_producer=kafka_producer)
     customer_controller = providers.Factory(CustomerController, use_case=customer_use_case)
