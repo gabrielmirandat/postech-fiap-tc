@@ -1,5 +1,6 @@
 fastapi
 uvicorn
 edgedb
+kafka-python 
 aiokafka
 dependency-injector

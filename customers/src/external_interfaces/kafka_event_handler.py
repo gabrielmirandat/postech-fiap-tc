@@ -1,14 +1,12 @@
 import json
+from typing import Optional
 from kafka import KafkaConsumer
 from src.use_cases.customer_use_case import CustomerUseCase
-from dependency_injector.wiring import inject, Provide
-from src.containers import AppContainer
 
 
 class KafkaEventHandler:
-    @inject
-    def __init__(self, customer_use_case: CustomerUseCase = Provide[AppContainer.customer_use_case]):
-        self.customer_use_case = customer_use_case
+    def __init__(self, use_case: Optional[CustomerUseCase] = None):
+        self.customer_use_case = use_case
 
     def start_consumer(self, topic: str, bootstrap_servers: str, group_id: str):
         consumer = KafkaConsumer(

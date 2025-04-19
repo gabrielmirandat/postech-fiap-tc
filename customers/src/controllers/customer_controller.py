@@ -1,14 +1,11 @@
 from fastapi import HTTPException
 from src.use_cases.customer_use_case import CustomerUseCase
 from src.presenters.customer_presenter import CustomerPresenter
-from dependency_injector.wiring import inject, Provide
-from src.containers import AppContainer
 
 
 class CustomerController:
-    @inject
-    def __init__(self, customer_use_case: CustomerUseCase = Provide[AppContainer.customer_use_case]):
-        self.customer_use_case = customer_use_case
+    def __init__(self, use_case: CustomerUseCase):
+        self.customer_use_case = use_case
 
     async def create_customer(self, gov_id: str, name: str, email: str):
         try:
