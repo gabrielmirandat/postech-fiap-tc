@@ -1,20 +1,30 @@
 import uuid
 from datetime import datetime
-from kafka import KafkaProducer
+from aiokafka import AIOKafkaProducer
 import json
 
 class KafkaProducerDevice:
-    """Kafka producer client for sending CloudEvents to Kafka topics."""
-
     def __init__(self, bootstrap_servers: str):
-        """Initializes the Kafka producer."""
-        self.producer = KafkaProducer(
-            bootstrap_servers=bootstrap_servers,
-            value_serializer=lambda v: json.dumps(v).encode('utf-8')
-        )
+        self.bootstrap_servers = bootstrap_servers
+        self.producer = None
 
-    def send_cloudevent(self, topic: str, data: dict, source: str, event_type: str):
-        """Sends a CloudEvent to the specified Kafka topic."""
+    async def start(self):
+        if self.producer is None:
+            self.producer = AIOKafkaProducer(
+                bootstrap_servers=self.bootstrap_servers,
+                value_serializer=lambda v: json.dumps(v).encode('utf-8')
+            )
+            await self.producer.start()
+
+    async def stop(self):
+        if self.producer:
+            await self.producer.stop()
+            self.producer = None
+
+    async def send_cloudevent(self, topic: str, data: dict, source: str, event_type: str):
+        if self.producer is None:
+            await self.start()
+            
         cloud_event = {
             "specversion": "1.0",
             "type": event_type,
@@ -24,6 +34,4 @@ class KafkaProducerDevice:
             "datacontenttype": "application/json",
             "data": data,
         }
-        # Send the event to Kafka
-        self.producer.send(topic, value=cloud_event)
-        self.producer.flush()
+        await self.producer.send_and_wait(topic, value=cloud_event)
