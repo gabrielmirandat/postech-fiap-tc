@@ -14,10 +14,11 @@ class CustomerUseCase:
             raise ValueError("All fields are required.")
         customer = await self.customer_gateway.create_customer(gov_id, name, email)
         # Publish customer created event
-        await self.kafka_producer.send_message(
+        await self.kafka_producer.send_cloudevent(
             topic="customer-events",
-            key=gov_id,
-            value={"event": "customer_created", "data": {"gov_id": gov_id, "name": name, "email": email}}
+            data={"gov_id": gov_id, "name": name, "email": email},
+            source="customers-service",
+            event_type="customer.created"
         )
         return customer
 

@@ -2,12 +2,13 @@ import edgedb
 from src.entities.customer import Customer
 
 class EdgeDBClient:
-    def __init__(self):
-        self.client = edgedb.create_client()
+    def __init__(self, dsn: str):
+        # Use async client for async operations
+        self.client = edgedb.create_async_client(dsn=dsn)
 
     async def save_customer(self, customer: Customer):
         query = """
-            INSERT Customer {
+            INSERT default::Customer {
                 govId := <str>$gov_id,
                 name := <str>$name,
                 email := <str>$email
@@ -17,7 +18,7 @@ class EdgeDBClient:
 
     async def find_customer_by_id(self, gov_id: str) -> Customer:
         query = """
-            SELECT Customer {
+            SELECT default::Customer {
                 govId,
                 name,
                 email
@@ -26,4 +27,4 @@ class EdgeDBClient:
         result = await self.client.query_single(query, gov_id=gov_id)
         if not result:
             return None
-        return Customer(result.govId, result.name, result.email)
+        return Customer(gov_id=result.govId, name=result.name, email=result.email)
