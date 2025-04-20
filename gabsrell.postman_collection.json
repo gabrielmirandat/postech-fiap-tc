@@ -1,0 +1,977 @@
+{
+	"info": {
+		"_postman_id": "2e85a4e1-a2a0-4d47-9c9f-5df111095cff",
+		"name": "POSTECH",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1328011"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.environment.set('access_token', res.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"{{new_username}}\",\r\n  \"password\": \"{{new_password}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{users_url}}/users/login",
+							"host": [
+								"{{users_url}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"{{new_username}}\",\r\n  \"password\": \"{{new_password}}\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{users_url}}/users/login",
+									"host": [
+										"{{users_url}}"
+									],
+									"path": [
+										"users",
+										"login"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"token_type\": \"Bearer\",\n  \"expires_in\": 3600,\n  \"username\": \"{{username}}\",\n  \"message\": \"Login successful\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{users_url}}/users/logout",
+							"host": [
+								"{{users_url}}"
+							],
+							"path": [
+								"users",
+								"logout"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Logout",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{users_url}}/users/logout",
+									"host": [
+										"{{users_url}}"
+									],
+									"path": [
+										"users",
+										"logout"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n  \"message\": \"Logout successful\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Register",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"{{new_username}}\",\r\n  \"password\": \"{{new_password}}\",\r\n  \"name\": \"Novo Usuario Normal\",\r\n  \"email\": \"normal2@email.com\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{users_url}}/users/register",
+							"host": [
+								"{{users_url}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Register",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"{{new_username}}\",\r\n  \"password\": \"{{new_password}}\",\r\n  \"name\": \"Novo Usuario Normal\",\r\n  \"email\": \"normal2@email.com\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{users_url}}/users/register",
+									"host": [
+										"{{users_url}}"
+									],
+									"path": [
+										"users",
+										"register"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"5f8f8c44e3b4a12d6c777567\",\n    \"username\": \"{{new_username}}\",\n    \"name\": \"Novo Usuario Normal\",\n    \"email\": \"normal2@email.com\",\n    \"message\": \"User registered successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Account",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{users_url}}/users/delete-account",
+							"host": [
+								"{{users_url}}"
+							],
+							"path": [
+								"users",
+								"delete-account"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete Account",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{users_url}}/users/delete-account",
+									"host": [
+										"{{users_url}}"
+									],
+									"path": [
+										"users",
+										"delete-account"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User account deleted successfully\",\n    \"username\": \"{{username}}\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Menu",
+			"item": [
+				{
+					"name": "Add Ingredient",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Costela Meat\",\n  \"category\": \"burger\",\n  \"price\": 2.90,\n  \"weight\": 100,\n  \"isExtra\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{menu_url}}/ingredients",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"ingredients"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Add Ingredient",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Costela Meat\",\n  \"category\": \"burger\",\n  \"price\": 2.90,\n  \"weight\": 100,\n  \"isExtra\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{menu_url}}/ingredients",
+									"host": [
+										"{{menu_url}}"
+									],
+									"path": [
+										"ingredients"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"ingredientId\": \"12345678-ingr-10092008\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Add Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"X-Burguer\",\n  \"description\": \"Carro chefe da casa\",\n  \"category\": \"burger\",\n  \"price\": 10.90,\n  \"image\": \"burguer.png\",\n  \"ingredients\": [\n    {\n      \"ingredientId\": \"12345678-INGR-2022-08-22\",\n      \"quantity\": 2\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{menu_url}}/products",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Add Product",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"X-Burguer\",\n  \"description\": \"Carro chefe da casa\",\n  \"category\": \"burger\",\n  \"price\": 10.90,\n  \"image\": \"burguer.png\",\n  \"ingredients\": [\n    {\n      \"ingredientId\": \"12345678-INGR-2022-08-22\",\n      \"quantity\": 2\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{menu_url}}/products",
+									"host": [
+										"{{menu_url}}"
+									],
+									"path": [
+										"products"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"productId\": \"12345678-prdc-10092008\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Search Ingredients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/ingredients?category=burger",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"ingredients"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "burger"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Search Ingredients",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{menu_url}}/ingredients?category=burger",
+									"host": [
+										"{{menu_url}}"
+									],
+									"path": [
+										"ingredients"
+									],
+									"query": [
+										{
+											"key": "category",
+											"value": "burger"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"12345678-INGR-10092008\",\n        \"name\": \"Costela Meat\",\n        \"category\": \"burger\",\n        \"price\": 2.9,\n        \"weight\": 100,\n        \"isExtra\": true\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Search Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/products?category=burger",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "burger"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Search Burguer",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{menu_url}}/products?category=burger",
+									"host": [
+										"{{menu_url}}"
+									],
+									"path": [
+										"products"
+									],
+									"query": [
+										{
+											"key": "category",
+											"value": "burger"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"12345678-PRDC-10092008\",\n        \"name\": \"X-Big\",\n        \"description\": \"Um hambúrguer gigante recheado com carne suculenta e camadas de queijo derretido.\",\n        \"category\": \"burger\",\n        \"price\": 10.90,\n        \"image\": \"x-big.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092009\",\n        \"name\": \"X-Burguer\",\n        \"description\": \"Um clássico irresistível, com carne grelhada e queijo derretido.\",\n        \"category\": \"burger\",\n        \"price\": 8.90,\n        \"image\": \"x-burguer.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092010\",\n        \"name\": \"X-Crazy\",\n        \"description\": \"Um burguer explosivo com combinações únicas de sabores.\",\n        \"category\": \"burger\",\n        \"price\": 12.50,\n        \"image\": \"x-crazy.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092011\",\n        \"name\": \"X-Double\",\n        \"description\": \"Duas camadas de carne suculenta com muito queijo.\",\n        \"category\": \"burger\",\n        \"price\": 13.90,\n        \"image\": \"x-double.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092012\",\n        \"name\": \"X-Salad\",\n        \"description\": \"Um burguer leve com alface, tomate e queijo fresco.\",\n        \"category\": \"burger\",\n        \"price\": 9.50,\n        \"image\": \"x-salad.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092013\",\n        \"name\": \"X-Veggie\",\n        \"description\": \"Uma opção deliciosa para vegetarianos, recheada com legumes grelhados.\",\n        \"category\": \"burger\",\n        \"price\": 8.50,\n        \"image\": \"x-veggie.png\"\n    }\n]"
+						},
+						{
+							"name": "Search Accompaniment",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{menu_url}}/products?category=accompaniment",
+									"host": [
+										"{{menu_url}}"
+									],
+									"path": [
+										"products"
+									],
+									"query": [
+										{
+											"key": "category",
+											"value": "accompaniment"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"12345678-PRDC-10092014\",\n        \"name\": \"Fried Fries\",\n        \"description\": \"Deliciosas batatas fritas crocantes, perfeitas para acompanhar seu prato.\",\n        \"category\": \"accompaniment\",\n        \"price\": 5.50,\n        \"image\": \"fried_fries.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092015\",\n        \"name\": \"Onion Rings\",\n        \"description\": \"Anéis de cebola empanados e fritos até ficarem dourados.\",\n        \"category\": \"accompaniment\",\n        \"price\": 6.00,\n        \"image\": \"onion_rings.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092016\",\n        \"name\": \"Coleslaw Salad\",\n        \"description\": \"Salada de repolho com molho cremoso, um acompanhamento leve e refrescante.\",\n        \"category\": \"accompaniment\",\n        \"price\": 5.50,\n        \"image\": \"coleslaw_salad.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092017\",\n        \"name\": \"Rustic Potato\",\n        \"description\": \"Batatas com casca, temperadas com ervas e assadas no ponto certo.\",\n        \"category\": \"accompaniment\",\n        \"price\": 6.90,\n        \"image\": \"rustic_potato.png\"\n    }\n]"
+						},
+						{
+							"name": "Search Dessert",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{menu_url}}/products?category=dessert",
+									"host": [
+										"{{menu_url}}"
+									],
+									"path": [
+										"products"
+									],
+									"query": [
+										{
+											"key": "category",
+											"value": "dessert"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"12345678-PRDC-10092018\",\n        \"name\": \"Chocolate Brownie\",\n        \"description\": \"Um rico e cremoso brownie de chocolate, perfeito para os amantes de doce.\",\n        \"category\": \"dessert\",\n        \"price\": 7.00,\n        \"image\": \"chocolate_brownie.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092019\",\n        \"name\": \"Lemon Pie\",\n        \"description\": \"Uma refrescante torta de limão com merengue por cima.\",\n        \"category\": \"dessert\",\n        \"price\": 6.50,\n        \"image\": \"lemon_pie.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092020\",\n        \"name\": \"Milk Pudding\",\n        \"description\": \"Um clássico brasileiro, suave e cremoso.\",\n        \"category\": \"dessert\",\n        \"price\": 5.50,\n        \"image\": \"milk_pudding.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092021\",\n        \"name\": \"Vanilla Ice\",\n        \"description\": \"Sorvete cremoso de baunilha, uma sobremesa sempre clássica.\",\n        \"category\": \"dessert\",\n        \"price\": 4.50,\n        \"image\": \"vanilla_ice.png\"\n    }\n]"
+						},
+						{
+							"name": "Search Drink",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{menu_url}}/products?category=drink",
+									"host": [
+										"{{menu_url}}"
+									],
+									"path": [
+										"products"
+									],
+									"query": [
+										{
+											"key": "category",
+											"value": "drink"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"12345678-PRDC-10092022\",\n        \"name\": \"Soda\",\n        \"description\": \"Uma variedade de refrigerantes gelados para refrescar.\",\n        \"category\": \"drink\",\n        \"price\": 4.00,\n        \"image\": \"soda.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092023\",\n        \"name\": \"Natural Juice\",\n        \"description\": \"Suco natural feito com frutas frescas, sem conservantes.\",\n        \"category\": \"drink\",\n        \"price\": 5.00,\n        \"image\": \"natural_juice.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092024\",\n        \"name\": \"Artesanal Beer\",\n        \"description\": \"Cerveja artesanal local, perfeita para acompanhar seus pratos.\",\n        \"category\": \"drink\",\n        \"price\": 10.00,\n        \"image\": \"artesanal_beer.png\"\n    },\n    {\n        \"id\": \"12345678-PRDC-10092025\",\n        \"name\": \"Mineral Water\",\n        \"description\": \"Água mineral pura e refrescante.\",\n        \"category\": \"drink\",\n        \"price\": 3.00,\n        \"image\": \"mineral_water.png\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Ingredient",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/ingredients/307a50b3-INGR-2024-02-11",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"ingredients",
+								"307a50b3-INGR-2024-02-11"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Ingredient",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{menu_url}}/ingredients/307a50b3-INGR-2024-02-11",
+									"host": [
+										"{{menu_url}}"
+									],
+									"path": [
+										"ingredients",
+										"307a50b3-INGR-2024-02-11"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"12345678-INGR-10092008\",\n    \"name\": \"Costela Meat\",\n    \"category\": \"burger\",\n    \"price\": 2.9,\n    \"weight\": 100,\n    \"isExtra\": true\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/products/5e47c51a-PRDC-2024-04-07",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"products",
+								"5e47c51a-PRDC-2024-04-07"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Product",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{menu_url}}/products/5e47c51a-PRDC-2024-04-07",
+									"host": [
+										"{{menu_url}}"
+									],
+									"path": [
+										"products",
+										"5e47c51a-PRDC-2024-04-07"
+									]
+								}
+							},
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"12345678-prdc-10092008\",\n    \"name\": \"X-Burger\",\n    \"description\": \"Carro chefe\",\n    \"category\": \"burger\",\n    \"price\": 10.9,\n    \"image\": \"burguer.png\",\n    \"ingredients\": [\n        {\n            \"id\": \"12345678-INGR-10092008\",\n            \"name\": \"Costela Meat\",\n            \"category\": \"burger\",\n            \"price\": 2.9,\n            \"weight\": 100,\n            \"isExtra\": true\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Ingredient",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/ingredients/d7a95ea3-INGR-2024-02-10",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"ingredients",
+								"d7a95ea3-INGR-2024-02-10"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete Ingredient",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{menu_url}}/ingredients/d7a95ea3-INGR-2024-02-10",
+									"host": [
+										"{{menu_url}}"
+									],
+									"path": [
+										"ingredients",
+										"d7a95ea3-INGR-2024-02-10"
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": "204 No Content"
+						}
+					]
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{menu_url}}/products/e1f84cac-PRDC-2024-02-12",
+							"host": [
+								"{{menu_url}}"
+							],
+							"path": [
+								"products",
+								"e1f84cac-PRDC-2024-02-12"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Delete Product",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{menu_url}}/products/e1f84cac-PRDC-2024-02-12",
+									"host": [
+										"{{menu_url}}"
+									],
+									"path": [
+										"products",
+										"e1f84cac-PRDC-2024-02-12"
+									]
+								}
+							},
+							"_postman_previewlanguage": "text",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "204 No Content"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Add Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"customer\": {\n    \"cpf\": \"123.456.789-12\"\n  },\n  \"shippingAddress\": {\n    \"street\": \"Vila Lula\",\n    \"city\": \"Sao Paulo\",\n    \"state\": \"SP\",\n    \"zip\": \"13011-111\"\n  },\n  \"notification\": \"(11) 11111-1111\",\n  \"items\": [\n    {\n      \"productId\": \"5e47c51a-PRDC-2024-04-07\",\n      \"extras\": [\n        {\n          \"ingredientId\": \"ebec5595-INGR-2024-04-07\",\n          \"quantity\": 2\n        }\n      ],\n      \"quantity\": 1\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{orders_url}}/orders",
+							"host": [
+								"{{orders_url}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Process Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{orders_url}}/orders/bd442e5d/status/PACKAGING",
+							"host": [
+								"{{orders_url}}"
+							],
+							"path": [
+								"orders",
+								"bd442e5d",
+								"status",
+								"PACKAGING"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{orders_url}}/orders/bd442e5d",
+							"host": [
+								"{{orders_url}}"
+							],
+							"path": [
+								"orders",
+								"bd442e5d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Order",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{orders_url}}/orders?category=burger",
+							"host": [
+								"{{orders_url}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "burger"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Customers",
+			"item": [
+				{
+					"name": "Create customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"govId\": \"540.267.690-97\",\n  \"name\": \"Joe\",\n  \"email\": \"joe@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{customers_url}}/customers",
+							"host": [
+								"{{customers_url}}"
+							],
+							"path": [
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get customer by govId",
+					"request": {
+						"method": "HEAD",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{customers_url}}/customers/540.267.690-97",
+							"host": [
+								"{{customers_url}}"
+							],
+							"path": [
+								"customers",
+								"540.267.690-97"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
