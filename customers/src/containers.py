@@ -5,14 +5,25 @@ from src.devices.kafka_producer import KafkaProducerDevice
 from src.external_interfaces.kafka_event_handler import KafkaEventHandler
 from src.gateways.customer_gateway import CustomerGateway
 from src.use_cases.customer_use_case import CustomerUseCase
+from src.config import config as app_config
 
 class AppContainer(containers.DeclarativeContainer):
     config = providers.Configuration()
+    
+    config.set('kafka_bootstrap_servers', app_config.KAFKA_BOOTSTRAP_SERVERS)
+    config.set('edgedb_dsn', app_config.EDGEDB_DSN)
+    
+    db_client = providers.Singleton(
+        EdgeDBClient, 
+        dsn=config.edgedb_dsn
+    )
+    
+    kafka_producer = providers.Singleton(
+        KafkaProducerDevice, 
+        bootstrap_servers=config.kafka_bootstrap_servers
+    )
 
-    db_client = providers.Singleton(EdgeDBClient)
-    kafka_producer = providers.Singleton(KafkaProducerDevice, bootstrap_servers="localhost:9092")
-
-    customer_gateway = providers.Factory(CustomerGateway, db_client=db_client)
+    customer_gateway = providers.Factory(CustomerGateway, edgedb_client=db_client)
     customer_use_case = providers.Factory(CustomerUseCase, gateway=customer_gateway, kafka_producer=kafka_producer)
     customer_controller = providers.Factory(CustomerController, use_case=customer_use_case)
     kafka_event_handler = providers.Factory(KafkaEventHandler, use_case=customer_use_case)

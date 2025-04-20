@@ -40,6 +40,19 @@ services:
     networks:
       - postech_network
 
+  customers-service:
+    container_name: postech_customers_service
+    build: ./customers
+    depends_on:
+      - edgedb
+      - kafka
+    ports:
+      - "8003:8003"
+    environment:
+      - ENV=docker
+    networks:
+      - postech_network
+
   postgres:
     container_name: postech_postgres
     image: postgres:17.2
@@ -61,6 +74,17 @@ services:
       MONGO_INITDB_ROOT_USERNAME: dummy
       MONGO_INITDB_ROOT_PASSWORD: dummy
       MONGO_INITDB_DATABASE: postech_db
+    networks:
+      - postech_network
+
+  edgedb:
+    container_name: postech_edgedb
+    image: edgedb/edgedb:3.5
+    ports:
+      - "5656:5656"
+    environment:
+      EDGEDB_SERVER_SECURITY: insecure_dev_mode
+      EDGEDB_SERVER_PASSWORD: dummy
     networks:
       - postech_network
 
