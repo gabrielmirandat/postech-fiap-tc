@@ -2,10 +2,10 @@ package com.gabriel.orders.core.domain.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.gabriel.core.domain.exception.DomainException;
-import com.gabriel.core.domain.model.Name;
-import com.gabriel.core.domain.model.Price;
-import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.model.DomainException;
+import com.gabriel.model.Name;
+import com.gabriel.model.Price;
+import com.gabriel.model.IngredientId;
 import com.gabriel.orders.core.domain.model.Extra;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ public class ExtraTest {
     @Test
     void shouldCreateExtraSuccessfully_whenValidDataIsProvided() {
         // Arrange & Act
-        Extra extra = new Extra(new IngredientID(), "Extra", 2.0);
+        Extra extra = new Extra(new IngredientId(), "Extra", 2.0);
 
         // Assert
         assertThat(extra).isNotNull();
@@ -42,13 +42,13 @@ public class ExtraTest {
         // Arrange & Act & Assert
         assertThatThrownBy(() -> new Extra(null, "Extra", 2.0))
             .isInstanceOf(DomainException.class)
-            .hasMessageContaining("Domain validation failed: value IngredientID cannot be null");
+            .hasMessageContaining("Domain validation failed: value IngredientId cannot be null");
     }
 
     @Test
     void shouldThrowException_whenNameIsNull() {
         // Arrange & Act & Assert
-        assertThatThrownBy(() -> new Extra(new IngredientID(), null, 2.0))
+        assertThatThrownBy(() -> new Extra(new IngredientId(), null, 2.0))
             .isInstanceOf(DomainException.class)
             .hasMessageContaining("Domain validation failed: value Name cannot be null or empty");
     }
@@ -56,7 +56,7 @@ public class ExtraTest {
     @Test
     void shouldThrowException_whenNameIsEmpty() {
         // Arrange & Act & Assert
-        assertThatThrownBy(() -> new Extra(new IngredientID(), "", 2.0))
+        assertThatThrownBy(() -> new Extra(new IngredientId(), "", 2.0))
             .isInstanceOf(DomainException.class)
             .hasMessageContaining("Domain validation failed: value Name cannot be null or empty");
     }
@@ -64,7 +64,7 @@ public class ExtraTest {
     @Test
     void shouldCreateExtraSuccessfully_whenValidDataIsProvidedWithTimestamp() {
         // Arrange & Act
-        Extra extra = new Extra(new IngredientID(), new Name("Extra"), new Price(2.0), Instant.now());
+        Extra extra = new Extra(new IngredientId(), new Name("Extra"), new Price(2.0), Instant.now());
 
         // Assert
         assertThat(extra).isNotNull();
@@ -77,7 +77,7 @@ public class ExtraTest {
     @Test
     void shouldSerializeExtraSuccessfully_whenValidDataIsProvided() {
         // Arrange
-        Extra extra = new Extra(new IngredientID(), new Name("Extra"), new Price(2.0), Instant.now());
+        Extra extra = new Extra(new IngredientId(), new Name("Extra"), new Price(2.0), Instant.now());
 
         // Act
         byte[] serialized = extra.serialized(objectMapper());
@@ -89,7 +89,7 @@ public class ExtraTest {
     @Test
     void shouldDeserializeExtraSuccessfully_whenValidDataIsProvided() {
         // Arrange
-        Extra extra = new Extra(new IngredientID(), new Name("Extra"), new Price(2.0), Instant.now());
+        Extra extra = new Extra(new IngredientId(), new Name("Extra"), new Price(2.0), Instant.now());
         byte[] serialized = extra.serialized(objectMapper());
 
         // Act

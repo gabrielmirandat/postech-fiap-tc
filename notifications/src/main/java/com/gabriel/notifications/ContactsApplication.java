@@ -1,6 +1,6 @@
-package com.gabriel.campaigns;
+package com.gabriel.notifications;
 
-public class CampaignsApplication {
+public class ContactsApplication {
     public static void main(String[] args) {
         System.out.println("Hello world!");
     }

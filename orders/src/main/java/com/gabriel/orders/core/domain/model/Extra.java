@@ -5,17 +5,16 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.ValueObject;
-import com.gabriel.core.domain.model.Name;
-import com.gabriel.core.domain.model.Price;
-import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.model.Name;
+import com.gabriel.model.Price;
+import com.gabriel.model.IngredientId;
 
 import java.io.IOException;
 import java.time.Instant;
 
-public class Extra extends ValueObject {
+public class Extra {
 
-    private final IngredientID ingredientID;
+    private final IngredientId ingredientId;
 
     private final Name name;
 
@@ -24,26 +23,26 @@ public class Extra extends ValueObject {
     private Instant timestamp;
 
     @JsonCreator
-    public Extra(@JsonProperty("ingredientID") IngredientID ingredientID,
+    public Extra(@JsonProperty("ingredientID") IngredientId ingredientId,
                  @JsonProperty("name") Name name,
                  @JsonProperty("value") Price value,
                  @JsonProperty("timestamp") @JsonAlias("updateTimestamp") Instant timestamp) {
-        this.ingredientID = ingredientID;
+        this.ingredientId = ingredientId;
         this.name = name;
         this.price = value;
         this.timestamp = timestamp;
     }
 
-    public Extra(IngredientID ingredientID,
+    public Extra(IngredientId ingredientId,
                  Name name,
                  Price value) {
-        this.ingredientID = ingredientID;
+        this.ingredientId = ingredientId;
         this.name = name;
         this.price = value;
     }
 
-    public Extra(IngredientID ingredientID, String name, Double value) {
-        this.ingredientID = ingredientID;
+    public Extra(IngredientId ingredientId, String name, Double value) {
+        this.ingredientId = ingredientId;
         this.name = new Name(name);
         this.price = new Price(value);
     }
@@ -64,8 +63,8 @@ public class Extra extends ValueObject {
         }
     }
 
-    public IngredientID getIngredientID() {
-        return ingredientID;
+    public IngredientId getIngredientId() {
+        return ingredientId;
     }
 
     public Name getName() {

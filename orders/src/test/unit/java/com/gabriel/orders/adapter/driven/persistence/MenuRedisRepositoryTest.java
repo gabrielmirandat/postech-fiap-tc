@@ -1,8 +1,8 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.adapter.driven.persistence.MenuRedisRepository;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
@@ -43,55 +43,55 @@ class MenuRedisRepositoryTest {
 
     @Test
     void existsProduct_whenProductExists_returnsTrue() {
-        ProductID productID = new ProductID();
-        when(redisTemplate.hasKey("prod:" + productID.getId())).thenReturn(true);
+        ProductId productId = new ProductId();
+        when(redisTemplate.hasKey("prod:" + productId.getId())).thenReturn(true);
 
-        boolean exists = repository.existsProduct(productID);
+        boolean exists = repository.existsProduct(productId);
 
         assertTrue(exists);
-        verify(redisTemplate).hasKey("prod:" + productID.getId());
+        verify(redisTemplate).hasKey("prod:" + productId.getId());
     }
 
     @Test
     void getProduct_whenProductExists_returnsProduct() throws Exception {
-        ProductID productID = new ProductID();
+        ProductId productId = new ProductId();
         byte[] serializedProduct = new byte[]{};
-        Product product = new Product(productID, "Test Product", 10.0);
+        Product product = new Product(productId, "Test Product", 10.0);
 
-        when(valueOperations.get("prod:" + productID.getId())).thenReturn(serializedProduct);
+        when(valueOperations.get("prod:" + productId.getId())).thenReturn(serializedProduct);
         when(objectMapper.readValue(serializedProduct, Product.class)).thenReturn(product);
 
-        Product result = repository.getProduct(productID);
+        Product result = repository.getProduct(productId);
 
         assertNotNull(result);
-        assertEquals(product.getProductID(), result.getProductID());
-        verify(valueOperations).get("prod:" + productID.getId());
+        assertEquals(product.getProductId(), result.getProductId());
+        verify(valueOperations).get("prod:" + productId.getId());
         verify(objectMapper).readValue(serializedProduct, Product.class);
     }
 
     @Test
     void addProduct_savesProduct() throws Exception {
-        ProductID productID = new ProductID();
-        Product product = new Product(productID, "Test Product", 10.0);
+        ProductId productId = new ProductId();
+        Product product = new Product(productId, "Test Product", 10.0);
         byte[] serializedProduct = new byte[]{};
 
         when(objectMapper.writeValueAsBytes(product)).thenReturn(serializedProduct);
 
         repository.addProduct(product);
 
-        verify(valueOperations).set(eq("prod:" + product.getProductID().getId()), eq(serializedProduct));
+        verify(valueOperations).set(eq("prod:" + product.getProductId().getId()), eq(serializedProduct));
     }
 
     @Test
     void deleteProduct_removesProduct() {
-        ProductID productID = new ProductID();
-        repository.deleteProduct(productID);
-        verify(redisTemplate).delete("prod:" + productID.getId());
+        ProductId productId = new ProductId();
+        repository.deleteProduct(productId);
+        verify(redisTemplate).delete("prod:" + productId.getId());
     }
 
     @Test
     void existsExtra_whenExtraExists_returnsTrue() {
-        IngredientID ingredientID = new IngredientID();
+        IngredientId ingredientID = new IngredientId();
         when(redisTemplate.hasKey("extr:" + ingredientID.getId())).thenReturn(true);
 
         boolean exists = repository.existsExtra(ingredientID);
@@ -102,7 +102,7 @@ class MenuRedisRepositoryTest {
 
     @Test
     void getExtra_whenExtraExists_returnsExtra() throws Exception {
-        IngredientID ingredientID = new IngredientID();
+        IngredientId ingredientID = new IngredientId();
         byte[] serializedExtra = new byte[]{};
         Extra extra = new Extra(ingredientID, "Test Extra", 5.0);
 
@@ -119,7 +119,7 @@ class MenuRedisRepositoryTest {
 
     @Test
     void addExtra_savesExtra() throws Exception {
-        IngredientID ingredientID = new IngredientID();
+        IngredientId ingredientID = new IngredientId();
         Extra extra = new Extra(ingredientID, "Test Extra", 5.0);
         byte[] serializedExtra = new byte[]{};
 
@@ -132,22 +132,22 @@ class MenuRedisRepositoryTest {
 
     @Test
     void deleteExtra_removesExtra() {
-        IngredientID ingredientID = new IngredientID();
+        IngredientId ingredientID = new IngredientId();
         repository.deleteExtra(ingredientID);
         verify(redisTemplate).delete("extr:" + ingredientID.getId());
     }
 
     @Test
-    void allProducts_returnsListOfProductIDs() {
+    void allProducts_returnsListOfProductIds() {
         Set<String> keys = Set.of("prod:5ed5dad3-PRDC-2024-02-12",
             "prod:5ed5dad3-PRDC-2024-03-11");
         when(redisTemplate.keys("prod:*")).thenReturn(keys);
 
-        List<ProductID> productIDs = repository.allProducts();
+        List<ProductId> productIds = repository.allProducts();
 
-        assertEquals(2, productIDs.size());
-        assertTrue(productIDs.stream().anyMatch(id -> id.getId().equals("5ed5dad3-PRDC-2024-02-12")));
-        assertTrue(productIDs.stream().anyMatch(id -> id.getId().equals("5ed5dad3-PRDC-2024-03-11")));
+        assertEquals(2, productIds.size());
+        assertTrue(productIds.stream().anyMatch(id -> id.getId().equals("5ed5dad3-PRDC-2024-02-12")));
+        assertTrue(productIds.stream().anyMatch(id -> id.getId().equals("5ed5dad3-PRDC-2024-03-11")));
     }
 
     @Test
@@ -156,7 +156,7 @@ class MenuRedisRepositoryTest {
             "extr:fabe70b1-INGR-2024-02-12");
         when(redisTemplate.keys("extr:*")).thenReturn(keys);
 
-        List<IngredientID> ingredientIDs = repository.allExtras();
+        List<IngredientId> ingredientIDs = repository.allExtras();
 
         assertEquals(2, ingredientIDs.size());
         assertTrue(ingredientIDs.stream().anyMatch(id -> id.getId().equals("1498994f-INGR-2024-02-11")));

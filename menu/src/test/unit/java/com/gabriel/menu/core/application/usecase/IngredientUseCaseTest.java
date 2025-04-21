@@ -1,6 +1,6 @@
 package com.gabriel.menu.core.application.usecase;
 
-import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.model.IngredientId;
 import com.gabriel.menu.core.MenuMock;
 import com.gabriel.menu.core.application.command.CreateIngredientCommand;
 import com.gabriel.menu.core.application.query.GetByIngredientIdQuery;
@@ -61,7 +61,7 @@ public class IngredientUseCaseTest {
     void getIngredientByIdTest() {
         when(ingredientRepository.getById(any())).thenReturn(ingredient);
 
-        IngredientID id = new IngredientID();
+        IngredientId id = new IngredientId();
         Ingredient result = ingredientUseCase.getIngredientById(new GetByIngredientIdQuery(id));
 
         verify(ingredientRepository).getById(id);
@@ -72,8 +72,8 @@ public class IngredientUseCaseTest {
     void getIngredientsByIdTest() {
         when(ingredientRepository.getById(any())).thenReturn(ingredient);
 
-        IngredientID id1 = new IngredientID();
-        IngredientID id2 = new IngredientID();
+        IngredientId id1 = new IngredientId();
+        IngredientId id2 = new IngredientId();
         List<Ingredient> results = ingredientUseCase.getIngredientsById(
             new GetByIngredientIdsQuery(Arrays.asList(id1, id2)));
 

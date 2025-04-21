@@ -1,6 +1,6 @@
 package com.gabriel.menu.core.application.usecase;
 
-import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.model.IngredientId;
 import com.gabriel.menu.adapter.driver.api.mapper.MenuMapper;
 import com.gabriel.menu.core.application.command.CreateProductCommand;
 import com.gabriel.menu.core.application.command.DeleteProductCommand;
@@ -29,12 +29,12 @@ public class ProductUseCase {
     @Inject
     ProductPublisher productPublisher;
 
-    private List<IngredientID> idsOf(List<Ingredient> ingredients) {
+    private List<IngredientId> idsOf(List<Ingredient> ingredients) {
         return ingredients.stream().map(Ingredient::getIngredientID).toList();
     }
 
     public Product createProduct(CreateProductCommand command) {
-        List<IngredientID> categoryMenu =
+        List<IngredientId> categoryMenu =
             idsOf(ingredientUseCase.searchIngredient(
                 new SearchIngredientQuery(command.category())));
         Product product = new Product(command.name(), command.price(), command.category(),

@@ -2,8 +2,8 @@ package com.gabriel.orders.core.application;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.domain.model.Order;
 import io.cloudevents.CloudEvent;
 import io.cucumber.java.Before;
@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CreateOrderSteps extends SpringStepsContext {
 
-    private final ProductID existingProductID = new ProductID("11111111-PRDC-1111-11-11");
-    private final IngredientID existingIngredientID = new IngredientID("11111111-INGR-1111-11-11");
-    private final ProductID nonExistentProductID = new ProductID("11111111-PRDC-1111-11-12");
-    private final IngredientID nonExistentIngredientID = new IngredientID("11111111-INGR-1111-11-12");
+    private final ProductId existingProductId = new ProductId("11111111-PRDC-1111-11-11");
+    private final IngredientId existingIngredientID = new IngredientId("11111111-INGR-1111-11-11");
+    private final ProductId nonExistentProductId = new ProductId("11111111-PRDC-1111-11-12");
+    private final IngredientId nonExistentIngredientID = new IngredientId("11111111-INGR-1111-11-12");
     private String validOrderRequest;
     private String invalidProductOrderRequest;
     private String invalidExtraOrderRequest;
@@ -50,11 +50,11 @@ public class CreateOrderSteps extends SpringStepsContext {
         validOrderRequest = OasConverter.convertSpecToJson("/oas/orders-api.yaml",
             "paths:/orders:post:requestBody:content:application/json:examples:CREATE_ORDER_SUCCESS:value");
 
-        invalidProductOrderRequest = validOrderRequest.replaceAll(existingProductID.getId(), nonExistentProductID.getId());
+        invalidProductOrderRequest = validOrderRequest.replaceAll(existingProductId.getId(), nonExistentProductId.getId());
 
         invalidExtraOrderRequest = validOrderRequest.replaceAll(existingIngredientID.getId(), nonExistentIngredientID.getId());
 
-        menuRepository.addProduct(ProductMock.validProduct(existingProductID));
+        menuRepository.addProduct(ProductMock.validProduct(existingProductId));
         menuRepository.addExtra(ExtraMock.validExtra(existingIngredientID));
     }
 

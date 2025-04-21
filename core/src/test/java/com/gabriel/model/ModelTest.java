@@ -212,7 +212,7 @@ class ModelTest {
                     Cpf.newBuilder().setValue("   ").build()
                 )
             );
-            assertEquals("Validation error:\n - value: CPF must follow the pattern XXX.XXX.XXX-XX [cpf.value]", exception.getMessage());
+            assertEquals("Validation error:\n - value: Cpf must follow the pattern XXX.XXX.XXX-XX [cpf.value]", exception.getMessage());
         }
         
         @Test
@@ -222,7 +222,7 @@ class ModelTest {
                     Cpf.newBuilder().setValue("12345678909").build()
                 )
             );
-            assertEquals("Validation error:\n - value: CPF must follow the pattern XXX.XXX.XXX-XX [cpf.value]", exception.getMessage());
+            assertEquals("Validation error:\n - value: Cpf must follow the pattern XXX.XXX.XXX-XX [cpf.value]", exception.getMessage());
         }        
     }
 
@@ -234,7 +234,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(CustomerId.newBuilder().setValue("invalid-id").build())
             );
-            assertEquals("Validation error:\n - value: Invalid Customer ID format [customer_id.value]", exception.getMessage());
+            assertEquals("Validation error:\n - value: Invalid Customer Id format [customer_id.value]", exception.getMessage());
         }
     
         @Test
@@ -342,7 +342,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(IngredientId.newBuilder().setValue("invalid-id").build())
             );
-            assertEquals("Validation error:\n - value: Invalid Ingredient ID format [ingredient_id.value]", exception.getMessage());
+            assertEquals("Validation error:\n - value: Invalid Ingredient Id format [ingredient_id.value]", exception.getMessage());
         }
     
         @Test
@@ -411,7 +411,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(OrderId.newBuilder().setValue("invalid-id").build())
             );
-            assertEquals("Validation error:\n - value: Invalid Order ID format [order_id.value]", exception.getMessage());
+            assertEquals("Validation error:\n - value: Invalid Order Id format [order_id.value]", exception.getMessage());
         }
     
         @Test
@@ -441,7 +441,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(OrderItemId.newBuilder().setValue("invalid-id").build())
             );
-            assertEquals("Validation error:\n - value: Invalid Order Item ID format [order_item_id.value]", exception.getMessage());
+            assertEquals("Validation error:\n - value: Invalid Order Item Id format [order_item_id.value]", exception.getMessage());
         }
     
         @Test
@@ -471,7 +471,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(PermissionId.newBuilder().setValue("invalid-id").build())
             );
-            assertEquals("Validation error:\n - value: Invalid Permission ID format [permission_id.value]", exception.getMessage());
+            assertEquals("Validation error:\n - value: Invalid Permission Id format [permission_id.value]", exception.getMessage());
         }
     
         @Test
@@ -544,7 +544,7 @@ class ModelTest {
             Model.Exception exception = assertThrows(Model.Exception.class, () -> 
                 Model.validate(ProductId.newBuilder().setValue("invalid-id").build())
             );
-            assertEquals("Validation error:\n - value: Invalid Product ID format [product_id.value]", exception.getMessage());
+            assertEquals("Validation error:\n - value: Invalid Product Id format [product_id.value]", exception.getMessage());
         }
     
         @Test
@@ -557,12 +557,12 @@ class ModelTest {
     
         @Test
         void shouldCompareProductIdsBasedOnId() {
-            ProductId productID1 = (ProductId) Model.validate(ProductId.newBuilder().setValue("12345678-PRDC-2023-04-18").build());
-            ProductId productID2 = (ProductId) Model.validate(ProductId.newBuilder().setValue("12345678-PRDC-2023-04-18").build());
-            ProductId productID3 = (ProductId) Model.validate(ProductId.newBuilder().setValue("87654321-PRDC-2023-04-18").build());
+            ProductId productId1 = (ProductId) Model.validate(ProductId.newBuilder().setValue("12345678-PRDC-2023-04-18").build());
+            ProductId productId2 = (ProductId) Model.validate(ProductId.newBuilder().setValue("12345678-PRDC-2023-04-18").build());
+            ProductId productId3 = (ProductId) Model.validate(ProductId.newBuilder().setValue("87654321-PRDC-2023-04-18").build());
     
-            assertEquals(productID1, productID2);
-            assertNotEquals(productID1, productID3);
+            assertEquals(productId1, productId2);
+            assertNotEquals(productId1, productId3);
         }
     }
 

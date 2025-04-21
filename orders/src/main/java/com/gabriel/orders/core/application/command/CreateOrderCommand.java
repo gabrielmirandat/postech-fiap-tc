@@ -1,12 +1,12 @@
 package com.gabriel.orders.core.application.command;
 
-import com.gabriel.core.domain.model.Address;
-import com.gabriel.core.domain.model.CPF;
-import com.gabriel.core.domain.model.Notification;
+import com.gabriel.model.Address;
+import com.gabriel.model.Cpf;
+import com.gabriel.model.Contact;
 import com.gabriel.orders.core.domain.model.OrderItemRef;
 
 import java.util.List;
 
-public record CreateOrderCommand(CPF customer, Address shippingAddress, Notification notification,
+public record CreateOrderCommand(Cpf customer, Address shippingAddress, Contact notification,
                                  List<OrderItemRef> items) {
 }

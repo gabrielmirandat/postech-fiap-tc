@@ -134,7 +134,7 @@ public class UsersHttpController {
         try {
             return URLEncoder.encode(userId, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new RuntimeException("Error encoding user ID", e);
+            throw new RuntimeException("Error encoding user Id", e);
         }
     }
 

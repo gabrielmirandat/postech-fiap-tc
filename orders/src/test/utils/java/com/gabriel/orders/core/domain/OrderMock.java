@@ -1,9 +1,9 @@
 package com.gabriel.orders.core.domain;
 
-import com.gabriel.core.domain.model.Address;
-import com.gabriel.core.domain.model.CPF;
-import com.gabriel.core.domain.model.Notification;
-import com.gabriel.core.domain.model.NotificationType;
+import com.gabriel.model.Address;
+import com.gabriel.model.Cpf;
+import com.gabriel.model.Contact;
+import com.gabriel.model.ContactType;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderItem;
 
@@ -25,8 +25,8 @@ public class OrderMock {
         OrderItem item2 = validOrderItem(true);
 
         Address shippingAddress = new Address("Street", "City", "SP", "41710-450");
-        Notification notification = new Notification(NotificationType.CELLPHONE, "(19) 12345-5555");
-        CPF customer = new CPF("123.456.789-00");
+        Contact notification = new Contact(ContactType.CELLPHONE, "(19) 12345-5555");
+        Cpf customer = new Cpf("123.456.789-00");
         return new Order(Arrays.asList(item1, item2), customer, shippingAddress, notification);
     }
 }

@@ -1,10 +1,6 @@
 package com.gabriel.orders.adapter.driven.persistence.mapper;
 
-import com.gabriel.core.domain.model.*;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.OrderID;
-import com.gabriel.core.domain.model.id.OrderItemID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.*;
 import com.gabriel.orders.core.domain.model.*;
 import org.bson.Document;
 
@@ -22,7 +18,7 @@ public class MongoMapper {
                 .map(MongoMapper::orderItemToDocument)
                 .collect(Collectors.toList()))
             .append("shippingAddress", addressToDocument(order.getShippingAddress()))
-            .append("notification", notificationToDocument(order.getNotification()))
+            .append("notification", notificationToDocument(order.getContact()))
             .append("price", order.getPrice().getValue())
             .append("ticketId", order.getTicketId())
             .append("status", order.getStatus().toString())
@@ -33,22 +29,22 @@ public class MongoMapper {
     }
 
     public static Order documentToOrder(Document doc) {
-        OrderID orderId = new OrderID(doc.getString("_id"));
+        OrderId orderId = new OrderId(doc.getString("_id"));
 
         List<Document> itemsList = doc.getList("items", Document.class);
         List<OrderItem> items = itemsList.stream()
             .map(MongoMapper::documentToOrderItem)
             .collect(Collectors.toList());
-        CPF customer = Objects.nonNull(doc.getString("customer")) ? new CPF(doc.getString("customer")) : null;
+        Cpf customer = Objects.nonNull(doc.getString("customer")) ? new Cpf(doc.getString("customer")) : null;
         Address shippingAddress = documentToAddress((Document) doc.get("shippingAddress"));
-        Notification notification = documentToNotification((Document) doc.get("notification"));
+        Contact contact = documentToContact((Document) doc.get("contact"));
         Price price = new Price(doc.getDouble("price"));
         String ticketId = doc.getString("ticketId");
         OrderStatus status = OrderStatus.valueOf(doc.getString("status").toUpperCase());
         Instant createdAt = Instant.parse(doc.getString("creationTimestamp"));
         Instant updatedAt = Instant.parse(doc.getString("updateTimestamp"));
 
-        return Order.copy(orderId, items, customer, shippingAddress, notification, price,
+        return Order.copy(orderId, items, customer, shippingAddress, contact, price,
             ticketId, status, createdAt, updatedAt);
     }
 
@@ -63,14 +59,14 @@ public class MongoMapper {
     }
 
     private static OrderItem documentToOrderItem(Document doc) {
-        OrderItemID itemID = new OrderItemID(doc.getString("itemID"));
+        OrderItemId itemId = new OrderItemId(doc.getString("itemId"));
         Product product = documentToProduct((Document) doc.get("product"));
 
         List<Document> extrasList = doc.getList("extras", Document.class);
         List<Extra> extras = extrasList.stream()
             .map(MongoMapper::documentToExtra)
             .collect(Collectors.toList());
-        return OrderItem.copy(itemID, product, extras);
+        return OrderItem.copy(itemId, product, extras);
     }
 
     private static Document addressToDocument(Address address) {
@@ -96,40 +92,40 @@ public class MongoMapper {
         );
     }
 
-    private static Document notificationToDocument(Notification notification) {
-        if (notification == null) {
+    private static Document contactToDocument(Contact contact) {
+        if (contact == null) {
             return null;
         }
         Document notifiableDoc = new Document();
-        notifiableDoc.append("type", notification.getType().toString())
-            .append("value", notification.getRepr().getValue()); // Assuming the toString method gives the required representation
+        notifiableDoc.append("type", contact.getType().toString())
+            .append("value", contact.getRepr().getValue()); // Assuming the toString method gives the required representation
 
         return notifiableDoc;
     }
 
-    private static Notification documentToNotification(Document doc) {
+    private static Contact documentToContact(Document doc) {
         if (doc == null) {
             return null;
         }
-        NotificationType type = NotificationType.valueOf(doc.getString("type").toUpperCase());
+        ContactType type = ContactType.valueOf(doc.getString("type").toUpperCase());
         String value = doc.getString("value");
 
-        return new Notification(type, value); // Assuming this constructor exists
+        return new Contact(type, value); // Assuming this constructor exists
     }
 
     private static Document productToDocument(Product product) {
         Document productDoc = new Document();
-        productDoc.append("productID", product.getProductID().getId())
+        productDoc.append("productId", product.getProductId().getId())
             .append("name", product.getName().getValue())
             .append("price", product.getPrice().getValue());
         return productDoc;
     }
 
     private static Product documentToProduct(Document doc) {
-        ProductID productID = new ProductID(doc.getString("productID"));
+        ProductId productId = new ProductId(doc.getString("productId"));
         Name name = new Name(doc.getString("name"));
         Price price = new Price(doc.getDouble("price"));
-        return new Product(productID, name, price);
+        return new Product(productId, name, price);
     }
 
     private static Document extraToDocument(Extra extra) {
@@ -141,7 +137,7 @@ public class MongoMapper {
     }
 
     private static Extra documentToExtra(Document doc) {
-        IngredientID ingredientID = new IngredientID(doc.getString("ingredientID"));
+        IngredientId ingredientID = new IngredientId(doc.getString("ingredientID"));
         Name name = new Name(doc.getString("name"));
         Price price = new Price(doc.getDouble("price"));
         return new Extra(ingredientID, name, price);

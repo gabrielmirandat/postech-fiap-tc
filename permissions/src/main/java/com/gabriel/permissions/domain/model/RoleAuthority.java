@@ -1,7 +1,7 @@
 package com.gabriel.permissions.domain.model;
 
 import com.gabriel.core.domain.AggregateRoot;
-import com.gabriel.core.domain.model.id.PermissionID;
+import com.gabriel.model.PermissionID;
 import jakarta.persistence.*;
 
 @Entity

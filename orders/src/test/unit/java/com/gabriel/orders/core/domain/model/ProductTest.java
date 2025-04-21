@@ -2,10 +2,10 @@ package com.gabriel.orders.core.domain.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.gabriel.core.domain.exception.DomainException;
-import com.gabriel.core.domain.model.Name;
-import com.gabriel.core.domain.model.Price;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.DomainException;
+import com.gabriel.model.Name;
+import com.gabriel.model.Price;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.domain.model.Product;
 import org.junit.jupiter.api.Test;
 
@@ -26,27 +26,27 @@ public class ProductTest {
     @Test
     void shouldCreateProductSuccessfully_whenValidDataIsProvided() {
         // Arrange & Act
-        Product product = new Product(new ProductID(), "Product", 2.0);
+        Product product = new Product(new ProductId(), "Product", 2.0);
 
         // Assert
         assertThat(product).isNotNull();
-        assertThat(product.getProductID()).isNotNull();
+        assertThat(product.getProductId()).isNotNull();
         assertThat(product.getName().getValue()).isEqualTo("Product");
         assertThat(product.getPrice().getValue()).isEqualTo(2.0);
     }
 
     // @Test
-    void shouldThrowException_whenProductIDIsNull() {
+    void shouldThrowException_whenProductIdIsNull() {
         // Arrange & Act & Assert
         assertThatThrownBy(() -> new Product(null, "Product", 2.0))
             .isInstanceOf(DomainException.class)
-            .hasMessageContaining("Domain validation failed: value ProductID cannot be null");
+            .hasMessageContaining("Domain validation failed: value ProductId cannot be null");
     }
 
     @Test
     void shouldThrowException_whenNameIsNull() {
         // Arrange & Act & Assert
-        assertThatThrownBy(() -> new Product(new ProductID(), null, 2.0))
+        assertThatThrownBy(() -> new Product(new ProductId(), null, 2.0))
             .isInstanceOf(DomainException.class)
             .hasMessageContaining("Domain validation failed: value Name cannot be null or empty");
     }
@@ -54,7 +54,7 @@ public class ProductTest {
     @Test
     void shouldThrowException_whenNameIsEmpty() {
         // Arrange & Act & Assert
-        assertThatThrownBy(() -> new Product(new ProductID(), "", 2.0))
+        assertThatThrownBy(() -> new Product(new ProductId(), "", 2.0))
             .isInstanceOf(DomainException.class)
             .hasMessageContaining("Domain validation failed: value Name cannot be null or empty");
     }
@@ -62,11 +62,11 @@ public class ProductTest {
     @Test
     void shouldCreateProductSuccessfully_whenValidDataIsProvidedWithTimestamp() {
         // Arrange & Act
-        Product product = new Product(new ProductID(), new Name("Product"), new Price(2.0), Instant.now());
+        Product product = new Product(new ProductId(), new Name("Product"), new Price(2.0), Instant.now());
 
         // Assert
         assertThat(product).isNotNull();
-        assertThat(product.getProductID()).isNotNull();
+        assertThat(product.getProductId()).isNotNull();
         assertThat(product.getName().getValue()).isEqualTo("Product");
         assertThat(product.getPrice().getValue()).isEqualTo(2.0);
         assertThat(product.getTimestamp()).isNotNull();
@@ -75,7 +75,7 @@ public class ProductTest {
     @Test
     void shouldSerializeProductSuccessfully_whenValidDataIsProvided() {
         // Arrange
-        Product product = new Product(new ProductID(), "Product", 2.0);
+        Product product = new Product(new ProductId(), "Product", 2.0);
 
         // Act
         byte[] serialized = product.serialized(objectMapper());
@@ -87,7 +87,7 @@ public class ProductTest {
     @Test
     void shouldDeserializeProductSuccessfully_whenValidDataIsProvided() {
         // Arrange
-        Product product = new Product(new ProductID(), "Product", 2.0);
+        Product product = new Product(new ProductId(), "Product", 2.0);
         byte[] serialized = product.serialized(objectMapper());
 
         // Act
@@ -95,7 +95,7 @@ public class ProductTest {
 
         // Assert
         assertThat(deserialized).isNotNull();
-        assertThat(deserialized.getProductID()).isEqualTo(product.getProductID());
+        assertThat(deserialized.getProductId()).isEqualTo(product.getProductId());
         assertThat(deserialized.getName().getValue()).isEqualTo("Product");
         assertThat(deserialized.getPrice().getValue()).isEqualTo(2.0);
     }

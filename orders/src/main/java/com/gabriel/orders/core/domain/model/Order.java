@@ -4,59 +4,51 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.application.exception.ApplicationError;
-import com.gabriel.core.application.exception.ApplicationException;
-import com.gabriel.core.domain.AggregateRoot;
-import com.gabriel.core.domain.model.Address;
-import com.gabriel.core.domain.model.CPF;
-import com.gabriel.core.domain.model.Notification;
-import com.gabriel.core.domain.model.Price;
-import com.gabriel.core.domain.model.id.OrderID;
+import com.gabriel.model.ApplicationCode;
+import com.gabriel.model.ApplicationException;
+import com.gabriel.model.Address;
+import com.gabriel.model.Cpf;
+import com.gabriel.model.Contact;
+import com.gabriel.model.Price;
+import com.gabriel.model.OrderId;
 import com.gabriel.orders.core.domain.exception.OrderDomainError;
 import com.gabriel.orders.core.domain.exception.OrderDomainException;
-import jakarta.validation.Valid;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 
-public class Order extends AggregateRoot {
+public class Order {
 
-    @Valid
-    private final OrderID orderId;
+    private final OrderId orderId;
 
-    @Valid
     private final List<OrderItem> items;
 
-    @Valid
     private Price price;
 
     private String ticketId;
 
     private OrderStatus status;
 
-    @Valid
-    private CPF customer;
+    private Cpf customer;
 
-    @Valid
     private Address shippingAddress;
 
-    @Valid
-    private Notification notification;
+    private Contact contact;
 
     public Order(List<OrderItem> items) {
-        this.orderId = new OrderID();
+        this.orderId = new OrderId();
         this.items = items;
         initialize();
     }
 
-    public Order(List<OrderItem> items, CPF customer, Address shippingAddress,
-                 Notification additionalNotification) {
-        this.orderId = new OrderID();
+    public Order(List<OrderItem> items, Cpf customer, Address shippingAddress,
+                 Contact additionalContact) {
+        this.orderId = new OrderId();
         this.items = items;
         this.customer = customer;
         this.shippingAddress = shippingAddress;
-        this.notification = additionalNotification;
+        this.contact = additionalContact;
         initialize();
     }
 
@@ -64,16 +56,16 @@ public class Order extends AggregateRoot {
      * Constructor for Jackson deserialization.
      */
     @JsonCreator
-    Order(@JsonProperty("orderId") OrderID orderId, @JsonProperty("items") List<OrderItem> items,
-          @JsonProperty("customer") CPF customer, @JsonProperty("shippingAddress") Address shippingAddress,
-          @JsonProperty("notification") Notification additionalNotification, @JsonProperty("price") Price price,
+    Order(@JsonProperty("orderId") OrderId orderId, @JsonProperty("items") List<OrderItem> items,
+          @JsonProperty("customer") Cpf customer, @JsonProperty("shippingAddress") Address shippingAddress,
+          @JsonProperty("contact") Contact additionalContact, @JsonProperty("price") Price price,
           @JsonProperty("ticketId") String ticketId, @JsonProperty("status") OrderStatus status,
           @JsonProperty("creationTimestamp") Instant createdAt, @JsonProperty("updateTimestamp") Instant updatedAt) {
         this.orderId = orderId;
         this.items = items;
         this.customer = customer;
         this.shippingAddress = shippingAddress;
-        this.notification = additionalNotification;
+        this.contact = additionalContact;
         this.price = price;
         this.ticketId = ticketId;
         this.status = status;
@@ -81,11 +73,11 @@ public class Order extends AggregateRoot {
         this.updateTimestamp = updatedAt;
     }
 
-    public static Order copy(OrderID orderId, List<OrderItem> items, CPF customer,
-                             Address shippingAddress, Notification additionalNotification,
+    public static Order copy(OrderId orderId, List<OrderItem> items, Cpf customer,
+                             Address shippingAddress, Contact additionalContact,
                              Price price, String ticketId, OrderStatus status,
                              Instant createdAt, Instant updatedAt) {
-        return new Order(orderId, items, customer, shippingAddress, additionalNotification,
+        return new Order(orderId, items, customer, shippingAddress, additionalContact,
             price, ticketId, status, createdAt, updatedAt);
     }
 
@@ -93,7 +85,7 @@ public class Order extends AggregateRoot {
         try {
             return deserializer.readValue(bytes, Order.class);
         } catch (IOException e) {
-            throw new ApplicationException("Error deserializing order", ApplicationError.APP_OO3);
+            throw new ApplicationException("Error deserializing order", ApplicationCode.APP_OO3);
         }
     }
 
@@ -231,11 +223,11 @@ public class Order extends AggregateRoot {
         try {
             return serializer.writeValueAsBytes(this);
         } catch (JsonProcessingException e) {
-            throw new ApplicationException("Error serializing order", ApplicationError.APP_OO3);
+            throw new ApplicationException("Error serializing order", ApplicationCode.APP_OO3);
         }
     }
 
-    public OrderID getOrderId() {
+    public OrderId getOrderId() {
         return orderId;
     }
 
@@ -255,7 +247,7 @@ public class Order extends AggregateRoot {
         return status;
     }
 
-    public CPF getCustomer() {
+    public Cpf getCustomer() {
         return customer;
     }
 
@@ -263,7 +255,7 @@ public class Order extends AggregateRoot {
         return shippingAddress;
     }
 
-    public Notification getNotification() {
-        return notification;
+    public Contact getContact() {
+        return contact;
     }
 }

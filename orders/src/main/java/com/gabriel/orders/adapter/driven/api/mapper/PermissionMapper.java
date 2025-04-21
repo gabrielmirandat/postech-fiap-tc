@@ -1,8 +1,8 @@
 package com.gabriel.orders.adapter.driven.api.mapper;
 
-import com.gabriel.core.domain.model.Name;
-import com.gabriel.core.domain.model.Permission;
-import com.gabriel.core.domain.model.id.PermissionID;
+import com.gabriel.model.Name;
+import com.gabriel.model.Permission;
+import com.gabriel.model.PermissionId;
 
 import java.time.Instant;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class PermissionMapper {
 
-    public static List<Permission> toPermissionList(com.gabriel.specs.permissions.PermissionResponse response) {
+    public static List<Permission> toPermissionList(com.gabriel.service.permissions.PermissionResponse response) {
         return response.getItemsList().stream()
             .map(item -> new Permission(
                 new PermissionID(item.getId()),

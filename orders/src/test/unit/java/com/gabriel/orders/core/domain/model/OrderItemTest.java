@@ -1,8 +1,8 @@
 package com.gabriel.orders.core.domain.model;
 
-import com.gabriel.core.domain.exception.DomainException;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.DomainException;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.OrderItem;
 import com.gabriel.orders.core.domain.model.Product;
@@ -19,7 +19,7 @@ class OrderItemTest {
     @Test
     void shouldCreateOrderItemSuccessfully_whenValidProductIsProvided() {
         // Arrange
-        Product validProduct = new Product(new ProductID(), "Product", 10.0);
+        Product validProduct = new Product(new ProductId(), "Product", 10.0);
 
         // Act
         OrderItem orderItem = new OrderItem(validProduct);
@@ -34,8 +34,8 @@ class OrderItemTest {
     @Test
     void shouldCreateOrderItemSuccessfully_whenValidProductAndExtrasAreProvided() {
         // Arrange
-        Product validProduct = new Product(new ProductID(), "Product", 10.0);
-        Extra validExtra = new Extra(new IngredientID(), "Extra", 2.0);
+        Product validProduct = new Product(new ProductId(), "Product", 10.0);
+        Extra validExtra = new Extra(new IngredientId(), "Extra", 2.0);
 
         // Act
         OrderItem orderItem = new OrderItem(validProduct, Collections.singletonList(validExtra));
@@ -59,7 +59,7 @@ class OrderItemTest {
     @Test
     void shouldThrowException_whenExtrasContainInvalidData() {
         // Arrange
-        Product validProduct = new Product(new ProductID(), "Product", 10.0);
+        Product validProduct = new Product(new ProductId(), "Product", 10.0);
 
         // Act & Assert
         assertThatThrownBy(() -> new OrderItem(validProduct, List.of(new Extra(null, null, 0.0))))

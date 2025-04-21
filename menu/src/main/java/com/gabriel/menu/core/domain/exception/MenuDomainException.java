@@ -1,6 +1,6 @@
 package com.gabriel.menu.core.domain.exception;
 
-import com.gabriel.core.domain.exception.DomainException;
+import com.gabriel.model.DomainException;
 
 public class MenuDomainException extends DomainException {
 

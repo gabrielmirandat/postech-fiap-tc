@@ -1,27 +1,26 @@
 package com.gabriel.orders.core.domain.model;
 
-import com.gabriel.core.domain.ValueObject;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderItemRef extends ValueObject {
-    private final ProductID productId;
-    private final List<IngredientID> extrasIds;
+public class OrderItemRef {
+    private final ProductId productId;
+    private final List<IngredientId> extrasIds;
 
     public OrderItemRef(String productId, List<String> extrasIds) {
-        this.productId = new ProductID(productId);
+        this.productId = new ProductId(productId);
         this.extrasIds = extrasIds.stream().map(
-            IngredientID::new).collect(Collectors.toList());
+            IngredientId::new).collect(Collectors.toList());
     }
 
-    public ProductID getProductId() {
+    public ProductId getProductId() {
         return productId;
     }
 
-    public List<IngredientID> getExtrasIds() {
+    public List<IngredientId> getExtrasIds() {
         return extrasIds;
     }
 }

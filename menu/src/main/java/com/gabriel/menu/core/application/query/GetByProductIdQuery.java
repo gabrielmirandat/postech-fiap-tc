@@ -1,6 +1,6 @@
 package com.gabriel.menu.core.application.query;
 
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.ProductId;
 
-public record GetByProductIdQuery(ProductID searchId) {
+public record GetByProductIdQuery(ProductId searchId) {
 }

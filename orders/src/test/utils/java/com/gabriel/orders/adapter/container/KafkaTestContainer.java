@@ -22,6 +22,6 @@ public class KafkaTestContainer {
     @DynamicPropertySource
     public static void kafkaProperties(DynamicPropertyRegistry registry) {
         registry.add("kafka.server.url", KAFKA_CONTAINER::getBootstrapServers);
-        registry.add("kafka.group.id", () -> "test-group-id-" + System.currentTimeMillis()); // Unique group ID
+        registry.add("kafka.group.id", () -> "test-group-id-" + System.currentTimeMillis()); // Unique group Id
     }
 }

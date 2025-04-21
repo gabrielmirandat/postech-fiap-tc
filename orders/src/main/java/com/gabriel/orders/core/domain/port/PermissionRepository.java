@@ -1,7 +1,7 @@
 package com.gabriel.orders.core.domain.port;
 
-import com.gabriel.core.domain.model.Permission;
-import com.gabriel.core.domain.model.id.PermissionID;
+import com.gabriel.model.Permission;
+import com.gabriel.model.PermissionId;
 
 import java.util.List;
 
@@ -9,9 +9,9 @@ public interface PermissionRepository {
 
     List<Permission> allPermissions();
 
-    Permission getPermission(PermissionID permissionID);
+    Permission getPermission(PermissionId permissionId);
 
     void addPermission(Permission permission);
 
-    void deletePermission(PermissionID permissionID);
+    void deletePermission(PermissionId permissionId);
 }

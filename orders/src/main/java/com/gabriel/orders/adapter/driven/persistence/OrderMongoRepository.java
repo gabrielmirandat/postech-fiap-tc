@@ -1,8 +1,8 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
-import com.gabriel.adapter.api.exceptions.NotFound;
-import com.gabriel.core.application.exception.ApplicationError;
-import com.gabriel.core.application.exception.ApplicationException;
+import com.gabriel.model.ApplicationCode;
+import com.gabriel.model.ApplicationException;
+import com.gabriel.orders.infra.http.HttpException;
 import com.gabriel.orders.adapter.driven.persistence.mapper.MongoMapper;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.port.OrderRepository;
@@ -47,7 +47,7 @@ public class OrderMongoRepository implements OrderRepository {
         Document document = MongoMapper.orderToDocument(newOrder);
         UpdateResult result = orderCollection.replaceOne(Filters.eq("_id", newOrder.getOrderId().getId()), document);
         if (result.getMatchedCount() == 0) {
-            throw new NotFound("Order not found");
+            throw new HttpException.notFound("Order not found");
         }
         return newOrder;
     }
@@ -58,7 +58,7 @@ public class OrderMongoRepository implements OrderRepository {
         if (doc != null) {
             return MongoMapper.documentToOrder(doc);
         }
-        throw new NotFound("Order not found");
+        throw new HttpException.notFound("Order not found");
     }
 
     @Override

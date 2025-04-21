@@ -1,8 +1,8 @@
 package com.gabriel.menu.core.application.query;
 
-import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.model.IngredientId;
 
 import java.util.List;
 
-public record GetByIngredientIdsQuery(List<IngredientID> searchIds) {
+public record GetByIngredientIdsQuery(List<IngredientId> searchIds) {
 }

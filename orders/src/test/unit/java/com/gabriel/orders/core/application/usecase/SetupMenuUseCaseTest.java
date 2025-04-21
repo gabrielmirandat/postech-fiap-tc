@@ -1,7 +1,7 @@
 package com.gabriel.orders.core.application.usecase;
 
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.MenuRepository;
@@ -42,7 +42,7 @@ public class SetupMenuUseCaseTest {
 
         // Build a MenuItem instance using the Builder
         MenuItem menuItemIngr = MenuItem.newBuilder()
-            .setId(new IngredientID().getId())
+            .setId(new IngredientId().getId())
             .setName("newIngredient")
             .setPrice(9.99)
             .setCategory("burger")
@@ -51,7 +51,7 @@ public class SetupMenuUseCaseTest {
 
         // Build a MenuItem instance using the Builder
         MenuItem menuItemProd = MenuItem.newBuilder()
-            .setId(new ProductID().getId())
+            .setId(new ProductId().getId())
             .setName("newIngredient")
             .setPrice(9.99)
             .setCategory("burger")

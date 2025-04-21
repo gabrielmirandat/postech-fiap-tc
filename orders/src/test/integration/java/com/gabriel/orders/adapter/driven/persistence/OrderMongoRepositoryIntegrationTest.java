@@ -1,8 +1,8 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
 import com.gabriel.adapter.api.exceptions.NotFound;
-import com.gabriel.core.application.exception.ApplicationError;
-import com.gabriel.core.application.exception.ApplicationException;
+import com.gabriel.model.ApplicationError;
+import com.gabriel.model.ApplicationException;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
 import com.gabriel.orders.core.domain.port.OrderSearchParameters;

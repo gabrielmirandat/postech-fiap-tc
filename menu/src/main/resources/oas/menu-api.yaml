@@ -95,13 +95,13 @@ paths:
     get:
       tags:
         - products
-      summary: Find Product By ID
-      description: Returns a single product by ID
+      summary: Find Product By Id
+      description: Returns a single product by Id
       operationId: getProductById
       parameters:
         - name: productId
           in: path
-          description: ID of product to return
+          description: Id of product to return
           required: true
           schema:
             type: string
@@ -128,7 +128,7 @@ paths:
     delete:
       tags:
         - products
-      summary: Deletes a Product by ID
+      summary: Deletes a Product by Id
       description: Deletes a product from menu
       operationId: deleteProduct
       parameters:
@@ -223,13 +223,13 @@ paths:
     get:
       tags:
         - products
-      summary: Find Ingredient By ID
-      description: Returns a single ingredient by ID
+      summary: Find Ingredient By Id
+      description: Returns a single ingredient by Id
       operationId: getIngredientById
       parameters:
         - name: ingredientId
           in: path
-          description: ID of ingredient to return
+          description: Id of ingredient to return
           required: true
           schema:
             type: string
@@ -364,7 +364,7 @@ components:
       properties:
         id:
           type: string
-          description: ID of the Ingredient
+          description: Id of the Ingredient
         name:
           type: string
           description: Name of the Ingredient
@@ -400,7 +400,7 @@ components:
       properties:
         id:
           type: string
-          description: ID of the Product
+          description: Id of the Product
         name:
           type: string
           description: Name of the Product

@@ -1,7 +1,7 @@
 package com.gabriel.orders.core.domain;
 
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.OrderItem;
 import com.gabriel.orders.core.domain.model.Product;
@@ -14,10 +14,10 @@ import static com.gabriel.orders.core.domain.ProductMock.validProduct;
 public class OrderItemMock {
 
     public static OrderItem validOrderItem(boolean withExtra) {
-        Product product = validProduct(new ProductID());
+        Product product = validProduct(new ProductId());
 
         if (withExtra) {
-            Extra extra = validExtra(new IngredientID());
+            Extra extra = validExtra(new IngredientId());
             return new OrderItem(product, Collections.singletonList(extra));
         }
 

@@ -2,8 +2,8 @@ package com.gabriel.orders.adapter.driver.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gabriel.adapter.api.exceptions.NotFound;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.OrdersApplication;
 import com.gabriel.orders.adapter.driven.api.MenuGrpcClient;
 import com.gabriel.orders.core.domain.model.Extra;
@@ -114,8 +114,8 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
 
         orderFull = OrderMock.validFullOrder();
         order = OrderMock.validBasicOrder();
-        product = ProductMock.validProduct(new ProductID("11111111-PRDC-1111-11-11"));
-        extra = ExtraMock.validExtra(new IngredientID("11111111-INGR-1111-11-11"));
+        product = ProductMock.validProduct(new ProductId("11111111-PRDC-1111-11-11"));
+        extra = ExtraMock.validExtra(new IngredientId("11111111-INGR-1111-11-11"));
 
         when(orderRepository.getByTicket(eq("11111111")))
             .thenReturn(orderFull);
@@ -127,15 +127,15 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
             .thenThrow(RuntimeException.class);
         when(orderRepository.searchBy(eq(new OrderSearchParameters(OrderStatus.CREATED))))
             .thenReturn(List.of(orderFull));
-        when(menuRepository.getProduct(eq(new ProductID("11111111-PRDC-1111-11-11"))))
+        when(menuRepository.getProduct(eq(new ProductId("11111111-PRDC-1111-11-11"))))
             .thenReturn(product);
-        when(menuRepository.existsProduct(eq(new ProductID("11111111-PRDC-1111-11-11"))))
+        when(menuRepository.existsProduct(eq(new ProductId("11111111-PRDC-1111-11-11"))))
             .thenReturn(true);
-        when(menuRepository.existsProduct(eq(new ProductID("11111111-PRDC-1111-11-19"))))
+        when(menuRepository.existsProduct(eq(new ProductId("11111111-PRDC-1111-11-19"))))
             .thenThrow(RuntimeException.class);
-        when(menuRepository.getExtra(eq(new IngredientID("11111111-INGR-1111-11-11"))))
+        when(menuRepository.getExtra(eq(new IngredientId("11111111-INGR-1111-11-11"))))
             .thenReturn(extra);
-        when(menuRepository.existsExtra(eq(new IngredientID("11111111-INGR-1111-11-11"))))
+        when(menuRepository.existsExtra(eq(new IngredientId("11111111-INGR-1111-11-11"))))
             .thenReturn(true);
 
         System.setProperty("host", "localhost");

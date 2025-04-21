@@ -9,7 +9,7 @@ message Cpf {
   // Cpf: Must follow the pattern "XXX.XXX.XXX-XX"
   string value = 1 [(buf.validate.field).cel = {
     id: "cpf.value",
-    message: "CPF must follow the pattern XXX.XXX.XXX-XX",
+    message: "Cpf must follow the pattern XXX.XXX.XXX-XX",
     expression: "size(this) > 0 && this.matches(r'\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}')"
   }];
 }
