@@ -40,7 +40,7 @@ public class RetrieveOrderSteps extends SpringStepsContext {
         stateManager.set("GENERATED_ORDER", actualOrder);
     }
 
-    @When("retrieving an order with non-existing ticket ID")
+    @When("retrieving an order with non-existing ticket Id")
     public void retrieveAnOrderWithNonExistingTicketID() {
         String nonExistentTicketId = "12345678";
         Response actualResponse = given()

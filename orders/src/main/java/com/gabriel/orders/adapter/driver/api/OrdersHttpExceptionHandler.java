@@ -1,9 +1,9 @@
 package com.gabriel.orders.adapter.driver.api;
 
-import com.gabriel.adapter.api.exceptions.*;
-import com.gabriel.core.application.exception.ApplicationException;
-import com.gabriel.core.domain.exception.DomainException;
+import com.gabriel.model.ApplicationException;
+import com.gabriel.model.DomainException;
 import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
+import com.gabriel.orders.infra.http.HttpException;
 import com.gabriel.specs.orders.models.ErrorResponse;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.env.Environment;
@@ -25,10 +25,10 @@ public class OrdersHttpExceptionHandler {
         this.environment = environment;
     }
 
-    private ResponseEntity<ErrorResponse> convertHttpAndSend(BaseHttpException exception) {
+    private ResponseEntity<ErrorResponse> convertHttpAndSend(HttpException exception) {
         if (environment.acceptsProfiles(Profiles.of("test")) &&
             exception.getMessage().contains("FORCE_FAILURE")) {
-            exception = InternalServerError.create();
+            exception = HttpException.internalServerError("");
         }
 
         ErrorResponse error = OrderMapper.toErrorResponse(exception);
@@ -41,32 +41,32 @@ public class OrdersHttpExceptionHandler {
         ConversionFailedException.class,
         HttpMessageNotReadableException.class})
     public ResponseEntity<ErrorResponse> handleConversionFailed(Exception exception) {
-        return convertHttpAndSend(BadRequest.from(exception));
+        return convertHttpAndSend(HttpException.badRequest(exception.getMessage()));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleFobiddenAcess(Exception exception) {
-        return convertHttpAndSend(Forbidden.from(exception));
+        return convertHttpAndSend(HttpException.forbidden(exception.getMessage()));
     }
 
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<ErrorResponse> handleDomainException(DomainException exception) {
-        return convertHttpAndSend(UnprocessableEntity.from(exception));
+        return convertHttpAndSend(HttpException.unprocessableEntity(exception.getMessage()));
     }
 
     @ExceptionHandler(ApplicationException.class)
     public ResponseEntity<ErrorResponse> handleApplicationException(ApplicationException exception) {
-        return convertHttpAndSend(UnprocessableEntity.from(exception));
+        return convertHttpAndSend(HttpException.unprocessableEntity(exception.getMessage()));
     }
 
-    @ExceptionHandler(BaseHttpException.class)
-    public ResponseEntity<ErrorResponse> handleBaseHttpException(BaseHttpException exception) {
+    @ExceptionHandler(HttpException.class)
+    public ResponseEntity<ErrorResponse> handleHttpException(HttpException exception) {
         return convertHttpAndSend(exception);
     }
 
     @ExceptionHandler({Exception.class, RuntimeException.class})
     public ResponseEntity<ErrorResponse> handleGenericException(Exception exception) {
         System.out.println(exception.getMessage());
-        return convertHttpAndSend(InternalServerError.create());
+        return convertHttpAndSend(HttpException.internalServerError(exception.getMessage()));
     }
 }

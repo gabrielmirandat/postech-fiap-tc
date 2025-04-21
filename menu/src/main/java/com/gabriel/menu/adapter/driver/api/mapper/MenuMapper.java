@@ -1,6 +1,6 @@
 package com.gabriel.menu.adapter.driver.api.mapper;
 
-import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.model.IngredientId;
 import com.gabriel.menu.core.application.command.CreateIngredientCommand;
 import com.gabriel.menu.core.application.command.CreateProductCommand;
 import com.gabriel.menu.core.domain.model.Category;
@@ -37,13 +37,13 @@ public class MenuMapper {
     }
 
     public static CreateProductCommand toCommand(com.gabriel.specs.menu.models.ProductRequest request) {
-        // convert from ProductIngredientRequest to List<IngredientID> considering
+        // convert from ProductIngredientRequest to List<IngredientId> considering
         // that quantity attribute defines the number of times ingredientId should be added to the list
         // e.g. if ingredientId = 1 and quantity = 3, then the list should contain 3 times the ingredientId
         // using IntStream.range and mapToObj
-        List<IngredientID> ingredients = request.getIngredients().stream()
+        List<IngredientId> ingredients = request.getIngredients().stream()
             .flatMap(in -> IntStream.range(0, in.getQuantity())
-                .mapToObj(dump -> new IngredientID(in.getIngredientId())))
+                .mapToObj(dump -> new IngredientId(in.getIngredientId())))
             .toList();
 
         return new CreateProductCommand(
@@ -58,7 +58,7 @@ public class MenuMapper {
 
     public static com.gabriel.specs.menu.models.ProductResponse toResponse(Product product, List<Ingredient> ingredientList) {
         return new com.gabriel.specs.menu.models.ProductResponse()
-            .id(product.getProductID().getId())
+            .id(product.getProductId().getId())
             .name(product.getName().getValue())
             .category(com.gabriel.specs.menu.models.ProductCategoryDTO.valueOf(product.getCategory().toString().toUpperCase()))
             .price(product.getPrice().getValue())

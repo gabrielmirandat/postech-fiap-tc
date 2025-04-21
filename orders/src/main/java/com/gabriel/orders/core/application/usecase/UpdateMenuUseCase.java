@@ -21,7 +21,7 @@ public class UpdateMenuUseCase {
 
     public void handleProductDeleted(Product product) {
         System.out.println("Produto deletado: " + product);
-        menuRepository.deleteProduct(product.getProductID());
+        menuRepository.deleteProduct(product.getProductId());
     }
 
     public void handleExtraAdded(Extra extra) {

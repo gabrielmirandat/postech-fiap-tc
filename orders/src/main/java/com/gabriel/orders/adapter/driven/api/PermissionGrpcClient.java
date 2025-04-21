@@ -1,9 +1,9 @@
 package com.gabriel.orders.adapter.driven.api;
 
 import com.gabriel.orders.core.application.usecase.SetupPermissionUseCase;
-import com.gabriel.specs.permissions.PermissionGrpc;
-import com.gabriel.specs.permissions.PermissionRequest;
-import com.gabriel.specs.permissions.PermissionResponse;
+import com.gabriel.service.permissions.PermissionGrpc;
+import com.gabriel.service.permissions.PermissionRequest;
+import com.gabriel.service.permissions.PermissionResponse;
 import io.grpc.ManagedChannel;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

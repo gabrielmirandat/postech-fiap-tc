@@ -1,8 +1,8 @@
 package com.gabriel.orders.core.application.usecase;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Order;
@@ -48,8 +48,8 @@ public class CreateOrderUseCaseTest {
     @Test
     public void testCreateOrder() throws JsonProcessingException {
         // Given
-        ProductID productId = new ProductID();
-        IngredientID ingredientId = new IngredientID();
+        ProductId productId = new ProductId();
+        IngredientId ingredientId = new IngredientId();
         CreateOrderCommand command = CreateOrderCommandMock.validCommand(productId, ingredientId);
 
         when(menuRepository.getProduct(any())).thenReturn(new Product(productId, "product", 10.0)); // Customize this as necessary
@@ -68,9 +68,9 @@ public class CreateOrderUseCaseTest {
         assertThat(createdOrder).isNotNull();
         assertThat(createdOrder.getCustomer()).isEqualTo(command.customer());
         assertThat(createdOrder.getShippingAddress()).isEqualTo(command.shippingAddress());
-        assertThat(createdOrder.getNotification()).isEqualTo(command.notification());
+        assertThat(createdOrder.getContact()).isEqualTo(command.notification());
         assertThat(createdOrder.getItems()).hasSize(1);
-        assertThat(createdOrder.getItems().get(0).getProduct().getProductID()).isEqualTo(productId);
+        assertThat(createdOrder.getItems().get(0).getProduct().getProductId()).isEqualTo(productId);
         assertThat(createdOrder.getItems().get(0).getExtras()).hasSize(1);
         assertThat(createdOrder.getItems().get(0).getExtras().get(0).getIngredientID()).isEqualTo(ingredientId);
     }

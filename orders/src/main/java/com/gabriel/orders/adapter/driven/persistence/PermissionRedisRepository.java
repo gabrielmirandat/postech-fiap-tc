@@ -1,8 +1,8 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.model.Permission;
-import com.gabriel.core.domain.model.id.PermissionID;
+import com.gabriel.model.Permission;
+import com.gabriel.model.PermissionId;
 import com.gabriel.orders.core.domain.port.PermissionRepository;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -51,9 +51,9 @@ public class PermissionRedisRepository implements PermissionRepository {
     }
 
     @Override
-    public Permission getPermission(PermissionID permissionID) {
+    public Permission getPermission(PermissionId permissionId) {
         ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
-        byte[] data = valueOps.get("perm:" + permissionID.getId());
+        byte[] data = valueOps.get("perm:" + permissionId.getId());
         if (data != null) {
             try {
                 return objectMapper.readValue(data, Permission.class);
@@ -66,8 +66,8 @@ public class PermissionRedisRepository implements PermissionRepository {
 
     @Override
     public void addPermission(Permission permission) {
-        String key = "perm:" + permission.getPermissionID().getId();
-        Permission existingPermission = getPermission(permission.getPermissionID());
+        String key = "perm:" + permission.getPermissionId().getId();
+        Permission existingPermission = getPermission(permission.getPermissionId());
         if (existingPermission == null || permission.getTimestamp().isAfter(existingPermission.getTimestamp())) {
             ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
             try {
@@ -81,7 +81,7 @@ public class PermissionRedisRepository implements PermissionRepository {
     }
 
     @Override
-    public void deletePermission(PermissionID permissionID) {
-        redisTemplate.delete("perm:" + permissionID.getId());
+    public void deletePermission(PermissionId permissionId) {
+        redisTemplate.delete("perm:" + permissionId.getId());
     }
 }

@@ -40,10 +40,10 @@ public class ProductTest {
 
     @Test
     void testProductCopy() {
-        Product copy = Product.copy(product.getProductID(), product.getName(), product.getPrice(), product.getCategory(),
+        Product copy = Product.copy(product.getProductId(), product.getName(), product.getPrice(), product.getCategory(),
             product.getDescription(), product.getImage(), product.getIngredients(),
             product.getCreationTimestamp(), product.getUpdateTimestamp());
-        assertEquals(product.getProductID(), copy.getProductID());
+        assertEquals(product.getProductId(), copy.getProductId());
         assertEquals(product.getName(), copy.getName());
         assertEquals(product.getPrice(), copy.getPrice());
         assertEquals(product.getCategory(), copy.getCategory());
@@ -64,7 +64,7 @@ public class ProductTest {
     void testDeserializeProduct() {
         byte[] serialized = product.serialized(objectMapper());
         Product deserialized = Product.deserialize(objectMapper(), serialized);
-        assertEquals(product.getProductID(), deserialized.getProductID());
+        assertEquals(product.getProductId(), deserialized.getProductId());
         assertEquals(product.getName().getValue(), deserialized.getName().getValue());
         assertEquals(product.getPrice().getValue(), deserialized.getPrice().getValue());
         assertEquals(product.getCategory(), deserialized.getCategory());

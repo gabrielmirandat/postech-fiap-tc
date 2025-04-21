@@ -1,6 +1,6 @@
 package com.gabriel.orders.core.application.exception;
 
-import com.gabriel.core.application.exception.ApplicationException;
+import com.gabriel.model.ApplicationException;
 
 public class OrderApplicationException extends ApplicationException {
 

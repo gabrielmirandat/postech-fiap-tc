@@ -1,7 +1,7 @@
 package com.gabriel.orders.core.application.usecase;
 
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.application.exception.OrderApplicationException;
 import com.gabriel.orders.core.domain.port.MenuRepository;
@@ -29,23 +29,23 @@ public class VerifyMenuUseCaseTest {
     private CreateOrderCommand commandWithInvalidProduct;
     private CreateOrderCommand commandWithInvalidExtra;
 
-    private ProductID productIdValid;
-    private ProductID productIdInvalid;
-    private IngredientID ingredientIdValid;
-    private IngredientID ingredientIdInValid;
+    private ProductId productIdValid;
+    private ProductId productIdInvalid;
+    private IngredientId ingredientIdValid;
+    private IngredientId ingredientIdInValid;
 
 
     @BeforeEach
     void setUp() {
         // Assuming CreateOrderCommand constructor and methods for setting up test data
-        productIdValid = new ProductID();
-        ingredientIdValid = new IngredientID();
+        productIdValid = new ProductId();
+        ingredientIdValid = new IngredientId();
         commandWithValidItems = CreateOrderCommandMock.validCommand(productIdValid, ingredientIdValid);
 
-        productIdInvalid = new ProductID();
+        productIdInvalid = new ProductId();
         commandWithInvalidProduct = CreateOrderCommandMock.validCommand(productIdInvalid, ingredientIdValid);
 
-        ingredientIdInValid = new IngredientID();
+        ingredientIdInValid = new IngredientId();
         commandWithInvalidExtra = CreateOrderCommandMock.validCommand(productIdValid, ingredientIdInValid);
 
         // Configure mocks

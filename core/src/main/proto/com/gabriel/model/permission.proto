@@ -7,7 +7,7 @@ import "com/gabriel/model/permission_id.proto";
 import "com/gabriel/model/name.proto";
 import "google/protobuf/timestamp.proto";
 
-// Permission: Represents a permission with ID, role, authority, and timestamp
+// Permission: Represents a permission with Id, role, authority, and timestamp
 message Permission {
     // PermissionId: Unique identifier for the permission
     PermissionId permission_id = 1;

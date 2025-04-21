@@ -1,6 +1,6 @@
 package com.gabriel.menu.adapter.driver.api;
 
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.ProductId;
 import com.gabriel.menu.adapter.driver.api.mapper.MenuMapper;
 import com.gabriel.menu.core.application.command.CreateProductCommand;
 import com.gabriel.menu.core.application.command.DeleteProductCommand;
@@ -27,18 +27,18 @@ public class ProductsHttpController implements ProductsApi {
     public ProductCreated addProduct(ProductRequest productRequest) {
         CreateProductCommand command = MenuMapper.toCommand(productRequest);
         Product newProduct = productUseCase.createProduct(command);
-        return new ProductCreated().productId(newProduct.getProductID().getId());
+        return new ProductCreated().productId(newProduct.getProductId().getId());
     }
 
     @Override
     public void deleteProduct(String productId) {
-        DeleteProductCommand command = new DeleteProductCommand(new ProductID(productId));
+        DeleteProductCommand command = new DeleteProductCommand(new ProductId(productId));
         productUseCase.deleteProduct(command);
     }
 
     @Override
     public ProductResponse getProductById(String productId) {
-        GetByProductIdQuery query = new GetByProductIdQuery(new ProductID(productId));
+        GetByProductIdQuery query = new GetByProductIdQuery(new ProductId(productId));
         return productUseCase.getResponseById(query);
     }
 

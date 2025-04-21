@@ -4,12 +4,14 @@ load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 load("@rules_spring//springboot:springboot.bzl", "springboot")
 
+# bazel build //orders:newrelic
 java_import(
     name = "newrelic",
     jars = ["@newrelic_java//:newrelic.jar"],
     visibility = ["//visibility:public"],
 )
 
+# bazel build //orders:orders_api_files
 openapi_generator(
     name = "orders_api_files",
     config = "config.yml",
@@ -17,6 +19,7 @@ openapi_generator(
     spec = "src/main/resources/oas/orders-api.yaml",
 )
 
+# bazel build //orders:orders_api_jar
 genrule(
     name = "orders_api_jar",
     srcs = [":orders_api_files"],
@@ -33,6 +36,7 @@ genrule(
     tools = ["@bazel_tools//tools/zip:zipper"],
 )
 
+# bazel build //orders:orders_api
 java_library(
     name = "orders_api",
     srcs = [":orders_api.srcjar"],
@@ -47,6 +51,7 @@ java_library(
     ],
 )
 
+# bazel build //orders:artifact
 java_library(
     name = "artifact",
     srcs = glob(["src/main/java/**/*.java"]),
@@ -60,11 +65,11 @@ java_library(
     visibility = ["//visibility:public"],
     deps = [
         ":orders_api",
-        "//core:artifact",
-        "//core:menu_java_grpc",
-        "//core:menu_java_proto",
-        "//core:permissions_java_grpc",
-        "//core:permissions_java_proto",
+        "//core/src/main/java:model_lib",
+        "//core/src/main/java:menu_java_proto",
+        "//core/src/main/java:menu_java_grpc",
+        "//core/src/main/java:permissions_java_proto",
+        "//core/src/main/java:permissions_java_grpc",
         "@maven//:com_fasterxml_jackson_core_jackson_annotations",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
@@ -123,6 +128,7 @@ java_library(
     ],
 )
 
+# bazel build //orders:test_utility
 java_library(
     name = "test_utility",
     srcs = glob([
@@ -137,7 +143,7 @@ java_library(
     deps = [
         ":artifact",
         ":orders_api",
-        "//core:artifact",
+        "//core/src/main/java:model_lib",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
         "@maven//:org_apache_tomcat_embed_tomcat_embed_core",
@@ -157,6 +163,7 @@ java_library(
     ],
 )
 
+# bazel test //orders:unit
 java_test_suite(
     name = "unit",
     srcs = glob([
@@ -175,9 +182,9 @@ java_test_suite(
         ":artifact",
         ":orders_api",
         ":test_utility",
-        "//core:artifact",
-        "//core:menu_java_grpc",
-        "//core:menu_java_proto",
+        "//core/src/main/java:model_lib",
+        "//core/src/main/java:menu_java_proto",
+        "//core/src/main/java:menu_java_grpc",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
@@ -199,6 +206,7 @@ java_test_suite(
     ],
 )
 
+# bazel test //orders:integration
 java_test_suite(
     name = "integration",
     srcs = glob([
@@ -219,9 +227,9 @@ java_test_suite(
         ":artifact",
         ":orders_api",
         ":test_utility",
-        "//core:artifact",
-        "//core:menu_java_grpc",
-        "//core:menu_java_proto",
+        "//core/src/main/java:model_lib",
+        "//core/src/main/java:menu_java_proto",
+        "//core/src/main/java:menu_java_grpc",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
         "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
@@ -253,6 +261,7 @@ java_test_suite(
     ],
 )
 
+# bazel test //orders:contract
 java_test_suite(
     name = "contract",
     srcs = glob([
@@ -272,7 +281,7 @@ java_test_suite(
     deps = [
         ":artifact",
         ":test_utility",
-        "//core:artifact",
+        "//core/src/main/java:model_lib",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
         "@maven//:in_specmatic_junit5_support",
         "@maven//:org_junit_jupiter_junit_jupiter_api",
@@ -285,6 +294,7 @@ java_test_suite(
     ],
 )
 
+# bazel test //orders:behavior
 java_test_suite(
     name = "behavior",
     srcs = glob([
@@ -304,7 +314,7 @@ java_test_suite(
     deps = [
         ":artifact",
         ":test_utility",
-        "//core:artifact",
+        "//core/src/main/java:model_lib",
         "//orders:orders_api",
         "@maven//:com_fasterxml_jackson_core_jackson_annotations",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
@@ -356,6 +366,7 @@ java_test_suite(
 #    runtime_deps = [":artifact"],
 #)
 
+# bazel build //orders:uber
 springboot(
     name = "uber",
     boot_app_class = "com.gabriel.orders.OrdersApplication",
@@ -363,6 +374,7 @@ springboot(
     java_library = ":artifact",
 )
 
+# bazel build //orders:layer
 tar(
     name = "layer",
     srcs = [
@@ -371,6 +383,7 @@ tar(
     ],
 )
 
+# bazel build //orders:image
 oci_image(
     name = "image",
     base = "@amazon_corretto_image",
@@ -384,6 +397,7 @@ oci_image(
     tars = [":layer"],
 )
 
+# bazel run //orders:push
 oci_push(
     name = "push",
     image = ":image",

@@ -335,8 +335,8 @@ paths:
     get:
       tags:
         - orders
-      summary: Find Order By ID
-      description: Returns a single order by ID
+      summary: Find Order By Id
+      description: Returns a single order by Id
       operationId: getOrderById
       security:
         - oAuth2Password:
@@ -362,7 +362,7 @@ paths:
               value: Bearer TOKENWITHWRONGSCOPE
         - name: orderId
           in: path
-          description: ID of order to return
+          description: Id of order to return
           required: true
           schema:
             type: string
@@ -472,7 +472,7 @@ paths:
       tags:
         - orders
       summary: Cancel Order
-      description: Cancel an existing order by ID
+      description: Cancel an existing order by Id
       operationId: cancelOrder
       security:
         - oAuth2Password:
@@ -498,7 +498,7 @@ paths:
               value: Bearer TOKENWITHWRONGSCOPE
         - name: orderId
           in: path
-          description: ID of the order to cancel
+          description: Id of the order to cancel
           required: true
           schema:
             type: string
@@ -790,7 +790,7 @@ components:
       properties:
         cpf:
           type: string
-          description: Customer identified CPF
+          description: Customer identified Cpf
     OrderExtraRequest:
       type: object
       required:
@@ -865,7 +865,7 @@ components:
       properties:
         id:
           type: string
-          description: ID of the Ingredient
+          description: Id of the Ingredient
         name:
           type: string
           description: Name of the Ingredient
@@ -886,7 +886,7 @@ components:
       properties:
         id:
           type: string
-          description: ID of the Product
+          description: Id of the Product
         name:
           type: string
           description: Name of the Product
@@ -918,7 +918,7 @@ components:
       properties:
         itemId:
           type: string
-          description: ID of the item
+          description: Id of the item
         product:
           $ref: '#/components/schemas/ProductResponse'
         extras:
@@ -939,7 +939,7 @@ components:
       properties:
         id:
           type: string
-          description: ID of the Order
+          description: Id of the Order
         ticketId:
           type: string
           description: ticketId of the item, sent to customer

@@ -1,6 +1,6 @@
 package com.gabriel.menu.adapter.driver.api;
 
-import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.model.IngredientId;
 import com.gabriel.menu.adapter.driver.api.mapper.MenuMapper;
 import com.gabriel.menu.core.application.command.CreateIngredientCommand;
 import com.gabriel.menu.core.application.query.GetByIngredientIdQuery;
@@ -31,7 +31,7 @@ public class IngredientsHttpController implements IngredientsApi {
 
     @Override
     public IngredientResponse getIngredientById(String ingredientId) {
-        GetByIngredientIdQuery query = new GetByIngredientIdQuery(new IngredientID(ingredientId));
+        GetByIngredientIdQuery query = new GetByIngredientIdQuery(new IngredientId(ingredientId));
         Ingredient ingredient = ingredientUseCase.getIngredientById(query);
         return MenuMapper.toResponse(ingredient);
     }

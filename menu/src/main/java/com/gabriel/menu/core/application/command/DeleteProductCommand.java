@@ -1,6 +1,6 @@
 package com.gabriel.menu.core.application.command;
 
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.ProductId;
 
-public record DeleteProductCommand(ProductID deleteId) {
+public record DeleteProductCommand(ProductId deleteId) {
 }

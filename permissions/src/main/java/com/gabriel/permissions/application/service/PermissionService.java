@@ -2,7 +2,7 @@ package com.gabriel.permissions.application.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.model.id.PermissionID;
+import com.gabriel.model.PermissionID;
 import com.gabriel.permissions.domain.model.Authority;
 import com.gabriel.permissions.domain.model.Role;
 import com.gabriel.permissions.domain.model.RoleAuthority;

@@ -4,7 +4,7 @@ import com.gabriel.orders.adapter.driven.api.mapper.MenuMapper;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.MenuRepository;
-import com.gabriel.specs.menu.MenuResponse;
+import com.gabriel.service.menu.MenuResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

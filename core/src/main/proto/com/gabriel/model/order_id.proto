@@ -10,7 +10,7 @@ message OrderId {
   // Value: Must follow the format [8 alphanumeric]-ORDR-[YYYY]-[MM]-[DD], exactly 20 characters
   string value = 1 [(buf.validate.field).cel = {
     id: "order_id.value",
-    message: "Invalid Order ID format",
+    message: "Invalid Order Id format",
     expression: "this.matches(r'[0-9a-f]{8}-ORDR-\\d{4}-\\d{2}-\\d{2}')"
   }];
 }

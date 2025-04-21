@@ -1,16 +1,15 @@
 package com.gabriel.orders.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.Pattern;
 
-public class TicketId extends ValueObject {
+public class TicketId {
 
     @JsonValue
     @Pattern(regexp = "[0-9a-f]{8}",
-        message = "Invalid Ticket ID format")
+        message = "Invalid Ticket Id format")
     private final String id;
 
     public TicketId(String id) {
@@ -18,7 +17,6 @@ public class TicketId extends ValueObject {
         validate();
     }
 
-    @Override
     public void validate() {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         var violations = validator.validate(this);

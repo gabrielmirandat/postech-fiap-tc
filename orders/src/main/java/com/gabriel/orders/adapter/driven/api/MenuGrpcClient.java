@@ -1,9 +1,9 @@
 package com.gabriel.orders.adapter.driven.api;
 
 import com.gabriel.orders.core.application.usecase.SetupMenuUseCase;
-import com.gabriel.specs.menu.MenuGrpc;
-import com.gabriel.specs.menu.MenuRequest;
-import com.gabriel.specs.menu.MenuResponse;
+import com.gabriel.service.menu.MenuGrpc;
+import com.gabriel.service.menu.MenuRequest;
+import com.gabriel.service.menu.MenuResponse;
 import io.grpc.ManagedChannel;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

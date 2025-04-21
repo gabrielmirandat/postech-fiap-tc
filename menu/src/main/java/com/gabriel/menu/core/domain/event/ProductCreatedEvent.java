@@ -20,7 +20,7 @@ public class ProductCreatedEvent implements DomainEvent {
 
     @Override
     public String subject() {
-        return String.format("id/%s", productAdded.getProductID().getId());
+        return String.format("id/%s", productAdded.getProductId().getId());
     }
 
     @Override

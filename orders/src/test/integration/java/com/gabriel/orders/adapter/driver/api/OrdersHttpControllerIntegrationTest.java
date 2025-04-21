@@ -1,7 +1,7 @@
 package com.gabriel.orders.adapter.driver.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.application.command.CreateOrderCommand;
 import com.gabriel.orders.core.application.usecase.*;
 import com.gabriel.orders.core.domain.model.Order;
@@ -67,7 +67,7 @@ public class OrdersHttpControllerIntegrationTest {
     public void whenPostRequestToAddOrder_thenCorrectResponse() throws Exception {
         OrderRequest orderRequest = new OrderRequest()
             .addItemsItem(new OrderItemRequest()
-                .productId(new ProductID().getId())
+                .productId(new ProductId().getId())
                 .quantity(1));
 
         when(createOrderUseCase.createOrder(any(CreateOrderCommand.class)))

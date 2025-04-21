@@ -11,7 +11,6 @@ clean:
 build: model menu permissions
 	@echo "Building all targets..."
 	
-
 test:
 	@echo "Running tests..."
 	$(BAZEL) test //core/src/test/java:unit

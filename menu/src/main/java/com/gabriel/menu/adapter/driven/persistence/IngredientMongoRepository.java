@@ -1,11 +1,11 @@
 package com.gabriel.menu.adapter.driven.persistence;
 
 import com.gabriel.adapter.api.exceptions.NotFound;
-import com.gabriel.core.application.exception.ApplicationError;
-import com.gabriel.core.application.exception.ApplicationException;
-import com.gabriel.core.domain.model.Name;
-import com.gabriel.core.domain.model.Price;
-import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.model.ApplicationError;
+import com.gabriel.model.ApplicationException;
+import com.gabriel.model.Name;
+import com.gabriel.model.Price;
+import com.gabriel.model.IngredientId;
 import com.gabriel.menu.core.domain.model.Category;
 import com.gabriel.menu.core.domain.model.Ingredient;
 import com.gabriel.menu.core.domain.model.Weight;
@@ -43,7 +43,7 @@ public class IngredientMongoRepository implements IngredientRepository {
     }
 
     @Override
-    public Ingredient getById(IngredientID id) {
+    public Ingredient getById(IngredientId id) {
         Document doc = ingredientCollection.find(Filters.eq("_id", id.getId())).first();
         if (doc != null) {
             return IngredientConverter.documentToIngredient(doc);
@@ -62,7 +62,7 @@ public class IngredientMongoRepository implements IngredientRepository {
     }
 
     @Override
-    public void deleteIngredient(IngredientID id) {
+    public void deleteIngredient(IngredientId id) {
 
         ingredientCollection.deleteOne(Filters.eq("_id", id.getId()));
     }
@@ -83,7 +83,7 @@ public class IngredientMongoRepository implements IngredientRepository {
         }
 
         public static Ingredient documentToIngredient(Document doc) {
-            IngredientID ingredientID = new IngredientID(doc.getString("_id"));
+            IngredientId ingredientID = new IngredientId(doc.getString("_id"));
             Name name = new Name(doc.getString("name"));
             Category category = Category.valueOf(doc.getString("category").toUpperCase());
             Price price = new Price(doc.getDouble("price"));

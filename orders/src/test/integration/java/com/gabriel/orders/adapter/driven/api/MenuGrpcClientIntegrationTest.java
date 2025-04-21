@@ -1,9 +1,9 @@
 package com.gabriel.orders.adapter.driven.api;
 
-import com.gabriel.core.domain.model.Name;
-import com.gabriel.core.domain.model.Price;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.Name;
+import com.gabriel.model.Price;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.application.usecase.SetupMenuUseCase;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
@@ -81,7 +81,7 @@ public class MenuGrpcClientIntegrationTest {
         menuGrpcClient.dumpMenuData();
 
         Product dumpedProduct = new Product(
-            new ProductID("5ed5dad3-PRDC-2024-02-12"),
+            new ProductId("5ed5dad3-PRDC-2024-02-12"),
             new Name("Cheese Burger"),
             new Price(10.99),
             Instant.parse("2022-01-02T12:00:00Z"));
@@ -91,7 +91,7 @@ public class MenuGrpcClientIntegrationTest {
         Product capturedProduct = productCaptor.getValue();
 
         // Assert the details of the response based on your stub
-        assertEquals(dumpedProduct.getProductID().getId(), capturedProduct.getProductID().getId());
+        assertEquals(dumpedProduct.getProductId().getId(), capturedProduct.getProductId().getId());
         assertEquals(dumpedProduct.getName().getValue(), capturedProduct.getName().getValue());
         assertEquals(dumpedProduct.getPrice().getValue(), capturedProduct.getPrice().getValue());
         assertEquals(dumpedProduct.getTimestamp(), capturedProduct.getTimestamp());
@@ -103,7 +103,7 @@ public class MenuGrpcClientIntegrationTest {
         menuGrpcClient.dumpMenuData();
 
         Extra dumpedExtra = new Extra(
-            new IngredientID("fabe70b1-INGR-2024-02-12"),
+            new IngredientId("fabe70b1-INGR-2024-02-12"),
             new Name("Costela"),
             new Price(1.99),
             Instant.parse("2022-01-01T12:00:00Z"));

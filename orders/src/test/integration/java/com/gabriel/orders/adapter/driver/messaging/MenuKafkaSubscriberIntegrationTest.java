@@ -1,8 +1,8 @@
 package com.gabriel.orders.adapter.driver.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.application.usecase.UpdateMenuUseCase;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
@@ -72,8 +72,8 @@ public class MenuKafkaSubscriberIntegrationTest {
 
     @BeforeEach
     void setup() {
-        product = ProductMock.validProduct(new ProductID());
-        extra = ExtraMock.validExtra(new IngredientID());
+        product = ProductMock.validProduct(new ProductId());
+        extra = ExtraMock.validExtra(new IngredientId());
         countDownLatch = new CountDownLatch(1);
         menuKafkaSubscriber.setCountDownLatch(countDownLatch);
     }
@@ -105,7 +105,7 @@ public class MenuKafkaSubscriberIntegrationTest {
         verify(menuRepository).addProduct(addedProduct);
 
         // Compare addedProduct with the product sent in the event
-        assertEquals(product.getProductID().getId(), addedProduct.getProductID().getId());
+        assertEquals(product.getProductId().getId(), addedProduct.getProductId().getId());
         assertEquals(product.getName().getValue(), addedProduct.getName().getValue());
         assertEquals(product.getPrice().getValue(), addedProduct.getPrice().getValue());
         assertEquals(product.getTimestamp(), addedProduct.getTimestamp());
@@ -132,9 +132,9 @@ public class MenuKafkaSubscriberIntegrationTest {
         verify(updateMenuUseCase).handleProductDeleted(productCaptor.capture());
         Product deletedProduct = productCaptor.getValue();
 
-        verify(menuRepository).deleteProduct(deletedProduct.getProductID());
+        verify(menuRepository).deleteProduct(deletedProduct.getProductId());
 
-        assertEquals(product.getProductID().getId(), deletedProduct.getProductID().getId());
+        assertEquals(product.getProductId().getId(), deletedProduct.getProductId().getId());
     }
 
     @Test

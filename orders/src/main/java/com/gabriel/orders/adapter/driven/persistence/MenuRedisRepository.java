@@ -1,8 +1,8 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.MenuRepository;
@@ -37,24 +37,24 @@ public class MenuRedisRepository implements MenuRepository {
     }
 
     @Override
-    public boolean existsProduct(ProductID productID) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey("prod:" + productID.getId()));
+    public boolean existsProduct(ProductId productId) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey("prod:" + productId.getId()));
     }
 
     @Override
-    public List<ProductID> allProducts() {
+    public List<ProductId> allProducts() {
         Set<String> keys = redisTemplate.keys("prod:*");
         if (keys == null)
             return new ArrayList<>();
         return new ArrayList<>(keys).stream()
-            .map(key -> new ProductID(key.substring(5)))
+            .map(key -> new ProductId(key.substring(5)))
             .toList();
     }
 
     @Override
-    public Product getProduct(ProductID productID) {
+    public Product getProduct(ProductId productId) {
         ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
-        byte[] data = valueOps.get("prod:" + productID.getId());
+        byte[] data = valueOps.get("prod:" + productId.getId());
         if (data != null) {
             try {
                 return objectMapper.readValue(data, Product.class);
@@ -67,8 +67,8 @@ public class MenuRedisRepository implements MenuRepository {
 
     @Override
     public void addProduct(Product product) {
-        String key = "prod:" + product.getProductID().getId();
-        Product existingProduct = getProduct(product.getProductID());
+        String key = "prod:" + product.getProductId().getId();
+        Product existingProduct = getProduct(product.getProductId());
         if (existingProduct == null || product.getTimestamp().isAfter(existingProduct.getTimestamp())) {
             ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
             try {
@@ -82,29 +82,29 @@ public class MenuRedisRepository implements MenuRepository {
     }
 
     @Override
-    public void deleteProduct(ProductID productID) {
-        redisTemplate.delete("prod:" + productID.getId());
+    public void deleteProduct(ProductId productId) {
+        redisTemplate.delete("prod:" + productId.getId());
     }
 
     @Override
-    public boolean existsExtra(IngredientID ingredientID) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey("extr:" + ingredientID.getId()));
+    public boolean existsExtra(IngredientId ingredientId) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey("extr:" + ingredientId.getId()));
     }
 
     @Override
-    public List<IngredientID> allExtras() {
+    public List<IngredientId> allExtras() {
         Set<String> keys = redisTemplate.keys("extr:*");
         if (keys == null)
             return new ArrayList<>();
         return new ArrayList<>(keys).stream()
-            .map(key -> new IngredientID(key.substring(5)))
+            .map(key -> new IngredientId(key.substring(5)))
             .toList();
     }
 
     @Override
-    public Extra getExtra(IngredientID ingredientID) {
+    public Extra getExtra(IngredientId ingredientId) {
         ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
-        byte[] data = valueOps.get("extr:" + ingredientID.getId());
+        byte[] data = valueOps.get("extr:" + ingredientId.getId());
         if (data != null) {
             try {
                 return objectMapper.readValue(data, Extra.class);
@@ -117,8 +117,8 @@ public class MenuRedisRepository implements MenuRepository {
 
     @Override
     public void addExtra(Extra extra) {
-        String key = "extr:" + extra.getIngredientID().getId();
-        Extra existingExtra = getExtra(extra.getIngredientID());
+        String key = "extr:" + extra.getIngredientId().getId();
+        Extra existingExtra = getExtra(extra.getIngredientId());
         if (existingExtra == null || extra.getTimestamp().isAfter(existingExtra.getTimestamp())) {
             ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
             try {
@@ -132,7 +132,7 @@ public class MenuRedisRepository implements MenuRepository {
     }
 
     @Override
-    public void deleteExtra(IngredientID ingredientID) {
-        redisTemplate.delete("extr:" + ingredientID.getId());
+    public void deleteExtra(IngredientId ingredientId) {
+        redisTemplate.delete("extr:" + ingredientId.getId());
     }
 }

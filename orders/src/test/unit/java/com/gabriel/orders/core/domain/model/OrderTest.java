@@ -2,7 +2,7 @@ package com.gabriel.orders.core.domain.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.gabriel.core.domain.exception.DomainException;
+import com.gabriel.model.DomainException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,12 +37,12 @@ class OrderTest {
     }
 
     @Test
-    void testOrderCreationWithShippingAddressAndNotification() {
+    void testOrderCreationWithShippingAddressAndContact() {
         assertNotNull(fullOrder);
         assertEquals(OrderStatus.CREATED, fullOrder.getStatus());
         assertNotNull(fullOrder.getOrderId());
         assertNotNull(fullOrder.getShippingAddress());
-        assertNotNull(fullOrder.getNotification());
+        assertNotNull(fullOrder.getContact());
     }
 
     @Test
@@ -141,8 +141,8 @@ class OrderTest {
         assertThat(deserialized).isNotNull();
         assertThat(deserialized.getOrderId()).isEqualTo(fullOrder.getOrderId());
         assertThat(deserialized.getShippingAddress().getCity()).isEqualTo(fullOrder.getShippingAddress().getCity());
-        assertThat(deserialized.getNotification().getRepr().getValue()).isEqualTo(
-            fullOrder.getNotification().getRepr().getValue());
+        assertThat(deserialized.getContact().getRepr().getValue()).isEqualTo(
+            fullOrder.getContact().getRepr().getValue());
         assertThat(deserialized.getStatus()).isEqualTo(fullOrder.getStatus());
         assertThat(deserialized.getPrice().getValue()).isEqualTo(fullOrder.getPrice().getValue());
         assertThat(deserialized.getTicketId()).isEqualTo(fullOrder.getTicketId());

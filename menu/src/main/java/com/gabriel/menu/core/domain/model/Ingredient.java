@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.model.Name;
-import com.gabriel.core.domain.model.Price;
-import com.gabriel.core.domain.model.id.IngredientID;
+import com.gabriel.model.Name;
+import com.gabriel.model.Price;
+import com.gabriel.model.IngredientId;
 
 import java.io.IOException;
 import java.time.Instant;
 
 public class Ingredient extends Menu {
 
-    private final IngredientID ingredientID;
+    private final IngredientId ingredientID;
 
     private final Name name;
 
@@ -26,7 +26,7 @@ public class Ingredient extends Menu {
     private final boolean isExtra;
 
     public Ingredient(Name name, Category category, Price price, Weight weight, boolean isExtra) {
-        this.ingredientID = new IngredientID();
+        this.ingredientID = new IngredientId();
         this.name = name;
         this.category = category;
         this.price = price;
@@ -35,7 +35,7 @@ public class Ingredient extends Menu {
     }
 
     public Ingredient(String name, Category category, Double price, Double weight, boolean isExtra) {
-        this.ingredientID = new IngredientID();
+        this.ingredientID = new IngredientId();
         this.name = new Name(name);
         this.category = category;
         this.price = new Price(price);
@@ -47,7 +47,7 @@ public class Ingredient extends Menu {
      * Constructor for Jackson deserialization.
      */
     @JsonCreator
-    Ingredient(@JsonProperty("menuId") IngredientID ingredientID, @JsonProperty("name") Name name,
+    Ingredient(@JsonProperty("menuId") IngredientId ingredientID, @JsonProperty("name") Name name,
                @JsonProperty("category") Category category, @JsonProperty("price") Price price,
                @JsonProperty("weight") Weight weight, @JsonProperty("extra") boolean isExtra,
                @JsonProperty("createdAt") Instant createdAt, @JsonProperty("updatedAt") Instant updatedAt) {
@@ -61,7 +61,7 @@ public class Ingredient extends Menu {
         this.updateTimestamp = updatedAt;
     }
 
-    public static Ingredient copy(IngredientID ingredientID, Name name, Category category, Price price,
+    public static Ingredient copy(IngredientId ingredientID, Name name, Category category, Price price,
                                   Weight weight, boolean isExtra, Instant createdAt, Instant updatedAt) {
         return new Ingredient(ingredientID, name, category, price, weight, isExtra, createdAt, updatedAt);
     }
@@ -87,7 +87,7 @@ public class Ingredient extends Menu {
         return ingredientID.getId();
     }
 
-    public IngredientID getIngredientID() {
+    public IngredientId getIngredientID() {
         return ingredientID;
     }
 

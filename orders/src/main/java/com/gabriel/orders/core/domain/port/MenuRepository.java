@@ -1,7 +1,7 @@
 package com.gabriel.orders.core.domain.port;
 
-import com.gabriel.core.domain.model.id.IngredientID;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.IngredientId;
+import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 
@@ -10,24 +10,24 @@ import java.util.List;
 public interface MenuRepository {
 
 
-    boolean existsProduct(ProductID productID);
+    boolean existsProduct(ProductId productId);
 
-    List<ProductID> allProducts();
+    List<ProductId> allProducts();
 
-    Product getProduct(ProductID productID);
+    Product getProduct(ProductId productId);
 
     void addProduct(Product product);
 
-    void deleteProduct(ProductID productID);
+    void deleteProduct(ProductId productId);
 
 
-    boolean existsExtra(IngredientID ingredientID);
+    boolean existsExtra(IngredientId ingredientId);
 
-    List<IngredientID> allExtras();
+    List<IngredientId> allExtras();
 
-    Extra getExtra(IngredientID ingredientID);
+    Extra getExtra(IngredientId ingredientId);
 
     void addExtra(Extra extra);
 
-    void deleteExtra(IngredientID ingredientID);
+    void deleteExtra(IngredientId ingredientId);
 }

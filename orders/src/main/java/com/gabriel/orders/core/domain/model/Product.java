@@ -5,17 +5,16 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.ValueObject;
-import com.gabriel.core.domain.model.Name;
-import com.gabriel.core.domain.model.Price;
-import com.gabriel.core.domain.model.id.ProductID;
+import com.gabriel.model.Name;
+import com.gabriel.model.Price;
+import com.gabriel.model.ProductId;
 
 import java.io.IOException;
 import java.time.Instant;
 
-public class Product extends ValueObject {
+public class Product {
 
-    private final ProductID productID;
+    private final ProductId productId;
 
     private final Name name;
 
@@ -24,24 +23,24 @@ public class Product extends ValueObject {
     private Instant timestamp;
 
     @JsonCreator
-    public Product(@JsonProperty("productID") ProductID productID,
+    public Product(@JsonProperty("productId") ProductId productId,
                    @JsonProperty("name") Name name,
                    @JsonProperty("price") Price value,
                    @JsonProperty("timestamp") @JsonAlias("updateTimestamp") Instant timestamp) {
-        this.productID = productID;
+        this.productId = productId;
         this.name = name;
         this.price = value;
         this.timestamp = timestamp;
     }
 
-    public Product(ProductID productID, Name name, Price value) {
-        this.productID = productID;
+    public Product(ProductId productId, Name name, Price value) {
+        this.productId = productId;
         this.name = name;
         this.price = value;
     }
 
-    public Product(ProductID productID, String name, Double value) {
-        this.productID = productID;
+    public Product(ProductId productId, String name, Double value) {
+        this.productId = productId;
         this.name = new Name(name);
         this.price = new Price(value);
     }
@@ -62,8 +61,8 @@ public class Product extends ValueObject {
         }
     }
 
-    public ProductID getProductID() {
-        return productID;
+    public ProductId getProductId() {
+        return productId;
     }
 
     public Name getName() {

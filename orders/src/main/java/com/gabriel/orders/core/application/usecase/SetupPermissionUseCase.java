@@ -1,9 +1,9 @@
 package com.gabriel.orders.core.application.usecase;
 
-import com.gabriel.core.domain.model.Permission;
+import com.gabriel.model.Permission;
 import com.gabriel.orders.adapter.driven.api.mapper.PermissionMapper;
 import com.gabriel.orders.core.domain.port.PermissionRepository;
-import com.gabriel.specs.permissions.PermissionResponse;
+import com.gabriel.service.permissions.PermissionResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
