@@ -1,6 +1,155 @@
-###############################################################################
-# Bazel now uses Bzlmod by default to manage external dependencies.
-# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
-#
-# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
-###############################################################################
+module(
+    name = "postech-fiap-tc",
+    version = "1.0.0",
+)
+
+bazel_dep(name = "rules_java", version = "8.15.1")
+bazel_dep(name = "rules_jvm_external", version = "6.8")
+bazel_dep(name = "contrib_rules_jvm", version = "0.29.0")
+bazel_dep(name = "rules_spring", version = "2.6.3")
+bazel_dep(name = "rules_proto", version = "7.1.0")
+bazel_dep(name = "protobuf", version = "29.2", repo_name = "com_google_protobuf")
+bazel_dep(name = "rules_buf", version = "0.5.1")
+bazel_dep(name = "protovalidate", version = "0.14.2")
+bazel_dep(name = "rules_oci", version = "2.2.6")
+bazel_dep(name = "openapi_tools_generator_bazel", version = "0.2.0")
+bazel_dep(name = "aspect_bazel_lib", version = "2.20.0")
+bazel_dep(name = "gazelle", version = "0.45.0")
+bazel_dep(name = "bazel_skylib", version = "1.8.1")
+
+# Maven dependencies
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+maven.install(
+    artifacts = [
+        "com.auth0:auth0-spring-security-api:1.5.3",
+        "com.fasterxml.jackson.core:jackson-annotations:2.18.2",
+        "com.fasterxml.jackson.core:jackson-core:2.18.2",
+        "com.fasterxml.jackson.core:jackson-databind:2.18.2",
+        "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.2",
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2",
+        "com.fasterxml.jackson.module:jackson-module-scala_2.13:2.18.2",
+        "com.google.protobuf:protobuf-java:4.28.2",
+        "com.google.protobuf:protobuf-java-util:4.28.2",
+        "com.konghq:unirest-java-core:4.3.1",
+        "com.konghq:unirest-modules-jackson:4.3.1",
+        "in.specmatic:junit5-support:1.3.10",
+        "in.specmatic:specmatic-core:1.3.10",
+        "io.cloudevents:cloudevents-core:2.5.0",
+        "io.cloudevents:cloudevents-json-jackson:2.5.0",
+        "io.cloudevents:cloudevents-kafka:2.5.0",
+        "io.cucumber:cucumber-java:7.18.0",
+        "io.cucumber:cucumber-junit-platform-engine:7.18.0",
+        "io.cucumber:cucumber-spring:7.18.0",
+        "io.grpc:grpc-api:1.63.0",
+        "io.grpc:grpc-netty:1.63.0",
+        "io.grpc:grpc-netty-shaded:1.63.0",
+        "io.grpc:grpc-protobuf:1.63.0",
+        "io.grpc:grpc-services:1.63.0",
+        "io.grpc:grpc-stub:1.63.0",
+        "io.grpc:grpc-testing:1.63.0",
+        "io.micrometer:micrometer-tracing-bridge-brave:1.1.0",
+        "io.micrometer:micrometer-core:1.1.0",
+        "io.mongock:mongodb-sync-v4-driver:5.4.1",
+        "io.mongock:mongock-standalone:5.4.1",
+        "io.opentelemetry:opentelemetry-api:1.36.0",
+        "io.opentelemetry:opentelemetry-exporter-otlp:1.36.0",
+        "io.opentelemetry:opentelemetry-sdk:1.36.0",
+        "io.quarkus:quarkus-bootstrap-core:3.17.6",
+        "io.quarkus:quarkus-core:3.17.6",
+        "io.quarkus:quarkus-core-deployment:3.17.6",
+        "io.quarkus:quarkus-devtools-common:3.17.6",
+        "io.quarkus:quarkus-grpc:3.17.6",
+        "io.quarkus:quarkus-hibernate-validator:3.17.6",
+        "io.quarkus:quarkus-junit5:3.17.6",
+        "io.quarkus:quarkus-messaging-kafka:3.17.6",
+        "io.quarkus:quarkus-mongodb-client:3.17.6",
+        "io.quarkus:quarkus-resteasy:3.17.6",
+        "io.quarkus:quarkus-resteasy-jackson:3.17.6",
+        "io.quarkus:quarkus-smallrye-health:3.17.6",
+        "io.rest-assured:json-path:5.4.0",
+        "io.rest-assured:json-schema-validator:5.4.0",
+        "io.rest-assured:rest-assured:5.4.0",
+        "io.rest-assured:spring-mock-mvc:5.4.0",
+        "io.smallrye.reactive:smallrye-reactive-messaging-api:4.24.0",
+        "io.swagger.core.v3:swagger-annotations:2.2.21",
+        "jakarta.annotation:jakarta.annotation-api:3.0.0-M1",
+        "jakarta.persistence:jakarta.persistence-api:3.1.0",
+        "jakarta.validation:jakarta.validation-api:3.1.0-M1",
+        "javax.annotation:javax.annotation-api:1.3.2",
+        "net.devh:grpc-spring-boot-starter:3.1.0.RELEASE",
+        "org.apache.tomcat:annotations-api:6.0.53",
+        "org.assertj:assertj-core:3.25.3",
+        "org.codehaus.plexus:plexus-utils:4.0.2",
+        "org.codehaus.plexus:plexus-xml:4.0.2",
+        "org.glassfish:jakarta.el:4.0.2",
+        "org.glassfish.expressly:expressly:5.0.0",
+        "org.hibernate.validator:hibernate-validator:8.0.1.Final",
+        "org.hibernate.validator:hibernate-validator-cdi:8.0.1.Final",
+        "org.junit.jupiter:junit-jupiter:5.11.3",
+        "org.junit.jupiter:junit-jupiter-api:5.11.3",
+        "org.junit.jupiter:junit-jupiter-engine:5.11.3",
+        "org.junit.jupiter:junit-jupiter-params:5.11.3",
+        "org.junit.platform:junit-platform-launcher:1.11.3",
+        "org.junit.platform:junit-platform-reporting:1.11.3",
+        "org.junit.platform:junit-platform-suite:1.11.0-M2",
+        "org.liquibase:liquibase-core:4.24.0",
+        "org.liquibase.ext:liquibase-mongodb:4.24.0",
+        "org.modelmapper:modelmapper:3.2.0",
+        "org.mockito:mockito-core:5.14.1",
+        "org.mockito:mockito-inline:5.2.0",
+        "org.mockito:mockito-junit-jupiter:5.14.1",
+        "org.mongodb:mongodb-driver-sync:4.11.1",
+        "org.postgresql:postgresql:42.7.3",
+        "org.springframework.boot:spring-boot-loader:3.2.4",
+        "org.springframework.boot:spring-boot-starter:3.2.4",
+        "org.springframework.boot:spring-boot-starter-actuator:3.2.4",
+        "org.springframework.boot:spring-boot-starter-cache:3.2.4",
+        "org.springframework.boot:spring-boot-starter-data-jpa:3.2.4",
+        "org.springframework.boot:spring-boot-starter-data-redis:3.2.4",
+        "org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.2.4",
+        "org.springframework.boot:spring-boot-starter-security:3.2.4",
+        "org.springframework.boot:spring-boot-starter-test:3.2.4",
+        "org.springframework.boot:spring-boot-starter-validation:3.2.4",
+        "org.springframework.boot:spring-boot-starter-web:3.2.4",
+        "org.springframework.kafka:spring-kafka:3.2.4",
+        "org.springframework.kafka:spring-kafka-test:3.2.4",
+        "org.springframework.security:spring-security-test:6.3.3",
+        "org.testcontainers:junit-jupiter:1.19.7",
+        "org.testcontainers:kafka:1.19.7",
+        "org.testcontainers:mongodb:1.19.7",
+        "org.testcontainers:testcontainers:1.19.7",
+        "org.yaml:snakeyaml:2.2",
+        "build.buf:protovalidate:0.5.0",
+    ],
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+    ],
+)
+use_repo(maven, "maven")
+
+# Buf toolchain
+buf = use_extension("@rules_buf//buf:extensions.bzl", "buf")
+buf.toolchains(version = "v1.50.0")
+buf.dependency(module = "buf.build/googleapis/googleapis:61b203b9a9164be9a834f58c37be6f62")
+buf.dependency(module = "buf.build/bufbuild/protovalidate:6c6e0d3c608e4549802254a2eee81bc8")
+use_repo(buf, "buf_deps")
+use_repo(buf, "rules_buf_toolchains")
+
+# OCI toolchain
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+
+# OpenAPI generator
+openapi_gen = use_extension("@openapi_tools_generator_bazel//:extension.bzl", "openapi_gen")
+openapi_gen.client(
+    version = "7.0.1"
+)
+use_repo(openapi_gen, "openapi_tools_generator_bazel_cli")
+
+# NewRelic dependency
+http_file = use_extension("@bazel_skylib//:extensions.bzl", "http_file")
+http_file.download(
+    name = "newrelic_java",
+    url = "https://repo1.maven.org/maven2/com/newrelic/agent/java/newrelic-java/8.10.0/newrelic-java-8.10.0.zip",
+    sha256 = "a79620c4173792b7575d360c4679009e40dc6042d4897279433ff8ba42a6cfe6",
+)
+use_repo(http_file, "newrelic_java")
