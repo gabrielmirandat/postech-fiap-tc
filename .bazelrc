@@ -1,4 +1,28 @@
-build --enable_workspace
-query --enable_workspace
-test --enable_workspace
-run --enable_workspace
+# Bazel 8.3.1+ configuration for Bzlmod (new module system)
+# Remove old WORKSPACE configurations
+
+# Enable Bzlmod by default (this is the default in Bazel 8+)
+# build --enable_bzlmod
+# query --enable_bzlmod
+# test --enable_bzlmod
+# run --enable_bzlmod
+common --enable_bzlmod
+
+# Java-specific configurations
+build --java_runtime_version=21
+build --java_language_version=21
+build --tool_java_runtime_version=21
+
+# Enable parallel execution
+build --jobs=auto
+
+# Enable build event protocol for better IDE integration
+build --build_event_json_file=bazel_build_events.json
+
+# Enable better error reporting
+build --verbose_failures
+build --show_timestamps
+
+# Enable better test reporting
+test --test_output=errors
+test --test_summary=detailed

@@ -8,7 +8,7 @@ proto_library(
     visibility = ["//visibility:public"],
     deps = [
         "@com_google_protobuf//:timestamp_proto",
-        "@buf_validate//proto/protovalidate/buf/validate:validate_proto",
+        "@buf_deps//buf/validate:validate_proto",
     ],
 )
 
