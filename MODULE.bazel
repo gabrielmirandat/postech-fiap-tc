@@ -16,7 +16,6 @@ bazel_dep(name = "rules_oci", version = "2.2.6")
 bazel_dep(name = "openapi_tools_generator_bazel", version = "0.2.0")
 bazel_dep(name = "aspect_bazel_lib", version = "2.20.0")
 bazel_dep(name = "gazelle", version = "0.45.0")
-bazel_dep(name = "bazel_skylib", version = "1.8.1")
 
 # Maven dependencies
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
@@ -147,10 +146,9 @@ openapi_gen.client(
 use_repo(openapi_gen, "openapi_tools_generator_bazel_cli")
 
 # NewRelic dependency
-http_file = use_extension("@bazel_skylib//:extensions.bzl", "http_file")
-http_file.download(
+http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+http_file(
     name = "newrelic_java",
     url = "https://repo1.maven.org/maven2/com/newrelic/agent/java/newrelic-java/8.10.0/newrelic-java-8.10.0.zip",
-    sha256 = "a79620c4173792b7575d360c4679009e40dc6042d4897279433ff8ba42a6cfe6",
+    sha256 = "a035c82c27a80a9385d0f8c97f41d87ecce8df8cdaf01eb0e565acb098deb4fe",
 )
-use_repo(http_file, "newrelic_java")
