@@ -1,4 +1,4 @@
-load("@io_grpc_grpc_java//:java_grpc_library.bzl", "java_grpc_library")
+load("@grpc-java//:java_grpc_library.bzl", "java_grpc_library")
 load("@rules_java//java:defs.bzl", "java_library", "java_proto_library")
 
 # bazel build //core/src/main/java:model_java_proto
