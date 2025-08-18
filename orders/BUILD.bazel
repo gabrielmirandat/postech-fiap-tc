@@ -5,9 +5,9 @@ load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 load("@rules_spring//springboot:springboot.bzl", "springboot")
 
 # bazel build //orders:newrelic
-java_import(
+java_library(
     name = "newrelic",
-    jars = ["@newrelic_java//:newrelic.jar"],
+    exports = ["@maven//:com_newrelic_agent_java_newrelic_agent"],
     visibility = ["//visibility:public"],
 )
 
@@ -379,7 +379,7 @@ tar(
     name = "layer",
     srcs = [
         ":uber.jar",
-        "@newrelic_java//:newrelic.jar",
+        "@maven//:com_newrelic_agent_java_newrelic_agent",
     ],
 )
 

@@ -369,6 +369,40 @@
         ]
       }
     },
+    "@@openapi_tools_generator_bazel+//:extension.bzl%openapi_gen": {
+      "general": {
+        "bzlTransitiveDigest": "OpLFSbBZQIsnXk7RdEflIQTNoFCU+0FDFCogz5A2rAc=",
+        "usagesDigest": "KH0udWSZg8pX/nfjwKSW+2erwv/KpQBT/jfzm5LX6IE=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "openapi_tools_generator_bazel_cli": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:jvm.bzl%jvm_import_external",
+            "attributes": {
+              "generated_rule_name": "openapi_tools_generator_bazel_cli",
+              "artifact_urls": [
+                "https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/7.0.1/openapi-generator-cli-7.0.1.jar"
+              ],
+              "srcjar_urls": [],
+              "canonical_id": "org.openapitools:openapi-generator-cli:7.0.1",
+              "rule_name": "java_import",
+              "tags": [
+                "maven_coordinates=org.openapitools:openapi-generator-cli:7.0.1"
+              ],
+              "artifact_sha256": "01387c73905de47a6ecf8801f91c8d61624f8a1e890c8058225df51d493bc32a"
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "openapi_tools_generator_bazel+",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
+      }
+    },
     "@@rules_buf+//buf:extensions.bzl%buf": {
       "general": {
         "bzlTransitiveDigest": "3Rf7aYiXlcRiCHrBNbvD8VB8RQTlZObfhopxw2Dz64c=",
