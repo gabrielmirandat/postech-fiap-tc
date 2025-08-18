@@ -4,13 +4,6 @@ load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 load("@rules_spring//springboot:springboot.bzl", "springboot")
 
-# bazel build //orders:newrelic
-java_library(
-    name = "newrelic",
-    exports = ["@maven//:com_newrelic_agent_java_newrelic_agent"],
-    visibility = ["//visibility:public"],
-)
-
 # bazel build //orders:orders_api_files
 openapi_generator(
     name = "orders_api_files",
@@ -378,8 +371,7 @@ springboot(
 tar(
     name = "layer",
     srcs = [
-        ":uber.jar",
-        "@maven//:com_newrelic_agent_java_newrelic_agent",
+        ":uber.jar"
     ],
 )
 

@@ -10,7 +10,6 @@ clean:
 
 build:
 	@echo "Building..."
-	$(BAZEL) build //orders:newrelic
 	$(BAZEL) build //orders:orders_api_files
 	$(BAZEL) build //orders:orders_api_jar
 	$(BAZEL) build //orders:orders_api
