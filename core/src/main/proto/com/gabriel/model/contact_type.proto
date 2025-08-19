@@ -1,0 +1,11 @@
+syntax = "proto3";
+option java_multiple_files = true;
+
+package com.gabriel.model;
+
+enum ContactType {
+  UNKNOWN = 0;
+  CELLPHONE = 1;
+  EMAIL = 2;
+  CUSTOM = 3;
+}

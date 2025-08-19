@@ -17,9 +17,9 @@ public class MenuMapper {
 
     public static Product toProduct(MenuItem menuItem) {
         return new Product(
-            new ProductId(menuItem.getId()),
-            new Name(menuItem.getName()),
-            new Price(menuItem.getPrice()),
+            ProductId.newBuilder().setValue(menuItem.getId()).build(),
+            Name.newBuilder().setValue(menuItem.getName()).build(),
+            Price.newBuilder().setValue(menuItem.getPrice()).build(),
             Instant.ofEpochSecond(
                 menuItem.getLastUpdated().getSeconds(),
                 menuItem.getLastUpdated().getNanos()));
@@ -27,9 +27,9 @@ public class MenuMapper {
 
     public static Extra toExtra(MenuItem menuItem) {
         return new Extra(
-            new IngredientId(menuItem.getId()),
-            new Name(menuItem.getName()),
-            new Price(menuItem.getPrice()),
+            IngredientId.newBuilder().setValue(menuItem.getId()).build(),
+            Name.newBuilder().setValue(menuItem.getName()).build(),
+            Price.newBuilder().setValue(menuItem.getPrice()).build(),
             Instant.ofEpochSecond(
                 menuItem.getLastUpdated().getSeconds(),
                 menuItem.getLastUpdated().getNanos())
@@ -38,14 +38,14 @@ public class MenuMapper {
 
     public static List<Product> extractProducts(MenuResponse response) {
         return response.getItemsList().stream()
-            .filter(item -> EntityID.identify(item.getId()) == EntityType.PRODUCT)
+            .filter(item -> item.getId().startsWith("PROD"))
             .map(MenuMapper::toProduct)
             .toList();
     }
 
     public static List<Extra> extractExtras(com.gabriel.service.menu.MenuResponse response) {
         return response.getItemsList().stream()
-            .filter(item -> EntityID.identify(item.getId()) == EntityType.INGREDIENT)
+            .filter(item -> item.getId().startsWith("EXTR"))
             .map(MenuMapper::toExtra)
             .toList();
     }

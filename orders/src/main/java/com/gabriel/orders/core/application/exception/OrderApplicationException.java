@@ -1,18 +1,15 @@
 package com.gabriel.orders.core.application.exception;
 
-import com.gabriel.model.ApplicationException;
-
-public class OrderApplicationException extends ApplicationException {
+public class OrderApplicationException extends RuntimeException {
 
     private final OrderApplicationError type;
 
     public OrderApplicationException(String message, OrderApplicationError type) {
-        super(message, null);
+        super(message);
         this.type = type;
     }
 
-    @Override
-    public String getType() {
-        return type.message;
+    public OrderApplicationError getType() {
+        return type;
     }
 }

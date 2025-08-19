@@ -96,7 +96,7 @@ paths:
                         city: "Paracatu"
                         state: "SP"
                         zip: "41710-450"
-                      notification: "(19) 12345-5555"
+                      contact: "(19) 12345-5555"
                       items:
                         - itemId: "12345678-ORDI-1009-20-08"
                           product:
@@ -196,7 +196,7 @@ paths:
                     city: "Paracatu"
                     state: "SP"
                     zip: "41710-450"
-                  notification: "(19) 12345-5555"
+                  contact: "(19) 12345-5555"
                   items:
                     - productId: "11111111-PRDC-1111-11-11"
                       extras:
@@ -242,7 +242,7 @@ paths:
                     city: "Paracatu"
                     state: "SP"
                     zip: "41710-450"
-                  notification: "(19) 12345-5555"
+                  contact: "(19) 12345-5555"
                   items:
                     - productId: "11111111-PRDC-1111-11-11"
                       extras:
@@ -258,7 +258,7 @@ paths:
                     city: "Paracatu"
                     state: "SP"
                     zip: "41710-450"
-                  notification: "(19) 12345-5555"
+                  contact: "(19) 12345-5555"
                   items:
                     - productId: "11111111-PRDC-1111-11-11"
                       extras:
@@ -400,7 +400,7 @@ paths:
                       city: "Paracatu"
                       state: "SP"
                       zip: "41710-450"
-                    notification: "(19) 12345-5555"
+                    contact: "(19) 12345-5555"
                     items:
                       - itemId: "11111111-ORDI-1111-11-11"
                         product:
@@ -835,9 +835,9 @@ components:
           $ref: '#/components/schemas/CustomerDTO'
         shippingAddress:
           $ref: '#/components/schemas/AddressDTO'
-        notification:
+        contact:
           type: string
-          description: Cellphone for additional notification when ready
+          description: Contact information for additional notification when ready
         items:
           type: array
           description: Items of the Order
@@ -957,9 +957,9 @@ components:
           $ref: '#/components/schemas/CustomerDTO'
         shippingAddress:
           $ref: '#/components/schemas/AddressDTO'
-        notification:
+        contact:
           type: string
-          description: Mobile phone for additional notification
+          description: Contact information for additional notification
         items:
           type: array
           description: Items of the Order

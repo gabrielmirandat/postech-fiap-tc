@@ -53,7 +53,7 @@ public class PermissionRedisRepository implements PermissionRepository {
     @Override
     public Permission getPermission(PermissionId permissionId) {
         ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
-        byte[] data = valueOps.get("perm:" + permissionId.getId());
+        byte[] data = valueOps.get("perm:" + permissionId.getValue());
         if (data != null) {
             try {
                 return objectMapper.readValue(data, Permission.class);
@@ -66,9 +66,17 @@ public class PermissionRedisRepository implements PermissionRepository {
 
     @Override
     public void addPermission(Permission permission) {
-        String key = "perm:" + permission.getPermissionId().getId();
+        String key = "perm:" + permission.getPermissionId().getValue();
         Permission existingPermission = getPermission(permission.getPermissionId());
-        if (existingPermission == null || permission.getTimestamp().isAfter(existingPermission.getTimestamp())) {
+        boolean shouldWrite = true;
+        if (existingPermission != null) {
+            long curSec = permission.getTimestamp().getSeconds();
+            int curNanos = permission.getTimestamp().getNanos();
+            long oldSec = existingPermission.getTimestamp().getSeconds();
+            int oldNanos = existingPermission.getTimestamp().getNanos();
+            shouldWrite = (curSec > oldSec) || (curSec == oldSec && curNanos > oldNanos);
+        }
+        if (shouldWrite) {
             ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
             try {
                 byte[] serializedExtra = objectMapper.writeValueAsBytes(permission);
@@ -82,6 +90,6 @@ public class PermissionRedisRepository implements PermissionRepository {
 
     @Override
     public void deletePermission(PermissionId permissionId) {
-        redisTemplate.delete("perm:" + permissionId.getId());
+        redisTemplate.delete("perm:" + permissionId.getValue());
     }
 }

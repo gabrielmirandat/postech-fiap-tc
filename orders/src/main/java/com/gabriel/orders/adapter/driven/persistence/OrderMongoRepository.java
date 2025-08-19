@@ -1,8 +1,5 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
-import com.gabriel.model.ApplicationCode;
-import com.gabriel.model.ApplicationException;
-import com.gabriel.orders.infra.http.HttpException;
 import com.gabriel.orders.adapter.driven.persistence.mapper.MongoMapper;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.port.OrderRepository;
@@ -37,7 +34,7 @@ public class OrderMongoRepository implements OrderRepository {
         try {
             orderCollection.insertOne(document);
         } catch (MongoWriteException ex) {
-            throw new ApplicationException(ex.getError().getMessage(), ApplicationError.APP_OO1);
+            throw new RuntimeException("Database error: " + ex.getError().getMessage(), ex);
         }
         return order;
     }
@@ -45,9 +42,9 @@ public class OrderMongoRepository implements OrderRepository {
     @Override
     public Order updateOrder(Order newOrder) {
         Document document = MongoMapper.orderToDocument(newOrder);
-        UpdateResult result = orderCollection.replaceOne(Filters.eq("_id", newOrder.getOrderId().getId()), document);
+        UpdateResult result = orderCollection.replaceOne(Filters.eq("_id", newOrder.getOrderId().getValue()), document);
         if (result.getMatchedCount() == 0) {
-            throw new HttpException.notFound("Order not found");
+            throw new RuntimeException("Order not found");
         }
         return newOrder;
     }
@@ -58,7 +55,7 @@ public class OrderMongoRepository implements OrderRepository {
         if (doc != null) {
             return MongoMapper.documentToOrder(doc);
         }
-        throw new HttpException.notFound("Order not found");
+        throw new RuntimeException("Order not found");
     }
 
     @Override

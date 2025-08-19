@@ -5,10 +5,14 @@ package com.gabriel.model;
 
 import "com/gabriel/model/cellphone.proto";
 import "com/gabriel/model/email.proto";
+import "com/gabriel/model/contact_type.proto";
 
 message Contact {
+    ContactType type = 1;
+    
     oneof with {
-        Cellphone cellphone = 1;
-        Email email = 2;
+        Cellphone cellphone = 2;
+        Email email = 3;
+        string custom_value = 4;
     }
 }

@@ -36,15 +36,27 @@ public class Order {
 
     private Contact contact;
 
+    private Instant creationTimestamp;
+
+    private Instant updateTimestamp;
+
+    public Instant getCreationTimestamp() {
+        return creationTimestamp;
+    }
+
+    public Instant getUpdateTimestamp() {
+        return updateTimestamp;
+    }
+
     public Order(List<OrderItem> items) {
-        this.orderId = new OrderId();
+        this.orderId = OrderId.newBuilder().setValue(generateOrderId()).build();
         this.items = items;
         initialize();
     }
 
     public Order(List<OrderItem> items, Cpf customer, Address shippingAddress,
                  Contact additionalContact) {
-        this.orderId = new OrderId();
+        this.orderId = OrderId.newBuilder().setValue(generateOrderId()).build();
         this.items = items;
         this.customer = customer;
         this.shippingAddress = shippingAddress;
@@ -85,7 +97,7 @@ public class Order {
         try {
             return deserializer.readValue(bytes, Order.class);
         } catch (IOException e) {
-            throw new ApplicationException("Error deserializing order", ApplicationCode.APP_OO3);
+            throw new RuntimeException("Error deserializing order", e);
         }
     }
 
@@ -96,7 +108,7 @@ public class Order {
     }
 
     private void generateTicket() {
-        ticketId = orderId.getId().split("-")[0];
+        ticketId = orderId.getValue().split("-")[0];
     }
 
     private void calculatePrice() {
@@ -109,7 +121,7 @@ public class Order {
             .map(extra -> extra.getPrice().getValue())
             .reduce(0.0, Double::sum);
 
-        price = new Price(productsTotalPrice + extrasTotalPrice);
+        price = Price.newBuilder().setValue(productsTotalPrice + extrasTotalPrice).build();
     }
 
     public void promote(OrderStatus toStatus) {
@@ -132,8 +144,6 @@ public class Order {
             case DELIVERY -> deliver_order();
             case COMPLETED -> finish_order();
             case CANCELED -> throw new UnsupportedOperationException("Unimplemented case: " + toStatus);
-            case CREATED -> throw new UnsupportedOperationException("Unimplemented case: " + toStatus);
-            default -> throw new IllegalArgumentException("Unexpected value: " + toStatus);
         }
     }
 
@@ -223,7 +233,7 @@ public class Order {
         try {
             return serializer.writeValueAsBytes(this);
         } catch (JsonProcessingException e) {
-            throw new ApplicationException("Error serializing order", ApplicationCode.APP_OO3);
+            throw new RuntimeException("Error serializing order", e);
         }
     }
 
@@ -257,5 +267,10 @@ public class Order {
 
     public Contact getContact() {
         return contact;
+    }
+
+    private String generateOrderId() {
+        return java.util.UUID.randomUUID().toString().substring(0, 8) + "-ORDR-" + 
+               java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 }

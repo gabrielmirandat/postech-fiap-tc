@@ -17,7 +17,7 @@ public class OrderCreatedEvent {
     }
 
     public String subject() {
-        return String.format("id/%s", orderCreated.getOrderId().getId());
+        return String.format("id/%s", orderCreated.getOrderId().getValue());
     }
 
     public String type() {

@@ -41,8 +41,8 @@ public class Product {
 
     public Product(ProductId productId, String name, Double value) {
         this.productId = productId;
-        this.name = new Name(name);
-        this.price = new Price(value);
+        this.name = Name.newBuilder().setValue(name).build();
+        this.price = Price.newBuilder().setValue(value).build();
     }
 
     public static Product deserialize(ObjectMapper deserializer, byte[] bytes) {

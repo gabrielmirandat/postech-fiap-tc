@@ -13,32 +13,32 @@ public class MongoMapper {
 
     public static Document orderToDocument(Order order) {
         Document doc = new Document();
-        doc.append("_id", order.getOrderId().getId())
+        doc.append("_id", order.getOrderId().getValue())
             .append("items", order.getItems().stream()
                 .map(MongoMapper::orderItemToDocument)
                 .collect(Collectors.toList()))
             .append("shippingAddress", addressToDocument(order.getShippingAddress()))
-            .append("notification", notificationToDocument(order.getContact()))
+            .append("notification", contactToDocument(order.getContact()))
             .append("price", order.getPrice().getValue())
             .append("ticketId", order.getTicketId())
             .append("status", order.getStatus().toString())
-            .append("customer", Objects.nonNull(order.getCustomer()) ? order.getCustomer().getId() : null)
+            .append("customer", Objects.nonNull(order.getCustomer()) ? order.getCustomer().getValue() : null)
             .append("creationTimestamp", order.getCreationTimestamp().toString())
             .append("updateTimestamp", order.getUpdateTimestamp().toString());
         return doc;
     }
 
     public static Order documentToOrder(Document doc) {
-        OrderId orderId = new OrderId(doc.getString("_id"));
+        OrderId orderId = OrderId.newBuilder().setValue(doc.getString("_id")).build();
 
         List<Document> itemsList = doc.getList("items", Document.class);
         List<OrderItem> items = itemsList.stream()
             .map(MongoMapper::documentToOrderItem)
             .collect(Collectors.toList());
-        Cpf customer = Objects.nonNull(doc.getString("customer")) ? new Cpf(doc.getString("customer")) : null;
+        Cpf customer = Objects.nonNull(doc.getString("customer")) ? Cpf.newBuilder().setValue(doc.getString("customer")).build() : null;
         Address shippingAddress = documentToAddress((Document) doc.get("shippingAddress"));
         Contact contact = documentToContact((Document) doc.get("contact"));
-        Price price = new Price(doc.getDouble("price"));
+        Price price = Price.newBuilder().setValue(doc.getDouble("price")).build();
         String ticketId = doc.getString("ticketId");
         OrderStatus status = OrderStatus.valueOf(doc.getString("status").toUpperCase());
         Instant createdAt = Instant.parse(doc.getString("creationTimestamp"));
@@ -50,7 +50,7 @@ public class MongoMapper {
 
     private static Document orderItemToDocument(OrderItem orderItem) {
         Document itemDoc = new Document();
-        itemDoc.append("itemID", orderItem.getItemID().getId())
+        itemDoc.append("itemID", orderItem.getItemID().getValue())
             .append("product", productToDocument(orderItem.getProduct()))
             .append("extras", orderItem.getExtras().stream()
                 .map(MongoMapper::extraToDocument)
@@ -59,7 +59,7 @@ public class MongoMapper {
     }
 
     private static OrderItem documentToOrderItem(Document doc) {
-        OrderItemId itemId = new OrderItemId(doc.getString("itemId"));
+        OrderItemId itemId = OrderItemId.newBuilder().setValue(doc.getString("itemId")).build();
         Product product = documentToProduct((Document) doc.get("product"));
 
         List<Document> extrasList = doc.getList("extras", Document.class);
@@ -84,12 +84,12 @@ public class MongoMapper {
         if (doc == null) {
             return null;
         }
-        return new Address(
-            doc.getString("street"),
-            doc.getString("city"),
-            doc.getString("state"),
-            doc.getString("zip")
-        );
+        return Address.newBuilder()
+            .setStreet(doc.getString("street"))
+            .setCity(doc.getString("city"))
+            .setState(doc.getString("state"))
+            .setZip(doc.getString("zip"))
+            .build();
     }
 
     private static Document contactToDocument(Contact contact) {
@@ -97,9 +97,25 @@ public class MongoMapper {
             return null;
         }
         Document notifiableDoc = new Document();
-        notifiableDoc.append("type", contact.getType().toString())
-            .append("value", contact.getRepr().getValue()); // Assuming the toString method gives the required representation
-
+        String value;
+        String type;
+        
+        if (contact.hasCellphone()) {
+            value = contact.getCellphone().getValue();
+            type = "CELLPHONE";
+        } else if (contact.hasEmail()) {
+            value = contact.getEmail().getValue();
+            type = "EMAIL";
+        } else if (contact.hasCustomValue()) {
+            value = contact.getCustomValue();
+            type = "CUSTOM";
+        } else {
+            value = "";
+            type = "UNKNOWN";
+        }
+        
+        notifiableDoc.append("type", type);
+        notifiableDoc.append("value", value);
         return notifiableDoc;
     }
 
@@ -107,39 +123,53 @@ public class MongoMapper {
         if (doc == null) {
             return null;
         }
-        ContactType type = ContactType.valueOf(doc.getString("type").toUpperCase());
+        String type = doc.getString("type");
         String value = doc.getString("value");
-
-        return new Contact(type, value); // Assuming this constructor exists
+        
+        Contact.Builder contactBuilder = Contact.newBuilder();
+        
+        if ("EMAIL".equalsIgnoreCase(type)) {
+            contactBuilder.setType(ContactType.EMAIL)
+                .setEmail(Email.newBuilder().setValue(value).build());
+        } else if ("CUSTOM".equalsIgnoreCase(type)) {
+            contactBuilder.setType(ContactType.CUSTOM)
+                .setCustomValue(value);
+        } else {
+            // Default to CELLPHONE
+            contactBuilder.setType(ContactType.CELLPHONE)
+                .setCellphone(Cellphone.newBuilder().setValue(value).build());
+        }
+        
+        return contactBuilder.build();
     }
 
     private static Document productToDocument(Product product) {
         Document productDoc = new Document();
-        productDoc.append("productId", product.getProductId().getId())
+        productDoc.append("productId", product.getProductId().getValue())
             .append("name", product.getName().getValue())
             .append("price", product.getPrice().getValue());
         return productDoc;
     }
 
     private static Product documentToProduct(Document doc) {
-        ProductId productId = new ProductId(doc.getString("productId"));
-        Name name = new Name(doc.getString("name"));
-        Price price = new Price(doc.getDouble("price"));
+        ProductId productId = ProductId.newBuilder().setValue(doc.getString("productId")).build();
+        Name name = Name.newBuilder().setValue(doc.getString("name")).build();
+        Price price = Price.newBuilder().setValue(doc.getDouble("price")).build();
         return new Product(productId, name, price);
     }
 
     private static Document extraToDocument(Extra extra) {
         Document extraDoc = new Document();
-        extraDoc.append("ingredientID", extra.getIngredientID().getId())
+        extraDoc.append("ingredientID", extra.getIngredientId().getValue())
             .append("name", extra.getName().getValue())
             .append("price", extra.getPrice().getValue());
         return extraDoc;
     }
 
     private static Extra documentToExtra(Document doc) {
-        IngredientId ingredientID = new IngredientId(doc.getString("ingredientID"));
-        Name name = new Name(doc.getString("name"));
-        Price price = new Price(doc.getDouble("price"));
+        IngredientId ingredientID = IngredientId.newBuilder().setValue(doc.getString("ingredientID")).build();
+        Name name = Name.newBuilder().setValue(doc.getString("name")).build();
+        Price price = Price.newBuilder().setValue(doc.getDouble("price")).build();
         return new Extra(ingredientID, name, price);
     }
 }
