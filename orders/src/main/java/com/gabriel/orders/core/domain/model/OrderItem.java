@@ -19,14 +19,19 @@ public class OrderItem {
         this.product = product;
         this.extras = Collections.emptyList();
 
-        this.itemID = new OrderItemId();
+        this.itemID = OrderItemId.newBuilder().setValue(generateItemId()).build();
     }
 
     public OrderItem(Product product, List<Extra> extras) {
         this.product = product;
         this.extras = extras;
 
-        this.itemID = new OrderItemId();
+        this.itemID = OrderItemId.newBuilder().setValue(generateItemId()).build();
+    }
+
+    private String generateItemId() {
+        return java.util.UUID.randomUUID().toString().substring(0, 8) + "-ITEM-" + 
+               java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     /**

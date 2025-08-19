@@ -31,6 +31,6 @@ public class UpdateMenuUseCase {
 
     public void handleExtraDeleted(Extra extra) {
         System.out.println("Ingrediente deletado: " + extra);
-        menuRepository.deleteExtra(extra.getIngredientID());
+        menuRepository.deleteExtra(extra.getIngredientId());
     }
 }

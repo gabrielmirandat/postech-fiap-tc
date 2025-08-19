@@ -19,19 +19,29 @@ public class OrderMapper {
     public static CreateOrderCommand toCommand(OrderRequest request) {
         Cpf customer = null;
         Address shippingAddress = null;
+        // Contact omitted at request mapping level if not present in spec
         Contact notification = null;
 
 
         if (request.getCustomer() != null) {
-            customer = new Cpf(request.getCustomer().getCpf());
+            customer = Cpf.newBuilder().setValue(request.getCustomer().getCpf()).build();
         }
 
         if (request.getShippingAddress() != null) {
-            shippingAddress = new Address(request.getShippingAddress().getStreet(), request.getShippingAddress().getCity(), request.getShippingAddress().getState(), request.getShippingAddress().getZip());
+            shippingAddress = Address.newBuilder()
+                .setStreet(request.getShippingAddress().getStreet())
+                .setCity(request.getShippingAddress().getCity())
+                .setState(request.getShippingAddress().getState())
+                .setZip(request.getShippingAddress().getZip())
+                .build();
         }
 
+        // Contact mapping with new proto structure
         if (request.getContact() != null) {
-            notification = new Contact(ContactType.CELLPHONE, request.getContact());
+            notification = Contact.newBuilder()
+                .setType(ContactType.CELLPHONE)
+                .setCellphone(Cellphone.newBuilder().setValue(request.getContact()).build())
+                .build();
         }
 
         List<OrderItemRef> items = request.getItems().stream().flatMap(in -> IntStream.range(0, in.getQuantity()).mapToObj(dump -> {
@@ -71,24 +81,24 @@ public class OrderMapper {
         for (var item : order.getItems()) {
 
             ProductResponse responseProduct = new ProductResponse(
-                item.getProduct().getProductId().getId(),
+                item.getProduct().getProductId().getValue(),
                 item.getProduct().getName().getValue(),
                 item.getProduct().getPrice().getValue());
 
             OrderItemResponse responseOrderItem =
-                new OrderItemResponse(item.getItemID().getId(), responseProduct);
+                new OrderItemResponse(item.getItemID().getValue(), responseProduct);
 
             if (item.getExtras() != null) {
                 List<OrderExtraResponse> responseExtras;
 
                 Map<String, Extra> ingredientMap = item.getExtras().stream()
                     .collect(Collectors.toMap(
-                        extra -> extra.getIngredientID().getId(), // Key Mapper
+                        extra -> extra.getIngredientId().getValue(), // Key Mapper
                         extra -> extra,         // Value Mapper
                         (existing, latest) -> latest)); // Merge function, in case of key collision
 
                 Map<String, Integer> ingredientCount = item.getExtras().stream()
-                    .collect(Collectors.groupingBy(extra -> extra.getIngredientID().getId(),
+                    .collect(Collectors.groupingBy(extra -> extra.getIngredientId().getValue(),
                         Collectors.summingInt(e -> 1)));
 
                 responseExtras = ingredientCount.entrySet().stream()
@@ -104,12 +114,12 @@ public class OrderMapper {
             responseOrderItems.add(responseOrderItem);
         }
 
-        OrderResponse response = new OrderResponse(order.getOrderId().getId(), order.getTicketId(),
+        OrderResponse response = new OrderResponse(order.getOrderId().getValue(), order.getTicketId(),
             OrderStatusDTO.fromValue(order.getStatus().toString().toUpperCase()),
             Double.valueOf(order.getPrice().getValue()), responseOrderItems);
 
         if (order.getCustomer() != null) {
-            response.setCustomer(new CustomerDTO(order.getCustomer().getId()));
+            response.setCustomer(new CustomerDTO(order.getCustomer().getValue()));
         }
 
         if (order.getShippingAddress() != null) {
@@ -118,8 +128,13 @@ public class OrderMapper {
         }
 
         if (order.getContact() != null) {
-            Cellphone phone = (Cellphone) order.getContact().getRepr();
-            response.setContact(phone.getValue());
+            if (order.getContact().hasCellphone()) {
+                response.setContact(order.getContact().getCellphone().getValue());
+            } else if (order.getContact().hasEmail()) {
+                response.setContact(order.getContact().getEmail().getValue());
+            } else if (order.getContact().hasCustomValue()) {
+                response.setContact(order.getContact().getCustomValue());
+            }
         }
 
         return response;
@@ -132,9 +147,9 @@ public class OrderMapper {
 
     public static ErrorResponse toErrorResponse(HttpException exception) {
         return new ErrorResponse()
-            .status(exception.getStatus())
+            .status(exception.getStatus().value())
             .message(exception.getMessage())
-            .code(exception.getCode() != null ? exception.getCode() : "");
+            .code("");
     }
 
     public static Order toOrder(OrderResponse orderResponse) {
@@ -142,22 +157,22 @@ public class OrderMapper {
 
         for (OrderItemResponse itemResponse : orderResponse.getItems()) {
             Product product = new Product(
-                new ProductId(itemResponse.getProduct().getId()),
-                new Name(itemResponse.getProduct().getName()),
-                new Price(itemResponse.getProduct().getPrice())
+                ProductId.newBuilder().setValue(itemResponse.getProduct().getId()).build(),
+                Name.newBuilder().setValue(itemResponse.getProduct().getName()).build(),
+                Price.newBuilder().setValue(itemResponse.getProduct().getPrice()).build()
             );
 
             List<Extra> extras = null;
             if (itemResponse.getExtras() != null) {
                 extras = itemResponse.getExtras().stream().map(extraResponse -> new Extra(
-                    new IngredientId(extraResponse.getIngredient().getId()),
-                    new Name(extraResponse.getIngredient().getName()),
-                    new Price(extraResponse.getIngredient().getPrice())
+                    IngredientId.newBuilder().setValue(extraResponse.getIngredient().getId()).build(),
+                    Name.newBuilder().setValue(extraResponse.getIngredient().getName()).build(),
+                    Price.newBuilder().setValue(extraResponse.getIngredient().getPrice()).build()
                 )).collect(Collectors.toList());
             }
 
             OrderItem orderItem = OrderItem.copy(
-                new OrderItemId(itemResponse.getItemId()),
+                OrderItemId.newBuilder().setValue(itemResponse.getItemId()).build(),
                 product,
                 extras
             );
@@ -167,31 +182,34 @@ public class OrderMapper {
 
         Cpf customer = null;
         if (orderResponse.getCustomer() != null) {
-            customer = new Cpf(orderResponse.getCustomer().getCpf());
+            customer = Cpf.newBuilder().setValue(orderResponse.getCustomer().getCpf()).build();
         }
 
         Address shippingAddress = null;
         if (orderResponse.getShippingAddress() != null) {
-            shippingAddress = new Address(
-                orderResponse.getShippingAddress().getStreet(),
-                orderResponse.getShippingAddress().getCity(),
-                orderResponse.getShippingAddress().getState(),
-                orderResponse.getShippingAddress().getZip()
-            );
+            shippingAddress = Address.newBuilder()
+                .setStreet(orderResponse.getShippingAddress().getStreet())
+                .setCity(orderResponse.getShippingAddress().getCity())
+                .setState(orderResponse.getShippingAddress().getState())
+                .setZip(orderResponse.getShippingAddress().getZip())
+                .build();
         }
 
         Contact notification = null;
         if (orderResponse.getContact() != null) {
-            notification = new Contact(ContactType.CELLPHONE, orderResponse.getContact());
+            notification = Contact.newBuilder()
+                .setType(ContactType.CELLPHONE)
+                .setCellphone(Cellphone.newBuilder().setValue(orderResponse.getContact()).build())
+                .build();
         }
 
         return Order.copy(
-            new OrderId(orderResponse.getId()),
+            OrderId.newBuilder().setValue(orderResponse.getId()).build(),
             orderItems,
             customer,
             shippingAddress,
             notification,
-            new Price(orderResponse.getPrice()),
+            Price.newBuilder().setValue(orderResponse.getPrice()).build(),
             orderResponse.getTicketId(),
             OrderStatus.valueOf(orderResponse.getStatus().toString().toUpperCase()),
             null,

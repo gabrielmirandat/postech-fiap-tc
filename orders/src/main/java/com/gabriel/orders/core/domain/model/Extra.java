@@ -43,8 +43,8 @@ public class Extra {
 
     public Extra(IngredientId ingredientId, String name, Double value) {
         this.ingredientId = ingredientId;
-        this.name = new Name(name);
-        this.price = new Price(value);
+        this.name = Name.newBuilder().setValue(name).build();
+        this.price = Price.newBuilder().setValue(value).build();
     }
 
     public static Extra deserialize(ObjectMapper deserializer, byte[] bytes) {

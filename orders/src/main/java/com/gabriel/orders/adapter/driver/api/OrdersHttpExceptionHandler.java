@@ -1,7 +1,5 @@
 package com.gabriel.orders.adapter.driver.api;
 
-import com.gabriel.model.ApplicationException;
-import com.gabriel.model.DomainException;
 import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
 import com.gabriel.orders.infra.http.HttpException;
 import com.gabriel.specs.orders.models.ErrorResponse;
@@ -47,16 +45,6 @@ public class OrdersHttpExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleFobiddenAcess(Exception exception) {
         return convertHttpAndSend(HttpException.forbidden(exception.getMessage()));
-    }
-
-    @ExceptionHandler(DomainException.class)
-    public ResponseEntity<ErrorResponse> handleDomainException(DomainException exception) {
-        return convertHttpAndSend(HttpException.unprocessableEntity(exception.getMessage()));
-    }
-
-    @ExceptionHandler(ApplicationException.class)
-    public ResponseEntity<ErrorResponse> handleApplicationException(ApplicationException exception) {
-        return convertHttpAndSend(HttpException.unprocessableEntity(exception.getMessage()));
     }
 
     @ExceptionHandler(HttpException.class)

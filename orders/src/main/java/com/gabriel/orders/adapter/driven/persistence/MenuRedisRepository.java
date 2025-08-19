@@ -38,7 +38,7 @@ public class MenuRedisRepository implements MenuRepository {
 
     @Override
     public boolean existsProduct(ProductId productId) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey("prod:" + productId.getId()));
+        return Boolean.TRUE.equals(redisTemplate.hasKey("prod:" + productId.getValue()));
     }
 
     @Override
@@ -47,14 +47,14 @@ public class MenuRedisRepository implements MenuRepository {
         if (keys == null)
             return new ArrayList<>();
         return new ArrayList<>(keys).stream()
-            .map(key -> new ProductId(key.substring(5)))
+            .map(key -> ProductId.newBuilder().setValue(key.substring(5)).build())
             .toList();
     }
 
     @Override
     public Product getProduct(ProductId productId) {
         ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
-        byte[] data = valueOps.get("prod:" + productId.getId());
+        byte[] data = valueOps.get("prod:" + productId.getValue());
         if (data != null) {
             try {
                 return objectMapper.readValue(data, Product.class);
@@ -67,7 +67,7 @@ public class MenuRedisRepository implements MenuRepository {
 
     @Override
     public void addProduct(Product product) {
-        String key = "prod:" + product.getProductId().getId();
+        String key = "prod:" + product.getProductId().getValue();
         Product existingProduct = getProduct(product.getProductId());
         if (existingProduct == null || product.getTimestamp().isAfter(existingProduct.getTimestamp())) {
             ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
@@ -83,12 +83,12 @@ public class MenuRedisRepository implements MenuRepository {
 
     @Override
     public void deleteProduct(ProductId productId) {
-        redisTemplate.delete("prod:" + productId.getId());
+        redisTemplate.delete("prod:" + productId.getValue());
     }
 
     @Override
     public boolean existsExtra(IngredientId ingredientId) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey("extr:" + ingredientId.getId()));
+        return Boolean.TRUE.equals(redisTemplate.hasKey("extr:" + ingredientId.getValue()));
     }
 
     @Override
@@ -97,14 +97,14 @@ public class MenuRedisRepository implements MenuRepository {
         if (keys == null)
             return new ArrayList<>();
         return new ArrayList<>(keys).stream()
-            .map(key -> new IngredientId(key.substring(5)))
+            .map(key -> IngredientId.newBuilder().setValue(key.substring(5)).build())
             .toList();
     }
 
     @Override
     public Extra getExtra(IngredientId ingredientId) {
         ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
-        byte[] data = valueOps.get("extr:" + ingredientId.getId());
+        byte[] data = valueOps.get("extr:" + ingredientId.getValue());
         if (data != null) {
             try {
                 return objectMapper.readValue(data, Extra.class);
@@ -117,7 +117,7 @@ public class MenuRedisRepository implements MenuRepository {
 
     @Override
     public void addExtra(Extra extra) {
-        String key = "extr:" + extra.getIngredientId().getId();
+        String key = "extr:" + extra.getIngredientId().getValue();
         Extra existingExtra = getExtra(extra.getIngredientId());
         if (existingExtra == null || extra.getTimestamp().isAfter(existingExtra.getTimestamp())) {
             ValueOperations<String, byte[]> valueOps = redisTemplate.opsForValue();
@@ -133,6 +133,6 @@ public class MenuRedisRepository implements MenuRepository {
 
     @Override
     public void deleteExtra(IngredientId ingredientId) {
-        redisTemplate.delete("extr:" + ingredientId.getId());
+        redisTemplate.delete("extr:" + ingredientId.getValue());
     }
 }

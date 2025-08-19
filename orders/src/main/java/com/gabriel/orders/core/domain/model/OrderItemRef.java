@@ -11,9 +11,9 @@ public class OrderItemRef {
     private final List<IngredientId> extrasIds;
 
     public OrderItemRef(String productId, List<String> extrasIds) {
-        this.productId = new ProductId(productId);
+        this.productId = ProductId.newBuilder().setValue(productId).build();
         this.extrasIds = extrasIds.stream().map(
-            IngredientId::new).collect(Collectors.toList());
+            id -> IngredientId.newBuilder().setValue(id).build()).collect(Collectors.toList());
     }
 
     public ProductId getProductId() {

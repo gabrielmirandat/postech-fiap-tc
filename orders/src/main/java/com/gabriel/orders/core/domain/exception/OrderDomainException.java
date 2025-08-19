@@ -2,17 +2,16 @@ package com.gabriel.orders.core.domain.exception;
 
 import com.gabriel.model.DomainException;
 
-public class OrderDomainException extends DomainException {
+public class OrderDomainException extends RuntimeException {
 
     private final OrderDomainError type;
 
     public OrderDomainException(String message, OrderDomainError type) {
-        super(message, null);
+        super(message);
         this.type = type;
     }
 
-    @Override
-    public String getType() {
-        return type.message;
+    public OrderDomainError getType() {
+        return type;
     }
 }
