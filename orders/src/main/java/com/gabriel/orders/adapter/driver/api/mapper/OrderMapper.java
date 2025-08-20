@@ -63,7 +63,7 @@ public class OrderMapper {
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (var item : command.items()) {
-            OrderItem orderItem = new OrderItem(
+            OrderItem orderItem = OrderItem.create(
                 menuRepository.getProduct(item.getProductId()),
                 item.getExtrasIds().stream().map(
                         menuRepository::getExtra)
@@ -71,7 +71,7 @@ public class OrderMapper {
             orderItems.add(orderItem);
         }
 
-        return new Order(orderItems, command.customer(), command.shippingAddress(),
+        return Order.create(orderItems, command.customer(), command.shippingAddress(),
             command.notification());
     }
 
@@ -156,7 +156,7 @@ public class OrderMapper {
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (OrderItemResponse itemResponse : orderResponse.getItems()) {
-            Product product = new Product(
+            Product product = Product.create(
                 ProductId.newBuilder().setValue(itemResponse.getProduct().getId()).build(),
                 Name.newBuilder().setValue(itemResponse.getProduct().getName()).build(),
                 Price.newBuilder().setValue(itemResponse.getProduct().getPrice()).build()
@@ -164,7 +164,7 @@ public class OrderMapper {
 
             List<Extra> extras = null;
             if (itemResponse.getExtras() != null) {
-                extras = itemResponse.getExtras().stream().map(extraResponse -> new Extra(
+                extras = itemResponse.getExtras().stream().map(extraResponse -> Extra.create(
                     IngredientId.newBuilder().setValue(extraResponse.getIngredient().getId()).build(),
                     Name.newBuilder().setValue(extraResponse.getIngredient().getName()).build(),
                     Price.newBuilder().setValue(extraResponse.getIngredient().getPrice()).build()

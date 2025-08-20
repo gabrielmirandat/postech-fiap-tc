@@ -2,10 +2,10 @@ package com.gabriel.orders.adapter.driven.api;
 
 import com.gabriel.orders.adapter.driven.api.MenuGrpcClient;
 import com.gabriel.orders.core.application.usecase.SetupMenuUseCase;
-import com.gabriel.specs.menu.MenuGrpc;
-import com.gabriel.specs.menu.MenuItem;
-import com.gabriel.specs.menu.MenuRequest;
-import com.gabriel.specs.menu.MenuResponse;
+import com.gabriel.service.menu.MenuGrpc;
+import com.gabriel.service.menu.MenuItem;
+import com.gabriel.service.menu.MenuRequest;
+import com.gabriel.service.menu.MenuResponse;
 import io.grpc.ManagedChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

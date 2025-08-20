@@ -48,12 +48,12 @@ public class CreateOrderUseCaseTest {
     @Test
     public void testCreateOrder() throws JsonProcessingException {
         // Given
-        ProductId productId = new ProductId();
-        IngredientId ingredientId = new IngredientId();
+        ProductId productId = ProductId.newBuilder().setValue("12345678-PRDC-2024-12-20").build();
+        IngredientId ingredientId = IngredientId.newBuilder().setValue("87654321-INGR-2024-12-20").build();
         CreateOrderCommand command = CreateOrderCommandMock.validCommand(productId, ingredientId);
 
-        when(menuRepository.getProduct(any())).thenReturn(new Product(productId, "product", 10.0)); // Customize this as necessary
-        when(menuRepository.getExtra(any())).thenReturn(new Extra(ingredientId, "extra", 2.0)); // Customize this as necessary
+        when(menuRepository.getProduct(any())).thenReturn(Product.create(productId, "product", 10.0)); // Customize this as necessary
+        when(menuRepository.getExtra(any())).thenReturn(Extra.create(ingredientId, "extra", 2.0)); // Customize this as necessary
 
         // When
         Order createdOrder = createOrderUseCase.createOrder(command);
@@ -72,6 +72,6 @@ public class CreateOrderUseCaseTest {
         assertThat(createdOrder.getItems()).hasSize(1);
         assertThat(createdOrder.getItems().get(0).getProduct().getProductId()).isEqualTo(productId);
         assertThat(createdOrder.getItems().get(0).getExtras()).hasSize(1);
-        assertThat(createdOrder.getItems().get(0).getExtras().get(0).getIngredientID()).isEqualTo(ingredientId);
+        assertThat(createdOrder.getItems().get(0).getExtras().get(0).getIngredientId()).isEqualTo(ingredientId);
     }
 }

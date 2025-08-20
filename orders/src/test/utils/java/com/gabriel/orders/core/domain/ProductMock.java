@@ -12,7 +12,7 @@ import static com.gabriel.orders.core.UtilsMock.generateRandomString;
 public class ProductMock {
 
     public static Product validProduct(ProductId productId) {
-        return new Product(productId, new Name(generateRandomString()),
-            new Price(10.0), Instant.now());
+        return Product.create(productId, Name.newBuilder().setValue(generateRandomString()).build(),
+            Price.newBuilder().setValue(10.0).build(), Instant.now());
     }
 }

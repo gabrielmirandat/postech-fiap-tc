@@ -11,6 +11,7 @@ import com.gabriel.model.Cpf;
 import com.gabriel.model.Contact;
 import com.gabriel.model.Price;
 import com.gabriel.model.OrderId;
+import com.gabriel.model.Model;
 import com.gabriel.orders.core.domain.exception.OrderDomainError;
 import com.gabriel.orders.core.domain.exception.OrderDomainException;
 
@@ -48,49 +49,54 @@ public class Order {
         return updateTimestamp;
     }
 
-    public Order(List<OrderItem> items) {
-        this.orderId = OrderId.newBuilder().setValue(generateOrderId()).build();
-        this.items = items;
-        initialize();
-    }
-
-    public Order(List<OrderItem> items, Cpf customer, Address shippingAddress,
-                 Contact additionalContact) {
-        this.orderId = OrderId.newBuilder().setValue(generateOrderId()).build();
-        this.items = items;
-        this.customer = customer;
-        this.shippingAddress = shippingAddress;
-        this.contact = additionalContact;
-        initialize();
-    }
-
-    /**
-     * Constructor for Jackson deserialization.
-     */
-    @JsonCreator
-    Order(@JsonProperty("orderId") OrderId orderId, @JsonProperty("items") List<OrderItem> items,
-          @JsonProperty("customer") Cpf customer, @JsonProperty("shippingAddress") Address shippingAddress,
-          @JsonProperty("contact") Contact additionalContact, @JsonProperty("price") Price price,
-          @JsonProperty("ticketId") String ticketId, @JsonProperty("status") OrderStatus status,
-          @JsonProperty("creationTimestamp") Instant createdAt, @JsonProperty("updateTimestamp") Instant updatedAt) {
+    // Construtor privado para uso interno
+    private Order(OrderId orderId, List<OrderItem> items, Cpf customer, Address shippingAddress,
+                  Contact additionalContact, Instant creationTimestamp, Instant updateTimestamp) {
         this.orderId = orderId;
         this.items = items;
         this.customer = customer;
         this.shippingAddress = shippingAddress;
         this.contact = additionalContact;
-        this.price = price;
-        this.ticketId = ticketId;
-        this.status = status;
-        this.creationTimestamp = createdAt;
-        this.updateTimestamp = updatedAt;
+        this.creationTimestamp = creationTimestamp;
+        this.updateTimestamp = updateTimestamp;
+        initialize();
+    }
+
+    // Factory methods que sempre validam
+    public static Order create(List<OrderItem> items) {
+        OrderId validatedOrderId = (OrderId) Model.validate(OrderId.newBuilder().setValue(generateOrderId()).build());
+        return new Order(validatedOrderId, items, null, null, null, Instant.now(), Instant.now());
+    }
+
+    public static Order create(List<OrderItem> items, Cpf customer, Address shippingAddress,
+                              Contact additionalContact) {
+        OrderId validatedOrderId = (OrderId) Model.validate(OrderId.newBuilder().setValue(generateOrderId()).build());
+        return new Order(validatedOrderId, items, customer, shippingAddress, additionalContact, Instant.now(), Instant.now());
+    }
+
+    // Construtor para Jackson deserialization (sem validação para evitar duplicação)
+    @JsonCreator
+    public static Order fromJson(@JsonProperty("orderId") OrderId orderId, @JsonProperty("items") List<OrderItem> items,
+                                 @JsonProperty("customer") Cpf customer, @JsonProperty("shippingAddress") Address shippingAddress,
+                                 @JsonProperty("contact") Contact additionalContact, @JsonProperty("price") Price price,
+                                 @JsonProperty("ticketId") String ticketId, @JsonProperty("status") OrderStatus status,
+                                 @JsonProperty("creationTimestamp") Instant createdAt, @JsonProperty("updateTimestamp") Instant updatedAt) {
+        Order order = new Order(orderId, items, customer, shippingAddress, additionalContact, createdAt, updatedAt);
+        order.price = price;
+        order.ticketId = ticketId;
+        order.status = status;
+        return order;
     }
 
     public static Order copy(OrderId orderId, List<OrderItem> items, Cpf customer,
                              Address shippingAddress, Contact additionalContact,
                              Price price, String ticketId, OrderStatus status,
                              Instant createdAt, Instant updatedAt) {
-        return new Order(orderId, items, customer, shippingAddress, additionalContact,
-            price, ticketId, status, createdAt, updatedAt);
+        Order order = new Order(orderId, items, customer, shippingAddress, additionalContact, createdAt, updatedAt);
+        order.price = price;
+        order.ticketId = ticketId;
+        order.status = status;
+        return order;
     }
 
     public static Order deserialize(ObjectMapper deserializer, byte[] bytes) {
@@ -269,7 +275,7 @@ public class Order {
         return contact;
     }
 
-    private String generateOrderId() {
+    private static String generateOrderId() {
         return java.util.UUID.randomUUID().toString().substring(0, 8) + "-ORDR-" + 
                java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }

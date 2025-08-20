@@ -4,6 +4,7 @@ import com.gabriel.orders.adapter.driven.persistence.mapper.MongoMapper;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.port.OrderRepository;
 import com.gabriel.orders.core.domain.port.OrderSearchParameters;
+import com.gabriel.orders.infra.http.HttpException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -44,7 +45,7 @@ public class OrderMongoRepository implements OrderRepository {
         Document document = MongoMapper.orderToDocument(newOrder);
         UpdateResult result = orderCollection.replaceOne(Filters.eq("_id", newOrder.getOrderId().getValue()), document);
         if (result.getMatchedCount() == 0) {
-            throw new RuntimeException("Order not found");
+            throw HttpException.notFound("Order not found");
         }
         return newOrder;
     }
@@ -55,7 +56,7 @@ public class OrderMongoRepository implements OrderRepository {
         if (doc != null) {
             return MongoMapper.documentToOrder(doc);
         }
-        throw new RuntimeException("Order not found");
+        throw HttpException.notFound("Order not found");
     }
 
     @Override

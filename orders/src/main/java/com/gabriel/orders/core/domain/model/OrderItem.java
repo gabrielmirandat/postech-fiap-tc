@@ -3,6 +3,7 @@ package com.gabriel.orders.core.domain.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gabriel.model.OrderItemId;
+import com.gabriel.model.Model;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,34 +16,34 @@ public class OrderItem {
 
     private final List<Extra> extras;
 
-    public OrderItem(Product product) {
-        this.product = product;
-        this.extras = Collections.emptyList();
-
-        this.itemID = OrderItemId.newBuilder().setValue(generateItemId()).build();
-    }
-
-    public OrderItem(Product product, List<Extra> extras) {
-        this.product = product;
-        this.extras = extras;
-
-        this.itemID = OrderItemId.newBuilder().setValue(generateItemId()).build();
-    }
-
-    private String generateItemId() {
-        return java.util.UUID.randomUUID().toString().substring(0, 8) + "-ITEM-" + 
-               java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    }
-
-    /**
-     * Constructor for Jackson deserialization.
-     */
-    @JsonCreator
-    OrderItem(@JsonProperty("itemID") OrderItemId itemID, @JsonProperty("product") Product product,
-              @JsonProperty("extras") List<Extra> extras) {
+    // Construtor privado para uso interno
+    private OrderItem(OrderItemId itemID, Product product, List<Extra> extras) {
         this.itemID = itemID;
         this.product = product;
         this.extras = extras;
+    }
+
+    // Factory methods que sempre validam
+    public static OrderItem create(Product product) {
+        OrderItemId validatedItemID = (OrderItemId) Model.validate(OrderItemId.newBuilder().setValue(generateItemId()).build());
+        return new OrderItem(validatedItemID, product, Collections.emptyList());
+    }
+
+    public static OrderItem create(Product product, List<Extra> extras) {
+        OrderItemId validatedItemID = (OrderItemId) Model.validate(OrderItemId.newBuilder().setValue(generateItemId()).build());
+        return new OrderItem(validatedItemID, product, extras);
+    }
+
+    private static String generateItemId() {
+        return java.util.UUID.randomUUID().toString().substring(0, 8) + "-ORDI-" + 
+               java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    // Construtor para Jackson deserialization (sem validação para evitar duplicação)
+    @JsonCreator
+    public static OrderItem fromJson(@JsonProperty("itemID") OrderItemId itemID, @JsonProperty("product") Product product,
+                                    @JsonProperty("extras") List<Extra> extras) {
+        return new OrderItem(itemID, product, extras);
     }
 
     public static OrderItem copy(OrderItemId itemID, Product product, List<Extra> extras) {

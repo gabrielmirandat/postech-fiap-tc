@@ -1,12 +1,15 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
-import com.gabriel.adapter.api.exceptions.NotFound;
-import com.gabriel.orders.adapter.driven.persistence.mapper.MongoMapper;
+import com.gabriel.orders.infra.http.HttpException;
 import com.gabriel.orders.core.domain.model.Order;
+import com.gabriel.orders.core.domain.OrderMock;
 import com.gabriel.orders.core.domain.port.OrderSearchParameters;
+import com.gabriel.orders.adapter.driven.persistence.mapper.MongoMapper;
+
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.UpdateResult;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +18,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import com.gabriel.orders.core.domain.OrderMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -64,7 +67,7 @@ public class OrderMongoRepositoryTest {
         when(mongoCollection.replaceOne(any(), any())).thenReturn(updateResult);
         Order newOrder = OrderMock.validBasicOrder();
 
-        assertThrows(NotFound.class, () -> repository.updateOrder(newOrder));
+        assertThrows(HttpException.class, () -> repository.updateOrder(newOrder));
     }
 
     @Test
@@ -82,7 +85,7 @@ public class OrderMongoRepositoryTest {
     public void getByTicket_NotFound_ThrowsNotFound() {
         when(mongoCollection.find(any(Bson.class))).thenReturn(findIterable);
         when(findIterable.first()).thenReturn(null);
-        assertThrows(NotFound.class, () -> repository.getByTicket("ticket123"));
+        assertThrows(HttpException.class, () -> repository.getByTicket("ticket123"));
     }
 
     @Test

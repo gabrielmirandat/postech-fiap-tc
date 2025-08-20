@@ -2,7 +2,7 @@ package com.gabriel.orders.infra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.gabriel.adapter.api.exceptions.Unauthorized;
+import com.gabriel.orders.infra.http.HttpException;
 import com.gabriel.orders.adapter.driver.api.mapper.OrderMapper;
 import com.gabriel.specs.orders.models.ErrorResponse;
 import jakarta.servlet.FilterChain;
@@ -62,7 +62,7 @@ public class AuthenticationFilterMock extends GenericFilterBean {
             }
 
             if (mockedAuth.equals("NONE")) {
-                Unauthorized unauthorized = new Unauthorized("Unauthorized");
+                HttpException unauthorized = HttpException.unauthorized("Unauthorized");
                 ErrorResponse error = OrderMapper.toErrorResponse(unauthorized);
                 httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 httpResponse.setContentType("application/json");

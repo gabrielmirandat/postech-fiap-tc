@@ -14,23 +14,27 @@ import static com.gabriel.orders.core.domain.OrderItemMock.validOrderItem;
 
 public class OrderMock {
 
-
     public static Order validBasicOrder() {
         OrderItem item1 = validOrderItem(false);
         OrderItem item2 = validOrderItem(true);
-        return new Order(Arrays.asList(item1, item2));
+        return Order.create(Arrays.asList(item1, item2));
     }
 
     public static Order validFullOrder() {
         OrderItem item1 = validOrderItem(false);
         OrderItem item2 = validOrderItem(true);
 
-        Address shippingAddress = new Address("Street", "City", "SP", "41710-450");
+        Address shippingAddress = Address.newBuilder()
+            .setStreet("Street")
+            .setCity("City")
+            .setState("SP")
+            .setZip("41710-450")
+            .build();
         Contact notification = Contact.newBuilder()
             .setType(ContactType.CELLPHONE)
             .setCellphone(Cellphone.newBuilder().setValue("(19) 12345-5555").build())
             .build();
-        Cpf customer = new Cpf("123.456.789-00");
-        return new Order(Arrays.asList(item1, item2), customer, shippingAddress, notification);
+        Cpf customer = Cpf.newBuilder().setValue("123.456.789-00").build();
+        return Order.create(Arrays.asList(item1, item2), customer, shippingAddress, notification);
     }
 }

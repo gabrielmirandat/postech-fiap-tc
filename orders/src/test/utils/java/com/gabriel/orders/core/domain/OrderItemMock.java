@@ -14,13 +14,13 @@ import static com.gabriel.orders.core.domain.ProductMock.validProduct;
 public class OrderItemMock {
 
     public static OrderItem validOrderItem(boolean withExtra) {
-        Product product = validProduct(new ProductId());
+        Product product = validProduct(ProductId.newBuilder().setValue("product-123").build());
 
         if (withExtra) {
-            Extra extra = validExtra(new IngredientId());
-            return new OrderItem(product, Collections.singletonList(extra));
+            Extra extra = validExtra(IngredientId.newBuilder().setValue("ingredient-123").build());
+            return OrderItem.create(product, Collections.singletonList(extra));
         }
 
-        return new OrderItem(product);
+        return OrderItem.create(product);
     }
 }

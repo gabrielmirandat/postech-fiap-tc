@@ -80,7 +80,7 @@ public class MenuGrpcClientIntegrationTest {
         // Execute the method to test
         menuGrpcClient.dumpMenuData();
 
-        Product dumpedProduct = new Product(
+        Product dumpedProduct = Product.create(
             new ProductId("5ed5dad3-PRDC-2024-02-12"),
             new Name("Cheese Burger"),
             new Price(10.99),

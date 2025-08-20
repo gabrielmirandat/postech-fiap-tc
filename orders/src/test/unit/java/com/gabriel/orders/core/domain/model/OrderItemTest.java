@@ -1,8 +1,8 @@
 package com.gabriel.orders.core.domain.model;
 
-import com.gabriel.model.DomainException;
 import com.gabriel.model.IngredientId;
 import com.gabriel.model.ProductId;
+import com.gabriel.model.Model;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.OrderItem;
 import com.gabriel.orders.core.domain.model.Product;
@@ -19,10 +19,10 @@ class OrderItemTest {
     @Test
     void shouldCreateOrderItemSuccessfully_whenValidProductIsProvided() {
         // Arrange
-        Product validProduct = new Product(new ProductId(), "Product", 10.0);
+        Product validProduct = Product.create(ProductId.newBuilder().setValue("12345678-PRDC-2024-12-20").build(), "Product", 10.0);
 
         // Act
-        OrderItem orderItem = new OrderItem(validProduct);
+        OrderItem orderItem = OrderItem.create(validProduct);
 
         // Assert
         assertThat(orderItem).isNotNull();
@@ -34,11 +34,11 @@ class OrderItemTest {
     @Test
     void shouldCreateOrderItemSuccessfully_whenValidProductAndExtrasAreProvided() {
         // Arrange
-        Product validProduct = new Product(new ProductId(), "Product", 10.0);
-        Extra validExtra = new Extra(new IngredientId(), "Extra", 2.0);
+        Product validProduct = Product.create(ProductId.newBuilder().setValue("12345678-PRDC-2024-12-20").build(), "Product", 10.0);
+        Extra validExtra = Extra.create(IngredientId.newBuilder().setValue("87654321-INGR-2024-12-20").build(), "Extra", 2.0);
 
         // Act
-        OrderItem orderItem = new OrderItem(validProduct, Collections.singletonList(validExtra));
+        OrderItem orderItem = OrderItem.create(validProduct, Collections.singletonList(validExtra));
 
         // Assert
         assertThat(orderItem).isNotNull();
@@ -51,19 +51,19 @@ class OrderItemTest {
     @Test
     void shouldThrowException_whenProductContainInvalidData() {
         // Arrange & Act & Assert
-        assertThatThrownBy(() -> new OrderItem(new Product(null, null, 0.0)))
-            .isInstanceOf(DomainException.class)
-            .hasMessageContaining("Domain validation failed: value Name cannot be null or empty");
+        assertThatThrownBy(() -> OrderItem.create(Product.create(ProductId.newBuilder().setValue("product-123").build(), "", 0.0)))
+            .isInstanceOf(Model.Exception.class)
+            .hasMessageContaining("Validation error");
     }
 
     @Test
     void shouldThrowException_whenExtrasContainInvalidData() {
         // Arrange
-        Product validProduct = new Product(new ProductId(), "Product", 10.0);
+        Product validProduct = Product.create(ProductId.newBuilder().setValue("12345678-PRDC-2024-12-20").build(), "Product", 10.0);
 
         // Act & Assert
-        assertThatThrownBy(() -> new OrderItem(validProduct, List.of(new Extra(null, null, 0.0))))
-            .isInstanceOf(DomainException.class)
-            .hasMessageContaining("Domain validation failed: value Name cannot be null or empty");
+        assertThatThrownBy(() -> OrderItem.create(validProduct, List.of(Extra.create(IngredientId.newBuilder().setValue("87654321-INGR-2024-12-20").build(), "", 0.0))))
+            .isInstanceOf(Model.Exception.class)
+            .hasMessageContaining("Validation error");
     }
 }
