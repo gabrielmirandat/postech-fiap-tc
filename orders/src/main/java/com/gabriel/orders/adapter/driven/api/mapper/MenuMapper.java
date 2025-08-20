@@ -16,7 +16,7 @@ import java.util.List;
 public class MenuMapper {
 
     public static Product toProduct(MenuItem menuItem) {
-        return new Product(
+        return Product.create(
             ProductId.newBuilder().setValue(menuItem.getId()).build(),
             Name.newBuilder().setValue(menuItem.getName()).build(),
             Price.newBuilder().setValue(menuItem.getPrice()).build(),
@@ -26,7 +26,7 @@ public class MenuMapper {
     }
 
     public static Extra toExtra(MenuItem menuItem) {
-        return new Extra(
+        return Extra.create(
             IngredientId.newBuilder().setValue(menuItem.getId()).build(),
             Name.newBuilder().setValue(menuItem.getName()).build(),
             Price.newBuilder().setValue(menuItem.getPrice()).build(),
@@ -38,14 +38,14 @@ public class MenuMapper {
 
     public static List<Product> extractProducts(MenuResponse response) {
         return response.getItemsList().stream()
-            .filter(item -> item.getId().startsWith("PROD"))
+            .filter(item -> item.getId().contains("-PRDC-"))
             .map(MenuMapper::toProduct)
             .toList();
     }
 
     public static List<Extra> extractExtras(com.gabriel.service.menu.MenuResponse response) {
         return response.getItemsList().stream()
-            .filter(item -> item.getId().startsWith("EXTR"))
+            .filter(item -> item.getId().contains("-INGR-"))
             .map(MenuMapper::toExtra)
             .toList();
     }

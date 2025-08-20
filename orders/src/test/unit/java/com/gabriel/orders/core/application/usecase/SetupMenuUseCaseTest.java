@@ -5,8 +5,8 @@ import com.gabriel.model.ProductId;
 import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.MenuRepository;
-import com.gabriel.specs.menu.MenuItem;
-import com.gabriel.specs.menu.MenuResponse;
+import com.gabriel.service.menu.MenuItem;
+import com.gabriel.service.menu.MenuResponse;
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ public class SetupMenuUseCaseTest {
 
         // Build a MenuItem instance using the Builder
         MenuItem menuItemIngr = MenuItem.newBuilder()
-            .setId(new IngredientId().getId())
+            .setId(IngredientId.newBuilder().setValue("11111111-INGR-2024-12-20").build().getValue())
             .setName("newIngredient")
             .setPrice(9.99)
             .setCategory("burger")
@@ -51,7 +51,7 @@ public class SetupMenuUseCaseTest {
 
         // Build a MenuItem instance using the Builder
         MenuItem menuItemProd = MenuItem.newBuilder()
-            .setId(new ProductId().getId())
+            .setId(ProductId.newBuilder().setValue("22222222-PRDC-2024-12-20").build().getValue())
             .setName("newIngredient")
             .setPrice(9.99)
             .setCategory("burger")

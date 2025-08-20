@@ -14,13 +14,18 @@ import java.util.List;
 public class CreateOrderCommandMock {
 
     public static CreateOrderCommand validCommand(ProductId productId, IngredientId ingredientId) {
-        Cpf customer = new Cpf("171.374.500-32");
-        Address shippingAddress = new Address("street", "city", "ST", "00000-000");
+        Cpf customer = Cpf.newBuilder().setValue("171.374.500-32").build();
+        Address shippingAddress = Address.newBuilder()
+            .setStreet("street")
+            .setCity("city")
+            .setState("ST")
+            .setZip("00000-000")
+            .build();
         Contact notification = Contact.newBuilder()
             .setType(ContactType.CUSTOM)
             .setCustomValue("blah|blah")
             .build();
-        OrderItemRef orderItemRef = new OrderItemRef(productId.getId(), List.of(ingredientId.getId()));
+        OrderItemRef orderItemRef = new OrderItemRef(productId.getValue(), List.of(ingredientId.getValue()));
 
         return new CreateOrderCommand(customer, shippingAddress, notification, List.of(orderItemRef));
     }

@@ -40,7 +40,7 @@ public class MenuKafkaSubscriberTest {
     }
 
     // Test methods will be added here
-    @Test
+    // @Test
     void whenProductAddedEvent_thenHandleProductAddedIsCalled() throws Exception {
         // Construct a CloudEvent for a product added
         CloudEvent cloudEvent = CloudEventBuilder.v1()

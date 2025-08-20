@@ -59,7 +59,7 @@ public class MongoMapper {
     }
 
     private static OrderItem documentToOrderItem(Document doc) {
-        OrderItemId itemId = OrderItemId.newBuilder().setValue(doc.getString("itemId")).build();
+        OrderItemId itemId = OrderItemId.newBuilder().setValue(doc.getString("itemID")).build();
         Product product = documentToProduct((Document) doc.get("product"));
 
         List<Document> extrasList = doc.getList("extras", Document.class);
@@ -155,7 +155,7 @@ public class MongoMapper {
         ProductId productId = ProductId.newBuilder().setValue(doc.getString("productId")).build();
         Name name = Name.newBuilder().setValue(doc.getString("name")).build();
         Price price = Price.newBuilder().setValue(doc.getDouble("price")).build();
-        return new Product(productId, name, price);
+        return Product.create(productId, name, price);
     }
 
     private static Document extraToDocument(Extra extra) {
@@ -170,6 +170,6 @@ public class MongoMapper {
         IngredientId ingredientID = IngredientId.newBuilder().setValue(doc.getString("ingredientID")).build();
         Name name = Name.newBuilder().setValue(doc.getString("name")).build();
         Price price = Price.newBuilder().setValue(doc.getDouble("price")).build();
-        return new Extra(ingredientID, name, price);
+        return Extra.create(ingredientID, name, price);
     }
 }

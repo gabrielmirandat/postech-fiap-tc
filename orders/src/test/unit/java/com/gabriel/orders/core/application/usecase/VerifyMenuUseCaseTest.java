@@ -38,14 +38,14 @@ public class VerifyMenuUseCaseTest {
     @BeforeEach
     void setUp() {
         // Assuming CreateOrderCommand constructor and methods for setting up test data
-        productIdValid = new ProductId();
-        ingredientIdValid = new IngredientId();
+        productIdValid = ProductId.newBuilder().setValue("product-valid").build();
+        ingredientIdValid = IngredientId.newBuilder().setValue("ingredient-valid").build();
         commandWithValidItems = CreateOrderCommandMock.validCommand(productIdValid, ingredientIdValid);
 
-        productIdInvalid = new ProductId();
+        productIdInvalid = ProductId.newBuilder().setValue("product-invalid").build();
         commandWithInvalidProduct = CreateOrderCommandMock.validCommand(productIdInvalid, ingredientIdValid);
 
-        ingredientIdInValid = new IngredientId();
+        ingredientIdInValid = IngredientId.newBuilder().setValue("ingredient-invalid").build();
         commandWithInvalidExtra = CreateOrderCommandMock.validCommand(productIdValid, ingredientIdInValid);
 
         // Configure mocks

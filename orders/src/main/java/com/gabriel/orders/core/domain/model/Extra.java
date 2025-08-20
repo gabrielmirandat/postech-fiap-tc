@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.model.Name;
 import com.gabriel.model.Price;
 import com.gabriel.model.IngredientId;
+import com.gabriel.model.Model;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -22,29 +23,41 @@ public class Extra {
 
     private Instant timestamp;
 
-    @JsonCreator
-    public Extra(@JsonProperty("ingredientID") IngredientId ingredientId,
-                 @JsonProperty("name") Name name,
-                 @JsonProperty("value") Price value,
-                 @JsonProperty("timestamp") @JsonAlias("updateTimestamp") Instant timestamp) {
+    // Construtor privado para uso interno
+    private Extra(IngredientId ingredientId, Name name, Price value, Instant timestamp) {
         this.ingredientId = ingredientId;
         this.name = name;
         this.price = value;
         this.timestamp = timestamp;
     }
 
-    public Extra(IngredientId ingredientId,
-                 Name name,
-                 Price value) {
-        this.ingredientId = ingredientId;
-        this.name = name;
-        this.price = value;
+    // Factory methods que sempre validam
+    public static Extra create(IngredientId ingredientId, String name, Double value) {
+        IngredientId validatedIngredientId = (IngredientId) Model.validate(ingredientId);
+        Name validatedName = (Name) Model.validate(Name.newBuilder().setValue(name).build());
+        Price validatedPrice = (Price) Model.validate(Price.newBuilder().setValue(value).build());
+        return new Extra(validatedIngredientId, validatedName, validatedPrice, null);
     }
 
-    public Extra(IngredientId ingredientId, String name, Double value) {
-        this.ingredientId = ingredientId;
-        this.name = Name.newBuilder().setValue(name).build();
-        this.price = Price.newBuilder().setValue(value).build();
+    public static Extra create(IngredientId ingredientId, Name name, Price value) {
+        Name validatedName = (Name) Model.validate(name);
+        Price validatedPrice = (Price) Model.validate(value);
+        return new Extra(ingredientId, validatedName, validatedPrice, null);
+    }
+
+    public static Extra create(IngredientId ingredientId, Name name, Price value, Instant timestamp) {
+        Name validatedName = (Name) Model.validate(name);
+        Price validatedPrice = (Price) Model.validate(value);
+        return new Extra(ingredientId, validatedName, validatedPrice, timestamp);
+    }
+
+    // Construtor para Jackson deserialization (sem validação para evitar duplicação)
+    @JsonCreator
+    public static Extra fromJson(@JsonProperty("ingredientID") IngredientId ingredientId,
+                                 @JsonProperty("name") Name name,
+                                 @JsonProperty("value") Price value,
+                                 @JsonProperty("timestamp") @JsonAlias("updateTimestamp") Instant timestamp) {
+        return new Extra(ingredientId, name, value, timestamp);
     }
 
     public static Extra deserialize(ObjectMapper deserializer, byte[] bytes) {
@@ -59,7 +72,7 @@ public class Extra {
         try {
             return serializer.writeValueAsBytes(this);
         } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Error serializing extra");
+            throw new IllegalStateException("Error serializing extra: " + e.getMessage(), e);
         }
     }
 
