@@ -818,11 +818,67 @@
     "@@rules_oci+//oci:extensions.bzl%oci": {
       "general": {
         "bzlTransitiveDigest": "iQZOkLD5gZw8LZ9chmHTJF8IzhJjzPejnvw6vAz6Qmk=",
-        "usagesDigest": "5IwHwvUrIQtyP77qdlB8gbnh/tUy3XHdqsJ8b4crNCk=",
+        "usagesDigest": "R0m6bbS845D7QYVQ6Yc288aej+kfofG//qLapzBUHL0=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
+          "dotnet_aspnet_8_0_linux_amd64": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_pull",
+            "attributes": {
+              "www_authenticate_challenges": {},
+              "scheme": "https",
+              "registry": "mcr.microsoft.com",
+              "repository": "dotnet/aspnet",
+              "identifier": "8.0",
+              "platform": "linux/amd64",
+              "target_name": "dotnet_aspnet_8_0_linux_amd64",
+              "bazel_tags": []
+            }
+          },
+          "dotnet_aspnet_8_0": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_alias",
+            "attributes": {
+              "target_name": "dotnet_aspnet_8_0",
+              "www_authenticate_challenges": {},
+              "scheme": "https",
+              "registry": "mcr.microsoft.com",
+              "repository": "dotnet/aspnet",
+              "identifier": "8.0",
+              "platforms": {
+                "@@platforms//cpu:x86_64": "@dotnet_aspnet_8_0_linux_amd64"
+              },
+              "bzlmod_repository": "dotnet_aspnet_8_0",
+              "reproducible": true
+            }
+          },
+          "amazon_corretto_image_single": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_pull",
+            "attributes": {
+              "www_authenticate_challenges": {},
+              "scheme": "https",
+              "registry": "public.ecr.aws",
+              "repository": "docker/library/amazoncorretto",
+              "identifier": "21",
+              "target_name": "amazon_corretto_image_single",
+              "bazel_tags": []
+            }
+          },
+          "amazon_corretto_image": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_alias",
+            "attributes": {
+              "target_name": "amazon_corretto_image",
+              "www_authenticate_challenges": {},
+              "scheme": "https",
+              "registry": "public.ecr.aws",
+              "repository": "docker/library/amazoncorretto",
+              "identifier": "21",
+              "platforms": {},
+              "platform": "@@rules_oci+//oci:amazon_corretto_image_single",
+              "bzlmod_repository": "amazon_corretto_image",
+              "reproducible": true
+            }
+          },
           "oci_crane_darwin_amd64": {
             "repoRuleId": "@@rules_oci+//oci:repositories.bzl%crane_repositories",
             "attributes": {
@@ -938,7 +994,11 @@
           }
         },
         "moduleExtensionMetadata": {
-          "explicitRootModuleDirectDeps": [],
+          "explicitRootModuleDirectDeps": [
+            "dotnet_aspnet_8_0",
+            "dotnet_aspnet_8_0_linux_amd64",
+            "amazon_corretto_image"
+          ],
           "explicitRootModuleDirectDevDeps": [],
           "useAllRepos": "NO",
           "reproducible": false

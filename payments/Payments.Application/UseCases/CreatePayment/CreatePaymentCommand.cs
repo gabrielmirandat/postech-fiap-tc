@@ -1,3 +1,5 @@
+using MediatR;
+using Payments.Application.DTOs;
 using Payments.Domain.ValueObjects;
 
 namespace Payments.Application.UseCases.CreatePayment;
@@ -8,7 +10,7 @@ public record CreatePaymentCommand(
     string OrderId,
     string CustomerId,
     string PaymentMethodId
-)
+) : IRequest<PaymentDto>
 {
     public Money ToMoney() => new(Amount, Currency);
 }
