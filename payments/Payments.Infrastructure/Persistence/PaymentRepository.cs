@@ -1,4 +1,5 @@
 using Cassandra;
+using Microsoft.Extensions.Logging;
 using Payments.Domain.Entities;
 using Payments.Domain.Repositories;
 using Payments.Domain.ValueObjects;
@@ -85,7 +86,7 @@ public class PaymentRepository : IPaymentRepository
         _logger.LogInformation("Payment {PaymentId} updated in Cassandra", payment.Id);
     }
 
-    private Payment MapToPayment(IRow row)
+    private Payment MapToPayment(Row row)
     {
         var amount = new Money(
             row.GetValue<decimal>("amount"),

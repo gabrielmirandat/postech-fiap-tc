@@ -20,6 +20,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+build_output/
 
 # Visual Studio cache/options directory
 .vs/
@@ -31,13 +32,56 @@ bld/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+*.dll
+*.pdb
+*.exe
+*.cache
 
 # NuGet Packages
 *.nupkg
 *.snupkg
 **/packages/*
+**/packages/
+project.assets.json
+project.nuget.cache
+*.nuget.props
+*.nuget.targets
+*.dgspec.json
 
 # Visual Studio cache files
 *.cachefile
 *.VC.db
 *.VC.VC.opendb
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# .NET Core publish
+publish/
+*.pubxml
+*.publishproj
+
+# macOS
+.DS_Store
+
+# Bazel
+bazel-*
+bazel-out/
+bazel-bin/
+bazel-testlogs/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+
+# Local configuration files
+appsettings.local.json
+appsettings.*.local.json
+*.local.json

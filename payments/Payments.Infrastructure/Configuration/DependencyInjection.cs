@@ -49,7 +49,7 @@ public static class DependencyInjection
         services.AddScoped<IEventPublisher, KafkaEventPublisher>();
 
         // MediatR
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreatePaymentCommandHandler).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreatePaymentHandler).Assembly));
 
         return services;
     }

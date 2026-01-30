@@ -1,4 +1,5 @@
 using Stripe;
+using Microsoft.Extensions.Logging;
 using Payments.Domain.Services;
 using Payments.Domain.ValueObjects;
 

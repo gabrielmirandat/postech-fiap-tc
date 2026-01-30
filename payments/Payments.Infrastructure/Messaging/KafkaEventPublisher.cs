@@ -1,7 +1,7 @@
 using Confluent.Kafka;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Payments.Domain.Events;
-using Payments.Domain.Interfaces;
 using Payments.Infrastructure.Messaging.Mappers;
 
 namespace Payments.Infrastructure.Messaging;
@@ -59,9 +59,9 @@ public class KafkaEventPublisher : IEventPublisher
     {
         return domainEvent switch
         {
-            Events.PaymentCreatedEvent e => e.OrderId,
-            Events.PaymentCompletedEvent e => e.OrderId,
-            Events.PaymentFailedEvent e => e.OrderId,
+            PaymentCreatedEvent e => e.OrderId,
+            PaymentCompletedEvent e => e.OrderId,
+            PaymentFailedEvent e => e.OrderId,
             _ => Guid.NewGuid().ToString()
         };
     }
