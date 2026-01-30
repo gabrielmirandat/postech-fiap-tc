@@ -33,6 +33,10 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
       - name: Build with Bazel
         run: bazel build //...
 
@@ -60,6 +64,10 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
       - name: Test with Bazel
         run: bazel test $(bazel query 'filter(":unit", //...:*)')
 
@@ -87,6 +95,10 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
       - name: Test with Bazel
         run: bazel test $(bazel query 'filter(":integration", //...:*)')
 
@@ -114,6 +126,10 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
       - name: Test with Bazel
         run: bazel test $(bazel query 'filter(":behavior", //...:*)')
 
@@ -141,6 +157,10 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
       - name: Test with Bazel
         run: bazel test $(bazel query 'filter(":contract", //...:*)')
       

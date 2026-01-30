@@ -818,7 +818,7 @@
     "@@rules_oci+//oci:extensions.bzl%oci": {
       "general": {
         "bzlTransitiveDigest": "iQZOkLD5gZw8LZ9chmHTJF8IzhJjzPejnvw6vAz6Qmk=",
-        "usagesDigest": "R0m6bbS845D7QYVQ6Yc288aej+kfofG//qLapzBUHL0=",
+        "usagesDigest": "6UDBLDQLeFvGJtePO/l8CoB9YeBGoHEZ37e1mHEZPOo=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -852,7 +852,7 @@
               "reproducible": true
             }
           },
-          "amazon_corretto_image_single": {
+          "amazon_corretto_image_linux_amd64": {
             "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_pull",
             "attributes": {
               "www_authenticate_challenges": {},
@@ -860,7 +860,8 @@
               "registry": "public.ecr.aws",
               "repository": "docker/library/amazoncorretto",
               "identifier": "21",
-              "target_name": "amazon_corretto_image_single",
+              "platform": "linux/amd64",
+              "target_name": "amazon_corretto_image_linux_amd64",
               "bazel_tags": []
             }
           },
@@ -873,8 +874,9 @@
               "registry": "public.ecr.aws",
               "repository": "docker/library/amazoncorretto",
               "identifier": "21",
-              "platforms": {},
-              "platform": "@@rules_oci+//oci:amazon_corretto_image_single",
+              "platforms": {
+                "@@platforms//cpu:x86_64": "@amazon_corretto_image_linux_amd64"
+              },
               "bzlmod_repository": "amazon_corretto_image",
               "reproducible": true
             }
@@ -997,7 +999,8 @@
           "explicitRootModuleDirectDeps": [
             "dotnet_aspnet_8_0",
             "dotnet_aspnet_8_0_linux_amd64",
-            "amazon_corretto_image"
+            "amazon_corretto_image",
+            "amazon_corretto_image_linux_amd64"
           ],
           "explicitRootModuleDirectDevDeps": [],
           "useAllRepos": "NO",

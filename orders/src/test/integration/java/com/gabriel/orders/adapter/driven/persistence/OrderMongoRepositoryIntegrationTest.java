@@ -1,8 +1,6 @@
 package com.gabriel.orders.adapter.driven.persistence;
 
-import com.gabriel.adapter.api.exceptions.NotFound;
-import com.gabriel.model.ApplicationError;
-import com.gabriel.model.ApplicationException;
+import com.gabriel.orders.infra.http.HttpException;
 import com.gabriel.orders.core.domain.model.Order;
 import com.gabriel.orders.core.domain.model.OrderStatus;
 import com.gabriel.orders.core.domain.port.OrderSearchParameters;
@@ -61,11 +59,11 @@ public class OrderMongoRepositoryIntegrationTest {
     void testSaveOrderRestrictionById() {
         orderRepository.saveOrder(basicOrder);
 
-        ApplicationException thrown = assertThrows(ApplicationException.class, () -> {
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
             orderRepository.saveOrder(basicOrder);
         }, "Expected saveOrder to throw, but it didn't");
 
-        assertEquals(ApplicationError.APP_OO1.getMessage(), thrown.getType(), "The exception error does not match the expected value");
+        assertThat(thrown.getMessage()).contains("Database error");
     }
 
     @Test
@@ -88,7 +86,7 @@ public class OrderMongoRepositoryIntegrationTest {
 
     @Test
     void testGetByTicketNotFound() {
-        assertThrows(NotFound.class, () -> {
+        assertThrows(HttpException.class, () -> {
             orderRepository.getByTicket("ticketInexistente");
         });
     }

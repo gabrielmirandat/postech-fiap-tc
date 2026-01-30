@@ -114,8 +114,8 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
 
         orderFull = OrderMock.validFullOrder();
         order = OrderMock.validBasicOrder();
-        product = ProductMock.validProduct(new ProductId("11111111-PRDC-1111-11-11"));
-        extra = ExtraMock.validExtra(new IngredientId("11111111-INGR-1111-11-11"));
+        product = ProductMock.validProduct(ProductId.newBuilder().setValue("11111111-PRDC-1111-11-11").build());
+        extra = ExtraMock.validExtra(IngredientId.newBuilder().setValue("11111111-INGR-1111-11-11").build());
 
         when(orderRepository.getByTicket(eq("11111111")))
             .thenReturn(orderFull);
@@ -127,15 +127,15 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
             .thenThrow(RuntimeException.class);
         when(orderRepository.searchBy(eq(new OrderSearchParameters(OrderStatus.CREATED))))
             .thenReturn(List.of(orderFull));
-        when(menuRepository.getProduct(eq(new ProductId("11111111-PRDC-1111-11-11"))))
+        when(menuRepository.getProduct(eq(ProductId.newBuilder().setValue("11111111-PRDC-1111-11-11").build())))
             .thenReturn(product);
-        when(menuRepository.existsProduct(eq(new ProductId("11111111-PRDC-1111-11-11"))))
+        when(menuRepository.existsProduct(eq(ProductId.newBuilder().setValue("11111111-PRDC-1111-11-11").build())))
             .thenReturn(true);
-        when(menuRepository.existsProduct(eq(new ProductId("11111111-PRDC-1111-11-19"))))
+        when(menuRepository.existsProduct(eq(ProductId.newBuilder().setValue("11111111-PRDC-1111-11-19").build())))
             .thenThrow(RuntimeException.class);
-        when(menuRepository.getExtra(eq(new IngredientId("11111111-INGR-1111-11-11"))))
+        when(menuRepository.getExtra(eq(IngredientId.newBuilder().setValue("11111111-INGR-1111-11-11").build())))
             .thenReturn(extra);
-        when(menuRepository.existsExtra(eq(new IngredientId("11111111-INGR-1111-11-11"))))
+        when(menuRepository.existsExtra(eq(IngredientId.newBuilder().setValue("11111111-INGR-1111-11-11").build())))
             .thenReturn(true);
 
         System.setProperty("host", "localhost");

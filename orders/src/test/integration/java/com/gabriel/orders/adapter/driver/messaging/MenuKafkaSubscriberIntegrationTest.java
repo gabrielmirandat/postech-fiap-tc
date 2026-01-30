@@ -72,8 +72,8 @@ public class MenuKafkaSubscriberIntegrationTest {
 
     @BeforeEach
     void setup() {
-        product = ProductMock.validProduct(new ProductId());
-        extra = ExtraMock.validExtra(new IngredientId());
+        product = ProductMock.validProduct(com.gabriel.orders.core.UtilsMock.generateProductId());
+        extra = ExtraMock.validExtra(com.gabriel.orders.core.UtilsMock.generateIngredientId());
         countDownLatch = new CountDownLatch(1);
         menuKafkaSubscriber.setCountDownLatch(countDownLatch);
     }
@@ -105,7 +105,7 @@ public class MenuKafkaSubscriberIntegrationTest {
         verify(menuRepository).addProduct(addedProduct);
 
         // Compare addedProduct with the product sent in the event
-        assertEquals(product.getProductId().getId(), addedProduct.getProductId().getId());
+        assertEquals(product.getProductId().getValue(), addedProduct.getProductId().getValue());
         assertEquals(product.getName().getValue(), addedProduct.getName().getValue());
         assertEquals(product.getPrice().getValue(), addedProduct.getPrice().getValue());
         assertEquals(product.getTimestamp(), addedProduct.getTimestamp());
@@ -134,7 +134,7 @@ public class MenuKafkaSubscriberIntegrationTest {
 
         verify(menuRepository).deleteProduct(deletedProduct.getProductId());
 
-        assertEquals(product.getProductId().getId(), deletedProduct.getProductId().getId());
+        assertEquals(product.getProductId().getValue(), deletedProduct.getProductId().getValue());
     }
 
     @Test
@@ -160,7 +160,7 @@ public class MenuKafkaSubscriberIntegrationTest {
 
         verify(menuRepository).addExtra(addedExtra);
 
-        assertEquals(extra.getIngredientID().getId(), addedExtra.getIngredientID().getId());
+        assertEquals(extra.getIngredientId().getValue(), addedExtra.getIngredientId().getValue());
     }
 
     @Test
@@ -184,9 +184,9 @@ public class MenuKafkaSubscriberIntegrationTest {
         verify(updateMenuUseCase).handleExtraDeleted(extraCaptor.capture());
         Extra deletedExtra = extraCaptor.getValue();
 
-        verify(menuRepository).deleteExtra(deletedExtra.getIngredientID());
+        verify(menuRepository).deleteExtra(deletedExtra.getIngredientId());
 
-        assertEquals(extra.getIngredientID().getId(), deletedExtra.getIngredientID().getId());
+        assertEquals(extra.getIngredientId().getValue(), deletedExtra.getIngredientId().getValue());
     }
 }
 

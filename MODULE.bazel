@@ -147,6 +147,7 @@ oci.pull(
     name = "amazon_corretto_image",
     image = "public.ecr.aws/docker/library/amazoncorretto",
     tag = "21",
+    platforms = ["linux/amd64"],
 )
 use_repo(oci, "dotnet_aspnet_8_0", "amazon_corretto_image")
 

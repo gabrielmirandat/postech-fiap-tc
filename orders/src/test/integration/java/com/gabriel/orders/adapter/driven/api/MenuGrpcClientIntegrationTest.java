@@ -9,7 +9,7 @@ import com.gabriel.orders.core.domain.model.Extra;
 import com.gabriel.orders.core.domain.model.Product;
 import com.gabriel.orders.core.domain.port.MenuRepository;
 import com.gabriel.orders.infra.grpc.MenuGrpcClientConfiguration;
-import com.gabriel.specs.menu.MenuResponse;
+import com.gabriel.service.menu.MenuResponse;
 import io.grpc.ManagedChannel;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -81,9 +81,9 @@ public class MenuGrpcClientIntegrationTest {
         menuGrpcClient.dumpMenuData();
 
         Product dumpedProduct = Product.create(
-            new ProductId("5ed5dad3-PRDC-2024-02-12"),
-            new Name("Cheese Burger"),
-            new Price(10.99),
+            ProductId.newBuilder().setValue("5ed5dad3-PRDC-2024-02-12").build(),
+            Name.newBuilder().setValue("Cheese Burger").build(),
+            Price.newBuilder().setValue(10.99).build(),
             Instant.parse("2022-01-02T12:00:00Z"));
 
         // Capture and assert the response passed to setupMenuUseCase
@@ -91,7 +91,7 @@ public class MenuGrpcClientIntegrationTest {
         Product capturedProduct = productCaptor.getValue();
 
         // Assert the details of the response based on your stub
-        assertEquals(dumpedProduct.getProductId().getId(), capturedProduct.getProductId().getId());
+        assertEquals(dumpedProduct.getProductId().getValue(), capturedProduct.getProductId().getValue());
         assertEquals(dumpedProduct.getName().getValue(), capturedProduct.getName().getValue());
         assertEquals(dumpedProduct.getPrice().getValue(), capturedProduct.getPrice().getValue());
         assertEquals(dumpedProduct.getTimestamp(), capturedProduct.getTimestamp());
@@ -102,10 +102,10 @@ public class MenuGrpcClientIntegrationTest {
         // Execute the method to test
         menuGrpcClient.dumpMenuData();
 
-        Extra dumpedExtra = new Extra(
-            new IngredientId("fabe70b1-INGR-2024-02-12"),
-            new Name("Costela"),
-            new Price(1.99),
+        Extra dumpedExtra = Extra.create(
+            IngredientId.newBuilder().setValue("fabe70b1-INGR-2024-02-12").build(),
+            Name.newBuilder().setValue("Costela").build(),
+            Price.newBuilder().setValue(1.99).build(),
             Instant.parse("2022-01-01T12:00:00Z"));
 
         // Capture and assert the response passed to setupMenuUseCase
