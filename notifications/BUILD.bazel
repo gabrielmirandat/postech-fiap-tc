@@ -1,0 +1,71 @@
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
+
+package(default_visibility = ["//visibility:public"])
+
+# Build target - just creates a marker
+genrule(
+    name = "notifications_build",
+    outs = ["notifications_build_marker"],
+    cmd = "touch $@",
+)
+
+# Unit tests - placeholder (Rails tests would run with bundle exec rspec)
+genrule(
+    name = "unit",
+    outs = ["unit_test_marker"],
+    cmd = "touch $@",
+    local = 1,
+)
+
+# Integration tests - placeholder
+genrule(
+    name = "integration",
+    outs = ["integration_test_marker"],
+    cmd = "touch $@",
+    local = 1,
+)
+
+# OCI image for notifications service
+oci_image(
+    name = "notifications_image",
+    base = "@ruby_3_2_0",
+    entrypoint = ["bundle", "exec", "puma", "-C", "config/puma.rb"],
+    env = {
+        "RAILS_ENV": "production",
+        "PORT": "8005",
+        "POSTGRES_HOST": "postgres",
+        "POSTGRES_PORT": "5432",
+        "POSTGRES_USER": "dummy",
+        "POSTGRES_PASSWORD": "dummy",
+        "POSTGRES_DB": "notifications_db",
+        "KAFKA_SERVER_URL": "kafka:29092",
+        "KAFKA_GROUP_ID": "notifications-group-id",
+        "KAFKA_DOMAIN_TOPIC": "orders",
+        "KAFKA_NOTIFICATIONS_TOPIC": "notifications",
+    },
+    tars = [":notifications_files"],
+)
+
+# Create tar with application files
+genrule(
+    name = "notifications_files",
+    srcs = glob([
+        "**/*.rb",
+        "**/*.yml",
+        "**/*.yaml",
+        "Gemfile",
+        "Gemfile.lock",
+        "Dockerfile",
+    ]),
+    outs = ["notifications.tar"],
+    cmd = """
+    tar -czf $@ -C $$(dirname $(location Gemfile)) .
+    """,
+)
+
+# Push to Docker Hub
+oci_push(
+    name = "notifications_push",
+    image = ":notifications_image",
+    remote_tags = ["gabrielmirandat/notifications:latest"],
+)
