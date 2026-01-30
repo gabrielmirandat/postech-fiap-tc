@@ -1,0 +1,57 @@
+# Payments module BUILD file for Bazel
+# Note: .NET support in Bazel - using Docker image for build
+# For full .NET support, consider using rules_dotnet or building via Docker
+
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
+
+# Build .NET application using Docker
+# This is a placeholder - in production, use rules_dotnet or build via Dockerfile
+genrule(
+    name = "payments_build",
+    srcs = glob([
+        "**/*.cs",
+        "**/*.csproj",
+        "**/*.json",
+        "**/*.proto",
+    ], exclude = [
+        "**/bin/**",
+        "**/obj/**",
+    ]),
+    outs = ["payments_build_marker"],
+    cmd = """
+        echo "Payments module build placeholder" > $@
+        echo "To build: cd payments && dotnet build"
+        echo "To run: cd payments/Payments.API && dotnet run"
+    """,
+)
+
+# Docker image for payments service
+# Build using Dockerfile
+oci_image(
+    name = "image",
+    base = "mcr.microsoft.com/dotnet/aspnet:8.0",
+    entrypoint = [
+        "dotnet",
+        "Payments.API.dll",
+    ],
+    tars = [":layer"],
+)
+
+tar(
+    name = "layer",
+    srcs = glob([
+        "**/*.dll",
+        "**/*.json",
+    ], exclude = [
+        "**/bin/**",
+        "**/obj/**",
+    ]),
+)
+
+oci_push(
+    name = "push",
+    image = ":image",
+    repository = "index.docker.io/gabrielmirandat/payments",
+    remote_tags = ["latest"],
+)
