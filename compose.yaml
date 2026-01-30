@@ -70,6 +70,28 @@ services:
     networks:
       - postech_network
 
+  notifications-service:
+    container_name: postech_notifications_service
+    build: ./notifications
+    depends_on:
+      - postgres
+      - kafka
+    ports:
+      - "8005:8005"
+    environment:
+      - RAILS_ENV=development
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=dummy
+      - POSTGRES_PASSWORD=dummy
+      - POSTGRES_DB=notifications_db
+      - KAFKA_SERVER_URL=kafka:29092
+      - KAFKA_GROUP_ID=notifications-group-id
+      - KAFKA_DOMAIN_TOPIC=orders
+      - KAFKA_NOTIFICATIONS_TOPIC=notifications
+    networks:
+      - postech_network
+
   cassandra:
     container_name: postech_cassandra
     image: cassandra:4.1
