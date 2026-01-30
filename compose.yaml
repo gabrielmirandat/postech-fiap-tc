@@ -53,6 +53,35 @@ services:
     networks:
       - postech_network
 
+  payments-service:
+    container_name: postech_payments_service
+    build: ./payments
+    depends_on:
+      - cassandra
+      - kafka
+    ports:
+      - "8004:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Cassandra__ContactPoints=cassandra
+      - Cassandra__Keyspace=payments
+      - Kafka__BootstrapServers=kafka:29092
+      - Stripe__ApiKey=${STRIPE_API_KEY:-}
+    networks:
+      - postech_network
+
+  cassandra:
+    container_name: postech_cassandra
+    image: cassandra:4.1
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=postech_cluster
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_RACK=rack1
+    networks:
+      - postech_network
+
   postgres:
     container_name: postech_postgres
     image: postgres:17.2
