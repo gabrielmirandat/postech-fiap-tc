@@ -65,9 +65,10 @@ public class OrdersHttpControllerIntegrationTest {
 
     @Test
     public void whenPostRequestToAddOrder_thenCorrectResponse() throws Exception {
+        ProductId productId = com.gabriel.orders.core.UtilsMock.generateProductId("12345678-PRDC-2024-12-20");
         OrderRequest orderRequest = new OrderRequest()
             .addItemsItem(new OrderItemRequest()
-                .productId(new ProductId().getId())
+                .productId(productId.getValue())
                 .quantity(1));
 
         when(createOrderUseCase.createOrder(any(CreateOrderCommand.class)))

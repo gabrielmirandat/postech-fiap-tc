@@ -63,7 +63,7 @@ public class OrderKafkaPublisherIntegrationTest {
         byte[] data = Objects.requireNonNull(receivedEvent.getData()).toBytes();
         String json = new String(data, StandardCharsets.UTF_8);
         Order receivedOrder = objectMapper.readValue(json, Order.class);
-        assertEquals(receivedOrder.getOrderId().getId(), order.getOrderId().getId());
+        assertEquals(receivedOrder.getOrderId().getValue(), order.getOrderId().getValue());
     }
 
     @Test

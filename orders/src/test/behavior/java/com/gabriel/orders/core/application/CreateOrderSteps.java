@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CreateOrderSteps extends SpringStepsContext {
 
-    private final ProductId existingProductId = new ProductId("11111111-PRDC-1111-11-11");
-    private final IngredientId existingIngredientID = new IngredientId("11111111-INGR-1111-11-11");
-    private final ProductId nonExistentProductId = new ProductId("11111111-PRDC-1111-11-12");
-    private final IngredientId nonExistentIngredientID = new IngredientId("11111111-INGR-1111-11-12");
+    private final ProductId existingProductId = ProductId.newBuilder().setValue("11111111-PRDC-1111-11-11").build();
+    private final IngredientId existingIngredientID = IngredientId.newBuilder().setValue("11111111-INGR-1111-11-11").build();
+    private final ProductId nonExistentProductId = ProductId.newBuilder().setValue("11111111-PRDC-1111-11-12").build();
+    private final IngredientId nonExistentIngredientID = IngredientId.newBuilder().setValue("11111111-INGR-1111-11-12").build();
     private String validOrderRequest;
     private String invalidProductOrderRequest;
     private String invalidExtraOrderRequest;
@@ -50,9 +50,9 @@ public class CreateOrderSteps extends SpringStepsContext {
         validOrderRequest = OasConverter.convertSpecToJson("/oas/orders-api.yaml",
             "paths:/orders:post:requestBody:content:application/json:examples:CREATE_ORDER_SUCCESS:value");
 
-        invalidProductOrderRequest = validOrderRequest.replaceAll(existingProductId.getId(), nonExistentProductId.getId());
+        invalidProductOrderRequest = validOrderRequest.replaceAll(existingProductId.getValue(), nonExistentProductId.getValue());
 
-        invalidExtraOrderRequest = validOrderRequest.replaceAll(existingIngredientID.getId(), nonExistentIngredientID.getId());
+        invalidExtraOrderRequest = validOrderRequest.replaceAll(existingIngredientID.getValue(), nonExistentIngredientID.getValue());
 
         menuRepository.addProduct(ProductMock.validProduct(existingProductId));
         menuRepository.addExtra(ExtraMock.validExtra(existingIngredientID));
@@ -137,6 +137,6 @@ public class CreateOrderSteps extends SpringStepsContext {
         String json = new String(data, StandardCharsets.UTF_8);
         Order receivedOrder = objectMapper.readValue(json, Order.class);
         Order actualOrder = (Order) stateManager.get("GENERATED_ORDER");
-        assertEquals(receivedOrder.getOrderId().getId(), actualOrder.getOrderId().getId());
+        assertEquals(receivedOrder.getOrderId().getValue(), actualOrder.getOrderId().getValue());
     }
 }

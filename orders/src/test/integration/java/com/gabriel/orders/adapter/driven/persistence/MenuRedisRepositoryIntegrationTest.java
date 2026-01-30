@@ -19,6 +19,7 @@ import com.gabriel.orders.adapter.container.RedisTestContainer;
 import com.gabriel.orders.core.domain.ExtraMock;
 import com.gabriel.orders.core.domain.ProductMock;
 
+import static com.gabriel.orders.core.UtilsMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,8 +42,8 @@ public class MenuRedisRepositoryIntegrationTest {
 
     @BeforeEach
     void setup() {
-        product = ProductMock.validProduct(new ProductId());
-        extra = ExtraMock.validExtra(new IngredientId());
+        product = ProductMock.validProduct(generateProductId());
+        extra = ExtraMock.validExtra(generateIngredientId());
 
         // Clear Redis data
         redisTemplate.getConnectionFactory().getConnection().flushDb();
@@ -59,7 +60,7 @@ public class MenuRedisRepositoryIntegrationTest {
 
     @Test
     void testGetNewerProductRightOrder() {
-        Product newerProduct = ProductMock.validProduct(new ProductId());
+        Product newerProduct = ProductMock.validProduct(generateProductId());
         menuRepository.addProduct(product);
         menuRepository.addProduct(newerProduct);
         Product fetchedProduct = menuRepository.getProduct(newerProduct.getProductId());
@@ -70,7 +71,7 @@ public class MenuRedisRepositoryIntegrationTest {
 
     @Test
     void testGetNewerProductWrongOrder() {
-        Product newerProduct = ProductMock.validProduct(new ProductId());
+        Product newerProduct = ProductMock.validProduct(generateProductId());
         menuRepository.addProduct(newerProduct);
         menuRepository.addProduct(product);
         Product fetchedProduct = menuRepository.getProduct(product.getProductId());
@@ -107,7 +108,7 @@ public class MenuRedisRepositoryIntegrationTest {
     @Test
     void testAddAndGetExtra() {
         menuRepository.addExtra(extra);
-        Extra fetchedExtra = menuRepository.getExtra(extra.getIngredientID());
+        Extra fetchedExtra = menuRepository.getExtra(extra.getIngredientId());
 
         assertThat(fetchedExtra).isNotNull();
         assertThat(fetchedExtra.getName().getValue()).isEqualTo(extra.getName().getValue());
@@ -115,9 +116,9 @@ public class MenuRedisRepositoryIntegrationTest {
 
     @Test
     void testExistsExtra() {
-        assertFalse(menuRepository.existsExtra(extra.getIngredientID()));
+        assertFalse(menuRepository.existsExtra(extra.getIngredientId()));
         menuRepository.addExtra(extra);
-        assertTrue(menuRepository.existsExtra(extra.getIngredientID()));
+        assertTrue(menuRepository.existsExtra(extra.getIngredientId()));
     }
 
     @Test
@@ -126,14 +127,14 @@ public class MenuRedisRepositoryIntegrationTest {
         menuRepository.addExtra(extra);
         assertFalse(menuRepository.allExtras().isEmpty());
         assertEquals(1, menuRepository.allExtras().size());
-        assertEquals(extra.getIngredientID(), menuRepository.allExtras().get(0));
+        assertEquals(extra.getIngredientId(), menuRepository.allExtras().get(0));
     }
 
     @Test
     void testDeleteExtra() {
         menuRepository.addExtra(extra);
-        menuRepository.deleteExtra(extra.getIngredientID());
-        Extra fetchedExtra = menuRepository.getExtra(extra.getIngredientID());
+        menuRepository.deleteExtra(extra.getIngredientId());
+        Extra fetchedExtra = menuRepository.getExtra(extra.getIngredientId());
 
         assertThat(fetchedExtra).isNull();
     }
