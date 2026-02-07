@@ -32,6 +32,7 @@ services:
     image: gabrielmirandat/orders:latest
     depends_on:
       - mongo
+      - redis
       - kafka
       - permissions-service
       - menu-service
@@ -84,10 +85,8 @@ services:
       - POSTGRES_PORT=5432
       - POSTGRES_USER=dummy
       - POSTGRES_PASSWORD=dummy
-      - POSTGRES_DB=notifications_db
+      - POSTGRES_DB=postech_db
       - KAFKA_SERVER_URL=kafka:29092
-      - KAFKA_GROUP_ID=notifications-group-id
-      - KAFKA_DOMAIN_TOPIC=orders
       - KAFKA_NOTIFICATIONS_TOPIC=notifications
     networks:
       - postech_network

@@ -1,8 +1,5 @@
 package com.gabriel.menu.adapter.driven.persistence;
 
-import com.gabriel.adapter.api.exceptions.NotFound;
-import com.gabriel.model.ApplicationError;
-import com.gabriel.model.ApplicationException;
 import com.gabriel.model.Name;
 import com.gabriel.model.Price;
 import com.gabriel.model.IngredientId;
@@ -37,18 +34,18 @@ public class IngredientMongoRepository implements IngredientRepository {
         try {
             ingredientCollection.insertOne(document);
         } catch (MongoWriteException ex) {
-            throw new ApplicationException(ex.getError().getMessage(), ApplicationError.APP_OO1);
+            throw new RuntimeException("Database error: " + ex.getError().getMessage());
         }
         return ingredient;
     }
 
     @Override
     public Ingredient getById(IngredientId id) {
-        Document doc = ingredientCollection.find(Filters.eq("_id", id.getId())).first();
+        Document doc = ingredientCollection.find(Filters.eq("_id", id.getValue())).first();
         if (doc != null) {
             return IngredientConverter.documentToIngredient(doc);
         }
-        throw new NotFound("Ingredient not found");
+        throw new RuntimeException("Ingredient not found");
     }
 
     @Override
@@ -64,14 +61,14 @@ public class IngredientMongoRepository implements IngredientRepository {
     @Override
     public void deleteIngredient(IngredientId id) {
 
-        ingredientCollection.deleteOne(Filters.eq("_id", id.getId()));
+        ingredientCollection.deleteOne(Filters.eq("_id", id.getValue()));
     }
 
     private static class IngredientConverter {
 
         public static Document ingredientToDocument(Ingredient ingredient) {
             Document doc = new Document();
-            doc.append("_id", ingredient.getIngredientID().getId())
+            doc.append("_id", ingredient.getIngredientID().getValue())
                 .append("name", ingredient.getName().getValue())
                 .append("category", ingredient.getCategory().toString())
                 .append("price", ingredient.getPrice().getValue())

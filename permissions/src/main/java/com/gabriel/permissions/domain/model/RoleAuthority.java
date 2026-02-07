@@ -1,21 +1,20 @@
 package com.gabriel.permissions.domain.model;
 
-import com.gabriel.core.domain.AggregateRoot;
-import com.gabriel.model.PermissionID;
+import com.gabriel.model.PermissionId;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.Instant;
 
 @Entity
 @Table(name = "role_authority")
-@AttributeOverrides({
-    @AttributeOverride(name = "creationTimestamp", column = @Column(name = "created_at", nullable = false, updatable = false)),
-    @AttributeOverride(name = "updateTimestamp", column = @Column(name = "updated_at", nullable = false))
-})
-public class RoleAuthority extends AggregateRoot {
+public class RoleAuthority {
 
     public RoleAuthority() {
     }
 
-    public RoleAuthority(RoleAuthorityKey key, PermissionID permissionID, Role role, Authority authority, String userId) {
+    public RoleAuthority(RoleAuthorityKey key, PermissionId permissionID, Role role, Authority authority, String userId) {
         this.key = key;
         this.permissionID = permissionID;
         this.role = role;
@@ -28,7 +27,7 @@ public class RoleAuthority extends AggregateRoot {
 
     @Convert(converter = PermissionIDConverter.class)
     @Column(name = "permission_id", nullable = false, updatable = false)
-    private PermissionID permissionID;
+    private PermissionId permissionID;
 
     @ManyToOne
     @MapsId("roleId")
@@ -43,11 +42,19 @@ public class RoleAuthority extends AggregateRoot {
     @Column(name = "user_id", nullable = false)
     private String userId;
 
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
     public RoleAuthorityKey getKey() {
         return key;
     }
 
-    public PermissionID getPermissionID() {
+    public PermissionId getPermissionID() {
         return permissionID;
     }
 
@@ -61,5 +68,13 @@ public class RoleAuthority extends AggregateRoot {
 
     public String getUserId() {
         return userId;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
     }
 }

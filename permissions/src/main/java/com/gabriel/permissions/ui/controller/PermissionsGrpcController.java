@@ -3,9 +3,9 @@ package com.gabriel.permissions.ui.controller;
 import com.gabriel.permissions.application.service.PermissionService;
 import com.gabriel.permissions.domain.model.Role;
 import com.gabriel.permissions.domain.model.RoleAuthority;
-import com.gabriel.specs.permissions.PermissionGrpc;
-import com.gabriel.specs.permissions.PermissionRequest;
-import com.gabriel.specs.permissions.PermissionResponse;
+import com.gabriel.service.permissions.PermissionGrpc;
+import com.gabriel.service.permissions.PermissionRequest;
+import com.gabriel.service.permissions.PermissionResponse;
 import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -37,7 +37,7 @@ public class PermissionsGrpcController extends PermissionGrpc.PermissionImplBase
             for (Role role : roles) {
                 for (RoleAuthority authority : role.getRoleAuthorities()) {
 
-                    Instant instant = authority.getUpdateTimestamp();
+                    Instant instant = authority.getUpdatedAt();
 
                     Timestamp timestamp = Timestamp.newBuilder()
                         .setSeconds(instant.getEpochSecond())
@@ -45,8 +45,8 @@ public class PermissionsGrpcController extends PermissionGrpc.PermissionImplBase
                         .build();
 
                     responseBuilder.addItems(
-                        com.gabriel.specs.permissions.PermissionItem.newBuilder()
-                            .setId(authority.getPermissionID().getId())
+                        com.gabriel.service.permissions.PermissionItem.newBuilder()
+                            .setId(authority.getPermissionID().getValue())
                             .setRole(authority.getRole().getName())
                             .setAuthority(authority.getAuthority().getName())
                             .setLastUpdated(timestamp)

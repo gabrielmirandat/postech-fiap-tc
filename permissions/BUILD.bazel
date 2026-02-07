@@ -55,7 +55,6 @@ java_library(
         "@maven//:org_springframework_spring_core",
         "@maven//:org_springframework_spring_tx",
         "@maven//:org_springframework_spring_web",
-        "@rules_spring//springboot/import_bundles:springboot_required_deps",
     ],
 )
 

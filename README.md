@@ -203,12 +203,71 @@ this project is a restaurant management system.
 
 ---
 
+### Notifications
+**Architecture:** Domain-Driven Design (DDD) + Service Layer  
+**Framework:** Ruby on Rails 7.1 (API-only)  
+**Language:** Ruby  
+**Database:** PostgreSQL 17.2 (with ActiveRecord migrations)  
+**Communication:** Kafka (event-driven, CloudEvents)  
+**Job Processing:** ActiveJob (async)  
+**Testing:** RSpec (planned)
+
+**Architectural Patterns:**
+- **Service Layer:** Clear separation between Controllers (API), Services (Business Logic), Jobs (Async Processing)
+- **DDD:** Domain entities (Notification), Domain Events published to Kafka
+- **Event-Driven:** Event publishing via Kafka using CloudEvents following DDD patterns
+- **Generic Design:** Domain-agnostic service that can handle notifications for any entity type
+
+**Structure:**
+- `app/controllers`: REST API controllers (NotificationsController)
+- `app/models`: Domain entities (Notification)
+- `app/services`: Business logic (NotificationService, EmailNotificationSender, SmsNotificationSender, NotificationEventPublisher)
+- `app/jobs`: Background jobs for asynchronous processing (SendNotificationJob)
+- `config`: Rails configurations, Kafka initialization
+- `db/migrate`: Database migrations
+
+**Key Technologies:**
+- Ruby on Rails 7.1 (API-only mode)
+- PostgreSQL 17.2 for persistence
+- ActiveRecord for ORM and migrations
+- Apache Kafka for event publishing
+- CloudEvents 1.0 for standardized event format
+- ActiveJob for asynchronous job processing
+
+**Features:**
+- Generic notification service (no knowledge of other domains)
+- Asynchronous notification processing via background jobs
+- Support for Email and SMS notifications (mocked services)
+- Event publishing to Kafka with DDD domain events:
+  - `postech.notifications.v1.notification.sent`
+  - `postech.notifications.v1.notification.failed`
+- RESTful API for creating and querying notifications
+- Generic entity support (entity_type, entity_id) instead of domain-specific fields
+
+**API Endpoints:**
+- `GET /api/v1/notifications` - List notifications (with pagination and filters)
+- `GET /api/v1/notifications/:id` - Get notification details
+- `POST /api/v1/notifications` - Create and enqueue notification (async)
+
+**Environment Variables:**
+- `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
+- `KAFKA_SERVER_URL` - Kafka broker addresses
+- `KAFKA_NOTIFICATIONS_TOPIC` - Topic for publishing notification events
+
+**Characteristics:**
+- Domain-agnostic design (generic entity_type/entity_id)
+- Asynchronous processing for better scalability
+- Event-driven architecture with CloudEvents
+- No direct coupling with other microservices
+
+---
+
 ### Infra
 **Technologies:** Docker Compose, Kubernetes, Terraform, AWS Academy, Docker Hub, GitHub Actions  
 **Status:** SAGA Pattern [TODO]
 
 **Infrastructure Components:**
-- **Docker Compose:** Local orchestration of services (PostgreSQL, MongoDB, EdgeDB, Redis, Kafka, Zookeeper)
+- **Docker Compose:** Local orchestration of services (PostgreSQL, MongoDB, EdgeDB, Redis, Kafka, Zookeeper, Cassandra, and all microservices)
 - **Kubernetes:** Container orchestration in production
 - **Terraform:** Infrastructure as Code for cloud provisioning
 - **AWS Academy:** AWS learning environment
@@ -217,11 +276,12 @@ this project is a restaurant management system.
 - **Bazel:** Build system for build and tests
 
 **Orchestrated Services:**
-- PostgreSQL 17.2 (Permissions)
+- PostgreSQL 17.2 (Permissions, Notifications)
 - MongoDB 6.0.6 (Orders, Menu)
 - EdgeDB 3.5 (Customers)
 - Redis 7.0.13 (Cache)
 - Kafka 7.4.0 + Zookeeper (Event Streaming)
+- Apache Cassandra 4.1 (Payments)
 
 **TODO (from original Modules section):** Implement SAGA pattern for distributed transaction orchestration
 
@@ -245,19 +305,21 @@ Restaurant management system based on **Microservices** with asynchronous (event
 **Backend:**
 - Java 21 (Orders, Menu, Permissions, Core)
 - Python 3 (Customers)
+- Ruby (Notifications)
 - .NET (Payments - planned)
 
 **Frameworks:**
 - Spring Boot 3.2.4
 - Quarkus 3.17.6
 - FastAPI
+- Ruby on Rails 7.1
 
 **Databases:**
 - MongoDB 6.0.6 (Orders, Menu)
-- PostgreSQL 17.2 (Permissions)
+- PostgreSQL 17.2 (Permissions, Notifications)
 - EdgeDB 3.5 (Customers)
 - Redis 7.0.13 (Cache)
-- Apache Cassandra (Payments - planned)
+- Apache Cassandra 4.1 (Payments)
 
 **Messaging:**
 - Apache Kafka 7.4.0
@@ -318,4 +380,9 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
     bazel build //menu:uber
     bazel build //menu:image
     bazel run //menu:push
+    
+    bazel build //notifications:notifications_build
+    bazel test //notifications:unit
+    bazel build //notifications:notifications_image
+    bazel run //notifications:notifications_push
 ```

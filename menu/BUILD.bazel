@@ -103,7 +103,7 @@ java_test_suite(
         "-target",
         "21",
     ],
-    resources = glob(["src/test/resources/**"]),
+    resources = glob(["src/test/resources/**"], allow_empty = True),
     runner = "junit5",
     runtime_deps = JUNIT5_DEPS,
     deps = [

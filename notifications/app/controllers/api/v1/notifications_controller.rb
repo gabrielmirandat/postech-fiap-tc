@@ -6,6 +6,8 @@ module Api
       def index
         @notifications = Notification.order(created_at: :desc)
         @notifications = @notifications.where(status: params[:status]) if params[:status].present?
+        @notifications = @notifications.where(entity_type: params[:entity_type]) if params[:entity_type].present?
+        @notifications = @notifications.where(entity_id: params[:entity_id]) if params[:entity_id].present?
         page = (params[:page] || 1).to_i
         per_page = (params[:per_page] || 20).to_i
         total = @notifications.count
@@ -25,29 +27,17 @@ module Api
         render json: notification_json(@notification)
       end
 
-      def by_order
-        @notifications = Notification.by_order(params[:order_id])
-        render json: {
-          order_id: params[:order_id],
-          notifications: @notifications.map { |n| notification_json(n) }
-        }
-      end
-
       def create
-        @notification = Notification.new(notification_params)
+        notification_service = NotificationService.new(notification_params)
+        @notification = notification_service.create_notification
         
-        if @notification.save
-          # Trigger sending
-          case @notification.notification_type
-          when Notification::TYPE_EMAIL
-            EmailNotificationSender.new(@notification).send
-          when Notification::TYPE_SMS
-            SmsNotificationSender.new(@notification).send
-          end
+        if @notification&.persisted?
+          # Enqueue job to send notification asynchronously
+          SendNotificationJob.perform_later(@notification.id)
           
           render json: notification_json(@notification), status: :created
         else
-          render json: { errors: @notification.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: @notification&.errors&.full_messages || ['Failed to create notification'] }, status: :unprocessable_entity
         end
       end
 
@@ -59,15 +49,16 @@ module Api
 
       def notification_params
         params.require(:notification).permit(
-          :order_id, :notification_type, :contact_type, :contact_value,
-          :message, :event_type, :event_id, metadata: {}
-        )
+          :entity_type, :entity_id, :notification_type, :contact_type, :contact_value,
+          :message, :event_type, :event_id, metadata: {}, contact_data: {}
+        ).to_h.symbolize_keys
       end
 
       def notification_json(notification)
         {
           id: notification.id,
-          order_id: notification.order_id,
+          entity_type: notification.entity_type,
+          entity_id: notification.entity_id,
           notification_type: notification.notification_type,
           contact_type: notification.contact_type,
           contact_value: notification.contact_value,

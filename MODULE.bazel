@@ -16,6 +16,8 @@ bazel_dep(name = "rules_oci", version = "2.2.6")
 bazel_dep(name = "openapi_tools_generator_bazel", version = "0.2.0")
 bazel_dep(name = "aspect_bazel_lib", version = "2.20.0")
 bazel_dep(name = "gazelle", version = "0.45.0")
+bazel_dep(name = "rules_python", version = "0.31.0")
+bazel_dep(name = "rules_foreign_cc", version = "0.10.1")
 
 # Maven dependencies
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
@@ -140,27 +142,27 @@ oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 oci.pull(
     name = "dotnet_aspnet_8_0",
     image = "mcr.microsoft.com/dotnet/aspnet",
-    tag = "8.0",
     platforms = ["linux/amd64"],
+    tag = "8.0",
 )
 oci.pull(
     name = "amazon_corretto_image",
     image = "public.ecr.aws/docker/library/amazoncorretto",
-    tag = "21",
     platforms = ["linux/amd64"],
+    tag = "21",
 )
 oci.pull(
     name = "ruby_3_2_0",
     image = "docker.io/library/ruby",
-    tag = "3.2.0-slim",
     platforms = ["linux/amd64"],
+    tag = "3.2.0-slim",
 )
-use_repo(oci, "dotnet_aspnet_8_0", "amazon_corretto_image", "ruby_3_2_0")
+use_repo(oci, "amazon_corretto_image", "amazon_corretto_image_linux_amd64", "dotnet_aspnet_8_0", "dotnet_aspnet_8_0_linux_amd64", "ruby_3_2_0", "ruby_3_2_0_linux_amd64")
 
 # OpenAPI generator
 openapi_gen = use_extension("@openapi_tools_generator_bazel//:extension.bzl", "openapi_gen")
 openapi_gen.client(
-    version = "7.0.1",
     sha256 = "01387c73905de47a6ecf8801f91c8d61624f8a1e890c8058225df51d493bc32a",
+    version = "7.0.1",
 )
 use_repo(openapi_gen, "openapi_tools_generator_bazel_cli")

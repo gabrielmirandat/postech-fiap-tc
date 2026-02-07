@@ -6,16 +6,16 @@ default: &default
   port: <%= ENV.fetch("POSTGRES_PORT") { "5432" } %>
   username: <%= ENV.fetch("POSTGRES_USER") { "dummy" } %>
   password: <%= ENV.fetch("POSTGRES_PASSWORD") { "dummy" } %>
-  database: <%= ENV.fetch("POSTGRES_DB") { "notifications_db" } %>
+  database: <%= ENV.fetch("POSTGRES_DB") { "postech_db" } %>
 
 development:
   <<: *default
-  database: notifications_db_development
+  database: postech_db
 
 test:
   <<: *default
-  database: notifications_db_test
+  database: postech_db_test
 
 production:
   <<: *default
-  database: notifications_db_production
+  database: postech_db

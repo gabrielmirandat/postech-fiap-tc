@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.model.ApplicationError;
-import com.gabriel.model.ApplicationException;
 import com.gabriel.model.Description;
 import com.gabriel.model.Name;
 import com.gabriel.model.Price;
@@ -79,13 +77,13 @@ public class Product extends Menu {
         try {
             return deserializer.readValue(bytes, Product.class);
         } catch (IOException e) {
-            throw new ApplicationException("Error deserializing product", ApplicationError.APP_OO3);
+            throw new RuntimeException("Error deserializing product: " + e.getMessage());
         }
     }
 
     @Override
     public String getMenuId() {
-        return productId.getId();
+        return productId.getValue();
     }
 
     private void validateIngredients(List<IngredientId> inputIngredients, List<IngredientId> allIngredients) {
@@ -99,7 +97,7 @@ public class Product extends Menu {
         try {
             return serializer.writeValueAsBytes(this);
         } catch (JsonProcessingException e) {
-            throw new ApplicationException("Error serializing product", ApplicationError.APP_OO2);
+            throw new RuntimeException("Error serializing product: " + e.getMessage());
         }
     }
 

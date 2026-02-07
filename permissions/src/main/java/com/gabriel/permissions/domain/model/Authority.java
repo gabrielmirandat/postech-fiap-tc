@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "authority")
-public class Authority extends com.gabriel.core.domain.Entity {
+public class Authority {
 
     public Authority() {
     }
@@ -99,7 +99,6 @@ public class Authority extends com.gabriel.core.domain.Entity {
         this.roleAuthorities = roleAuthorities;
     }
 
-    @Override
     public String toString() {
         return "Authority{" +
             "id=" + id +

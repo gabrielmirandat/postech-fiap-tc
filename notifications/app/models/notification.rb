@@ -9,17 +9,16 @@ class Notification < ApplicationRecord
   TYPE_SMS = 'sms'
   TYPE_PUSH = 'push'
 
-  # Contact types (from core proto)
+  # Contact types
   CONTACT_TYPE_EMAIL = 'email'
   CONTACT_TYPE_CELLPHONE = 'cellphone'
 
-  validates :order_id, presence: true
   validates :notification_type, presence: true, inclusion: { in: [TYPE_EMAIL, TYPE_SMS, TYPE_PUSH] }
   validates :contact_type, presence: true, inclusion: { in: [CONTACT_TYPE_EMAIL, CONTACT_TYPE_CELLPHONE] }
   validates :contact_value, presence: true
   validates :status, presence: true, inclusion: { in: [STATUS_PENDING, STATUS_SENT, STATUS_FAILED] }
 
-  scope :by_order, ->(order_id) { where(order_id: order_id) }
+  scope :by_entity, ->(entity_type, entity_id) { where(entity_type: entity_type, entity_id: entity_id) }
   scope :pending, -> { where(status: STATUS_PENDING) }
   scope :sent, -> { where(status: STATUS_SENT) }
   scope :failed, -> { where(status: STATUS_FAILED) }

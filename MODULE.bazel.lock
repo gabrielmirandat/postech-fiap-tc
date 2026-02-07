@@ -372,7 +372,7 @@
     "@@openapi_tools_generator_bazel+//:extension.bzl%openapi_gen": {
       "general": {
         "bzlTransitiveDigest": "OpLFSbBZQIsnXk7RdEflIQTNoFCU+0FDFCogz5A2rAc=",
-        "usagesDigest": "KH0udWSZg8pX/nfjwKSW+2erwv/KpQBT/jfzm5LX6IE=",
+        "usagesDigest": "EoWZdr+UQK9s8TZj04O3IvHLxHRjZINohKtYu22o0cw=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -818,7 +818,7 @@
     "@@rules_oci+//oci:extensions.bzl%oci": {
       "general": {
         "bzlTransitiveDigest": "iQZOkLD5gZw8LZ9chmHTJF8IzhJjzPejnvw6vAz6Qmk=",
-        "usagesDigest": "6UDBLDQLeFvGJtePO/l8CoB9YeBGoHEZ37e1mHEZPOo=",
+        "usagesDigest": "j3SKDCUCes92aZKuN7rnjKqHI2Lej+3x/xD+mMH6ezQ=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -878,6 +878,35 @@
                 "@@platforms//cpu:x86_64": "@amazon_corretto_image_linux_amd64"
               },
               "bzlmod_repository": "amazon_corretto_image",
+              "reproducible": true
+            }
+          },
+          "ruby_3_2_0_linux_amd64": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_pull",
+            "attributes": {
+              "www_authenticate_challenges": {},
+              "scheme": "https",
+              "registry": "index.docker.io",
+              "repository": "library/ruby",
+              "identifier": "3.2.0-slim",
+              "platform": "linux/amd64",
+              "target_name": "ruby_3_2_0_linux_amd64",
+              "bazel_tags": []
+            }
+          },
+          "ruby_3_2_0": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_alias",
+            "attributes": {
+              "target_name": "ruby_3_2_0",
+              "www_authenticate_challenges": {},
+              "scheme": "https",
+              "registry": "index.docker.io",
+              "repository": "library/ruby",
+              "identifier": "3.2.0-slim",
+              "platforms": {
+                "@@platforms//cpu:x86_64": "@ruby_3_2_0_linux_amd64"
+              },
+              "bzlmod_repository": "ruby_3_2_0",
               "reproducible": true
             }
           },
@@ -1000,7 +1029,9 @@
             "dotnet_aspnet_8_0",
             "dotnet_aspnet_8_0_linux_amd64",
             "amazon_corretto_image",
-            "amazon_corretto_image_linux_amd64"
+            "amazon_corretto_image_linux_amd64",
+            "ruby_3_2_0",
+            "ruby_3_2_0_linux_amd64"
           ],
           "explicitRootModuleDirectDevDeps": [],
           "useAllRepos": "NO",
