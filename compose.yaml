@@ -93,14 +93,15 @@ services:
       - postech_network
 
   cassandra:
-    container_name: postech_cassandra
     image: cassandra:4.1
+    container_name: postech_cassandra
     ports:
       - "9042:9042"
     environment:
       - CASSANDRA_CLUSTER_NAME=postech_cluster
       - CASSANDRA_DC=datacenter1
       - CASSANDRA_RACK=rack1
+      - CASSANDRA_SEEDS=cassandra
     networks:
       - postech_network
 
