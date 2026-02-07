@@ -13,13 +13,23 @@ builder.Services.AddInfrastructure(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI(c =>
+//     {
+//         c.RoutePrefix = string.Empty;
+//     });
+// }
 
-app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.RoutePrefix = string.Empty;
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Payments API v1");
+});
+
+//app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
