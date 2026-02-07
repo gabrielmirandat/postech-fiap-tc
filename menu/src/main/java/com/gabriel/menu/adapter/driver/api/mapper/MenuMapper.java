@@ -24,7 +24,7 @@ public class MenuMapper {
 
     public static com.gabriel.specs.menu.models.IngredientResponse toResponse(Ingredient ingredient) {
         return new com.gabriel.specs.menu.models.IngredientResponse()
-            .id(ingredient.getIngredientID().getId())
+            .id(ingredient.getIngredientID().getValue())
             .name(ingredient.getName().getValue())
             .price(ingredient.getPrice().getValue())
             .category(com.gabriel.specs.menu.models.ProductCategoryDTO.valueOf(ingredient.getCategory().toString().toUpperCase()))
@@ -58,7 +58,7 @@ public class MenuMapper {
 
     public static com.gabriel.specs.menu.models.ProductResponse toResponse(Product product, List<Ingredient> ingredientList) {
         return new com.gabriel.specs.menu.models.ProductResponse()
-            .id(product.getProductId().getId())
+            .id(product.getProductId().getValue())
             .name(product.getName().getValue())
             .category(com.gabriel.specs.menu.models.ProductCategoryDTO.valueOf(product.getCategory().toString().toUpperCase()))
             .price(product.getPrice().getValue())
@@ -66,7 +66,7 @@ public class MenuMapper {
             .image(product.getImage().getUrl())
             .ingredients(ingredientList.stream()
                 .map(ingredient -> new com.gabriel.specs.menu.models.IngredientResponse()
-                    .id(ingredient.getIngredientID().getId())
+                    .id(ingredient.getIngredientID().getValue())
                     .name(ingredient.getName().getValue())
                     .category(com.gabriel.specs.menu.models.ProductCategoryDTO.valueOf(ingredient.getCategory().toString().toUpperCase()))
                     .price(ingredient.getPrice().getValue())

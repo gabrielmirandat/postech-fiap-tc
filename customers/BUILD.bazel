@@ -1,5 +1,13 @@
-load("@io_bazel_rules_python//python:defs.bzl", "py_binary", "py_library")
-load("@rules_foreign_cc//tools/build_defs/make:make.bzl", "make")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+
+package(default_visibility = ["//visibility:public"])
+
+# Build target - just creates a marker
+genrule(
+    name = "customers_build",
+    outs = ["customers_build_marker"],
+    cmd = "touch $@",
+)
 
 # Instalações necessárias (executa EdgeDB CLI e OpenAPI Generator)
 genrule(

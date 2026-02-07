@@ -2,10 +2,9 @@ package com.gabriel.menu.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.gabriel.core.domain.ValueObject;
 import jakarta.validation.constraints.Pattern;
 
-public class Image extends ValueObject {
+public class Image {
 
     @JsonValue
     @Pattern(regexp = ".*\\.png$", message = "Image must end with .png")
@@ -15,6 +14,12 @@ public class Image extends ValueObject {
     public Image(String url) {
         this.url = url;
         validate();
+    }
+
+    private void validate() {
+        if (url == null || !url.endsWith(".png")) {
+            throw new IllegalArgumentException("Image must end with .png");
+        }
     }
 
     public String getUrl() {

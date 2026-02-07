@@ -12,12 +12,11 @@ class NotificationEventPublisher
     topic = ENV.fetch("KAFKA_NOTIFICATIONS_TOPIC", "notifications")
     
     begin
-      KAFKA_CLIENT.deliver_message(
-        event.to_json,
-        topic: topic,
-        key: @notification.order_id
-      )
-      Rails.logger.info "Published notification event: #{@status} for order #{@notification.order_id}"
+      key = @notification.entity_id || @notification.id.to_s
+      producer = KAFKA_CLIENT.producer
+      producer.produce(event.to_json, topic: topic, key: key)
+      producer.deliver_messages
+      Rails.logger.info "Published notification event: #{@status} for notification #{@notification.id}"
     rescue => e
       Rails.logger.error "Failed to publish notification event: #{e.message}"
     end
@@ -32,7 +31,8 @@ class NotificationEventPublisher
     
     payload = {
       notification_id: @notification.id,
-      order_id: @notification.order_id,
+      entity_type: @notification.entity_type,
+      entity_id: @notification.entity_id,
       notification_type: @notification.notification_type,
       contact_type: @notification.contact_type,
       contact_value: @notification.contact_value,

@@ -25,6 +25,6 @@ public class IngredientKafkaPublisher implements IngredientPublisher {
     @Override
     public void ingredientCreated(IngredientCreatedEvent event) {
         this.emitter.send(Message.of(new String(event.payload(objectMapper), StandardCharsets.UTF_8))
-            .addMetadata(CloudEventMapper.fromEvent(event)));
+            .addMetadata(CloudEventMapper.fromIngredientEvent(event)));
     }
 }

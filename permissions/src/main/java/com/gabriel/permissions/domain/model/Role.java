@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "role")
-public class Role extends com.gabriel.core.domain.Entity {
+public class Role {
 
     public Role() {
     }

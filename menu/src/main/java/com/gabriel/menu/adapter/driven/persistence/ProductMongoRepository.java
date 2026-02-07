@@ -1,8 +1,5 @@
 package com.gabriel.menu.adapter.driven.persistence;
 
-import com.gabriel.adapter.api.exceptions.NotFound;
-import com.gabriel.model.ApplicationError;
-import com.gabriel.model.ApplicationException;
 import com.gabriel.model.Description;
 import com.gabriel.model.Name;
 import com.gabriel.model.Price;
@@ -40,19 +37,19 @@ public class ProductMongoRepository implements ProductRepository {
         try {
             productCollection.insertOne(document);
         } catch (MongoWriteException ex) {
-            throw new ApplicationException(ex.getError().getMessage(), ApplicationError.APP_OO1);
+            throw new RuntimeException("Database error: " + ex.getError().getMessage());
         }
         return product;
     }
 
     @Override
     public Product getById(ProductId id) {
-        Document doc = productCollection.find(Filters.eq("_id", id.getId())).first();
+        Document doc = productCollection.find(Filters.eq("_id", id.getValue())).first();
 
         if (doc != null) {
             return ProductConverter.documentToProduct(doc);
         }
-        throw new NotFound("Product not found");
+        throw new RuntimeException("Product not found");
     }
 
     @Override
@@ -74,14 +71,14 @@ public class ProductMongoRepository implements ProductRepository {
 
         public static Document productToDocument(Product product) {
             Document doc = new Document();
-            doc.append("_id", product.getProductId().getId())
+            doc.append("_id", product.getProductId().getValue())
                 .append("name", product.getName().getValue())
                 .append("price", product.getPrice().getValue())
                 .append("category", product.getCategory().toString())
                 .append("description", product.getDescription().getValue())
                 .append("image", product.getImage().getUrl());
             List<String> ingredientIds = product.getIngredients().stream()
-                .map(IngredientId::getId)
+                .map(IngredientId::getValue)
                 .collect(Collectors.toList());
             doc.append("ingredients", ingredientIds);
             doc.append("creationTimestamp", product.getCreationTimestamp().toString());

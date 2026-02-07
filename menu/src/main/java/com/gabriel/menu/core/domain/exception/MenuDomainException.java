@@ -1,17 +1,14 @@
 package com.gabriel.menu.core.domain.exception;
 
-import com.gabriel.model.DomainException;
-
-public class MenuDomainException extends DomainException {
+public class MenuDomainException extends RuntimeException {
 
     private final MenuDomainError type;
 
     public MenuDomainException(String message, MenuDomainError type) {
-        super(message, null);
+        super(message);
         this.type = type;
     }
 
-    @Override
     public String getType() {
         return type.message;
     }

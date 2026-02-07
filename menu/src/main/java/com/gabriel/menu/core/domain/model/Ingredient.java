@@ -84,7 +84,7 @@ public class Ingredient extends Menu {
 
     @Override
     public String getMenuId() {
-        return ingredientID.getId();
+        return ingredientID.getValue();
     }
 
     public IngredientId getIngredientID() {

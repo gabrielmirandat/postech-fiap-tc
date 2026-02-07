@@ -1,0 +1,34 @@
+# Core module BUILD file
+# Provides aliases for core targets
+
+package(default_visibility = ["//visibility:public"])
+
+# Alias for model_lib
+alias(
+    name = "artifact",
+    actual = "//core/src/main/java:model_lib",
+)
+
+# Alias for menu proto
+alias(
+    name = "menu_java_proto",
+    actual = "//core/src/main/java:menu_java_proto",
+)
+
+# Alias for menu grpc
+alias(
+    name = "menu_java_grpc",
+    actual = "//core/src/main/java:menu_java_grpc",
+)
+
+# Alias for permissions proto
+alias(
+    name = "permissions_java_proto",
+    actual = "//core/src/main/java:permissions_java_proto",
+)
+
+# Alias for permissions grpc
+alias(
+    name = "permissions_java_grpc",
+    actual = "//core/src/main/java:permissions_java_grpc",
+)

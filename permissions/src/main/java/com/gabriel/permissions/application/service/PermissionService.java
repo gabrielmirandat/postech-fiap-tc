@@ -2,7 +2,7 @@ package com.gabriel.permissions.application.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.model.PermissionID;
+import com.gabriel.model.PermissionId;
 import com.gabriel.permissions.domain.model.Authority;
 import com.gabriel.permissions.domain.model.Role;
 import com.gabriel.permissions.domain.model.RoleAuthority;
@@ -311,14 +311,21 @@ public class PermissionService {
     }
 
     public RoleAuthority addRoleAuthority(UUID roleId, UUID authorityId) {
+        String permissionIdValue = generatePermissionId();
         RoleAuthority roleAuthority = new RoleAuthority(
             new RoleAuthorityKey(roleId, authorityId),
-            new PermissionID(),
+            PermissionId.newBuilder().setValue(permissionIdValue).build(),
             retrieveRoleById(roleId),
             retrieveAuthorityById(authorityId),
             "admin"
         );
         return roleAuthorityRepository.save(roleAuthority);
+    }
+
+    private String generatePermissionId() {
+        String part1 = UUID.randomUUID().toString().substring(0, 8);
+        String part2 = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ISO_DATE);
+        return part1 + "-PERM-" + part2;
     }
 
     public void removeRoleAuthority(UUID roleId, UUID authorityId) {

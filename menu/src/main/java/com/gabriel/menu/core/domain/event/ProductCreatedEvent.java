@@ -2,10 +2,9 @@ package com.gabriel.menu.core.domain.event;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.core.domain.DomainEvent;
 import com.gabriel.menu.core.domain.model.Product;
 
-public class ProductCreatedEvent implements DomainEvent {
+public class ProductCreatedEvent {
 
     Product productAdded;
 
@@ -13,24 +12,28 @@ public class ProductCreatedEvent implements DomainEvent {
         this.productAdded = productAdded;
     }
 
-    @Override
     public String source() {
         return "post/products";
     }
 
-    @Override
     public String subject() {
         return String.format("id/%s", productAdded.getProductId().getId());
     }
 
-    @Override
     public String type() {
         return "postech.menu.v1.product.created";
     }
 
-    @Override
     public byte[] payload(ObjectMapper serializer) {
         return productAdded.serialized(serializer);
+    }
+
+    public String audience() {
+        return "public";
+    }
+
+    public String context() {
+        return "menu";
     }
 
     public Product getProductAdded() {

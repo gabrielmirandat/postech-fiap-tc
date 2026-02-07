@@ -25,6 +25,6 @@ public class ProductKafkaPublisher implements ProductPublisher {
     @Override
     public void productCreated(ProductCreatedEvent event) {
         this.emitter.send(Message.of(new String(event.payload(objectMapper), StandardCharsets.UTF_8))
-            .addMetadata(CloudEventMapper.fromEvent(event)));
+            .addMetadata(CloudEventMapper.fromProductEvent(event)));
     }
 }

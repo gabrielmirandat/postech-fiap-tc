@@ -45,7 +45,3 @@ console:
 server:
 	@echo "Starting Rails server..."
 	$(RAILS) server -p 8005
-
-consumer:
-	@echo "Starting Kafka consumer..."
-	$(RAILS) runner "OrderEventConsumerJob.perform_now"
