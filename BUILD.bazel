@@ -1,8 +1,51 @@
-java_library(
+# Genrule that builds all projects - generic build target
+# Uses tools to ensure all dependencies are built before this rule executes
+genrule(
     name = "global_artifact",
-    runtime_deps = [
+    tools = [
+        "//core:artifact",
         "//menu:artifact",
         "//orders:artifact",
         "//permissions:artifact",
+        "//customers:artifact",
+        "//notifications:artifact",
+        "//payments:artifact",
     ],
+    outs = ["global_artifact_marker"],
+    cmd = """
+        echo "All projects built successfully:" > $@
+        echo "  - core:artifact" >> $@
+        echo "  - menu:artifact" >> $@
+        echo "  - orders:artifact" >> $@
+        echo "  - permissions:artifact" >> $@
+        echo "  - customers:artifact" >> $@
+        echo "  - notifications:artifact" >> $@
+        echo "  - payments:artifact" >> $@
+    """,
+    visibility = ["//visibility:public"],
+)
+
+# Genrule that builds all executables (uber) - ready to run
+# Uses tools to ensure all executables are built before this rule executes
+genrule(
+    name = "global_uber",
+    tools = [
+        "//menu:uber",
+        "//orders:uber",
+        "//permissions:uber",
+        "//customers:uber",
+        "//notifications:uber",
+        "//payments:uber",
+    ],
+    outs = ["global_uber_marker"],
+    cmd = """
+        echo "All executables built successfully:" > $@
+        echo "  - menu:uber (Quarkus)" >> $@
+        echo "  - orders:uber (Spring Boot)" >> $@
+        echo "  - permissions:uber (Spring Boot)" >> $@
+        echo "  - customers:uber (Python/FastAPI)" >> $@
+        echo "  - notifications:uber (Docker/Rails)" >> $@
+        echo "  - payments:uber (Docker/.NET)" >> $@
+    """,
+    visibility = ["//visibility:public"],
 )

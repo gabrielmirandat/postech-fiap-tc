@@ -49,7 +49,7 @@ public class Order {
         return updateTimestamp;
     }
 
-    // Construtor privado para uso interno
+    // Private constructor for internal use
     private Order(OrderId orderId, List<OrderItem> items, Cpf customer, Address shippingAddress,
                   Contact additionalContact, Instant creationTimestamp, Instant updateTimestamp) {
         this.orderId = orderId;
@@ -74,7 +74,7 @@ public class Order {
         return new Order(validatedOrderId, items, customer, shippingAddress, additionalContact, Instant.now(), Instant.now());
     }
 
-    // Construtor para Jackson deserialization (sem validação para evitar duplicação)
+    // Constructor for Jackson deserialization (no validation to avoid duplication)
     @JsonCreator
     public static Order fromJson(@JsonProperty("orderId") OrderId orderId, @JsonProperty("items") List<OrderItem> items,
                                  @JsonProperty("customer") Cpf customer, @JsonProperty("shippingAddress") Address shippingAddress,

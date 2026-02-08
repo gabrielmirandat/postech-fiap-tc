@@ -6,7 +6,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Restaurante - Faça seu pedido'),
+        title: Text('Restaurant - Place your order'),
       ),
       drawer: Drawer(
         child: ListView(
@@ -16,20 +16,20 @@ class HomeScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
-              child: Text('Menu do Restaurante'),
+              child: Text('Restaurant Menu'),
             ),
             ListTile(
               leading: Icon(Icons.menu),
-              title: Text('Cardápio'),
+              title: Text('Menu'),
               onTap: () {
                 Navigator.of(context).pop();
               },
             ),
             ListTile(
               leading: Icon(Icons.info),
-              title: Text('Sobre'),
+              title: Text('About'),
               onTap: () {
-                // Aqui você pode implementar uma rota para tela de informações
+                // You can implement a route to the information screen here
               },
             ),
           ],

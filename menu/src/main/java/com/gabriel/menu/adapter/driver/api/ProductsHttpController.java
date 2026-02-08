@@ -27,18 +27,18 @@ public class ProductsHttpController implements ProductsApi {
     public ProductCreated addProduct(ProductRequest productRequest) {
         CreateProductCommand command = MenuMapper.toCommand(productRequest);
         Product newProduct = productUseCase.createProduct(command);
-        return new ProductCreated().productId(newProduct.getProductId().getId());
+        return new ProductCreated().productId(newProduct.getProductId().getValue());
     }
 
     @Override
     public void deleteProduct(String productId) {
-        DeleteProductCommand command = new DeleteProductCommand(new ProductId(productId));
+        DeleteProductCommand command = new DeleteProductCommand(ProductId.newBuilder().setValue(productId).build());
         productUseCase.deleteProduct(command);
     }
 
     @Override
     public ProductResponse getProductById(String productId) {
-        GetByProductIdQuery query = new GetByProductIdQuery(new ProductId(productId));
+        GetByProductIdQuery query = new GetByProductIdQuery(ProductId.newBuilder().setValue(productId).build());
         return productUseCase.getResponseById(query);
     }
 

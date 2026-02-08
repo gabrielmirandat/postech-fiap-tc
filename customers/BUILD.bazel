@@ -4,12 +4,12 @@ package(default_visibility = ["//visibility:public"])
 
 # Build target - just creates a marker
 genrule(
-    name = "customers_build",
-    outs = ["customers_build_marker"],
+    name = "artifact",
+    outs = ["artifact_marker"],
     cmd = "touch $@",
 )
 
-# Instalações necessárias (executa EdgeDB CLI e OpenAPI Generator)
+# Required installations (runs EdgeDB CLI and OpenAPI Generator)
 genrule(
     name = "install_edgedb",
     outs = ["edgedb_installed"],
@@ -22,7 +22,7 @@ genrule(
     cmd = "pip install openapi-python-client && touch $@",
 )
 
-# Geração dos objetos OpenAPI
+# OpenAPI objects generation
 genrule(
     name = "generate_openapi_client",
     srcs = ["openapi.yaml"],
@@ -31,7 +31,7 @@ genrule(
     tools = [":install_openapi_generator"],
 )
 
-# Migração e criação do banco de dados EdgeDB
+# EdgeDB database migration and creation
 genrule(
     name = "edgedb_migrate",
     srcs = ["db/migrations/*.esdl"],
@@ -40,12 +40,124 @@ genrule(
     tools = [":install_edgedb"],
 )
 
-py_binary(
-    name = "main",
+# Python libraries for each module with dependencies
+py_library(
+    name = "entities",
+    srcs = glob(["src/entities/**/*.py"]),
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "db",
+    srcs = glob(["src/db/**/*.py"]),
+    deps = [
+        ":entities",
+        ":config",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "devices",
+    srcs = glob(["src/devices/**/*.py"]),
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "gateways",
+    srcs = glob(["src/gateways/**/*.py"]),
+    deps = [
+        ":entities",
+        ":db",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "presenters",
+    srcs = glob(["src/presenters/**/*.py"]),
+    deps = [
+        ":entities",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "use_cases",
+    srcs = glob(["src/use_cases/**/*.py"]),
+    deps = [
+        ":entities",
+        ":gateways",
+        ":devices",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "controllers",
+    srcs = glob(["src/controllers/**/*.py"]),
+    deps = [
+        ":use_cases",
+        ":presenters",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "external_interfaces",
+    srcs = glob(["src/external_interfaces/**/*.py"]),
+    deps = [
+        ":use_cases",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "web",
+    srcs = glob(["src/web/**/*.py"]),
+    deps = [
+        ":use_cases",
+        ":entities",
+        ":containers",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "config",
     srcs = [
-        "main.py",
+        "src/config.py",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
+    name = "containers",
+    srcs = [
+        "src/containers.py",
     ],
     deps = [
+        ":config",
+        ":controllers",
+        ":db",
+        ":devices",
+        ":external_interfaces",
+        ":gateways",
+        ":use_cases",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Executable - ready to run
+py_binary(
+    name = "uber",
+    srcs = [
+        "src/main.py",
+    ],
+    main = "src/main.py",
+    deps = [
+        ":config",
+        ":containers",
         ":controllers",
         ":db",
         ":devices",
@@ -55,7 +167,6 @@ py_binary(
         ":presenters",
         ":use_cases",
         ":web",
-        ":generate_openapi_client",
-        ":edgedb_migrate",
     ],
+    visibility = ["//visibility:public"],
 )

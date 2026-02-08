@@ -17,7 +17,7 @@ public class IngredientCreatedEvent {
     }
 
     public String subject() {
-        return String.format("id/%s", ingredientAdded.getIngredientID().getId());
+        return String.format("id/%s", ingredientAdded.getIngredientID().getValue());
     }
 
     public String type() {

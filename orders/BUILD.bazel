@@ -364,6 +364,7 @@ springboot(
     boot_app_class = "com.gabriel.orders.OrdersApplication",
     boot_launcher_class = "org.springframework.boot.loader.launch.JarLauncher",
     java_library = ":artifact",
+    visibility = ["//visibility:public"],
 )
 
 # bazel build //orders:layer

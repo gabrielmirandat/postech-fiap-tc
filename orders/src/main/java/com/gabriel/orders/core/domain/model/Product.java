@@ -23,7 +23,7 @@ public class Product {
 
     private Instant timestamp;
 
-    // Construtor privado para uso interno
+    // Private constructor for internal use
     private Product(ProductId productId, Name name, Price value, Instant timestamp) {
         this.productId = productId;
         this.name = name;
@@ -51,7 +51,7 @@ public class Product {
         return new Product(productId, validatedName, validatedPrice, timestamp);
     }
 
-    // Construtor para Jackson deserialization (sem validação para evitar duplicação)
+    // Constructor for Jackson deserialization (no validation to avoid duplication)
     @JsonCreator
     public static Product fromJson(@JsonProperty("productId") ProductId productId,
                                    @JsonProperty("name") Name name,

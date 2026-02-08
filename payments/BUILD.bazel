@@ -5,11 +5,13 @@
 load("@aspect_bazel_lib//lib:tar.bzl", "tar")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 
+package(default_visibility = ["//visibility:public"])
+
 # Build .NET solution using Dockerfile
 # Note: .NET builds are done via Dockerfile, not genrule, to avoid sandbox issues
 # The actual build happens when building the Docker image
 genrule(
-    name = "payments_build",
+    name = "artifact",
     srcs = glob([
         "**/*.cs",
         "**/*.csproj",
@@ -22,10 +24,10 @@ genrule(
         "**/obj/**",
         "**/TestResults/**",
     ]),
-    outs = ["payments_build_marker"],
+    outs = ["artifact_marker"],
     cmd = """
         echo "Build marker for payments module" > $@
-        echo "Actual build happens via Dockerfile when building :image target"
+        echo "Actual build happens via Dockerfile when building :uber target"
     """,
     local = 1,
 )
@@ -74,11 +76,11 @@ genrule(
     local = 1,
 )
 
-# Docker image for payments service
+# Executable - ready to run (Docker image)
 # Uses Dockerfile for build (similar to how Java modules use springboot rule)
 # The Dockerfile handles the dotnet build internally
 oci_image(
-    name = "image",
+    name = "uber",
     base = "@dotnet_aspnet_8_0",
     entrypoint = [
         "dotnet",
@@ -107,7 +109,7 @@ tar(
 
 oci_push(
     name = "push",
-    image = ":image",
+    image = ":uber",
     repository = "index.docker.io/gabrielmirandat/payments",
     remote_tags = ["latest"],
 )

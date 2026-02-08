@@ -43,8 +43,8 @@ public class MenuMapper {
         // using IntStream.range and mapToObj
         List<IngredientId> ingredients = request.getIngredients().stream()
             .flatMap(in -> IntStream.range(0, in.getQuantity())
-                .mapToObj(dump -> new IngredientId(in.getIngredientId())))
-            .toList();
+                .mapToObj(dump -> IngredientId.newBuilder().setValue(in.getIngredientId()).build()))
+            .collect(Collectors.toList());
 
         return new CreateProductCommand(
             request.getName(),
@@ -72,14 +72,15 @@ public class MenuMapper {
                     .price(ingredient.getPrice().getValue())
                     .weight(ingredient.getWeight().getValue())
                     .isExtra(ingredient.isExtra()))
-                .toList());
+                .collect(Collectors.toList()));
 
     }
 
-    public static com.gabriel.specs.menu.models.ErrorResponse toErrorResponse(com.gabriel.adapter.api.exceptions.BaseHttpException exception) {
-        return new com.gabriel.specs.menu.models.ErrorResponse()
-            .status(exception.getStatus())
-            .message(exception.getMessage())
-            .code(exception.getCode());
-    }
+    // Temporarily disabled - BaseHttpException package not found
+    // public static com.gabriel.specs.menu.models.ErrorResponse toErrorResponse(com.gabriel.adapter.api.exceptions.BaseHttpException exception) {
+    //     return new com.gabriel.specs.menu.models.ErrorResponse()
+    //         .status(exception.getStatus())
+    //         .message(exception.getMessage())
+    //         .code(exception.getCode());
+    // }
 }

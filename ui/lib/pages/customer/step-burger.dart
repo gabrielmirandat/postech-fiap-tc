@@ -21,7 +21,7 @@ class BurgerStep extends ConsumerWidget {
         ),
         ElevatedButton(
           onPressed: nextPage,
-          child: Text('Próxima Etapa: Acompanhamentos'),
+          child: Text('Next Step: Accompaniments'),
         ),
       ],
     );

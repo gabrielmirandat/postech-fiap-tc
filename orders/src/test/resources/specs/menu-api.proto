@@ -5,17 +5,17 @@ package com.gabriel.specs.menu;
 
 import "google/protobuf/timestamp.proto";
 
-// O serviço gRPC
+// gRPC service
 service Menu {
   rpc RetrieveMenu (MenuRequest) returns (MenuResponse);
 }
 
-// Mensagem de requisição com opção de filtro por categoria
+// Request message with category filter option
 message MenuRequest {
   string category = 1;
 }
 
-// Definindo um item de menu individual
+// Defining an individual menu item
 message MenuItem {
   string id = 1;
   string name = 2;
@@ -24,7 +24,7 @@ message MenuItem {
   google.protobuf.Timestamp lastUpdated = 5;
 }
 
-// Mensagem de resposta
+// Response message
 message MenuResponse {
   repeated MenuItem items = 1;
 }

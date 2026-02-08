@@ -42,7 +42,7 @@ class MenuPage extends ConsumerWidget {
                   onPressed: () {
                     // Adiciona o item ao carrinho
                     cart.addItem(item);
-                    onItemSelected(); // Próxima etapa
+                    onItemSelected(); // Next step
                   },
                   child: Icon(Icons.add_shopping_cart),
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),

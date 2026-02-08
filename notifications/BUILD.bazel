@@ -4,8 +4,8 @@ package(default_visibility = ["//visibility:public"])
 
 # Build target - just creates a marker
 genrule(
-    name = "notifications_build",
-    outs = ["notifications_build_marker"],
+    name = "artifact",
+    outs = ["artifact_marker"],
     cmd = "touch $@",
 )
 
@@ -32,9 +32,9 @@ genrule(
     local = 1,
 )
 
-# OCI image for notifications service
+# Executable - ready to run (Docker image)
 oci_image(
-    name = "notifications_image",
+    name = "uber",
     base = "@ruby_3_2_0",
     entrypoint = ["bundle", "exec", "puma", "-C", "config/puma.rb"],
     env = {
@@ -71,7 +71,7 @@ genrule(
 
 # Push to Docker Hub
 oci_push(
-    name = "notifications_push",
-    image = ":notifications_image",
+    name = "push",
+    image = ":uber",
     remote_tags = ["gabrielmirandat/notifications:latest"],
 )

@@ -25,11 +25,11 @@ class DessertStep extends ConsumerWidget {
           children: [
             ElevatedButton(
               onPressed: previousPage,
-              child: Text('Voltar'),
+              child: Text('Back'),
             ),
             ElevatedButton(
               onPressed: nextPage,
-              child: Text('Próxima Etapa: Identificação'),
+              child: Text('Next Step: Identification'),
             ),
           ],
         ),

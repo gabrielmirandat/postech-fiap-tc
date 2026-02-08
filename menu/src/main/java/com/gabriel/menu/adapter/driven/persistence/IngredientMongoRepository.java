@@ -80,10 +80,10 @@ public class IngredientMongoRepository implements IngredientRepository {
         }
 
         public static Ingredient documentToIngredient(Document doc) {
-            IngredientId ingredientID = new IngredientId(doc.getString("_id"));
-            Name name = new Name(doc.getString("name"));
+            IngredientId ingredientID = IngredientId.newBuilder().setValue(doc.getString("_id")).build();
+            Name name = Name.newBuilder().setValue(doc.getString("name")).build();
             Category category = Category.valueOf(doc.getString("category").toUpperCase());
-            Price price = new Price(doc.getDouble("price"));
+            Price price = Price.newBuilder().setValue(doc.getDouble("price")).build();
             Weight weight = new Weight(doc.getDouble("weight"));
             boolean isExtra = doc.getBoolean("isExtra");
             Instant createdAt = Instant.parse(doc.getString("creationTimestamp"));

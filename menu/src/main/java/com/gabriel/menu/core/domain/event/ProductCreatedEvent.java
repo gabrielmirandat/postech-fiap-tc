@@ -17,7 +17,7 @@ public class ProductCreatedEvent {
     }
 
     public String subject() {
-        return String.format("id/%s", productAdded.getProductId().getId());
+        return String.format("id/%s", productAdded.getProductId().getValue());
     }
 
     public String type() {
