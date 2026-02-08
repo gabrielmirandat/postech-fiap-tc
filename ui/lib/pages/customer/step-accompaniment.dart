@@ -25,11 +25,11 @@ class AccompanimentStep extends ConsumerWidget {
           children: [
             ElevatedButton(
               onPressed: previousPage,
-              child: Text('Voltar'),
+              child: Text('Back'),
             ),
             ElevatedButton(
               onPressed: nextPage,
-              child: Text('Próxima Etapa: Bebidas'),
+              child: Text('Next Step: Drinks'),
             ),
           ],
         ),

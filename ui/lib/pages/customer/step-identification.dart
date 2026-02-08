@@ -12,13 +12,13 @@ class IdentificationStep extends StatelessWidget {
 
     return Column(
       children: [
-        Text('Identifique-se', style: Theme.of(context).textTheme.headlineLarge),
+        Text('Identify yourself', style: Theme.of(context).textTheme.headlineLarge),
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: TextField(
             controller: _codeController,
             decoration: InputDecoration(
-              labelText: 'Digite o código enviado ao seu celular',
+              labelText: 'Enter the code sent to your phone',
               border: OutlineInputBorder(),
             ),
             keyboardType: TextInputType.number,
@@ -29,21 +29,21 @@ class IdentificationStep extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: previousPage,
-              child: Text('Voltar'),
+              child: Text('Back'),
             ),
             ElevatedButton(
               onPressed: () {
-                // Valida o código de identificação aqui
+                // Validate the identification code here
                 if (_codeController.text.isNotEmpty) {
                   nextPage();
                 } else {
-                  // Mostrar mensagem de erro
+                  // Show error message
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Por favor, insira o código')),
+                    SnackBar(content: Text('Please enter the code')),
                   );
                 }
               },
-              child: Text('Próximo'),
+              child: Text('Next'),
             ),
           ],
         ),

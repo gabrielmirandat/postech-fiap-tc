@@ -36,11 +36,11 @@ public class Product extends Menu {
     public Product(String name, Double price, Category category,
                    String description, String image, List<IngredientId> ingredients,
                    List<IngredientId> allIngredients) {
-        this.productId = new ProductId();
-        this.name = new Name(name);
-        this.price = new Price(price);
+        this.productId = ProductId.newBuilder().build();
+        this.name = Name.newBuilder().setValue(name).build();
+        this.price = Price.newBuilder().setValue(price).build();
         this.category = category;
-        this.description = new Description(description);
+        this.description = Description.newBuilder().setValue(description).build();
         this.image = new Image(image);
         this.ingredients = ingredients;
         validateIngredients(ingredients, allIngredients);

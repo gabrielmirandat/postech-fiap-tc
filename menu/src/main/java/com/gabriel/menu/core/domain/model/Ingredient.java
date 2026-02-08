@@ -26,7 +26,7 @@ public class Ingredient extends Menu {
     private final boolean isExtra;
 
     public Ingredient(Name name, Category category, Price price, Weight weight, boolean isExtra) {
-        this.ingredientID = new IngredientId();
+        this.ingredientID = IngredientId.newBuilder().build();
         this.name = name;
         this.category = category;
         this.price = price;
@@ -35,10 +35,10 @@ public class Ingredient extends Menu {
     }
 
     public Ingredient(String name, Category category, Double price, Double weight, boolean isExtra) {
-        this.ingredientID = new IngredientId();
-        this.name = new Name(name);
+        this.ingredientID = IngredientId.newBuilder().build();
+        this.name = Name.newBuilder().setValue(name).build();
         this.category = category;
-        this.price = new Price(price);
+        this.price = Price.newBuilder().setValue(price).build();
         this.weight = new Weight(weight);
         this.isExtra = isExtra;
     }

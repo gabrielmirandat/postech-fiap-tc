@@ -23,7 +23,7 @@ public class Extra {
 
     private Instant timestamp;
 
-    // Construtor privado para uso interno
+    // Private constructor for internal use
     private Extra(IngredientId ingredientId, Name name, Price value, Instant timestamp) {
         this.ingredientId = ingredientId;
         this.name = name;
@@ -51,7 +51,7 @@ public class Extra {
         return new Extra(ingredientId, validatedName, validatedPrice, timestamp);
     }
 
-    // Construtor para Jackson deserialization (sem validação para evitar duplicação)
+    // Constructor for Jackson deserialization (no validation to avoid duplication)
     @JsonCreator
     public static Extra fromJson(@JsonProperty("ingredientID") IngredientId ingredientId,
                                  @JsonProperty("name") Name name,

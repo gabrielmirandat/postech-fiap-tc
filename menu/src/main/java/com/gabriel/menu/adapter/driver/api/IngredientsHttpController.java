@@ -26,12 +26,12 @@ public class IngredientsHttpController implements IngredientsApi {
     public IngredientCreated addIngredient(IngredientRequest ingredientRequest) {
         CreateIngredientCommand command = MenuMapper.toCommand(ingredientRequest);
         Ingredient newIngredient = ingredientUseCase.createIngredient(command);
-        return new IngredientCreated().ingredientId(newIngredient.getIngredientID().getId());
+        return new IngredientCreated().ingredientId(newIngredient.getIngredientID().getValue());
     }
 
     @Override
     public IngredientResponse getIngredientById(String ingredientId) {
-        GetByIngredientIdQuery query = new GetByIngredientIdQuery(new IngredientId(ingredientId));
+        GetByIngredientIdQuery query = new GetByIngredientIdQuery(IngredientId.newBuilder().setValue(ingredientId).build());
         Ingredient ingredient = ingredientUseCase.getIngredientById(query);
         return MenuMapper.toResponse(ingredient);
     }

@@ -5,17 +5,17 @@ package com.gabriel.service.permissions;
 
 import "google/protobuf/timestamp.proto";
 
-// O serviço gRPC para Permissions
+// gRPC service for Permissions
 service Permission {
   rpc RetrievePermissions (PermissionRequest) returns (PermissionResponse);
 }
 
-// Mensagem de requisição (possivelmente para filtrar por role específica)
+// Request message (possibly to filter by specific role)
 message PermissionRequest {
-  string role = 1; // Opcional, se você quiser filtrar por uma role específica
+  string role = 1; // Optional, if you want to filter by a specific role
 }
 
-// Definindo a associação entre role e authorities
+// Defining the association between role and authorities
 message PermissionItem {
   string id = 1;
   string role = 2;
@@ -23,7 +23,7 @@ message PermissionItem {
   google.protobuf.Timestamp lastUpdated = 4;
 }
 
-// Mensagem de resposta que contém uma lista de associações de roles com suas permissions
+// Response message containing a list of role associations with their permissions
 message PermissionResponse {
   repeated PermissionItem items = 1;
 }

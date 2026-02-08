@@ -38,9 +38,9 @@ class PaymentStep extends ConsumerWidget {
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
-            // Implementar a lógica de pagamento aqui
+            // Implement payment logic here
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Pagamento realizado com sucesso!')),
+              SnackBar(content: Text('Payment completed successfully!')),
             );
           },
           child: Text('Pagar'),
@@ -48,7 +48,7 @@ class PaymentStep extends ConsumerWidget {
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: previousPage,
-          child: Text('Voltar'),
+          child: Text('Back'),
         ),
       ],
     );

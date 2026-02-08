@@ -69,6 +69,7 @@ springboot(
     boot_app_class = "com.gabriel.permissions.PermissionsApplication",
     boot_launcher_class = "org.springframework.boot.loader.launch.JarLauncher",
     java_library = ":artifact",
+    visibility = ["//visibility:public"],
 )
 
 tar(

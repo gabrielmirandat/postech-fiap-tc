@@ -16,7 +16,7 @@ public class OrderItem {
 
     private final List<Extra> extras;
 
-    // Construtor privado para uso interno
+    // Private constructor for internal use
     private OrderItem(OrderItemId itemID, Product product, List<Extra> extras) {
         this.itemID = itemID;
         this.product = product;
@@ -39,7 +39,7 @@ public class OrderItem {
                java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
-    // Construtor para Jackson deserialization (sem validação para evitar duplicação)
+    // Constructor for Jackson deserialization (no validation to avoid duplication)
     @JsonCreator
     public static OrderItem fromJson(@JsonProperty("itemID") OrderItemId itemID, @JsonProperty("product") Product product,
                                     @JsonProperty("extras") List<Extra> extras) {

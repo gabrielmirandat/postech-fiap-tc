@@ -25,11 +25,11 @@ class DrinkStep extends ConsumerWidget {
           children: [
             ElevatedButton(
               onPressed: previousPage,
-              child: Text('Voltar'),
+              child: Text('Back'),
             ),
             ElevatedButton(
               onPressed: nextPage,
-              child: Text('Próxima Etapa: Sobremesas'),
+              child: Text('Next Step: Desserts'),
             ),
           ],
         ),

@@ -64,7 +64,7 @@ public class ProductMongoRepository implements ProductRepository {
 
     @Override
     public void deleteProduct(ProductId id) {
-        productCollection.deleteOne(Filters.eq("_id", id.getId()));
+        productCollection.deleteOne(Filters.eq("_id", id.getValue()));
     }
 
     private static class ProductConverter {
@@ -87,14 +87,14 @@ public class ProductMongoRepository implements ProductRepository {
         }
 
         public static Product documentToProduct(Document doc) {
-            ProductId productId = new ProductId(doc.getString("_id"));
-            Name name = new Name(doc.getString("name"));
-            Price price = new Price(doc.getDouble("price"));
+            ProductId productId = ProductId.newBuilder().setValue(doc.getString("_id")).build();
+            Name name = Name.newBuilder().setValue(doc.getString("name")).build();
+            Price price = Price.newBuilder().setValue(doc.getDouble("price")).build();
             Category category = Category.valueOf(doc.getString("category").toUpperCase());
-            Description description = new Description(doc.getString("description"));
+            Description description = Description.newBuilder().setValue(doc.getString("description")).build();
             Image image = new Image(doc.getString("image"));
             List<IngredientId> ingredients = ((List<String>) doc.get("ingredients")).stream()
-                .map(IngredientId::new)
+                .map(id -> IngredientId.newBuilder().setValue(id).build())
                 .collect(Collectors.toList());
             Instant createdAt = Instant.parse(doc.getString("creationTimestamp"));
             Instant updatedAt = Instant.parse(doc.getString("updateTimestamp"));
