@@ -95,9 +95,39 @@ dotnet run --project Payments.API
 
 ### Using Bazel
 
+#### Prerequisites
+
+Before building with Bazel, ensure you have the following installed on your system:
+
+- **Bazel 8.3.1+** - Build system
+- **.NET 8.0 SDK** - Required for building .NET projects
+- **Docker** - Required for building the final image
+
+#### Build Commands
+
 ```bash
-bazel build //payments:payments_api
+# Build artifact
+bazel build //payments:artifact
+
+# Run unit tests
+bazel test //payments:unit
+
+# Run integration tests
+bazel test //payments:integration
+
+# Build Docker image (uber)
+bazel build //payments:uber
+
+# Push to Docker Hub
+bazel run //payments:push
 ```
+
+#### Notes
+
+- The `artifact` target creates a build marker (actual build happens via Dockerfile)
+- The `uber` target builds a Docker image using the Dockerfile in the payments directory
+- .NET SDK is required for local builds and tests
+- The final image uses .NET 8.0 ASP.NET base image
 
 ## Docker
 

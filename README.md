@@ -16,6 +16,12 @@ this project is a restaurant management system.
 - Jakarta Validation for model validation
 - Hibernate Validator for advanced validation
 
+**Bazel Build:**
+- **Dependencies:** Java 21 JDK, Bazel 8.3.1+
+- **Build target:** `//core:artifact`
+- **Test target:** `//core:unit`
+- **No additional system dependencies required** - all dependencies are managed via Bazel's Maven integration
+
 ---
 
 ### Orders
@@ -59,6 +65,14 @@ this project is a restaurant management system.
 
 **TODO (from original design):** Migrate to full Event Sourcing with EventStoreDB + CQRS
 
+**Bazel Build:**
+- **Dependencies:** Java 21 JDK, Bazel 8.3.1+
+- **Build target:** `//orders:artifact`
+- **Test targets:** `//orders:unit`, `//orders:integration`, `//orders:contract`, `//orders:behavior`
+- **Executable target:** `//orders:uber` (Spring Boot JAR)
+- **Image target:** `//orders:image` (Docker image)
+- **No additional system dependencies required** - all dependencies are managed via Bazel's Maven integration
+
 ---
 
 ### Menu
@@ -94,6 +108,14 @@ this project is a restaurant management system.
 - Cloud-native optimized reactive framework
 - Fast startup and low memory footprint
 - Native image support with GraalVM
+
+**Bazel Build:**
+- **Dependencies:** Java 21 JDK, Bazel 8.3.1+
+- **Build target:** `//menu:artifact`
+- **Test target:** `//menu:unit`
+- **Executable target:** `//menu:uber` (Quarkus JAR built with custom rules_quarkus)
+- **Image target:** `//menu:image` (Docker image)
+- **No additional system dependencies required** - all dependencies are managed via Bazel's Maven integration
 
 ---
 
@@ -139,6 +161,14 @@ this project is a restaurant management system.
 - Implement audit table for permission changes
 - Integrate Kafka to emit permission-related events
 
+**Bazel Build:**
+- **Dependencies:** Java 21 JDK, Bazel 8.3.1+
+- **Build target:** `//permissions:artifact`
+- **Test targets:** `//permissions:unit`, `//permissions:integration`
+- **Executable target:** `//permissions:uber` (Spring Boot JAR)
+- **Image target:** `//permissions:image` (Docker image)
+- **No additional system dependencies required** - all dependencies are managed via Bazel's Maven integration
+
 ---
 
 ### Customers
@@ -182,6 +212,13 @@ this project is a restaurant management system.
 
 **TODO (from original Modules section):** Complete implementation of the Customers module
 
+**Bazel Build:**
+- **Dependencies:** Python 3.8+, Bazel 8.3.1+
+- **Build target:** `//customers:artifact`
+- **Executable target:** `//customers:uber` (Python binary with FastAPI)
+- **System dependencies:** Python 3.8+ must be installed on the system (Bazel uses system Python)
+- **Note:** EdgeDB migrations are handled at runtime, not during Bazel build
+
 ---
 
 ### Payments
@@ -197,6 +234,14 @@ this project is a restaurant management system.
 - Integration with Stripe for payment processing
 - Cassandra for distributed transaction storage
 - Event-driven architecture for asynchronous processing
+
+**Bazel Build:**
+- **Dependencies:** .NET 8.0 SDK, Bazel 8.3.1+, Docker
+- **Build target:** `//payments:artifact`
+- **Test targets:** `//payments:unit`, `//payments:integration`
+- **Executable target:** `//payments:uber` (Docker image with .NET runtime)
+- **System dependencies:** .NET 8.0 SDK must be installed on the system for local builds
+- **Note:** The build uses Dockerfile for .NET compilation, so Docker must be available
 - Clean Architecture for clear separation of responsibilities
 
 **TODO (from original Modules section):** Implement the Payments module with Stripe, Cassandra, Kafka and Clean Architecture
@@ -259,6 +304,14 @@ this project is a restaurant management system.
 - Asynchronous processing for better scalability
 - Event-driven architecture with CloudEvents
 - No direct coupling with other microservices
+
+**Bazel Build:**
+- **Dependencies:** Ruby 3.2.0+, Bundler, Bazel 8.3.1+, Docker
+- **Build target:** `//notifications:artifact`
+- **Test target:** `//notifications:unit` (RSpec tests)
+- **Executable target:** `//notifications:uber` (Docker image with Rails)
+- **System dependencies:** Ruby 3.2.0+ and Bundler must be installed on the system for local builds
+- **Note:** The build uses Docker for Rails runtime, so Docker must be available
 
 ---
 
