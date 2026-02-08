@@ -1,0 +1,28 @@
+source https://api.nuget.org/v3/index.json
+
+framework: net10.0
+
+# Application layer dependencies
+nuget MediatR 12.2.0
+nuget FluentValidation 11.9.0
+nuget FluentValidation.DependencyInjectionExtensions 11.9.0
+
+# Infrastructure layer dependencies
+nuget CassandraCSharpDriver 3.20.1
+nuget Stripe.net 44.0.0
+nuget Confluent.Kafka 2.3.0
+nuget Microsoft.Extensions.Configuration 8.0.0
+nuget Microsoft.Extensions.DependencyInjection 8.0.0
+nuget Microsoft.Extensions.Logging 8.0.0
+nuget Microsoft.Extensions.Hosting 8.0.0
+
+# API layer dependencies
+nuget Microsoft.AspNetCore 2.2.0
+nuget Microsoft.AspNetCore.Mvc.Core 2.2.0
+nuget Microsoft.AspNetCore.Mvc.Abstractions 2.2.0
+nuget Microsoft.AspNetCore.Routing 2.2.0
+nuget Microsoft.AspNetCore.Hosting.Abstractions 2.2.0
+nuget Microsoft.AspNetCore.Http.Abstractions 2.2.0
+nuget Microsoft.AspNetCore.OpenApi 8.0.0
+nuget Swashbuckle.AspNetCore 6.5.0
+nuget Grpc.AspNetCore 2.59.0

@@ -1,5 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 using Payments.Application.DTOs;
 using Payments.Application.UseCases.CreatePayment;
 using Payments.Domain.ValueObjects;
@@ -25,17 +28,13 @@ public class PaymentsController : ControllerBase
         try
         {
             var result = await _mediator.Send(command);
+            _logger.LogInformation("Payment created: {PaymentId} for order {OrderId}", result.Id, result.OrderId);
             return CreatedAtAction(nameof(GetPayment), new { id = result.Id }, result);
-        }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogWarning(ex, "Invalid operation while creating payment");
-            return BadRequest(new { error = ex.Message });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating payment");
-            return StatusCode(500, new { error = "An error occurred while processing the payment" });
+            _logger.LogError(ex, "Error creating payment for order {OrderId}", command.OrderId);
+            return BadRequest(new { error = ex.Message });
         }
     }
 
@@ -43,6 +42,6 @@ public class PaymentsController : ControllerBase
     public async Task<ActionResult<PaymentDto>> GetPayment(Guid id)
     {
         // TODO: Implement GetPayment query handler
-        return NotFound();
+        return NotFound(new { error = "GetPayment query handler not implemented" });
     }
 }

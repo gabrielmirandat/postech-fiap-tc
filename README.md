@@ -69,8 +69,8 @@ this project is a restaurant management system.
 - **Dependencies:** Bazel 8.3.1+ (Java 21 JDK is automatically managed via hermetic toolchain)
 - **Build target:** `//orders:artifact`
 - **Test targets:** `//orders:unit`, `//orders:integration`, `//orders:contract`, `//orders:behavior`
-- **Executable target:** `//orders:uber` (Spring Boot JAR)
-- **Image target:** `//orders:image` (Docker image)
+- **Executable target:** `//orders:uber` (Spring Boot JAR - no Docker required)
+- **Image target:** `//orders:image` (Docker image - Docker required only for this target)
 - **No system dependencies required** - all dependencies are managed via Bazel's Maven integration and hermetic toolchains
 
 ---
@@ -113,8 +113,8 @@ this project is a restaurant management system.
 - **Dependencies:** Bazel 8.3.1+ (Java 21 JDK is automatically managed via hermetic toolchain)
 - **Build target:** `//menu:artifact`
 - **Test target:** `//menu:unit`
-- **Executable target:** `//menu:uber` (Quarkus JAR built with custom rules_quarkus)
-- **Image target:** `//menu:image` (Docker image)
+- **Executable target:** `//menu:uber` (Quarkus JAR - no Docker required)
+- **Image target:** `//menu:image` (Docker image - Docker required only for this target)
 - **No system dependencies required** - all dependencies are managed via Bazel's Maven integration and hermetic toolchains
 
 ---
@@ -165,8 +165,8 @@ this project is a restaurant management system.
 - **Dependencies:** Bazel 8.3.1+ (Java 21 JDK is automatically managed via hermetic toolchain)
 - **Build target:** `//permissions:artifact`
 - **Test targets:** `//permissions:unit`, `//permissions:integration`
-- **Executable target:** `//permissions:uber` (Spring Boot JAR)
-- **Image target:** `//permissions:image` (Docker image)
+- **Executable target:** `//permissions:uber` (Spring Boot JAR - no Docker required)
+- **Image target:** `//permissions:image` (Docker image - Docker required only for this target)
 - **No system dependencies required** - all dependencies are managed via Bazel's Maven integration and hermetic toolchains
 
 ---
@@ -215,7 +215,7 @@ this project is a restaurant management system.
 **Bazel Build:**
 - **Dependencies:** Bazel 8.3.1+ (Python 3.11 is automatically managed via hermetic toolchain)
 - **Build target:** `//customers:artifact`
-- **Executable target:** `//customers:uber` (Python binary with FastAPI)
+- **Executable target:** `//customers:uber` (Python binary - no Docker required)
 - **No system dependencies required** - Python runtime is automatically downloaded and managed by Bazel
 - **Note:** EdgeDB migrations are handled at runtime, not during Bazel build
 
@@ -236,12 +236,12 @@ this project is a restaurant management system.
 - Event-driven architecture for asynchronous processing
 
 **Bazel Build:**
-- **Dependencies:** Bazel 8.3.1+, Docker (for final image only)
+- **Dependencies:** Bazel 8.3.1+, Docker (required for uber target)
 - **Build target:** `//payments:artifact`
 - **Test targets:** `//payments:unit`, `//payments:integration`
-- **Executable target:** `//payments:uber` (Docker image with .NET runtime)
+- **Executable target:** `//payments:uber` (Docker image with .NET runtime - Docker required)
 - **No system dependencies required** - .NET 8.0 SDK is automatically managed via hermetic toolchain
-- **Note:** Docker is only needed for building the final container image (uber target)
+- **Note:** Docker is required because the uber target generates a Docker image (oci_image)
 - Clean Architecture for clear separation of responsibilities
 
 **TODO (from original Modules section):** Implement the Payments module with Stripe, Cassandra, Kafka and Clean Architecture
@@ -306,12 +306,12 @@ this project is a restaurant management system.
 - No direct coupling with other microservices
 
 **Bazel Build:**
-- **Dependencies:** Bazel 8.3.1+, Docker (for final image only)
+- **Dependencies:** Bazel 8.3.1+, Docker (required for uber target)
 - **Build target:** `//notifications:artifact`
 - **Test target:** `//notifications:unit` (RSpec tests)
-- **Executable target:** `//notifications:uber` (Docker image with Rails)
+- **Executable target:** `//notifications:uber` (Docker image with Rails - Docker required)
 - **No system dependencies required** - Ruby 3.2.0 is automatically managed via hermetic toolchain
-- **Note:** Docker is only needed for building the final container image (uber target)
+- **Note:** Docker is required because the uber target generates a Docker image (oci_image)
 
 ---
 
@@ -419,8 +419,10 @@ The Bazel build system uses hermetic toolchains that automatically download and 
 - **Ruby 3.2.0** - Managed via `rules_ruby` with hermetic Ruby toolchain
 
 **Prerequisites:**
-- **Bazel 8.3.1+** - The only system dependency required
-- **Docker** - Only needed for building final container images (uber targets)
+- **Bazel 8.3.1+** - The only system dependency required for most builds
+- **Docker** - Only needed for:
+  - Building `//notifications:uber` and `//payments:uber` (these generate Docker images)
+  - Building `:image` targets (Docker images for all services)
 
 **No need to install:**
 - ❌ Java JDK
@@ -431,6 +433,11 @@ The Bazel build system uses hermetic toolchains that automatically download and 
 - ❌ Any language-specific package managers
 
 All language runtimes are automatically downloaded and managed by Bazel's hermetic toolchains, ensuring reproducible builds across different machines.
+
+**Docker Requirements:**
+- ✅ **Not required** for: `//orders:uber`, `//permissions:uber`, `//menu:uber`, `//customers:uber` (these generate JARs or Python binaries)
+- ✅ **Required** for: `//notifications:uber`, `//payments:uber` (these generate Docker images)
+- ✅ **Required** for: all `:image` targets (Docker images for deployment)
 
 ### Build Commands
 

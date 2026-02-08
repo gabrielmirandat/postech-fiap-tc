@@ -1,36 +1,46 @@
 using Payments.Infrastructure.Configuration;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace Payments.Api;
 
-// Add services to the container
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-// Add infrastructure
-builder.Services.AddInfrastructure(builder.Configuration);
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI(c =>
-//     {
-//         c.RoutePrefix = string.Empty;
-//     });
-// }
-
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+public class Program
 {
-    c.RoutePrefix = string.Empty;
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Payments API v1");
-});
+    public static void Main(string[] args)
+    {
+        BuildWebHost(args).Run();
+    }
 
-//app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
+    public static IWebHost BuildWebHost(string[] args) =>
+        WebHost.CreateDefaultBuilder(args)
+            .UseStartup<Startup>()
+            .Build();
+}
 
-app.Run();
+public class Startup
+{
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
+
+    public IConfiguration Configuration { get; }
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        // Add MVC services (ASP.NET Core 2.2)
+        services.AddMvcCore();
+
+        // Add infrastructure
+        services.AddInfrastructure(Configuration);
+    }
+
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    {
+        // MVC routing (ASP.NET Core 2.2)
+        app.UseMvc();
+    }
+}

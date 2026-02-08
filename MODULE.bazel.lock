@@ -462,7 +462,7 @@
     "@@rules_dotnet+//dotnet:extensions.bzl%dotnet": {
       "general": {
         "bzlTransitiveDigest": "3NFH9+PfsEdlRhZtq3iPX8FRGmmgowYZvWUuTyxUYdw=",
-        "usagesDigest": "DBbREGy9eBy2e2KYYm9sSFNEZKnGcg9K/aYljZ8fYxg=",
+        "usagesDigest": "OHPCYCEDwLgqCsw8t5RRa8/ACWB+/ZKgo99UM3V7fVw=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -471,42 +471,42 @@
             "repoRuleId": "@@rules_dotnet+//dotnet:repositories.bzl%dotnet_repositories",
             "attributes": {
               "platform": "x86_64-apple-darwin",
-              "dotnet_version": "8.0.100"
+              "dotnet_version": "10.0.100"
             }
           },
           "dotnet_aarch64-apple-darwin": {
             "repoRuleId": "@@rules_dotnet+//dotnet:repositories.bzl%dotnet_repositories",
             "attributes": {
               "platform": "aarch64-apple-darwin",
-              "dotnet_version": "8.0.100"
+              "dotnet_version": "10.0.100"
             }
           },
           "dotnet_x86_64-unknown-linux-gnu": {
             "repoRuleId": "@@rules_dotnet+//dotnet:repositories.bzl%dotnet_repositories",
             "attributes": {
               "platform": "x86_64-unknown-linux-gnu",
-              "dotnet_version": "8.0.100"
+              "dotnet_version": "10.0.100"
             }
           },
           "dotnet_arm64-unknown-linux-gnu": {
             "repoRuleId": "@@rules_dotnet+//dotnet:repositories.bzl%dotnet_repositories",
             "attributes": {
               "platform": "arm64-unknown-linux-gnu",
-              "dotnet_version": "8.0.100"
+              "dotnet_version": "10.0.100"
             }
           },
           "dotnet_x86_64-pc-windows-msvc": {
             "repoRuleId": "@@rules_dotnet+//dotnet:repositories.bzl%dotnet_repositories",
             "attributes": {
               "platform": "x86_64-pc-windows-msvc",
-              "dotnet_version": "8.0.100"
+              "dotnet_version": "10.0.100"
             }
           },
           "dotnet_arm64-pc-windows-msvc": {
             "repoRuleId": "@@rules_dotnet+//dotnet:repositories.bzl%dotnet_repositories",
             "attributes": {
               "platform": "arm64-pc-windows-msvc",
-              "dotnet_version": "8.0.100"
+              "dotnet_version": "10.0.100"
             }
           },
           "dotnet_toolchains": {
@@ -948,37 +948,37 @@
     "@@rules_oci+//oci:extensions.bzl%oci": {
       "general": {
         "bzlTransitiveDigest": "fPokQfnbxxW662am0juLMa+CZQ1+huxdy6aFqPQMiYQ=",
-        "usagesDigest": "RToUMu7hk5RZtJtPVgALWLvlAm+8I9mxaTL7kEb/J90=",
+        "usagesDigest": "/PnMSGfcET/+N/og0vr7bNq5vnkQsD6V8waAa8K66ws=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
         "generatedRepoSpecs": {
-          "dotnet_aspnet_8_0_linux_amd64": {
+          "dotnet_aspnet_10_0_linux_amd64": {
             "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_pull",
             "attributes": {
               "www_authenticate_challenges": {},
               "scheme": "https",
               "registry": "mcr.microsoft.com",
               "repository": "dotnet/aspnet",
-              "identifier": "8.0",
+              "identifier": "10.0",
               "platform": "linux/amd64",
-              "target_name": "dotnet_aspnet_8_0_linux_amd64",
+              "target_name": "dotnet_aspnet_10_0_linux_amd64",
               "bazel_tags": []
             }
           },
-          "dotnet_aspnet_8_0": {
+          "dotnet_aspnet_10_0": {
             "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_alias",
             "attributes": {
-              "target_name": "dotnet_aspnet_8_0",
+              "target_name": "dotnet_aspnet_10_0",
               "www_authenticate_challenges": {},
               "scheme": "https",
               "registry": "mcr.microsoft.com",
               "repository": "dotnet/aspnet",
-              "identifier": "8.0",
+              "identifier": "10.0",
               "platforms": {
-                "@@platforms//cpu:x86_64": "@dotnet_aspnet_8_0_linux_amd64"
+                "@@platforms//cpu:x86_64": "@dotnet_aspnet_10_0_linux_amd64"
               },
-              "bzlmod_repository": "dotnet_aspnet_8_0",
+              "bzlmod_repository": "dotnet_aspnet_10_0",
               "reproducible": true
             }
           },
@@ -1156,8 +1156,8 @@
         },
         "moduleExtensionMetadata": {
           "explicitRootModuleDirectDeps": [
-            "dotnet_aspnet_8_0",
-            "dotnet_aspnet_8_0_linux_amd64",
+            "dotnet_aspnet_10_0",
+            "dotnet_aspnet_10_0_linux_amd64",
             "amazon_corretto_image",
             "amazon_corretto_image_linux_amd64",
             "ruby_3_2_0_image",

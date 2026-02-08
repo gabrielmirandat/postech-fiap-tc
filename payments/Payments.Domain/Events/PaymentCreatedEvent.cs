@@ -1,3 +1,4 @@
+using System;
 using Payments.Domain.ValueObjects;
 
 namespace Payments.Domain.Events;

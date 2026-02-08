@@ -1,6 +1,9 @@
 using Confluent.Kafka;
-using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Payments.Domain.Events;
 using Payments.Infrastructure.Messaging.Mappers;
 
@@ -25,28 +28,21 @@ public class KafkaEventPublisher : IEventPublisher
         try
         {
             var eventType = typeof(T).Name;
-            var topic = $"{TopicPrefix}-{eventType.ToLowerInvariant()}";
-            
+            var topic = $"{TopicPrefix}.{eventType.ToLower()}";
             var message = CloudEventMapper.ToCloudEvent(domainEvent);
             var json = JsonSerializer.Serialize(message);
+            var key = GetEventKey(domainEvent);
 
             var kafkaMessage = new Message<string, string>
             {
-                Key = GetEventKey(domainEvent),
-                Value = json,
-                Headers = new Headers
-                {
-                    { "event-type", System.Text.Encoding.UTF8.GetBytes(eventType) },
-                    { "content-type", System.Text.Encoding.UTF8.GetBytes("application/json") }
-                }
+                Key = key,
+                Value = json
             };
 
             await _producer.ProduceAsync(topic, kafkaMessage, cancellationToken);
             
-            _logger.LogInformation(
-                "Published event {EventType} to topic {Topic}",
-                eventType,
-                topic);
+            _logger.LogInformation("Published event {EventType} to topic {Topic} with key {Key}", 
+                eventType, topic, key);
         }
         catch (Exception ex)
         {
