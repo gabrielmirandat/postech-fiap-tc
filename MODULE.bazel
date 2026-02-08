@@ -14,10 +14,13 @@ bazel_dep(name = "rules_buf", version = "0.5.1")
 bazel_dep(name = "protovalidate", version = "0.14.2")
 bazel_dep(name = "rules_oci", version = "2.2.6")
 bazel_dep(name = "openapi_tools_generator_bazel", version = "0.2.0")
-bazel_dep(name = "aspect_bazel_lib", version = "2.20.0")
-bazel_dep(name = "gazelle", version = "0.45.0")
-bazel_dep(name = "rules_python", version = "0.31.0")
+bazel_dep(name = "aspect_bazel_lib", version = "2.21.2")
+bazel_dep(name = "gazelle", version = "0.45.0", repo_name = "bazel_gazelle")
+
+bazel_dep(name = "rules_python", version = "1.8.3")
 bazel_dep(name = "rules_foreign_cc", version = "0.10.1")
+bazel_dep(name = "rules_dotnet", version = "0.21.5")
+bazel_dep(name = "rules_ruby", version = "0.21.1")
 
 # Maven dependencies
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
@@ -152,12 +155,12 @@ oci.pull(
     tag = "21",
 )
 oci.pull(
-    name = "ruby_3_2_0",
+    name = "ruby_3_2_0_image",
     image = "docker.io/library/ruby",
     platforms = ["linux/amd64"],
     tag = "3.2.0-slim",
 )
-use_repo(oci, "amazon_corretto_image", "amazon_corretto_image_linux_amd64", "dotnet_aspnet_8_0", "dotnet_aspnet_8_0_linux_amd64", "ruby_3_2_0", "ruby_3_2_0_linux_amd64")
+use_repo(oci, "amazon_corretto_image", "amazon_corretto_image_linux_amd64", "dotnet_aspnet_8_0", "dotnet_aspnet_8_0_linux_amd64", "ruby_3_2_0_image", "ruby_3_2_0_image_linux_amd64")
 
 # OpenAPI generator
 openapi_gen = use_extension("@openapi_tools_generator_bazel//:extension.bzl", "openapi_gen")
@@ -166,3 +169,25 @@ openapi_gen.client(
     version = "7.0.1",
 )
 use_repo(openapi_gen, "openapi_tools_generator_bazel_cli")
+
+# Python toolchain - hermetic Python builds
+python = use_extension("@rules_python//python:extensions.bzl", "python")
+python.toolchain(
+    python_version = "3.11",
+    configure_coverage_tool = True,
+)
+use_repo(python, "python3_11_toolchains", "python_versions")
+
+# .NET toolchain - hermetic .NET builds
+dotnet = use_extension("@rules_dotnet//dotnet:extensions.bzl", "dotnet")
+dotnet.toolchain(dotnet_version = "8.0.100")
+use_repo(dotnet, "dotnet_toolchains")
+register_toolchains("@dotnet_toolchains//:all")
+
+# Ruby toolchain - hermetic Ruby builds
+ruby = use_extension("@rules_ruby//ruby:extensions.bzl", "ruby")
+ruby.toolchain(
+    name = "ruby_3_2_0",
+    version = "3.2.0",
+)
+use_repo(ruby, "ruby_3_2_0")
