@@ -164,13 +164,37 @@ bundle exec rspec
 
 ## Build with Bazel
 
+### Prerequisites
+
+Before building with Bazel, ensure you have the following installed on your system:
+
+- **Bazel 8.3.1+** - Build system
+- **Ruby 3.2.0+** - Required for local builds and tests
+- **Bundler** - Ruby dependency manager (`gem install bundler`)
+- **Docker** - Required for building the final image
+
+### Build Commands
+
 ```bash
-# Build image
-bazel build //notifications:notifications_image
+# Build artifact
+bazel build //notifications:artifact
+
+# Run unit tests
+bazel test //notifications:unit
+
+# Build Docker image (uber)
+bazel build //notifications:uber
 
 # Push to Docker Hub
-bazel run //notifications:notifications_push
+bazel run //notifications:push
 ```
+
+### Notes
+
+- The `artifact` target creates a build marker (no actual compilation needed for Rails)
+- The `uber` target builds a Docker image with the Rails application
+- Unit tests require Ruby and Bundler to be installed on the system
+- The final image uses Ruby 3.2.0-slim base image
 
 ## Makefile
 
