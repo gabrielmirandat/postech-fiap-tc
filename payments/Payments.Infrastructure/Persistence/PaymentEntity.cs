@@ -1,3 +1,5 @@
+using System;
+
 namespace Payments.Infrastructure.Persistence;
 
 // Entity representation for Cassandra persistence

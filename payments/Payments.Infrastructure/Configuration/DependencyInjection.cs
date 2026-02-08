@@ -3,6 +3,7 @@ using Confluent.Kafka;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Stripe;
 using Payments.Application.UseCases.CreatePayment;
 using Payments.Domain.Repositories;
 using Payments.Domain.Services;
@@ -10,7 +11,6 @@ using Payments.Domain.Events;
 using Payments.Infrastructure.Gateways;
 using Payments.Infrastructure.Messaging;
 using Payments.Infrastructure.Persistence;
-using Stripe;
 
 namespace Payments.Infrastructure.Configuration;
 
@@ -21,12 +21,12 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         // Cassandra
-        var cassandraContactPoints = configuration["Cassandra:ContactPoints"] ?? "localhost";
+        var cassandraContactPoints = configuration["Cassandra:ContactPoints"] ?? "localhost:9042";
         var cassandraKeyspace = configuration["Cassandra:Keyspace"] ?? "payments";
         var session = CassandraConfiguration.CreateSession(cassandraContactPoints, cassandraKeyspace);
-        services.AddSingleton<ISession>(session);
-        services.AddScoped<IPaymentRepository, PaymentRepository>();
+        services.AddSingleton(session);
         services.AddScoped<PaymentDbContext>(sp => new PaymentDbContext(session, cassandraKeyspace));
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
 
         // Stripe
         var stripeApiKey = configuration["Stripe:ApiKey"];
@@ -38,14 +38,12 @@ public static class DependencyInjection
         services.AddScoped<IPaymentAuthorizationService, StripePaymentAuthorizationService>();
 
         // Kafka
-        var kafkaConfig = new ProducerConfig
+        var kafkaBootstrapServers = configuration["Kafka:BootstrapServers"] ?? "localhost:9092";
+        var producerConfig = new ProducerConfig
         {
-            BootstrapServers = configuration["Kafka:BootstrapServers"] ?? "localhost:9092",
-            Acks = Acks.All,
-            EnableIdempotence = true
+            BootstrapServers = kafkaBootstrapServers
         };
-        services.AddSingleton<IProducer<string, string>>(sp =>
-            new ProducerBuilder<string, string>(kafkaConfig).Build());
+        services.AddSingleton<IProducer<string, string>>(sp => new ProducerBuilder<string, string>(producerConfig).Build());
         services.AddScoped<IEventPublisher, KafkaEventPublisher>();
 
         // MediatR
