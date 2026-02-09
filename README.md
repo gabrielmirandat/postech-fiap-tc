@@ -240,7 +240,7 @@ this project is a restaurant management system.
 - **Build target:** `//payments:artifact`
 - **Test targets:** `//payments:unit`, `//payments:integration`
 - **Executable target:** `//payments:uber` (Docker image with .NET runtime - Docker required)
-- **No system dependencies required** - .NET 8.0 SDK is automatically managed via hermetic toolchain
+- **No system dependencies required** - .NET 10.0 SDK is automatically managed via hermetic toolchain
 - **Note:** Docker is required because the uber target generates a Docker image (oci_image)
 - Clean Architecture for clear separation of responsibilities
 
@@ -310,7 +310,9 @@ this project is a restaurant management system.
 - **Build target:** `//notifications:artifact`
 - **Test target:** `//notifications:unit` (RSpec tests)
 - **Executable target:** `//notifications:uber` (Docker image with Rails - Docker required)
-- **No system dependencies required** - Ruby 3.2.0 is automatically managed via hermetic toolchain
+- **No system dependencies required** - Ruby 3.2.0 and all gems are automatically managed via hermetic toolchain
+- **Hermetic gem management:** All Ruby gems are fetched hermetically via `bundle_fetch` with SHA256 checksums in `MODULE.bazel`
+- **Gemfile.lock:** Must be kept in sync with `Gemfile` - regenerate with `bundle install` if dependencies change
 - **Note:** Docker is required because the uber target generates a Docker image (oci_image)
 
 ---
@@ -415,8 +417,8 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
 The Bazel build system uses hermetic toolchains that automatically download and manage all required language runtimes:
 - **Java 21** - Managed via `rules_java` and `contrib_rules_jvm`
 - **Python 3.11** - Managed via `rules_python` with hermetic Python toolchain
-- **.NET 8.0** - Managed via `rules_dotnet` with hermetic .NET SDK
-- **Ruby 3.2.0** - Managed via `rules_ruby` with hermetic Ruby toolchain
+- **.NET 10.0** - Managed via `rules_dotnet` with hermetic .NET SDK
+- **Ruby 3.2.0** - Managed via `rules_ruby` with hermetic Ruby toolchain and `bundle_fetch` for gem dependencies
 
 **Prerequisites:**
 - **Bazel 8.3.1+** - The only system dependency required for most builds
@@ -433,6 +435,15 @@ The Bazel build system uses hermetic toolchains that automatically download and 
 - ❌ Any language-specific package managers
 
 All language runtimes are automatically downloaded and managed by Bazel's hermetic toolchains, ensuring reproducible builds across different machines.
+
+**Ruby Gem Management:**
+- Gems are fetched hermetically using `bundle_fetch` with SHA256 checksums
+- Checksums are defined in `MODULE.bazel` for reproducibility
+- `Gemfile.lock` must be kept in sync with `Gemfile` - if you update `Gemfile`, regenerate `Gemfile.lock` using Docker:
+  ```bash
+  docker run --rm -v "$(pwd)/notifications:/app" -w /app ruby:3.2.0-slim \
+    bash -c "apt-get update -qq && apt-get install -y -qq build-essential libpq-dev libffi-dev libyaml-dev libreadline-dev zlib1g-dev libssl-dev > /dev/null 2>&1 && gem install bundler --no-document && bundle install"
+  ```
 
 **Docker Requirements:**
 - ✅ **Not required** for: `//orders:uber`, `//permissions:uber`, `//menu:uber`, `//customers:uber` (these generate JARs or Python binaries)
