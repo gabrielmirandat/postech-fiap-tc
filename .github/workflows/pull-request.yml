@@ -33,15 +33,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Set up .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2.0'
-          bundler-cache: true
       - name: Build with Bazel
         run: bazel build //...
 
@@ -69,15 +60,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Set up .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2.0'
-          bundler-cache: true
       - name: Test with Bazel
         run: bazel test $(bazel query 'filter(":unit", //...:*)')
 
@@ -105,15 +87,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Set up .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2.0'
-          bundler-cache: true
       - name: Test with Bazel
         run: bazel test $(bazel query 'filter(":integration", //...:*)')
 
@@ -141,15 +114,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Set up .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2.0'
-          bundler-cache: true
       - name: Test with Bazel
         run: bazel test $(bazel query 'filter(":behavior", //...:*)')
 
@@ -177,15 +141,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Set up .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2.0'
-          bundler-cache: true
       - name: Test with Bazel
         run: bazel test $(bazel query 'filter(":contract", //...:*)')
       
