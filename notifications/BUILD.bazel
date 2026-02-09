@@ -1,24 +1,53 @@
+load("@rules_ruby//ruby:defs.bzl", "rb_library", "rb_binary", "rb_test")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 
 package(default_visibility = ["//visibility:public"])
 
-# Build target - just creates a marker
+# Rails application library
+rb_library(
+    name = "app",
+    srcs = glob([
+        "app/**/*.rb",
+        "config/**/*.rb",
+    ]),
+    deps = [
+        "@bundle//:bundle",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Rails executable (puma server)
+rb_binary(
+    name = "uber",
+    main = "config.ru",
+    deps = [
+        ":app",
+        "@bundle//:bundle",
+    ],
+    args = [
+        "-C",
+        "config/puma.rb",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Build target - marker
 genrule(
     name = "artifact",
     outs = ["artifact_marker"],
     cmd = "touch $@",
 )
 
-# Unit tests - using sh_test to run Rails tests
-sh_test(
+# Unit tests - using rb_test
+rb_test(
     name = "unit",
-    srcs = ["test_runner.sh"],
-    data = glob([
-        "**/*.rb",
-        "**/*.yml",
-        "Gemfile",
-        "Gemfile.lock",
-    ]),
+    srcs = glob([
+        "spec/**/*_spec.rb",
+    ], allow_empty = True),
+    deps = [
+        ":app",
+        "@bundle//:bundle",
+    ],
     size = "medium",
     timeout = "moderate",
 )
@@ -32,10 +61,10 @@ genrule(
     local = 1,
 )
 
-# Executable - ready to run (Docker image)
+# Docker image - for deployment
 oci_image(
-    name = "uber",
-    base = "@ruby_3_2_0",
+    name = "image",
+    base = "@ruby_3_2_0_image",
     entrypoint = ["bundle", "exec", "puma", "-C", "config/puma.rb"],
     env = {
         "RAILS_ENV": "production",
@@ -59,7 +88,6 @@ genrule(
         "**/*.yml",
         "Gemfile",
         "Gemfile.lock",
-        "Dockerfile",
     ]) + glob([
         "**/*.yaml",
     ], allow_empty = True),
@@ -72,6 +100,6 @@ genrule(
 # Push to Docker Hub
 oci_push(
     name = "push",
-    image = ":uber",
+    image = ":image",
     remote_tags = ["gabrielmirandat/notifications:latest"],
 )
