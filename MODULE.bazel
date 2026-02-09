@@ -190,7 +190,78 @@ ruby.toolchain(
     name = "ruby_3_2_0",
     version = "3.2.0",
 )
-use_repo(ruby, "ruby_3_2_0")
+# Bundle fetch - generic hermetic gem installation
+ruby.bundle_fetch(
+    name = "bundle",
+    gemfile = "//notifications:Gemfile",
+    gemfile_lock = "//notifications:Gemfile.lock",
+    gem_checksums = {
+        # Rails core gems
+        "rails-7.1.0": "530ef22c0fc12aba60498a47c53b0f686d1eba285293e1aaa649d94fa7cfff2f",
+        "actionpack-7.1.0": "efdc8c3e1f2e4911c98f112a0def6cdc5510ec1e21bf1c646345ef529ac1ac41",
+        "actionview-7.1.0": "c2c709e9a02a679a2cf695219a79e6bfb4e91ccb0a36e6b7dd9afca74e2bd3b0",
+        "activejob-7.1.0": "9372a50044f23204d7f5b46b6e00d1d82663131531f53ac1dbfc9e5ca2e64a0b",
+        "activemodel-7.1.0": "1ceb4f97d7a54e774a28afad7323507dc5702bae03b462286512dd6da2985906",
+        "activerecord-7.1.0": "e51e919bcd60c412ea927a7eded28b209b118beab61a13c7747eacbcf05becd2",
+        "activesupport-7.1.0": "01a20b75b86ffb3b3bf014c6611fecf12a27cb9f0bbdc1c794f5d5c3e1e9fcf6",
+        "railties-7.1.0": "3d9f9c75e0f211877da9928faca1db7c11a18a44232fe2171a623a1dccf1d247",
+        "actioncable-7.1.0": "2bd70c89425d8d780875487190ad3cedd42082738422fb7f3d4b6e124cf97e11",
+        "actionmailbox-7.1.0": "a2db19c6990f352c3216659f50621e232ea61ef7d89c801ca911dd5441fbc24d",
+        "actionmailer-7.1.0": "acbc748b7369f2dd681ea29d9bf1047ec3034407554b5e479bede6a0d00f7c29",
+        "actiontext-7.1.0": "975280387dc0880e9957206adf02697c8600fb7188ddb0de12662b94af1ccc60",
+        "activestorage-7.1.0": "8b013b7979a8ba4a855f652cfa1829986bc0db67b02a83e3b771d2110d6091bc",
+        # Database
+        "pg-1.5.4": "04f7b247151c639a0b955d8e5a9a41541343f4640aa3c2bdf749a872c339d25d",
+        # Server
+        "puma-6.4.2": "3eb41999d00733280be3faeb00d610331b6965a537a8cd3d905f316c38575b44",
+        "nio4r-2.7.5": "6c90168e48fb5f8e768419c93abb94ba2b892a1d0602cb06eef16d8b7df1dca1",
+        # Middleware
+        "rack-3.0.8": "9c2c912fb7bb367ddeea98193fc51f2aa526733066d0846911aaddb13a457248",
+        "rack-cors-2.0.1": "bcc66bdf5c6a4af05d571c4d01d35ac4a873552ba4f86c05fbe39365c39b9b0a",
+        "rack-session-2.0.0": "db04b2063e180369192a9046b4559af311990af38c6a93d4c600cee4eb6d4e81",
+        "rack-test-2.1.0": "0c61fc61904049d691922ea4bb99e28004ed3f43aa5cfd495024cc345f125dfb",
+        # Kafka
+        "ruby-kafka-1.5.0": "f7646944e6c72ba3413e21423ff4d510b22e3ab760ac70940a3658e0e576238e",
+        # CloudEvents
+        "cloudevents-0.0.0": "26809f225f1e4bed1df76c75a25bef28d954ef83a84a1d02e36d54038355c662",
+        # JSON
+        "json-2.7.1": "187ea312fb58420ff0c40f40af1862651d4295c8675267c6a1c353f1a0ac3265",
+        # Environment
+        "dotenv-rails-2.8.1": "b05b81b7f4e51d1359e218d92279db1d84b12440f7118c9df19b5dfffb620f6c",
+        "dotenv-2.8.1": "c5944793349ae03c432e1780a2ca929d60b88c7d14d52d630db0508c3a8a17d8",
+        # Testing
+        "rspec-rails-6.0.0": "123391f91bbccb3cc3b7f237ac592278c19215f349fdbd26bbf01781736ab732",
+        # factory_bot_rails
+        "factory_bot_rails-6.4.2": "0c384f626f9eb8afa50b50f4c2b3d70769e53b54cda4101e4da11f187be8e2e0",
+        "factory_bot-6.4.1": "0ee0d9c2f60e0d3b029f0a08af7ebd082ea0e0d90944d81298e1638d9ba74238",
+        "shoulda-matchers-6.3.0": "b57b890b9c79d47bd209f6746d325d12089d9460707eb70a6cf2226e6fc32951",
+        # Development
+        "listen-3.8.0": "9679040ac6e7845ad9f19cf59ecde60861c78e2fae57a5c20fe35e94959b2f8f",
+        # Dependencies
+        "builder-3.2.4": "99caf08af60c8d7f3a6b004029c4c3c0bdaebced6c949165fe98f1db27fbbc10",
+        "concurrent-ruby-1.2.3": "82fdd3f8a0816e28d513e637bb2b90a45d7b982bdf4f3a0511722d2e495801e2",
+        "crass-1.0.6": "dc516022a56e7b3b156099abc81b6d2b08ea1ed12676ac7a5657617f012bd45d",
+        "erubi-1.12.0": "27bedb74dfb1e04ff60674975e182d8ca787f2224f2e8143268c7696f42e4723",
+        "globalid-1.2.0": "052cf388d1f0cfd2ddf20d0f97f7cc458d8b3eb98028b3ead32dbebf257094d7",
+        "i18n-1.14.1": "9d03698903547c060928e70a9bc8b6b87fda674453cda918fc7ab80235ae4a61",
+        "loofah-2.22.0": "10d76e070c86b12fec74b6a9515fd1940f4459198b991342d0a7897d86c372fe",
+        "marcel-1.0.2": "a013b677ef46cbcb49fd5c59b3d35803d2ee04dd75d8bfdc43533fc5a31f7e4e",
+        "method_source-1.0.0": "d779455a2b5666a079ce58577bfad8534f571af7cec8107f4dce328f0981dede",
+        # minitest (may be default gem in Ruby 3.2.0)
+        "minitest-5.20.0": "a3faf26a757ced073aaae0bd10481340f53e221a4f50d8a6033591555374752e",
+        "nokogiri-1.16.2-x86_64-linux": "5b146240ac6ec6c40fd4367623e74442bca45a542bd3282b1d4d18b07b8e5dfe",
+        "racc-1.7.3": "b785ab8a30ec43bce073c51dbbe791fd27000f68d1c996c95da98bf685316905",
+        "rake-13.1.0": "be6a3e1aa7f66e6c65fa57555234eb75ce4cf4ada077658449207205474199c6",
+        "rails-dom-testing-2.2.0": "e515712e48df1f687a1d7c380fd7b07b8558faa26464474da64183a7426fa93b",
+        "rails-html-sanitizer-1.6.0": "86e9f19d2e6748890dcc2633c8945ca45baa08a1df9d8c215ce17b3b0afaa4de",
+        "thor-1.3.1": "fa7e3471d4f6a27138e3d9c9b0d4daac9c3d7383927667ae83e9ab42ae7401ef",
+        "tzinfo-2.0.6": "8daf828cc77bcf7d63b0e3bdb6caa47e2272dcfaf4fbfe46f8c3a9df087a829b",
+        "websocket-driver-0.7.6": "f69400be7bc197879726ad8e6f5869a61823147372fd8928836a53c2c741d0db",
+        "websocket-extensions-0.1.5": "1c6ba63092cda343eb53fc657110c71c754c56484aad42578495227d717a8241",
+    },
+)
+use_repo(ruby, "ruby_3_2_0", "bundle", "ruby_3_2_0_toolchains")
+register_toolchains("@ruby_3_2_0_toolchains//:all")
 
 # Payments NuGet dependencies (generated by paket2bazel)
 # Run ./payments/update-deps.sh to regenerate paket.main.bzl and paket.main_extension.bzl
