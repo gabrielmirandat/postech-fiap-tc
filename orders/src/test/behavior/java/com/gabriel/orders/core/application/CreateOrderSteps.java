@@ -137,6 +137,6 @@ public class CreateOrderSteps extends SpringStepsContext {
         String json = new String(data, StandardCharsets.UTF_8);
         Order receivedOrder = objectMapper.readValue(json, Order.class);
         Order actualOrder = (Order) stateManager.get("GENERATED_ORDER");
-        assertEquals(receivedOrder.getOrderId().getValue(), actualOrder.getOrderId().getValue());
+        assertEquals(receivedOrder.getOrderIdString(), actualOrder.getOrderIdString());
     }
 }

@@ -116,6 +116,7 @@ java_library(
         "@maven//:org_springframework_spring_tx",
         "@maven//:org_springframework_spring_web",
         "@maven//:org_springframework_spring_webmvc",
+        "@maven//:org_apache_tomcat_embed_tomcat_embed_core",
         "@maven//:org_yaml_snakeyaml"
     ],
 )
@@ -283,6 +284,7 @@ java_test_suite(
         "@maven//:org_springframework_security_spring_security_oauth2_jose",
         "@maven//:org_springframework_spring_context",
         "@maven//:org_springframework_spring_test",
+        "@maven//:org_springframework_boot_spring_boot_starter_test",
     ],
 )
 

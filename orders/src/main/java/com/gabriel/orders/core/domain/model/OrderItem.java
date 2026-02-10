@@ -1,6 +1,7 @@
 package com.gabriel.orders.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gabriel.model.OrderItemId;
 import com.gabriel.model.Model;
@@ -41,8 +42,9 @@ public class OrderItem {
 
     // Constructor for Jackson deserialization (no validation to avoid duplication)
     @JsonCreator
-    public static OrderItem fromJson(@JsonProperty("itemID") OrderItemId itemID, @JsonProperty("product") Product product,
+    public static OrderItem fromJson(@JsonProperty("itemID") String itemIDStr, @JsonProperty("product") Product product,
                                     @JsonProperty("extras") List<Extra> extras) {
+        OrderItemId itemID = OrderItemId.newBuilder().setValue(itemIDStr).build();
         return new OrderItem(itemID, product, extras);
     }
 
@@ -50,8 +52,14 @@ public class OrderItem {
         return new OrderItem(itemID, product, extras);
     }
 
+    @JsonIgnore
     public OrderItemId getItemID() {
         return itemID;
+    }
+    
+    @JsonProperty("itemID")
+    public String getItemIDString() {
+        return itemID.getValue();
     }
 
     public Product getProduct() {

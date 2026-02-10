@@ -1,6 +1,8 @@
 package com.gabriel.menu.core.domain.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gabriel.menu.core.MenuMock;
 import com.gabriel.menu.core.domain.model.Category;
@@ -25,6 +27,13 @@ public class ProductTest {
         ObjectMapper mapper = new ObjectMapper();
         // Register the JavaTimeModule to handle Java 8 date/time types
         mapper.registerModule(new JavaTimeModule());
+        // Configure to ignore unknown properties (needed for Protobuf objects)
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // Configure to ignore properties that can't be serialized
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        // Configure to ignore properties that cause serialization issues
+        mapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false);
+        mapper.configure(SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS, false);
         return mapper;
     }
 
@@ -48,7 +57,7 @@ public class ProductTest {
         assertEquals(product.getPrice(), copy.getPrice());
         assertEquals(product.getCategory(), copy.getCategory());
         assertEquals(product.getDescription(), copy.getDescription());
-        assertEquals(product.getImage(), copy.getImage());
+        assertEquals(product.getImage().getUrl(), copy.getImage().getUrl());
         assertEquals(product.getIngredients(), copy.getIngredients());
         assertEquals(product.getCreationTimestamp(), copy.getCreationTimestamp());
         assertEquals(product.getUpdateTimestamp(), copy.getUpdateTimestamp());

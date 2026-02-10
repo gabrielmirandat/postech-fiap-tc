@@ -1,6 +1,7 @@
 package com.gabriel.orders.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,6 +10,9 @@ import com.gabriel.model.ApplicationException;
 import com.gabriel.model.Address;
 import com.gabriel.model.Cpf;
 import com.gabriel.model.Contact;
+import com.gabriel.model.ContactType;
+import com.gabriel.model.Cellphone;
+import com.gabriel.model.Email;
 import com.gabriel.model.Price;
 import com.gabriel.model.OrderId;
 import com.gabriel.model.Model;
@@ -76,16 +80,65 @@ public class Order {
 
     // Constructor for Jackson deserialization (no validation to avoid duplication)
     @JsonCreator
-    public static Order fromJson(@JsonProperty("orderId") OrderId orderId, @JsonProperty("items") List<OrderItem> items,
-                                 @JsonProperty("customer") Cpf customer, @JsonProperty("shippingAddress") Address shippingAddress,
-                                 @JsonProperty("contact") Contact additionalContact, @JsonProperty("price") Price price,
+    public static Order fromJson(@JsonProperty("orderId") String orderIdStr, @JsonProperty("items") List<OrderItem> items,
+                                 @JsonProperty("customer") String customerStr, @JsonProperty("shippingAddress") AddressDto shippingAddressDto,
+                                 @JsonProperty("contact") ContactDto contactDto, @JsonProperty("price") Double priceValue,
                                  @JsonProperty("ticketId") String ticketId, @JsonProperty("status") OrderStatus status,
                                  @JsonProperty("creationTimestamp") Instant createdAt, @JsonProperty("updateTimestamp") Instant updatedAt) {
-        Order order = new Order(orderId, items, customer, shippingAddress, additionalContact, createdAt, updatedAt);
+        if (orderIdStr == null) {
+            throw new IllegalArgumentException("orderId cannot be null");
+        }
+        if (items == null) {
+            throw new IllegalArgumentException("items cannot be null");
+        }
+        OrderId orderId = OrderId.newBuilder().setValue(orderIdStr).build();
+        Cpf customer = customerStr != null ? Cpf.newBuilder().setValue(customerStr).build() : null;
+        Price price = priceValue != null ? Price.newBuilder().setValue(priceValue).build() : null;
+        Address shippingAddress = shippingAddressDto != null ? Address.newBuilder()
+            .setStreet(shippingAddressDto.street != null ? shippingAddressDto.street : "")
+            .setCity(shippingAddressDto.city != null ? shippingAddressDto.city : "")
+            .setState(shippingAddressDto.state != null ? shippingAddressDto.state : "")
+            .setZip(shippingAddressDto.zip != null ? shippingAddressDto.zip : "")
+            .build() : null;
+        Contact additionalContact = null;
+        if (contactDto != null) {
+            Contact.Builder contactBuilder = Contact.newBuilder();
+            if (contactDto.type != null) {
+                contactBuilder.setType(contactDto.type);
+            }
+            if (contactDto.cellphone != null) {
+                contactBuilder.setCellphone(Cellphone.newBuilder().setValue(contactDto.cellphone).build());
+            }
+            if (contactDto.email != null) {
+                contactBuilder.setEmail(Email.newBuilder().setValue(contactDto.email).build());
+            }
+            if (contactDto.customValue != null) {
+                contactBuilder.setCustomValue(contactDto.customValue);
+            }
+            additionalContact = contactBuilder.build();
+        }
+        Order order = new Order(orderId, items, customer, shippingAddress, additionalContact, 
+            createdAt != null ? createdAt : Instant.now(), 
+            updatedAt != null ? updatedAt : Instant.now());
         order.price = price;
         order.ticketId = ticketId;
-        order.status = status;
+        order.status = status != null ? status : OrderStatus.CREATED;
         return order;
+    }
+    
+    // DTOs for Jackson deserialization and API responses
+    public static class AddressDto {
+        public String street;
+        public String city;
+        public String state;
+        public String zip;
+    }
+    
+    public static class ContactDto {
+        public ContactType type;
+        public String cellphone;
+        public String email;
+        public String customValue;
     }
 
     public static Order copy(OrderId orderId, List<OrderItem> items, Cpf customer,
@@ -108,22 +161,37 @@ public class Order {
     }
 
     private void initialize() {
-        this.status = OrderStatus.CREATED;
-        this.generateTicket();
-        this.calculatePrice();
+        if (this.status == null) {
+            this.status = OrderStatus.CREATED;
+        }
+        if (this.ticketId == null) {
+            this.generateTicket();
+        }
+        if (this.price == null && this.items != null) {
+            this.calculatePrice();
+        }
     }
 
     private void generateTicket() {
-        ticketId = orderId.getValue().split("-")[0];
+        if (orderId != null) {
+            ticketId = orderId.getValue().split("-")[0];
+        }
     }
 
     private void calculatePrice() {
+        if (items == null || items.isEmpty()) {
+            price = Price.newBuilder().setValue(0.0).build();
+            return;
+        }
         Double productsTotalPrice = items.parallelStream()
+            .filter(item -> item != null && item.getProduct() != null && item.getProduct().getPrice() != null)
             .map(item -> item.getProduct().getPrice().getValue())
             .reduce(0.0, Double::sum);
 
         Double extrasTotalPrice = items.stream()
+            .filter(item -> item != null && item.getExtras() != null)
             .flatMap(item -> item.getExtras().stream())
+            .filter(extra -> extra != null && extra.getPrice() != null)
             .map(extra -> extra.getPrice().getValue())
             .reduce(0.0, Double::sum);
 
@@ -243,16 +311,28 @@ public class Order {
         }
     }
 
+    @JsonIgnore
     public OrderId getOrderId() {
         return orderId;
+    }
+    
+    @JsonProperty("orderId")
+    public String getOrderIdString() {
+        return orderId.getValue();
     }
 
     public List<OrderItem> getItems() {
         return items;
     }
 
+    @JsonIgnore
     public Price getPrice() {
         return price;
+    }
+    
+    @JsonProperty("price")
+    public Double getPriceValue() {
+        return price != null ? price.getValue() : null;
     }
 
     public String getTicketId() {
@@ -263,16 +343,50 @@ public class Order {
         return status;
     }
 
+    @JsonIgnore
     public Cpf getCustomer() {
         return customer;
     }
+    
+    @JsonProperty("customer")
+    public String getCustomerString() {
+        return customer != null ? customer.getValue() : null;
+    }
 
+    @JsonIgnore
     public Address getShippingAddress() {
         return shippingAddress;
     }
+    
+    @JsonProperty("shippingAddress")
+    public AddressDto getShippingAddressDto() {
+        if (shippingAddress == null) {
+            return null;
+        }
+        AddressDto dto = new AddressDto();
+        dto.street = shippingAddress.getStreet();
+        dto.city = shippingAddress.getCity();
+        dto.state = shippingAddress.getState();
+        dto.zip = shippingAddress.getZip();
+        return dto;
+    }
 
+    @JsonIgnore
     public Contact getContact() {
         return contact;
+    }
+    
+    @JsonProperty("contact")
+    public ContactDto getContactDto() {
+        if (contact == null) {
+            return null;
+        }
+        ContactDto dto = new ContactDto();
+        dto.type = contact.getType();
+        dto.cellphone = contact.hasCellphone() ? contact.getCellphone().getValue() : null;
+        dto.email = contact.hasEmail() ? contact.getEmail().getValue() : null;
+        dto.customValue = contact.hasCustomValue() ? contact.getCustomValue() : null;
+        return dto;
     }
 
     private static String generateOrderId() {

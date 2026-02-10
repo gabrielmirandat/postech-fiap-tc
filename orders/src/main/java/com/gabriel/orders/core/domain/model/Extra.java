@@ -2,6 +2,7 @@ package com.gabriel.orders.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,10 +54,13 @@ public class Extra {
 
     // Constructor for Jackson deserialization (no validation to avoid duplication)
     @JsonCreator
-    public static Extra fromJson(@JsonProperty("ingredientID") IngredientId ingredientId,
-                                 @JsonProperty("name") Name name,
-                                 @JsonProperty("value") Price value,
+    public static Extra fromJson(@JsonProperty("ingredientID") String ingredientIdStr,
+                                 @JsonProperty("name") String nameStr,
+                                 @JsonProperty("value") Double valueDouble,
                                  @JsonProperty("timestamp") @JsonAlias("updateTimestamp") Instant timestamp) {
+        IngredientId ingredientId = IngredientId.newBuilder().setValue(ingredientIdStr).build();
+        Name name = Name.newBuilder().setValue(nameStr).build();
+        Price value = Price.newBuilder().setValue(valueDouble).build();
         return new Extra(ingredientId, name, value, timestamp);
     }
 
@@ -76,16 +80,34 @@ public class Extra {
         }
     }
 
+    @JsonIgnore
     public IngredientId getIngredientId() {
         return ingredientId;
     }
+    
+    @JsonProperty("ingredientID")
+    public String getIngredientIdString() {
+        return ingredientId.getValue();
+    }
 
+    @JsonIgnore
     public Name getName() {
         return name;
     }
+    
+    @JsonProperty("name")
+    public String getNameString() {
+        return name.getValue();
+    }
 
+    @JsonIgnore
     public Price getPrice() {
         return price;
+    }
+    
+    @JsonProperty("value")
+    public Double getPriceValue() {
+        return price.getValue();
     }
 
     public Instant getTimestamp() {

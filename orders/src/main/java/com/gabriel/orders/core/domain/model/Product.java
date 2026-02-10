@@ -2,6 +2,7 @@ package com.gabriel.orders.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,10 +54,13 @@ public class Product {
 
     // Constructor for Jackson deserialization (no validation to avoid duplication)
     @JsonCreator
-    public static Product fromJson(@JsonProperty("productId") ProductId productId,
-                                   @JsonProperty("name") Name name,
-                                   @JsonProperty("price") Price value,
+    public static Product fromJson(@JsonProperty("productId") String productIdStr,
+                                   @JsonProperty("name") String nameStr,
+                                   @JsonProperty("price") Double valueDouble,
                                    @JsonProperty("timestamp") @JsonAlias("updateTimestamp") Instant timestamp) {
+        ProductId productId = ProductId.newBuilder().setValue(productIdStr).build();
+        Name name = Name.newBuilder().setValue(nameStr).build();
+        Price value = Price.newBuilder().setValue(valueDouble).build();
         return new Product(productId, name, value, timestamp);
     }
 
@@ -76,16 +80,34 @@ public class Product {
         }
     }
 
+    @JsonIgnore
     public ProductId getProductId() {
         return productId;
     }
+    
+    @JsonProperty("productId")
+    public String getProductIdString() {
+        return productId.getValue();
+    }
 
+    @JsonIgnore
     public Name getName() {
         return name;
     }
+    
+    @JsonProperty("name")
+    public String getNameString() {
+        return name.getValue();
+    }
 
+    @JsonIgnore
     public Price getPrice() {
         return price;
+    }
+    
+    @JsonProperty("price")
+    public Double getPriceValue() {
+        return price.getValue();
     }
 
     public Instant getTimestamp() {
