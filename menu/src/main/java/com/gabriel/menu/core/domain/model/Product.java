@@ -1,6 +1,7 @@
 package com.gabriel.menu.core.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,18 +51,20 @@ public class Product extends Menu {
      * Constructor for Jackson deserialization.
      */
     @JsonCreator
-    Product(@JsonProperty("menuId") ProductId productId, @JsonProperty("name") Name name,
-            @JsonProperty("price") Price price, @JsonProperty("category") Category category,
-            @JsonProperty("description") Description description, @JsonProperty("image") Image image,
-            @JsonProperty("ingredients") List<IngredientId> ingredients,
+    Product(@JsonProperty("menuId") String menuId, @JsonProperty("name") String nameStr,
+            @JsonProperty("price") Double priceValue, @JsonProperty("category") Category category,
+            @JsonProperty("description") String descriptionStr, @JsonProperty("image") String imageStr,
+            @JsonProperty("ingredients") List<String> ingredientIds,
             @JsonProperty("createdAt") Instant createdAt, @JsonProperty("updatedAt") Instant updatedAt) {
-        this.productId = productId;
-        this.name = name;
-        this.price = price;
+        this.productId = ProductId.newBuilder().setValue(menuId).build();
+        this.name = Name.newBuilder().setValue(nameStr).build();
+        this.price = Price.newBuilder().setValue(priceValue).build();
         this.category = category;
-        this.description = description;
-        this.image = image;
-        this.ingredients = ingredients;
+        this.description = Description.newBuilder().setValue(descriptionStr).build();
+        this.image = new Image(imageStr);
+        this.ingredients = ingredientIds != null ? ingredientIds.stream()
+            .map(id -> IngredientId.newBuilder().setValue(id).build())
+            .toList() : List.of();
         this.creationTimestamp = createdAt;
         this.updateTimestamp = updatedAt;
     }
@@ -69,7 +72,10 @@ public class Product extends Menu {
     public static Product copy(ProductId productId, Name name, Price price, Category category,
                                Description description, Image image, List<IngredientId> ingredients,
                                Instant createdAt, Instant updatedAt) {
-        return new Product(productId, name, price, category, description, image, ingredients,
+        List<String> ingredientIds = ingredients != null ? ingredients.stream()
+            .map(IngredientId::getValue)
+            .toList() : List.of();
+        return new Product(productId.getValue(), name.getValue(), price.getValue(), category, description.getValue(), image.getUrl(), ingredientIds,
             createdAt, updatedAt);
     }
 
@@ -101,31 +107,67 @@ public class Product extends Menu {
         }
     }
 
+    @JsonIgnore
     public ProductId getProductId() {
         return productId;
     }
+    
+    @JsonProperty("menuId")
+    public String getMenuIdString() {
+        return productId.getValue();
+    }
 
+    @JsonIgnore
     public Name getName() {
         return name;
     }
+    
+    @JsonProperty("name")
+    public String getNameString() {
+        return name.getValue();
+    }
 
+    @JsonIgnore
     public Price getPrice() {
         return price;
+    }
+    
+    @JsonProperty("price")
+    public Double getPriceValue() {
+        return price.getValue();
     }
 
     public Category getCategory() {
         return category;
     }
 
+    @JsonIgnore
     public Description getDescription() {
         return description;
     }
+    
+    @JsonProperty("description")
+    public String getDescriptionString() {
+        return description.getValue();
+    }
 
+    @JsonIgnore
     public Image getImage() {
         return image;
     }
+    
+    @JsonProperty("image")
+    public String getImageString() {
+        return image.getUrl();
+    }
 
+    @JsonIgnore
     public List<IngredientId> getIngredients() {
         return ingredients;
+    }
+    
+    @JsonProperty("ingredients")
+    public List<String> getIngredientsAsStrings() {
+        return ingredients.stream().map(IngredientId::getValue).toList();
     }
 }

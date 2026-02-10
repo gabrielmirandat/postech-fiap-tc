@@ -1,7 +1,7 @@
 package com.gabriel.orders.adapter.driver.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.gabriel.adapter.api.exceptions.NotFound;
+import com.gabriel.orders.infra.http.HttpException;
 import com.gabriel.model.IngredientId;
 import com.gabriel.model.ProductId;
 import com.gabriel.orders.OrdersApplication;
@@ -122,7 +122,7 @@ public class OrdersApiContractTest extends SpecmaticJUnitSupport {
         when(orderRepository.getByTicket(eq("11111112")))
             .thenReturn(order);
         when(orderRepository.getByTicket(eq("11111113")))
-            .thenThrow(new NotFound("Could not find order with ticketId 11111113"));
+            .thenThrow(HttpException.notFound("Could not find order with ticketId 11111113"));
         when(orderRepository.getByTicket(eq("11111119")))
             .thenThrow(RuntimeException.class);
         when(orderRepository.searchBy(eq(new OrderSearchParameters(OrderStatus.CREATED))))

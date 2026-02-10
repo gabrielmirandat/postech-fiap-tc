@@ -9,36 +9,9 @@ genrule(
     cmd = "touch $@",
 )
 
-# Required installations (runs EdgeDB CLI and OpenAPI Generator)
-genrule(
-    name = "install_edgedb",
-    outs = ["edgedb_installed"],
-    cmd = "pip install edgedb && touch $@",
-)
-
-genrule(
-    name = "install_openapi_generator",
-    outs = ["openapi_generator_installed"],
-    cmd = "pip install openapi-python-client && touch $@",
-)
-
-# OpenAPI objects generation
-genrule(
-    name = "generate_openapi_client",
-    srcs = ["openapi.yaml"],
-    outs = ["openapi_client/__init__.py"],
-    cmd = "openapi-python-client generate --path $< --output openapi_client",
-    tools = [":install_openapi_generator"],
-)
-
-# EdgeDB database migration and creation
-genrule(
-    name = "edgedb_migrate",
-    srcs = ["db/migrations/*.esdl"],
-    outs = ["migrations_applied"],
-    cmd = "edgedb project init && edgedb migrate && touch $@",
-    tools = [":install_edgedb"],
-)
+# NOTE: EdgeDB CLI and OpenAPI Generator are now managed hermetically via @pip//
+# If needed, create py_binary targets that use @pip//edgedb and @pip//openapi_python_client
+# For now, these genrules are removed as they used non-hermetic pip install
 
 # Python libraries for each module with dependencies
 py_library(
@@ -53,6 +26,7 @@ py_library(
     deps = [
         ":entities",
         ":config",
+        "@pip//edgedb",
     ],
     visibility = ["//visibility:public"],
 )
@@ -60,6 +34,9 @@ py_library(
 py_library(
     name = "devices",
     srcs = glob(["src/devices/**/*.py"]),
+    deps = [
+        "@pip//aiokafka",
+    ],
     visibility = ["//visibility:public"],
 )
 
@@ -119,6 +96,7 @@ py_library(
         ":use_cases",
         ":entities",
         ":containers",
+        "@pip//fastapi",
     ],
     visibility = ["//visibility:public"],
 )
@@ -144,6 +122,7 @@ py_library(
         ":external_interfaces",
         ":gateways",
         ":use_cases",
+        "@pip//dependency_injector",
     ],
     visibility = ["//visibility:public"],
 )
@@ -167,6 +146,13 @@ py_binary(
         ":presenters",
         ":use_cases",
         ":web",
+        # Hermetic Python dependencies
+        "@pip//fastapi",
+        "@pip//uvicorn",
+        "@pip//edgedb",
+        "@pip//kafka_python",
+        "@pip//aiokafka",
+        "@pip//dependency_injector",
     ],
     visibility = ["//visibility:public"],
 )

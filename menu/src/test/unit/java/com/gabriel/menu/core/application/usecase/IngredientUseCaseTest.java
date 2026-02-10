@@ -61,7 +61,7 @@ public class IngredientUseCaseTest {
     void getIngredientByIdTest() {
         when(ingredientRepository.getById(any())).thenReturn(ingredient);
 
-        IngredientId id = new IngredientId();
+        IngredientId id = IngredientId.newBuilder().setValue("12345678-INGR-2023-04-18").build();
         Ingredient result = ingredientUseCase.getIngredientById(new GetByIngredientIdQuery(id));
 
         verify(ingredientRepository).getById(id);
@@ -72,8 +72,8 @@ public class IngredientUseCaseTest {
     void getIngredientsByIdTest() {
         when(ingredientRepository.getById(any())).thenReturn(ingredient);
 
-        IngredientId id1 = new IngredientId();
-        IngredientId id2 = new IngredientId();
+        IngredientId id1 = IngredientId.newBuilder().setValue("12345678-INGR-2023-04-18").build();
+        IngredientId id2 = IngredientId.newBuilder().setValue("87654321-INGR-2023-04-18").build();
         List<Ingredient> results = ingredientUseCase.getIngredientsById(
             new GetByIngredientIdsQuery(Arrays.asList(id1, id2)));
 

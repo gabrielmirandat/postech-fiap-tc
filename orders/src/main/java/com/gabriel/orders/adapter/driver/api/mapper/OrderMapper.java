@@ -114,26 +114,28 @@ public class OrderMapper {
             responseOrderItems.add(responseOrderItem);
         }
 
-        OrderResponse response = new OrderResponse(order.getOrderId().getValue(), order.getTicketId(),
+        OrderResponse response = new OrderResponse(order.getOrderIdString(), order.getTicketId(),
             OrderStatusDTO.fromValue(order.getStatus().toString().toUpperCase()),
-            Double.valueOf(order.getPrice().getValue()), responseOrderItems);
+            order.getPriceValue(), responseOrderItems);
 
-        if (order.getCustomer() != null) {
-            response.setCustomer(new CustomerDTO(order.getCustomer().getValue()));
+        if (order.getCustomerString() != null) {
+            response.setCustomer(new CustomerDTO(order.getCustomerString()));
         }
 
-        if (order.getShippingAddress() != null) {
-            response.setShippingAddress(new AddressDTO().street(order.getShippingAddress().getStreet()).city(order.getShippingAddress().getCity())
-                .state(order.getShippingAddress().getState()).zip(order.getShippingAddress().getZip()));
+        Order.AddressDto addressDto = order.getShippingAddressDto();
+        if (addressDto != null) {
+            response.setShippingAddress(new AddressDTO().street(addressDto.street).city(addressDto.city)
+                .state(addressDto.state).zip(addressDto.zip));
         }
 
-        if (order.getContact() != null) {
-            if (order.getContact().hasCellphone()) {
-                response.setContact(order.getContact().getCellphone().getValue());
-            } else if (order.getContact().hasEmail()) {
-                response.setContact(order.getContact().getEmail().getValue());
-            } else if (order.getContact().hasCustomValue()) {
-                response.setContact(order.getContact().getCustomValue());
+        Order.ContactDto contactDto = order.getContactDto();
+        if (contactDto != null) {
+            if (contactDto.cellphone != null) {
+                response.setContact(contactDto.cellphone);
+            } else if (contactDto.email != null) {
+                response.setContact(contactDto.email);
+            } else if (contactDto.customValue != null) {
+                response.setContact(contactDto.customValue);
             }
         }
 
@@ -146,10 +148,24 @@ public class OrderMapper {
 
 
     public static ErrorResponse toErrorResponse(HttpException exception) {
+        return toErrorResponse(exception, "", null);
+    }
+    
+    public static ErrorResponse toErrorResponse(HttpException exception, String path) {
+        return toErrorResponse(exception, path, null);
+    }
+
+    public static ErrorResponse toErrorResponse(HttpException exception, String path, String code) {
+        // Represent timestamp as ISO-8601 string; the OpenAPI contract treats it as plain string.
+        String timestamp = java.time.OffsetDateTime.now().toString();
+
         return new ErrorResponse()
             .status(exception.getStatus().value())
             .message(exception.getMessage())
-            .code("");
+            .code(code != null ? code : "")
+            .timestamp(timestamp)
+            .error(exception.getStatus().getReasonPhrase())
+            .path(path != null ? path : "");
     }
 
     public static Order toOrder(OrderResponse orderResponse) {

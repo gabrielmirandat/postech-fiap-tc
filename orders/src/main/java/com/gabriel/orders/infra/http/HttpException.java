@@ -62,4 +62,8 @@ public class HttpException extends RuntimeException {
     public static HttpException internalServerError(String message) {
         return new HttpException(HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
+    
+    public static HttpException unprocessableEntity(String message) {
+        return new HttpException(HttpStatus.UNPROCESSABLE_ENTITY, message);
+    }
 }

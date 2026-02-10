@@ -994,3 +994,12 @@ components:
         code:
           type: string
           description: Specific code of the error
+        timestamp:
+          type: string
+          description: Timestamp when the error occurred
+        error:
+          type: string
+          description: Error type or reason
+        path:
+          type: string
+          description: Request path where the error occurred

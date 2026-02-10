@@ -178,6 +178,15 @@ python.toolchain(
 )
 use_repo(python, "python3_11_toolchains", "python_versions")
 
+# Python pip dependencies - hermetic package management
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    hub_name = "pip",
+    python_version = "3.11",
+    requirements_lock = "//customers:requirements.lock",
+)
+use_repo(pip, "pip")
+
 # .NET toolchain - hermetic .NET builds
 dotnet = use_extension("@rules_dotnet//dotnet:extensions.bzl", "dotnet")
 dotnet.toolchain(dotnet_version = "10.0.100")

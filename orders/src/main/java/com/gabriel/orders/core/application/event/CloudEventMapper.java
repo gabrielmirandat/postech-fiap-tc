@@ -25,15 +25,22 @@ interface DomainEvent {
 public class CloudEventMapper {
 
     public static CloudEvent ceFrom(ObjectMapper serializer, DomainEvent event) throws JsonProcessingException {
-        return CloudEventBuilder.v1()
+        CloudEventBuilder builder = CloudEventBuilder.v1()
             .withId(UUID.randomUUID().toString())
             .withSource(URI.create(event.source()))
             .withSubject(event.subject())
             .withType(event.type())
-            .withData(event.payload(serializer))
-            .withExtension("audience", event.audience())
-            .withExtension("context", event.context())
-            .build();
+            .withData(event.payload(serializer));
+        
+        // Only add extensions if they are not null
+        if (event.audience() != null) {
+            builder.withExtension("audience", event.audience());
+        }
+        if (event.context() != null) {
+            builder.withExtension("context", event.context());
+        }
+        
+        return builder.build();
     }
 
     public static CloudEvent ceFrom(ObjectMapper serializer, com.gabriel.orders.core.domain.event.OrderCreatedEvent e) throws JsonProcessingException {
