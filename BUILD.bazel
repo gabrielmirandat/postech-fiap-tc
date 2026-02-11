@@ -57,29 +57,3 @@ genrule(
     """,
     visibility = ["//visibility:public"],
 )
-
-# Build all OCI images - convenience target
-genrule(
-    name = "all_images",
-    tools = [
-        "//orders:image",
-        "//menu:image",
-        "//permissions:image",
-        "//customers:image",
-        "//notifications:image",
-        "//payments:image",
-        "//deliveries:image",
-    ],
-    outs = ["all_images_marker"],
-    cmd = """
-        echo "All OCI images built successfully:" > $@
-        echo "  - orders:image" >> $@
-        echo "  - menu:image" >> $@
-        echo "  - permissions:image" >> $@
-        echo "  - customers:image" >> $@
-        echo "  - notifications:image" >> $@
-        echo "  - payments:image" >> $@
-        echo "  - deliveries:image" >> $@
-    """,
-    visibility = ["//visibility:public"],
-)
