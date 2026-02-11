@@ -1,0 +1,8 @@
+# pnpm workspace configuration
+packages:
+  - '.'
+
+# Configure which packages should run build scripts
+# See: https://pnpm.io/10.x/settings#onlybuiltdependencies
+onlyBuiltDependencies:
+  - '@nestjs/core'
