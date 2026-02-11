@@ -3,12 +3,10 @@ use axum::{
     Router,
     response::Json,
 };
-use serde::{Deserialize, Serialize};
+use deliveries_lib::handlers;
+use serde::Serialize;
 use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-
-mod handlers;
-mod models;
 
 #[derive(Serialize)]
 struct HealthResponse {
