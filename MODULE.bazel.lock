@@ -1100,7 +1100,7 @@
     "@@rules_oci+//oci:extensions.bzl%oci": {
       "general": {
         "bzlTransitiveDigest": "8r09ivtPUVgEBFC/rvAMYG5Qbd1uMI/xlRh5FDwiTy8=",
-        "usagesDigest": "TIHwQNek4WVK3QAVn7XP2+K9Dp0Cj0ShOYE8h1rD3Do=",
+        "usagesDigest": "aogyF0kcPSoOP3E7BsMM9cSCvwRlv5df5nGbpChOe+I=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -1218,6 +1218,35 @@
                 "@@platforms//cpu:x86_64": "@nodejs_image_linux_amd64"
               },
               "bzlmod_repository": "nodejs_image",
+              "reproducible": true
+            }
+          },
+          "python_3_11_slim_linux_amd64": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_pull",
+            "attributes": {
+              "www_authenticate_challenges": {},
+              "scheme": "https",
+              "registry": "index.docker.io",
+              "repository": "library/python",
+              "identifier": "3.11-slim",
+              "platform": "linux/amd64",
+              "target_name": "python_3_11_slim_linux_amd64",
+              "bazel_tags": []
+            }
+          },
+          "python_3_11_slim": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_alias",
+            "attributes": {
+              "target_name": "python_3_11_slim",
+              "www_authenticate_challenges": {},
+              "scheme": "https",
+              "registry": "index.docker.io",
+              "repository": "library/python",
+              "identifier": "3.11-slim",
+              "platforms": {
+                "@@platforms//cpu:x86_64": "@python_3_11_slim_linux_amd64"
+              },
+              "bzlmod_repository": "python_3_11_slim",
               "reproducible": true
             }
           },
@@ -1344,7 +1373,9 @@
             "ruby_3_2_0_image",
             "ruby_3_2_0_image_linux_amd64",
             "nodejs_image",
-            "nodejs_image_linux_amd64"
+            "nodejs_image_linux_amd64",
+            "python_3_11_slim",
+            "python_3_11_slim_linux_amd64"
           ],
           "explicitRootModuleDirectDevDeps": [],
           "useAllRepos": "NO",

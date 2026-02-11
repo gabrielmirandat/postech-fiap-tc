@@ -1,0 +1,52 @@
+name: Terraform Validation
+
+on:
+  pull_request:
+    paths:
+      - 'infra/**'
+      - '.terraform/**'
+      - '.github/workflows/terraform.yml'
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'infra/**'
+      - '.terraform/**'
+
+env:
+  TF_LOG: DEBUG
+  TF_DIR: ".terraform/"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Format Terraform files
+        id: fmt
+        run: terraform fmt -check
+        working-directory: ${{ env.TF_DIR }}
+        continue-on-error: true
+
+      - name: Init configuration
+        id: init
+        run: terraform init
+        working-directory: ${{ env.TF_DIR }}
+
+      - name: Validate Terraform script
+        id: validate
+        run: terraform validate -no-color
+        working-directory: ${{ env.TF_DIR }}
+
+      - name: Terraform Plan (on push only)
+        if: github.event_name == 'push'
+        id: plan
+        run: terraform plan -no-color
+        working-directory: ${{ env.TF_DIR }}
+        continue-on-error: true
