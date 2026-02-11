@@ -1,0 +1,83 @@
+load("@rules_nodejs//nodejs:defs.bzl", "nodejs_binary")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+load("@aspect_rules_js//npm:defs.bzl", "npm_package")
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
+
+package(default_visibility = ["//visibility:public"])
+
+# TypeScript compilation using ts_project
+ts_project(
+    name = "tsconfig",
+    srcs = glob(["src/**/*.ts"]),
+    tsconfig = "tsconfig.json",
+    deps = [
+        "@npm//@nestjs/common",
+        "@npm//@nestjs/core",
+        "@npm//@nestjs/platform-express",
+        "@npm//@nestjs/config",
+        "@npm//@nestjs/swagger",
+        "@npm//reflect-metadata",
+        "@npm//rxjs",
+        "@npm//class-validator",
+        "@npm//class-transformer",
+    ],
+)
+
+# Build target - compiled TypeScript
+filegroup(
+    name = "artifact",
+    srcs = [":tsconfig"],
+    visibility = ["//visibility:public"],
+)
+
+# NestJS application binary
+nodejs_binary(
+    name = "app",
+    entry_point = "src/main.ts",
+    data = [
+        ":tsconfig",
+        "package.json",
+        "tsconfig.json",
+        "nest-cli.json",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Uber target - creates a distribution package using npm_package
+npm_package(
+    name = "uber",
+    srcs = [
+        ":tsconfig",
+        "package.json",
+        "tsconfig.json",
+        "nest-cli.json",
+    ],
+    package = "supplies",
+    visibility = ["//visibility:public"],
+)
+
+# Docker image
+tar(
+    name = "layer",
+    srcs = [
+        ":uber",
+    ],
+)
+
+oci_image(
+    name = "image",
+    base = "@nodejs_image",
+    entrypoint = [
+        "sh",
+        "-c",
+        "cd supplies && npm install --production && node dist/main.js",
+    ],
+    tars = [":layer"],
+)
+
+oci_push(
+    name = "push",
+    image = ":image",
+    repository = "gabrielmic/supplies",
+)
