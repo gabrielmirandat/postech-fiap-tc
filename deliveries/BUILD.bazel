@@ -1,0 +1,60 @@
+load("@rules_java//java:defs.bzl", "java_binary", "java_library")
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
+
+package(default_visibility = ["//visibility:public"])
+
+# Build artifact marker
+genrule(
+    name = "artifact",
+    outs = ["artifact_marker"],
+    cmd = "touch $@",
+    visibility = ["//visibility:public"],
+)
+
+# Main application library
+java_library(
+    name = "deliveries_lib",
+    srcs = glob(["src/main/java/**/*.java"]),
+    resources = glob(["src/main/resources/**/*"], allow_empty = True),
+    visibility = ["//visibility:public"],
+)
+
+# Executable binary
+java_binary(
+    name = "uber",
+    main_class = "com.gabriel.deliveries.DeliveriesApplication",
+    runtime_deps = [":deliveries_lib"],
+    visibility = ["//visibility:public"],
+)
+
+# Tar layer for OCI image
+tar(
+    name = "layer",
+    srcs = [":uber_deploy.jar"],
+)
+
+# OCI image target
+oci_image(
+    name = "image",
+    base = "@amazon_corretto_image",
+    entrypoint = [
+        "java",
+        "-jar",
+        "/service/uber_deploy.jar",
+    ],
+    tars = [":layer"],
+    labels = {
+        "org.opencontainers.image.source": "https://github.com/gabrielmirandat/postech-fiap-tc",
+        "org.opencontainers.image.description": "Deliveries microservice - Java",
+        "org.opencontainers.image.licenses": "MIT",
+    },
+)
+
+# OCI push target for Docker Hub
+oci_push(
+    name = "push",
+    image = ":image",
+    repository = "index.docker.io/gabrielmirandat/deliveries",
+    remote_tags = ["latest"],
+)

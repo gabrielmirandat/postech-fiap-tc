@@ -11,6 +11,7 @@ genrule(
         "//notifications:artifact",
         "//payments:artifact",
         "//supplies:artifact",
+        "//deliveries:artifact",
     ],
     outs = ["global_artifact_marker"],
     cmd = """
@@ -23,6 +24,7 @@ genrule(
         echo "  - notifications:artifact" >> $@
         echo "  - payments:artifact" >> $@
         echo "  - supplies:artifact" >> $@
+        echo "  - deliveries:artifact" >> $@
     """,
     visibility = ["//visibility:public"],
 )
@@ -39,6 +41,7 @@ genrule(
         "//notifications:uber",
         "//payments:uber",
         "//supplies:uber",
+        "//deliveries:uber",
     ],
     outs = ["global_uber_marker"],
     cmd = """
@@ -50,6 +53,33 @@ genrule(
         echo "  - notifications:uber (Docker/Rails)" >> $@
         echo "  - payments:uber (Docker/.NET)" >> $@
         echo "  - supplies:uber (Docker/NestJS)" >> $@
+        echo "  - deliveries:uber (Java)" >> $@
+    """,
+    visibility = ["//visibility:public"],
+)
+
+# Build all OCI images - convenience target
+genrule(
+    name = "all_images",
+    tools = [
+        "//orders:image",
+        "//menu:image",
+        "//permissions:image",
+        "//customers:image",
+        "//notifications:image",
+        "//payments:image",
+        "//deliveries:image",
+    ],
+    outs = ["all_images_marker"],
+    cmd = """
+        echo "All OCI images built successfully:" > $@
+        echo "  - orders:image" >> $@
+        echo "  - menu:image" >> $@
+        echo "  - permissions:image" >> $@
+        echo "  - customers:image" >> $@
+        echo "  - notifications:image" >> $@
+        echo "  - payments:image" >> $@
+        echo "  - deliveries:image" >> $@
     """,
     visibility = ["//visibility:public"],
 )

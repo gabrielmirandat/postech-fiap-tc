@@ -1,4 +1,6 @@
 load("@rules_python//python:defs.bzl", "py_binary", "py_library")
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -155,4 +157,40 @@ py_binary(
         "@pip//dependency_injector",
     ],
     visibility = ["//visibility:public"],
+)
+
+# Tar layer for OCI image
+tar(
+    name = "layer",
+    srcs = [":uber"],
+)
+
+# OCI image target
+oci_image(
+    name = "image",
+    base = "@python_3_11_slim",
+    entrypoint = [
+        "python",
+        "-m",
+        "uvicorn",
+        "src.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+    ],
+    tars = [":layer"],
+    labels = {
+        "org.opencontainers.image.source": "https://github.com/gabrielmirandat/postech-fiap-tc",
+        "org.opencontainers.image.description": "Customers microservice - FastAPI + EdgeDB",
+        "org.opencontainers.image.licenses": "MIT",
+    },
+)
+
+# OCI push target for Docker Hub
+oci_push(
+    name = "push",
+    image = ":image",
+    repository = "index.docker.io/gabrielmirandat/customers",
+    remote_tags = ["latest"],
 )
