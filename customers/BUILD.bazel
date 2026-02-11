@@ -194,3 +194,21 @@ oci_push(
     repository = "index.docker.io/gabrielmirandat/customers",
     remote_tags = ["latest"],
 )
+
+# Unit tests
+load("@rules_python//python:defs.bzl", "py_test")
+
+py_test(
+    name = "unit",
+    srcs = [
+        "tests/__init__.py",
+        "tests/unit/__init__.py",
+        "tests/unit/test_customer_simple.py",
+    ],
+    main = "tests/unit/test_customer_simple.py",
+    deps = [
+        ":entities",
+    ],
+    imports = ["."],
+    python_version = "PY3",
+)

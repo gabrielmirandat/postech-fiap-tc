@@ -97,3 +97,56 @@ oci_push(
     remote_tags = ["latest"],
     repository = "index.docker.io/gabrielmirandat/permissions",
 )
+
+# Unit tests
+load("@contrib_rules_jvm//java:defs.bzl", "java_test_suite")
+
+java_test_suite(
+    name = "unit",
+    size = "small",
+    srcs = glob([
+        "src/test/java/com/gabriel/permissions/application/**/*Test.java",
+        "src/test/java/com/gabriel/permissions/domain/model/**/*Test.java",
+    ]),
+    runner = "junit5",
+    runtime_deps = [
+        "@maven//:org_junit_jupiter_junit_jupiter_engine",
+        "@maven//:org_junit_platform_junit_platform_launcher",
+        "@maven//:org_junit_platform_junit_platform_reporting",
+    ],
+    deps = [
+        ":artifact",
+        "//core:permissions_java_proto",
+        "//core/src/main/java:model_lib",
+        "@maven//:org_junit_jupiter_junit_jupiter",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_mockito_mockito_core",
+        "@maven//:org_mockito_mockito_junit_jupiter",
+        "@maven//:org_springframework_spring_core",
+        "@maven//:org_springframework_security_spring_security_core",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+    ],
+)
+
+# Integration tests
+java_test_suite(
+    name = "integration",
+    size = "large",
+    srcs = glob(["src/test/java/com/gabriel/permissions/integration/**/*Test.java"]),
+    runner = "junit5",
+    runtime_deps = [
+        "@maven//:org_junit_jupiter_junit_jupiter_engine",
+        "@maven//:org_junit_platform_junit_platform_launcher",
+        "@maven//:org_junit_platform_junit_platform_reporting",
+    ],
+    deps = [
+        ":artifact",
+        "@maven//:org_junit_jupiter_junit_jupiter",
+        "@maven//:org_springframework_boot_spring_boot_test",
+        "@maven//:org_springframework_boot_spring_boot_test_autoconfigure",
+        "@maven//:org_springframework_spring_test",
+        "@maven//:org_testcontainers_testcontainers",
+        "@maven//:org_testcontainers_junit_jupiter",
+        "@maven//:org_testcontainers_postgresql",
+    ],
+)
