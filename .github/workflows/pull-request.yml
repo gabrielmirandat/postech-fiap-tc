@@ -48,8 +48,6 @@ jobs:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
           repository-cache: true
-          disk-cache: ${{ github.workflow }}
-          repository-cache: true
       - name: Install Protocol Buffers Compiler 4.28.2
         run: |
           sudo apt-get update
@@ -75,8 +73,6 @@ jobs:
         uses: bazel-contrib/setup-bazel@0.18.0
         with:
           bazelisk-cache: true
-          disk-cache: ${{ github.workflow }}
-          repository-cache: true
           disk-cache: ${{ github.workflow }}
           repository-cache: true
       - name: Install Protocol Buffers Compiler 4.28.2
@@ -106,8 +102,6 @@ jobs:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
           repository-cache: true
-          disk-cache: ${{ github.workflow }}
-          repository-cache: true
       - name: Install Protocol Buffers Compiler 4.28.2
         run: |
           sudo apt-get update
@@ -133,8 +127,6 @@ jobs:
         uses: bazel-contrib/setup-bazel@0.18.0
         with:
           bazelisk-cache: true
-          disk-cache: ${{ github.workflow }}
-          repository-cache: true
           disk-cache: ${{ github.workflow }}
           repository-cache: true
       - name: Install Protocol Buffers Compiler 4.28.2
