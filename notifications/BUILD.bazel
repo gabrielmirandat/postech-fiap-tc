@@ -101,5 +101,6 @@ genrule(
 oci_push(
     name = "push",
     image = ":image",
-    remote_tags = ["gabrielmirandat/notifications:latest"],
+    repository = "index.docker.io/gabrielmirandat/notifications",
+    remote_tags = ["latest"],
 )
