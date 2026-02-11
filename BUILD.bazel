@@ -10,6 +10,7 @@ genrule(
         "//customers:artifact",
         "//notifications:artifact",
         "//payments:artifact",
+        "//supplies:artifact",
     ],
     outs = ["global_artifact_marker"],
     cmd = """
@@ -21,6 +22,7 @@ genrule(
         echo "  - customers:artifact" >> $@
         echo "  - notifications:artifact" >> $@
         echo "  - payments:artifact" >> $@
+        echo "  - supplies:artifact" >> $@
     """,
     visibility = ["//visibility:public"],
 )
@@ -36,6 +38,7 @@ genrule(
         "//customers:uber",
         "//notifications:uber",
         "//payments:uber",
+        "//supplies:uber",
     ],
     outs = ["global_uber_marker"],
     cmd = """
@@ -46,6 +49,7 @@ genrule(
         echo "  - customers:uber (Python/FastAPI)" >> $@
         echo "  - notifications:uber (Docker/Rails)" >> $@
         echo "  - payments:uber (Docker/.NET)" >> $@
+        echo "  - supplies:uber (Docker/NestJS)" >> $@
     """,
     visibility = ["//visibility:public"],
 )

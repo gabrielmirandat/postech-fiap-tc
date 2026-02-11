@@ -16,11 +16,14 @@ bazel_dep(name = "rules_oci", version = "2.2.6")
 bazel_dep(name = "openapi_tools_generator_bazel", version = "0.2.0")
 bazel_dep(name = "aspect_bazel_lib", version = "2.21.2")
 bazel_dep(name = "gazelle", version = "0.45.0", repo_name = "bazel_gazelle")
+bazel_dep(name = "aspect_rules_js", version = "2.9.1")
+bazel_dep(name = "aspect_rules_ts", version = "3.8.4")
 
 bazel_dep(name = "rules_python", version = "1.8.3")
 bazel_dep(name = "rules_foreign_cc", version = "0.10.1")
 bazel_dep(name = "rules_dotnet", version = "0.21.5")
 bazel_dep(name = "rules_ruby", version = "0.21.1")
+bazel_dep(name = "rules_nodejs", version = "6.7.3")
 
 # Maven dependencies
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
@@ -162,7 +165,13 @@ oci.pull(
     platforms = ["linux/amd64"],
     tag = "3.2.0-slim",
 )
-use_repo(oci, "amazon_corretto_image", "amazon_corretto_image_linux_amd64", "dotnet_aspnet_10_0", "dotnet_aspnet_10_0_linux_amd64", "ruby_3_2_0_image", "ruby_3_2_0_image_linux_amd64")
+oci.pull(
+    name = "nodejs_image",
+    image = "docker.io/library/node",
+    platforms = ["linux/amd64"],
+    tag = "20-alpine",
+)
+use_repo(oci, "amazon_corretto_image", "amazon_corretto_image_linux_amd64", "dotnet_aspnet_10_0", "dotnet_aspnet_10_0_linux_amd64", "ruby_3_2_0_image", "ruby_3_2_0_image_linux_amd64", "nodejs_image", "nodejs_image_linux_amd64")
 
 # OpenAPI generator
 openapi_gen = use_extension("@openapi_tools_generator_bazel//:extension.bzl", "openapi_gen")
@@ -278,3 +287,18 @@ register_toolchains("@ruby_3_2_0_toolchains//:all")
 # Run ./payments/update-deps.sh to regenerate paket.main.bzl and paket.main_extension.bzl
 payments_deps = use_extension("//payments:payments_deps.bzl", "payments_deps_extension")
 use_repo(payments_deps, "paket.main")
+
+# NPM dependencies for Node.js/NestJS projects
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
+npm.npm_translate_lock(
+    name = "npm",
+    npm_lock = "//supplies:package-lock.json",
+)
+use_repo(npm, "npm")
+
+# TypeScript toolchain setup for rules_ts
+rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext", dev_dependency = True)
+rules_ts_ext.deps(
+    ts_version_from = "//supplies:package.json",
+)
+use_repo(rules_ts_ext, "npm_typescript")
