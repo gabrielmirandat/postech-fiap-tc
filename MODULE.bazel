@@ -28,6 +28,8 @@ bazel_dep(name = "rules_nodejs", version = "6.7.3")
 # Maven dependencies
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
+    fail_if_repin_required = False,
+    version_conflict_policy = "pinned",
     artifacts = [
         "com.auth0:auth0-spring-security-api:1.5.3",
         "com.fasterxml.jackson.core:jackson-annotations:2.18.2",
@@ -101,7 +103,7 @@ maven.install(
         "org.junit.jupiter:junit-jupiter-params:5.11.3",
         "org.junit.platform:junit-platform-launcher:1.11.3",
         "org.junit.platform:junit-platform-reporting:1.11.3",
-        "org.junit.platform:junit-platform-suite:1.11.0-M2",
+        "org.junit.platform:junit-platform-suite:1.11.3",
         "org.liquibase:liquibase-core:4.24.0",
         "org.liquibase.ext:liquibase-mongodb:4.24.0",
         "org.modelmapper:modelmapper:3.2.0",
