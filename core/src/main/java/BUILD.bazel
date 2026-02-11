@@ -13,6 +13,7 @@ genrule(
     srcs = [":model_java_proto"],
     outs = ["model_proto.srcjar"],
     cmd = "for f in $(locations :model_java_proto); do if [[ $$f == *model_proto-speed-src.jar ]]; then cp $$f $@; break; fi; done",
+    visibility = ["//visibility:public"],
 )
 
 # bazel build //core/src/main/java:model_lib
