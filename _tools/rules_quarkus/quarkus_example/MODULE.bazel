@@ -1,0 +1,36 @@
+###############################################################################
+# Bazel now uses Bzlmod by default to manage external dependencies.
+# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
+#
+# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
+###############################################################################
+
+module(name = "quarkus_example", version = "0.0.1")
+
+bazel_dep(name = "rules_quarkus", version = "0.0.1")
+bazel_dep(name = "rules_jvm_external", version = "6.4")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+
+QUARKUS_VERSION = "3.17.6"
+
+maven.install(
+    name = "maven",
+    artifacts = [
+        "io.quarkus:quarkus-core:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-resteasy:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-resteasy-jackson:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-hibernate-validator:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-mongodb-client:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-grpc:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-smallrye-health:%s" % QUARKUS_VERSION,
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2",
+    ],
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+    ],
+)
+
+use_repo(maven, "maven")
+
+local_path_override(module_name = "rules_quarkus", path = "..")

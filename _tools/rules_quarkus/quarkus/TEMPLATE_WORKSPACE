@@ -1,0 +1,86 @@
+# Template WORKSPACE for using rules_quarkus
+# Copy this file to your project and customize as needed
+
+# Load Bazel tools
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# rules_jvm_external for Maven dependency management
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = "85776be6d8fe64abf26f463a8e12cd4c15be927348397180a01693610da7ec90",
+    strip_prefix = "rules_jvm_external-6.4",
+    url = "https://github.com/bazel-contrib/rules_jvm_external/releases/download/6.4/rules_jvm_external-6.4.tar.gz",
+)
+
+load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
+rules_jvm_external_deps()
+
+load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
+rules_jvm_external_setup()
+
+# Load rules_quarkus
+# Option 1: Git repository (recommended for production use)
+git_repository(
+    name = "rules_quarkus",
+    remote = "git@github.com:your-username/rules_quarkus.git",
+    commit = "main",  # or a specific tag like "v1.0.0"
+)
+
+# Option 2: Local repository (for development)
+# local_repository(
+#     name = "rules_quarkus",
+#     path = "/path/to/rules_quarkus",
+# )
+
+# Option 3: HTTP archive (most robust)
+# http_archive(
+#     name = "rules_quarkus",
+#     sha256 = "hash_of_the_zip_file",
+#     strip_prefix = "rules_quarkus-1.0.0",
+#     url = "https://github.com/your-username/rules_quarkus/archive/v1.0.0.zip",
+# )
+
+# Maven dependencies
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+
+maven_install(
+    artifacts = [
+        # Quarkus Core Dependencies
+        "io.quarkus:quarkus-core:3.17.6",
+        "io.quarkus:quarkus-bootstrap-core:3.17.6",
+        "io.quarkus:quarkus-resteasy:3.17.6",
+        "io.quarkus:quarkus-resteasy-jackson:3.17.6",
+        "io.quarkus:quarkus-arc:3.17.6",
+        "io.quarkus:quarkus-undertow:3.17.6",
+        
+        # Jakarta Dependencies
+        "jakarta.annotation:jakarta.annotation-api:3.0.0-M1",
+        "jakarta.validation:jakarta.validation-api:3.1.0-M1",
+        "jakarta.persistence:jakarta.persistence-api:3.1.0",
+        
+        # Jackson Dependencies
+        "com.fasterxml.jackson.core:jackson-annotations:2.18.2",
+        "com.fasterxml.jackson.core:jackson-core:2.18.2",
+        "com.fasterxml.jackson.core:jackson-databind:2.18.2",
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2",
+        
+        # Testing Dependencies
+        "org.junit.jupiter:junit-jupiter:5.11.3",
+        "org.junit.jupiter:junit-jupiter-api:5.11.3",
+        "org.junit.jupiter:junit-jupiter-engine:5.11.3",
+        "org.junit.platform:junit-platform-launcher:1.11.3",
+        "org.assertj:assertj-core:3.25.3",
+        "org.mockito:mockito-core:5.14.1",
+        "org.mockito:mockito-junit-jupiter:5.14.1",
+        
+        # Logging
+        "org.slf4j:slf4j-api:2.0.12",
+        "ch.qos.logback:logback-classic:1.4.14",
+        
+        # Add your custom dependencies here
+        # "your.group:your-artifact:version",
+    ],
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+    ],
+)

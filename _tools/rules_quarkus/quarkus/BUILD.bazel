@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2024, rules_quarkus contributors
+# All rights reserved.
+# Licensed under the Apache 2.0 license.
+# For full license text, see LICENSE.txt file in the repo root or https://www.apache.org/licenses/LICENSE-2.0
+#
+
+exports_files([
+    "LICENSE.txt",
+    "quarkus.bzl",
+])
+
+package(
+    default_visibility = ["//visibility:public"],
+)

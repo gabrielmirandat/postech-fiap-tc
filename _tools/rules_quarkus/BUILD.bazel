@@ -1,0 +1,3 @@
+# BUILD file to make _tools/rules_quarkus a valid package
+
+package(default_visibility = ["//visibility:public"])

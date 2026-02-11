@@ -1,0 +1,19 @@
+package(default_visibility = ["//visibility:public"]) 
+
+load("@rules_java//java:defs.bzl", "java_binary")
+
+java_binary(
+    name = "augmenter",
+    main_class = "com.rulesquarkus.tools.Augment",
+    srcs = ["src/main/java/com/rulesquarkus/tools/Augment.java"],
+    deps = [
+        "@maven//:io_quarkus_quarkus_bootstrap_core",
+        "@maven//:io_quarkus_quarkus_bootstrap_app_model",
+        "@maven//:io_quarkus_quarkus_bootstrap_maven_resolver",
+        "@maven//:io_quarkus_quarkus_core_deployment",
+        "@maven//:io_quarkus_quarkus_devtools_common",
+        "@maven//:io_quarkus_quarkus_core",
+        "@maven//:io_smallrye_config_smallrye_config_core",
+        "@maven//:org_slf4j_slf4j_api",
+    ],
+)

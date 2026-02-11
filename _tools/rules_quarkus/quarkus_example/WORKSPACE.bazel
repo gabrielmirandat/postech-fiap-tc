@@ -1,0 +1,34 @@
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = "85776be6d8fe64abf26f463a8e12cd4c15be927348397180a01693610da7ec90",
+    strip_prefix = "rules_jvm_external-6.4",
+    url = "https://github.com/bazel-contrib/rules_jvm_external/releases/download/6.4/rules_jvm_external-6.4.tar.gz",
+)
+
+load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
+rules_jvm_external_deps()
+
+load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
+rules_jvm_external_setup()
+
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+
+QUARKUS_VERSION = "3.17.6"
+
+maven_install(
+    artifacts = [
+        "io.quarkus:quarkus-core:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-resteasy:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-resteasy-jackson:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-hibernate-validator:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-mongodb-client:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-grpc:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-smallrye-health:%s" % QUARKUS_VERSION,
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2",
+    ],
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+    ],
+)
