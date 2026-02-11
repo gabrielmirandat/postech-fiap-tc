@@ -1,8 +1,3 @@
 # BUILD file to make _tools a valid package
 
 package(default_visibility = ["//visibility:public"])
-
-# Export the quarkus.bzl file so it can be loaded
-exports_files([
-    "rules_quarkus/quarkus/quarkus.bzl",
-])
