@@ -1,0 +1,78 @@
+# Quarkus Example WORKSPACE
+# Following the exact same pattern as the working Spring Boot project
+
+# Version constants (following the same pattern)
+QUARKUS_VERSION = "3.17.6"
+JACKSON_VERSION = "2.18.2"
+JAKARTA_ANNOTATION_VERSION = "3.0.0-M1"
+JAKARTA_VALIDATION_VERSION = "3.1.0-M1"
+JAKARTA_PERSISTENCE_VERSION = "3.1.0"
+JUNIT_JUPITER_VERSION = "5.11.3"
+JUNIT_PLATFORM_VERSION = "1.11.3"
+ASSERTJ_CORE_VERSION = "3.25.3"
+MOCKITO_VERSION = "5.14.1"
+
+# Load Bazel tools
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# rules_jvm_external (same as Spring Boot project)
+http_archive(
+    name = "rules_jvm_external",
+    sha256 = "85776be6d8fe64abf26f463a8e12cd4c15be927348397180a01693610da7ec90",
+    strip_prefix = "rules_jvm_external-6.4",
+    url = "https://github.com/bazel-contrib/rules_jvm_external/releases/download/6.4/rules_jvm_external-6.4.tar.gz",
+)
+
+load("@rules_jvm_external//:repositories.bzl", "rules_jvm_external_deps")
+rules_jvm_external_deps()
+
+load("@rules_jvm_external//:setup.bzl", "rules_jvm_external_setup")
+rules_jvm_external_setup()
+
+# Load our custom Quarkus rules
+local_repository(
+    name = "rules_quarkus",
+    path = "../quarkus",
+)
+# Maven dependencies (following the same pattern as Spring Boot)
+load("@rules_jvm_external//:defs.bzl", "maven_install")
+
+maven_install(
+    artifacts = [
+        # Quarkus Core Dependencies
+        "io.quarkus:quarkus-core:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-bootstrap-core:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-resteasy:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-resteasy-jackson:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-arc:%s" % QUARKUS_VERSION,
+        "io.quarkus:quarkus-undertow:%s" % QUARKUS_VERSION,
+        
+        # Jakarta Dependencies
+        "jakarta.annotation:jakarta.annotation-api:%s" % JAKARTA_ANNOTATION_VERSION,
+        "jakarta.validation:jakarta.validation-api:%s" % JAKARTA_VALIDATION_VERSION,
+        "jakarta.persistence:jakarta.persistence-api:%s" % JAKARTA_PERSISTENCE_VERSION,
+        
+        # Jackson Dependencies
+        "com.fasterxml.jackson.core:jackson-annotations:%s" % JACKSON_VERSION,
+        "com.fasterxml.jackson.core:jackson-core:%s" % JACKSON_VERSION,
+        "com.fasterxml.jackson.core:jackson-databind:%s" % JACKSON_VERSION,
+        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:%s" % JACKSON_VERSION,
+        
+        # Testing Dependencies
+        "org.junit.jupiter:junit-jupiter:%s" % JUNIT_JUPITER_VERSION,
+        "org.junit.jupiter:junit-jupiter-api:%s" % JUNIT_JUPITER_VERSION,
+        "org.junit.jupiter:junit-jupiter-engine:%s" % JUNIT_JUPITER_VERSION,
+        "org.junit.platform:junit-platform-launcher:%s" % JUNIT_PLATFORM_VERSION,
+        "org.assertj:assertj-core:%s" % ASSERTJ_CORE_VERSION,
+        "org.mockito:mockito-core:%s" % MOCKITO_VERSION,
+        "org.mockito:mockito-junit-jupiter:%s" % MOCKITO_VERSION,
+        
+        # Logging
+        "org.slf4j:slf4j-api:2.0.12",
+        "ch.qos.logback:logback-classic:1.4.14",
+    ],
+    repositories = [
+        "https://repo.maven.apache.org/maven2",
+    ],
+)
+

@@ -1,0 +1,185 @@
+# Template BUILD.bazel for using rules_quarkus
+# Copy this file to your project and customize as needed
+
+# Load rules_quarkus
+load("@rules_quarkus//quarkus:quarkus.bzl", "quarkus_app")
+
+# Main application library
+java_library(
+    name = "artifact",
+    srcs = glob(["src/main/java/**/*.java"]),
+    resources = glob(["src/main/resources/**"]),
+    deps = [
+        # Quarkus Core Dependencies
+        "@maven//:io_quarkus_quarkus_core",
+        "@maven//:io_quarkus_quarkus_bootstrap_core",
+        "@maven//:io_quarkus_quarkus_resteasy",
+        "@maven//:io_quarkus_quarkus_resteasy_jackson",
+        "@maven//:io_quarkus_quarkus_arc",
+        "@maven//:io_quarkus_quarkus_undertow",
+        
+        # Jakarta Dependencies
+        "@maven//:jakarta_annotation_jakarta_annotation_api",
+        "@maven//:jakarta_validation_jakarta_validation_api",
+        "@maven//:jakarta_persistence_jakarta_persistence_api",
+        
+        # Jackson Dependencies
+        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+        
+        # Logging
+        "@maven//:org_slf4j_slf4j_api",
+        "@maven//:ch_qos_logback_logback_classic",
+        
+        # Add your custom dependencies here
+        # "@maven//:your_dependency",
+    ],
+)
+
+# Production Quarkus application
+quarkus_app(
+    name = "my_app",
+    main_class = "com.example.Main",  # Change this to your main class
+    deps = [":artifact"],
+)
+
+# Development Quarkus application
+quarkus_app(
+    name = "my_app_dev",
+    main_class = "com.example.Main",  # Change this to your main class
+    deps = [":artifact"],
+)
+
+# Test utilities
+java_library(
+    name = "test_utility",
+    srcs = glob([
+        "src/test/utils/**/*.java",
+    ]),
+    deps = [
+        ":artifact",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+        "@maven//:org_slf4j_slf4j_api",
+    ],
+)
+
+# Unit tests
+java_test(
+    name = "unit",
+    srcs = glob([
+        "src/test/unit/java/**/*.java",
+    ]),
+    resources = glob(["src/test/resources/**"]),
+    deps = [
+        ":artifact",
+        ":test_utility",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+        "@maven//:org_assertj_assertj_core",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_mockito_mockito_core",
+        "@maven//:org_mockito_mockito_junit_jupiter",
+        "@maven//:org_slf4j_slf4j_api",
+    ],
+)
+
+# Integration tests
+java_test(
+    name = "integration",
+    srcs = glob([
+        "src/test/integration/java/**/*.java",
+    ]),
+    resources = glob(["src/test/resources/**"]),
+    deps = [
+        ":artifact",
+        ":test_utility",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:com_fasterxml_jackson_datatype_jackson_datatype_jsr310",
+        "@maven//:org_assertj_assertj_core",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_mockito_mockito_core",
+        "@maven//:org_mockito_mockito_junit_jupiter",
+        "@maven//:org_slf4j_slf4j_api",
+    ],
+)
+
+# Contract tests
+java_test(
+    name = "contract",
+    srcs = glob([
+        "src/test/contract/java/**/*.java",
+    ]),
+    resources = glob(["src/test/resources/**"]),
+    deps = [
+        ":artifact",
+        ":test_utility",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_mockito_mockito_core",
+        "@maven//:org_slf4j_slf4j_api",
+    ],
+)
+
+# Behavior tests
+java_test(
+    name = "behavior",
+    srcs = glob([
+        "src/test/behavior/java/**/*.java",
+    ]),
+    resources = glob(["src/test/resources/**"]),
+    deps = [
+        ":artifact",
+        ":test_utility",
+        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
+        "@maven//:com_fasterxml_jackson_core_jackson_core",
+        "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:org_assertj_assertj_core",
+        "@maven//:org_junit_jupiter_junit_jupiter",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_junit_jupiter_junit_jupiter_engine",
+        "@maven//:org_junit_platform_junit_platform_launcher",
+        "@maven//:org_mockito_mockito_core",
+        "@maven//:org_mockito_mockito_junit_jupiter",
+        "@maven//:org_slf4j_slf4j_api",
+    ],
+)
+
+# Test runner (alternative to java_test)
+java_binary(
+    name = "test_runner",
+    main_class = "com.example.TestRunner",  # Change this to your test runner class
+    srcs = glob(["src/test/java/**/*.java"]),
+    deps = [
+        ":artifact",
+        "@maven//:io_quarkus_quarkus_core",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+    ],
+)
+
+# Distribution package
+filegroup(
+    name = "distribution",
+    srcs = [
+        ":my_app",
+        ":my_app_dev",
+        "README.md",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# All targets
+filegroup(
+    name = "all",
+    srcs = [
+        ":my_app",
+        ":my_app_dev",
+        ":test_runner",
+        ":distribution",
+    ],
+    visibility = ["//visibility:public"],
+)

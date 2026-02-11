@@ -1,0 +1,4 @@
+# Example project - not built by default
+# This is a reference example and not part of the main build
+
+package(default_visibility = ["//visibility:public"])
