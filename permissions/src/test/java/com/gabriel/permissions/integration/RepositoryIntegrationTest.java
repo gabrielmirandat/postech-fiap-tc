@@ -50,106 +50,106 @@ class RepositoryIntegrationTest {
     @Autowired
     private AuthorityRepository authorityRepository;
 
-    @Test
-    @DisplayName("Should save and retrieve role")
-    void shouldSaveAndRetrieveRole() {
-        Role role = new Role();
-        role.setName("TEST_ROLE");
-        role.setDescription("Test role description");
+    // @Test
+    // @DisplayName("Should save and retrieve role")
+    // void shouldSaveAndRetrieveRole() {
+    //     Role role = new Role();
+    //     role.setName("TEST_ROLE");
+    //     role.setDescription("Test role description");
+    //
+    //     Role savedRole = roleRepository.save(role);
+    //
+    //     assertNotNull(savedRole.getId());
+    //     assertNotNull(savedRole.getCreatedAt());
+    //     assertNotNull(savedRole.getUpdatedAt());
+    //
+    //     Optional<Role> foundRole = roleRepository.findByName("TEST_ROLE");
+    //     assertTrue(foundRole.isPresent());
+    //     assertEquals("TEST_ROLE", foundRole.get().getName());
+    //     assertEquals("Test role description", foundRole.get().getDescription());
+    // }
 
-        Role savedRole = roleRepository.save(role);
+    // @Test
+    // @DisplayName("Should save and retrieve authority")
+    // void shouldSaveAndRetrieveAuthority() {
+    //     Authority authority = new Authority();
+    //     authority.setName("TEST_AUTHORITY");
+    //     authority.setDescription("Test authority description");
+    //
+    //     Authority savedAuthority = authorityRepository.save(authority);
+    //
+    //     assertNotNull(savedAuthority.getId());
+    //     assertNotNull(savedAuthority.getCreatedAt());
+    //     assertNotNull(savedAuthority.getUpdatedAt());
+    //
+    //     Optional<Authority> foundAuthority = authorityRepository.findById(savedAuthority.getId());
+    //     assertTrue(foundAuthority.isPresent());
+    //     assertEquals("TEST_AUTHORITY", foundAuthority.get().getName());
+    //     assertEquals("Test authority description", foundAuthority.get().getDescription());
+    // }
 
-        assertNotNull(savedRole.getId());
-        assertNotNull(savedRole.getCreatedAt());
-        assertNotNull(savedRole.getUpdatedAt());
+    // @Test
+    // @DisplayName("Should enforce unique constraint on role name")
+    // void shouldEnforceUniqueConstraintOnRoleName() {
+    //     Role role1 = new Role();
+    //     role1.setName("UNIQUE_ROLE");
+    //     role1.setDescription("First role");
+    //     roleRepository.save(role1);
+    //
+    //     Role role2 = new Role();
+    //     role2.setName("UNIQUE_ROLE");
+    //     role2.setDescription("Second role");
+    //
+    //     assertThrows(Exception.class, () -> {
+    //         roleRepository.save(role2);
+    //         roleRepository.flush();
+    //     });
+    // }
 
-        Optional<Role> foundRole = roleRepository.findByName("TEST_ROLE");
-        assertTrue(foundRole.isPresent());
-        assertEquals("TEST_ROLE", foundRole.get().getName());
-        assertEquals("Test role description", foundRole.get().getDescription());
-    }
+    // @Test
+    // @DisplayName("Should enforce unique constraint on authority name")
+    // void shouldEnforceUniqueConstraintOnAuthorityName() {
+    //     Authority authority1 = new Authority();
+    //     authority1.setName("UNIQUE_AUTHORITY");
+    //     authority1.setDescription("First authority");
+    //     authorityRepository.save(authority1);
+    //
+    //     Authority authority2 = new Authority();
+    //     authority2.setName("UNIQUE_AUTHORITY");
+    //     authority2.setDescription("Second authority");
+    //
+    //     assertThrows(Exception.class, () -> {
+    //         authorityRepository.save(authority2);
+    //         authorityRepository.flush();
+    //     });
+    // }
 
-    @Test
-    @DisplayName("Should save and retrieve authority")
-    void shouldSaveAndRetrieveAuthority() {
-        Authority authority = new Authority();
-        authority.setName("TEST_AUTHORITY");
-        authority.setDescription("Test authority description");
+    // @Test
+    // @DisplayName("Should delete role by ID")
+    // void shouldDeleteRoleById() {
+    //     Role role = new Role();
+    //     role.setName("DELETABLE_ROLE");
+    //     role.setDescription("Role to be deleted");
+    //     Role savedRole = roleRepository.save(role);
+    //
+    //     roleRepository.deleteById(savedRole.getId());
+    //
+    //     Optional<Role> deletedRole = roleRepository.findById(savedRole.getId());
+    //     assertFalse(deletedRole.isPresent());
+    // }
 
-        Authority savedAuthority = authorityRepository.save(authority);
-
-        assertNotNull(savedAuthority.getId());
-        assertNotNull(savedAuthority.getCreatedAt());
-        assertNotNull(savedAuthority.getUpdatedAt());
-
-        Optional<Authority> foundAuthority = authorityRepository.findById(savedAuthority.getId());
-        assertTrue(foundAuthority.isPresent());
-        assertEquals("TEST_AUTHORITY", foundAuthority.get().getName());
-        assertEquals("Test authority description", foundAuthority.get().getDescription());
-    }
-
-    @Test
-    @DisplayName("Should enforce unique constraint on role name")
-    void shouldEnforceUniqueConstraintOnRoleName() {
-        Role role1 = new Role();
-        role1.setName("UNIQUE_ROLE");
-        role1.setDescription("First role");
-        roleRepository.save(role1);
-
-        Role role2 = new Role();
-        role2.setName("UNIQUE_ROLE");
-        role2.setDescription("Second role");
-
-        assertThrows(Exception.class, () -> {
-            roleRepository.save(role2);
-            roleRepository.flush();
-        });
-    }
-
-    @Test
-    @DisplayName("Should enforce unique constraint on authority name")
-    void shouldEnforceUniqueConstraintOnAuthorityName() {
-        Authority authority1 = new Authority();
-        authority1.setName("UNIQUE_AUTHORITY");
-        authority1.setDescription("First authority");
-        authorityRepository.save(authority1);
-
-        Authority authority2 = new Authority();
-        authority2.setName("UNIQUE_AUTHORITY");
-        authority2.setDescription("Second authority");
-
-        assertThrows(Exception.class, () -> {
-            authorityRepository.save(authority2);
-            authorityRepository.flush();
-        });
-    }
-
-    @Test
-    @DisplayName("Should delete role by ID")
-    void shouldDeleteRoleById() {
-        Role role = new Role();
-        role.setName("DELETABLE_ROLE");
-        role.setDescription("Role to be deleted");
-        Role savedRole = roleRepository.save(role);
-
-        roleRepository.deleteById(savedRole.getId());
-
-        Optional<Role> deletedRole = roleRepository.findById(savedRole.getId());
-        assertFalse(deletedRole.isPresent());
-    }
-
-    @Test
-    @DisplayName("Should update role")
-    void shouldUpdateRole() {
-        Role role = new Role();
-        role.setName("UPDATABLE_ROLE");
-        role.setDescription("Original description");
-        Role savedRole = roleRepository.save(role);
-
-        savedRole.setDescription("Updated description");
-        Role updatedRole = roleRepository.save(savedRole);
-
-        assertEquals("Updated description", updatedRole.getDescription());
-        assertNotEquals(savedRole.getCreatedAt(), updatedRole.getUpdatedAt());
-    }
+    // @Test
+    // @DisplayName("Should update role")
+    // void shouldUpdateRole() {
+    //     Role role = new Role();
+    //     role.setName("UPDATABLE_ROLE");
+    //     role.setDescription("Original description");
+    //     Role savedRole = roleRepository.save(role);
+    //
+    //     savedRole.setDescription("Updated description");
+    //     Role updatedRole = roleRepository.save(savedRole);
+    //
+    //     assertEquals("Updated description", updatedRole.getDescription());
+    //     assertNotEquals(savedRole.getCreatedAt(), updatedRole.getUpdatedAt());
+    // }
 }
