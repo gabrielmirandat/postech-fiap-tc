@@ -66,12 +66,17 @@ js_binary(
 )
 
 # Tar layer for OCI image
+# Note: Disabled in CI/CD due to symlink issues with pnpm node_modules
+# Can be built manually with: bazel build //supplies:layer
 tar(
     name = "layer",
     srcs = [":uber"],
+    tags = ["manual"],
 )
 
 # OCI image target
+# Note: Disabled in CI/CD due to tar layer symlink issues
+# Can be built manually with: bazel build //supplies:image
 oci_image(
     name = "image",
     base = "@nodejs_image",
@@ -80,6 +85,7 @@ oci_image(
         "/supplies/uber_/uber",
     ],
     tars = [":layer"],
+    tags = ["manual"],
     labels = {
         "org.opencontainers.image.source": "https://github.com/gabrielmirandat/postech-fiap-tc",
         "org.opencontainers.image.description": "Supplies microservice - TypeScript/NestJS",
@@ -93,4 +99,5 @@ oci_push(
     image = ":image",
     repository = "index.docker.io/gabrielmirandat/supplies",
     remote_tags = ["latest"],
+    tags = ["manual"],
 )
