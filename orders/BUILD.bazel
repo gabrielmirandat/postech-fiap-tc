@@ -304,7 +304,11 @@ java_test_suite(
         "src/test/resources/**",
     ]),
     runner = "junit5",
-    runtime_deps = JUNIT5_DEPS,
+    runtime_deps = [
+        "@maven//:org_junit_jupiter_junit_jupiter",
+        "@maven//:org_junit_jupiter_junit_jupiter_engine",
+        "@maven//:org_junit_platform_junit_platform_launcher",
+    ],
     deps = [
         ":artifact",
         ":test_utility",
