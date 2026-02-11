@@ -305,20 +305,18 @@ register_toolchains("@ruby_3_2_0_toolchains//:all")
 payments_deps = use_extension("//payments:payments_deps.bzl", "payments_deps_extension")
 use_repo(payments_deps, "paket.main")
 
-# NPM dependencies for Node.js/NestJS projects
-# Note: Commented out due to npm/pnpm version incompatibility
-# Using Docker-based build instead (see supplies/BUILD.bazel)
-# npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
-# npm.npm_translate_lock(
-#     name = "npm",
-#     pnpm_lock = "//supplies:package-lock.json",
-# )
-# use_repo(npm, "npm")
+# NPM dependencies for Node.js/NestJS projects (using pnpm)
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
+npm.npm_translate_lock(
+    name = "npm",
+    pnpm_lock = "//supplies:pnpm-lock.yaml",
+)
+use_repo(npm, "npm")
 
 # TypeScript toolchain setup for rules_ts
 rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext", dev_dependency = True)
 rules_ts_ext.deps(
-    ts_version_from = "//supplies:package.json",
+    ts_version = "5.9.3",
 )
 use_repo(rules_ts_ext, "npm_typescript")
 
