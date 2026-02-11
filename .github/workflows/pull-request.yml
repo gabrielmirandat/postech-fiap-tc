@@ -19,7 +19,6 @@ jobs:
         with:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
-          bazelisk-version: latest
           repository-cache: true
       - name: Install Protocol Buffers Compiler 4.28.2
         run: |
