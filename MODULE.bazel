@@ -289,12 +289,13 @@ payments_deps = use_extension("//payments:payments_deps.bzl", "payments_deps_ext
 use_repo(payments_deps, "paket.main")
 
 # NPM dependencies for Node.js/NestJS projects
-npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
-npm.npm_translate_lock(
-    name = "npm",
-    npm_lock = "//supplies:package-lock.json",
-)
-use_repo(npm, "npm")
+# Note: package-lock.json needs to be generated first with 'npm install' in supplies/
+# npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
+# npm.npm_translate_lock(
+#     name = "npm",
+#     npm_lock = "//supplies:package-lock.json",
+# )
+# use_repo(npm, "npm")
 
 # TypeScript toolchain setup for rules_ts
 rules_ts_ext = use_extension("@aspect_rules_ts//ts:extensions.bzl", "ext", dev_dependency = True)

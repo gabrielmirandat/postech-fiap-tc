@@ -3,7 +3,6 @@ load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
 load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
 load("@rules_jvm_external//:defs.bzl", "artifact")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
-load("//_tools/rules_quarkus/quarkus:quarkus.bzl", "quarkus_app", "quarkus_fastjar")
 
 openapi_generator(
     name = "menu_api_files",
