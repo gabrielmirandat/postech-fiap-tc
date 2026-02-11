@@ -1,23 +1,96 @@
-# Temporarily simplified until rules_nodejs and npm are properly configured
-# load("@rules_nodejs//nodejs:defs.bzl", "nodejs_binary")
-# load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
-# load("@aspect_rules_js//npm:defs.bzl", "npm_package")
-# load("@aspect_bazel_lib//lib:tar.bzl", "tar")
-# load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 
 package(default_visibility = ["//visibility:public"])
 
-# Placeholder target - supplies service temporarily disabled
-# Will be re-enabled once rules_nodejs and npm are properly configured
-filegroup(
+# Build artifact marker
+genrule(
     name = "artifact",
-    srcs = [],
+    outs = ["artifact_marker"],
+    cmd = "touch $@",
     visibility = ["//visibility:public"],
 )
 
-# Placeholder uber target
-filegroup(
+# Build NestJS application using Docker
+# This approach is more reliable for Node.js/NestJS builds
+genrule(
     name = "uber",
-    srcs = [],
+    srcs = glob([
+        "src/**/*",
+        "*.json",
+        "*.js",
+    ], allow_empty = True),
+    outs = ["dist.tar.gz"],
+    cmd = """
+        set -e
+        WORKDIR=$$(mktemp -d)
+        trap "rm -rf $$WORKDIR" EXIT
+
+        # Copy source files
+        cp -r $$(dirname $(location package.json))/* $$WORKDIR/ || true
+        cd $$WORKDIR
+
+        # Install dependencies and build
+        npm install --legacy-peer-deps 2>&1 | tail -10
+        npm run build 2>&1 | tail -10
+
+        # Create tarball
+        tar czf $(location dist.tar.gz) dist node_modules package.json
+    """,
+    tags = ["local"],
     visibility = ["//visibility:public"],
+)
+
+# Extract dist for OCI image
+genrule(
+    name = "extract_dist",
+    srcs = [":uber"],
+    outs = ["dist_marker"],
+    cmd = """
+        TMPDIR=$$(mktemp -d)
+        trap "rm -rf $$TMPDIR" EXIT
+        tar xzf $(location :uber) -C $$TMPDIR
+        mkdir -p $(@D)/supplies_dist
+        cp -r $$TMPDIR/* $(@D)/supplies_dist/
+        touch $@
+    """,
+)
+
+# Filegroup for OCI image
+filegroup(
+    name = "dist_files",
+    srcs = [
+        ":extract_dist",
+        ":uber",
+    ],
+)
+
+# Tar layer for OCI image
+tar(
+    name = "layer",
+    srcs = [":dist_files"],
+)
+
+# OCI image target
+oci_image(
+    name = "image",
+    base = "@nodejs_image",
+    cmd = [
+        "node",
+        "supplies_dist/dist/main.js",
+    ],
+    tars = [":layer"],
+    labels = {
+        "org.opencontainers.image.source": "https://github.com/gabrielmirandat/postech-fiap-tc",
+        "org.opencontainers.image.description": "Supplies microservice - NestJS/TypeScript",
+        "org.opencontainers.image.licenses": "MIT",
+    },
+)
+
+# OCI push target for Docker Hub
+oci_push(
+    name = "push",
+    image = ":image",
+    repository = "index.docker.io/gabrielmirandat/supplies",
+    remote_tags = ["latest"],
 )

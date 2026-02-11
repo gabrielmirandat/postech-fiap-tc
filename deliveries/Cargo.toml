@@ -1,0 +1,21 @@
+[package]
+name = "deliveries"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+tower = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1.0", features = ["v4", "serde"] }
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "deliveries"
+path = "src/main.rs"
