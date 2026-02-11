@@ -25,6 +25,7 @@ jobs:
         with:
           bazelisk-cache: true
           disk-cache: ${{ github.workflow }}
+          bazelisk-version: latest
           repository-cache: true
       - name: Install Protocol Buffers Compiler 4.28.2
         run: |
@@ -63,9 +64,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Set up Bazel
-        uses: bazel-contrib/setup-bazel@v1
+        uses: bazel-contrib/setup-bazel@0.18.0
         with:
           bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
           disk-cache: ${{ github.workflow }}
           repository-cache: true
       - name: Set up JDK 21
