@@ -203,3 +203,35 @@ oci_push(
     remote_tags = ["latest"],
     repository = "index.docker.io/gabrielmirandat/menu",
 )
+
+# Integration tests
+java_test_suite(
+    name = "integration",
+    size = "large",
+    srcs = glob(["src/test/integration/java/**/*.java"]),
+    javacopts = [
+        "-source",
+        "21",
+        "-target",
+        "21",
+    ],
+    runner = "junit5",
+    runtime_deps = [
+        "@maven//:org_junit_jupiter_junit_jupiter_engine",
+        "@maven//:org_junit_platform_junit_platform_launcher",
+        "@maven//:org_junit_platform_junit_platform_reporting",
+    ],
+    deps = [
+        ":artifact",
+        ":menu_api",
+        "//core/src/main/java:model_lib",
+        "@maven//:org_junit_jupiter_junit_jupiter",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_testcontainers_testcontainers",
+        "@maven//:org_testcontainers_junit_jupiter",
+        "@maven//:org_testcontainers_mongodb",
+        "@maven//:org_mongodb_mongodb_driver_sync",
+        "@maven//:org_mongodb_mongodb_driver_core",
+        "@maven//:org_mongodb_bson",
+    ],
+)
