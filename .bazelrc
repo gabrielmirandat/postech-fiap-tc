@@ -1,28 +1,14 @@
-# Bazel 8.3.1+ configuration for Bzlmod (new module system)
-# Remove old WORKSPACE configurations
+# Use remote JDK 21 for hermetic builds
+build --java_runtime_version=remotejdk_21
+build --tool_java_runtime_version=remotejdk_21
 
-# Enable Bzlmod by default (this is the default in Bazel 8+)
-# build --enable_bzlmod
-# query --enable_bzlmod
-# test --enable_bzlmod
-# run --enable_bzlmod
-common --enable_bzlmod
+# Enable Bazel toolchain resolution
+build --incompatible_use_toolchain_resolution_for_java_rules
 
-# Java-specific configurations
-build --java_runtime_version=21
-build --java_language_version=21
-build --tool_java_runtime_version=21
+# Common performance optimizations
+build --worker_sandboxing
+build --experimental_reuse_sandbox_directories
 
-# Enable parallel execution
-build --jobs=auto
-
-# Enable build event protocol for better IDE integration
-build --build_event_json_file=bazel_build_events.json
-
-# Enable better error reporting
-build --verbose_failures
+# Output settings
 build --show_timestamps
-
-# Enable better test reporting
-test --test_output=errors
-test --test_summary=detailed
+build --color=yes
