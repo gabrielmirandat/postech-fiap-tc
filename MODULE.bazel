@@ -6,6 +6,7 @@ module(
 bazel_dep(name = "rules_java", version = "8.15.1")
 bazel_dep(name = "rules_jvm_external", version = "6.8")
 bazel_dep(name = "contrib_rules_jvm", version = "0.29.0")
+bazel_dep(name = "rules_kotlin", version = "2.1.0")
 bazel_dep(name = "rules_spring", version = "2.6.3")
 bazel_dep(name = "rules_proto", version = "7.1.0")
 bazel_dep(name = "grpc-java", version = "1.71.0")
@@ -98,6 +99,9 @@ maven.install(
         "org.glassfish.expressly:expressly:5.0.0",
         "org.hibernate.validator:hibernate-validator:8.0.1.Final",
         "org.hibernate.validator:hibernate-validator-cdi:8.0.1.Final",
+        "org.jetbrains.kotlin:kotlin-stdlib:2.1.0",
+        "org.jetbrains.kotlin:kotlin-reflect:2.1.0",
+        "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.1.0",
         "org.junit.jupiter:junit-jupiter:5.11.3",
         "org.junit.jupiter:junit-jupiter-api:5.11.3",
         "org.junit.jupiter:junit-jupiter-engine:5.11.3",

@@ -1,10 +1,39 @@
 load("@aspect_bazel_lib//lib:tar.bzl", "tar")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 load("@rules_spring//springboot:springboot.bzl", "springboot")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
+# Kotlin domain model library
+kt_jvm_library(
+    name = "kotlin_domain",
+    srcs = glob(["src/main/kotlin/**/*.kt"]),
+    visibility = ["//visibility:public"],
+    deps = [
+        "//core:artifact",
+        "//core:permissions_java_proto",
+        "@maven//:com_fasterxml_jackson_core_jackson_annotations",
+        "@maven//:jakarta_persistence_jakarta_persistence_api",
+        "@maven//:org_hibernate_orm_hibernate_core",
+        "@maven//:org_jetbrains_kotlin_kotlin_stdlib",
+        "@maven//:org_jetbrains_kotlin_kotlin_reflect",
+    ],
+)
+
+# Java library (will be gradually migrated to Kotlin)
 java_library(
-    name = "artifact",
-    srcs = glob(["src/main/java/**/*.java"]),
+    name = "java_artifact",
+    srcs = glob(
+        ["src/main/java/**/*.java"],
+        exclude = [
+            # Exclude migrated domain model classes
+            "src/main/java/com/gabriel/permissions/domain/model/Role.java",
+            "src/main/java/com/gabriel/permissions/domain/model/Authority.java",
+            "src/main/java/com/gabriel/permissions/domain/model/RoleAuthority.java",
+            "src/main/java/com/gabriel/permissions/domain/model/RoleAuthorityKey.java",
+            "src/main/java/com/gabriel/permissions/domain/model/PermissionIDConverter.java",
+            "src/main/java/com/gabriel/permissions/domain/model/InstantAttributeConverter.java",
+        ],
+    ),
     javacopts = [
         "-source",
         "21",
@@ -14,6 +43,7 @@ java_library(
     resources = glob(["src/main/resources/**"]),
     visibility = ["//visibility:public"],
     deps = [
+        ":kotlin_domain",
         "//core:artifact",
         "//core:permissions_java_grpc",
         "//core:permissions_java_proto",
@@ -64,11 +94,21 @@ java_library(
 #    runtime_deps = [":artifact"],
 #)
 
+# Combined artifact with both Java and Kotlin
+java_library(
+    name = "artifact",
+    visibility = ["//visibility:public"],
+    exports = [
+        ":java_artifact",
+        ":kotlin_domain",
+    ],
+)
+
 springboot(
     name = "uber",
     boot_app_class = "com.gabriel.permissions.PermissionsApplication",
     boot_launcher_class = "org.springframework.boot.loader.launch.JarLauncher",
-    java_library = ":artifact",
+    java_library = ":java_artifact",
     visibility = ["//visibility:public"],
 )
 
