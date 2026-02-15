@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bazel test //orders:src/test/behavior/java/com/gabriel/orders/core/application/RunCucumberTest)"
+    ]
+  }
+}
