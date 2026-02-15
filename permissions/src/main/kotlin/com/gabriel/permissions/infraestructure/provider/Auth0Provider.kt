@@ -4,16 +4,16 @@ import kong.unirest.core.Unirest
 import kong.unirest.core.UnirestException
 import kong.unirest.core.json.JSONArray
 import kong.unirest.core.json.JSONObject
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
+import org.eclipse.microprofile.config.inject.ConfigProperty
+import jakarta.enterprise.context.ApplicationScoped
 
-@Component
+@ApplicationScoped
 class Auth0Provider(
-    @Value("\${auth0.issuer}") private val issuer: String,
-    @Value("\${auth0.app-client-id}") private val appClientId: String,
-    @Value("\${auth0.app-client-secret}") private val appClientSecret: String,
-    @Value("\${auth0.app-audience}") private val appAudience: String,
-    @Value("\${auth0.app-scope}") private val appScope: String
+    @ConfigProperty(name = "auth0.issuer") private val issuer: String,
+    @ConfigProperty(name = "auth0.app-client-id") private val appClientId: String,
+    @ConfigProperty(name = "auth0.app-client-secret") private val appClientSecret: String,
+    @ConfigProperty(name = "auth0.app-audience") private val appAudience: String,
+    @ConfigProperty(name = "auth0.app-scope") private val appScope: String
 ) {
 
     @Throws(UnirestException::class)
@@ -59,7 +59,6 @@ class Auth0Provider(
     companion object {
         @JvmStatic
         fun formatUserId(userId: String): String {
-            // remove auth0| prefix
             return userId.substring(6)
         }
     }

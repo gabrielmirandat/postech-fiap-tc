@@ -1,9 +1,9 @@
 load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library", "kt_jvm_test")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
-load("@rules_spring//springboot:springboot.bzl", "springboot")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 
-# Kotlin microservice (fully migrated from Java)
+# Kotlin library (used by Quarkus Maven build and by tests)
 kt_jvm_library(
     name = "artifact",
     srcs = glob(["src/main/kotlin/**/*.kt"]),
@@ -13,7 +13,6 @@ kt_jvm_library(
         "//core:artifact",
         "//core:permissions_java_grpc",
         "//core:permissions_java_proto",
-        "@maven//:com_auth0_auth0_spring_security_api",
         "@maven//:com_fasterxml_jackson_core_jackson_annotations",
         "@maven//:com_fasterxml_jackson_core_jackson_core",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
@@ -21,64 +20,110 @@ kt_jvm_library(
         "@maven//:com_konghq_unirest_java_core",
         "@maven//:com_konghq_unirest_modules_jackson",
         "@maven//:io_grpc_grpc_api",
-        "@maven//:io_grpc_grpc_netty_shaded",
         "@maven//:io_grpc_grpc_protobuf",
         "@maven//:io_grpc_grpc_stub",
-        "@maven//:io_micrometer_micrometer_core",
-        "@maven//:io_micrometer_micrometer_tracing_bridge_brave",
+        "@maven//:io_quarkus_quarkus_kotlin",
+        "@maven//:io_quarkus_quarkus_resteasy",
+        "@maven//:io_quarkus_quarkus_resteasy_jackson",
+        "@maven//:io_quarkus_quarkus_hibernate_orm",
+        "@maven//:io_quarkus_quarkus_hibernate_orm_panache",
+        "@maven//:io_quarkus_quarkus_jdbc_postgresql",
+        "@maven//:io_quarkus_quarkus_liquibase",
+        "@maven//:io_quarkus_quarkus_oidc",
+        "@maven//:io_quarkus_quarkus_security",
+        "@maven//:io_quarkus_quarkus_grpc",
+        "@maven//:io_quarkus_quarkus_smallrye_health",
         "@maven//:jakarta_persistence_jakarta_persistence_api",
-        "@maven//:jakarta_transaction_jakarta_transaction_api",
-        "@maven//:net_devh_grpc_server_spring_boot_starter",
-        "@maven//:net_devh_grpc_spring_boot_starter",
-        "@maven//:org_apache_tomcat_annotations_api",
-        "@maven//:org_apache_tomcat_embed_tomcat_embed_core",
-        "@maven//:org_hibernate_orm_hibernate_core",
         "@maven//:org_jetbrains_kotlin_kotlin_reflect",
         "@maven//:org_jetbrains_kotlin_kotlin_stdlib",
         "@maven//:org_liquibase_liquibase_core",
         "@maven//:org_postgresql_postgresql",
-        "@maven//:org_springframework_boot_spring_boot",
-        "@maven//:org_springframework_boot_spring_boot_autoconfigure",
-        "@maven//:org_springframework_boot_spring_boot_starter_data_jpa",
-        "@maven//:org_springframework_boot_spring_boot_starter_security",
-        "@maven//:org_springframework_boot_spring_boot_starter_web",
-        "@maven//:org_springframework_data_spring_data_jpa",
-        "@maven//:org_springframework_security_spring_security_config",
-        "@maven//:org_springframework_security_spring_security_core",
-        "@maven//:org_springframework_security_spring_security_oauth2_jose",
-        "@maven//:org_springframework_security_spring_security_oauth2_resource_server",
-        "@maven//:org_springframework_security_spring_security_web",
-        "@maven//:org_springframework_spring_beans",
-        "@maven//:org_springframework_spring_context",
-        "@maven//:org_springframework_spring_core",
-        "@maven//:org_springframework_spring_tx",
-        "@maven//:org_springframework_spring_web",
     ],
 )
 
-springboot(
+# Quarkus build via Maven (same pattern as menu)
+load("//_tools/rules_quarkus/quarkus:quarkus.bzl", "quarkus_maven", "quarkus_maven_test")
+
+# Same pattern as menu/orders: depend on core at lib generation and add Java sources
+# (model_java_jar = srcjar so genrule extracts .java to workspace; no com.gabriel:core in pom)
+quarkus_maven(
     name = "uber",
-    boot_app_class = "com.gabriel.permissions.PermissionsApplicationKt",
-    boot_launcher_class = "org.springframework.boot.loader.launch.JarLauncher",
     java_library = ":artifact",
+    pom_xml = "pom.xml",
+    source_files = glob(["src/main/kotlin/**/*.kt"]),
+    resource_files = glob(["src/main/resources/**"]),
+    deps = [
+        "//core/src/main/java:model_lib",
+        "//core/src/main/java:model_java_jar",
+        "//core/src/main/java:permissions_java_grpc",
+        "//core/src/main/java:permissions_java_proto",
+    ],
     visibility = ["//visibility:public"],
+)
+
+# Quarkus integration tests via Maven (Docker): runs mvn test with @QuarkusTest/Testcontainers.
+# Same deps as uber: core sources (model_java_jar) inlined in workspace; pom has core dep stripped.
+quarkus_maven_test(
+    name = "quarkus_integration_tests",
+    java_library = ":artifact",
+    pom_xml = "pom.xml",
+    source_files = glob(["src/main/kotlin/**/*.kt"]),
+    resource_files = glob(["src/main/resources/**"]),
+    test_source_files = glob([
+        "src/test/kotlin/**/*.kt",
+        "src/test/java/**/*.java",
+    ]),
+    test_resource_files = glob(["src/test/resources/**"]),
+    deps = [
+        "//core/src/main/java:model_lib",
+        "//core/src/main/java:model_java_jar",
+        "//core/src/main/java:permissions_java_grpc",
+        "//core/src/main/java:permissions_java_proto",
+    ],
+    tags = ["requires-docker", "local"],
+)
+
+# Extract quarkus-app from the ZIP (same as menu)
+genrule(
+    name = "quarkus_app_extracted",
+    srcs = [":uber"],
+    outs = ["permissions_quarkus_app_marker"],
+    cmd = """
+set -e
+TMPDIR=$$(mktemp -d)
+trap "rm -rf $$TMPDIR" EXIT
+unzip -q $(location :uber) -d $$TMPDIR
+mkdir -p $(@D)/permissions
+if [ -d "$$TMPDIR/quarkus-app" ]; then
+  mv $$TMPDIR/quarkus-app $(@D)/permissions/
+  echo "quarkus-app extracted" > $@
+else
+  echo "Error: quarkus-app directory not found in ZIP" >&2
+  exit 1
+fi
+""",
+)
+
+filegroup(
+    name = "quarkus_app_files",
+    srcs = [
+        ":quarkus_app_extracted",
+        ":uber",
+    ],
 )
 
 tar(
     name = "layer",
-    srcs = [
-        ":uber.jar",
-    ],
+    srcs = [":quarkus_app_files"],
 )
 
 oci_image(
     name = "image",
     base = "@amazon_corretto_image",
     entrypoint = [
-        "java",
-        "-jar",
-        "-Dspring.profiles.active=prod",
-        "permissions/uber.jar",
+        "sh",
+        "-c",
+        "cd permissions/quarkus-app && java -jar quarkus-run.jar",
     ],
     tars = [":layer"],
 )
@@ -90,22 +135,11 @@ oci_push(
     repository = "index.docker.io/gabrielmirandat/permissions",
 )
 
-# Unit tests
-load("@contrib_rules_jvm//java:defs.bzl", "java_test_suite")
-
-java_test_suite(
-    name = "unit",
-    size = "small",
-    srcs = glob([
-        "src/test/java/com/gabriel/permissions/application/**/*Test.java",
-        "src/test/java/com/gabriel/permissions/domain/model/**/*Test.java",
-    ]),
-    runner = "junit5",
-    runtime_deps = [
-        "@maven//:org_junit_jupiter_junit_jupiter_engine",
-        "@maven//:org_junit_platform_junit_platform_launcher",
-        "@maven//:org_junit_platform_junit_platform_reporting",
-    ],
+# Kotlin test code: unit tests + all integration tests (including Quarkus/Testcontainers).
+# JUnit Platform 1.13+ is required so Quarkus test (LauncherSession.getStore()) works under Bazel.
+kt_jvm_library(
+    name = "test-kotlin",
+    srcs = glob(["src/test/kotlin/**/*.kt"]),
     deps = [
         ":artifact",
         "//core:permissions_java_proto",
@@ -114,33 +148,42 @@ java_test_suite(
         "@maven//:org_junit_jupiter_junit_jupiter_api",
         "@maven//:org_mockito_mockito_core",
         "@maven//:org_mockito_mockito_junit_jupiter",
-        "@maven//:org_springframework_spring_core",
-        "@maven//:org_springframework_security_spring_security_core",
         "@maven//:com_fasterxml_jackson_core_jackson_databind",
+        "@maven//:org_assertj_assertj_core",
+        "@maven//:io_quarkus_quarkus_junit",
+        "@maven//:io_quarkus_quarkus_test_common",
+        "@maven//:org_testcontainers_testcontainers",
+        "@maven//:org_testcontainers_postgresql",
+        "@maven//:jakarta_inject_jakarta_inject_api",
     ],
 )
 
-# Integration tests
+# JUnit 5 suite launchers (Java) that select Kotlin test classes; Bazel runs these with JUnit 5.
+java_test_suite(
+    name = "unit",
+    size = "small",
+    srcs = ["src/test/java/com/gabriel/permissions/AllUnitTests.java"],
+    test_suffixes = ["Test.java", "Tests.java"],
+    runner = "junit5",
+    runtime_deps = JUNIT5_DEPS,
+    deps = [
+        ":test-kotlin",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_junit_platform_junit_platform_suite",
+        "@maven//:org_junit_platform_junit_platform_suite_api",
+    ],
+)
 java_test_suite(
     name = "integration",
     size = "large",
-    srcs = glob(["src/test/java/com/gabriel/permissions/integration/**/*Test.java"]),
+    srcs = ["src/test/java/com/gabriel/permissions/RepositoryIntegrationSuite.java"],
+    test_suffixes = ["Suite.java", "Test.java"],
     runner = "junit5",
-    runtime_deps = [
-        "@maven//:org_junit_jupiter_junit_jupiter_engine",
-        "@maven//:org_junit_platform_junit_platform_launcher",
-        "@maven//:org_junit_platform_junit_platform_reporting",
-    ],
+    runtime_deps = JUNIT5_DEPS,
     deps = [
-        ":artifact",
-        "@maven//:org_junit_jupiter_junit_jupiter",
+        ":test-kotlin",
         "@maven//:org_junit_jupiter_junit_jupiter_api",
-        "@maven//:org_springframework_boot_spring_boot_test",
-        "@maven//:org_springframework_boot_spring_boot_test_autoconfigure",
-        "@maven//:org_springframework_spring_beans",
-        "@maven//:org_springframework_spring_test",
-        "@maven//:org_testcontainers_testcontainers",
-        "@maven//:org_testcontainers_junit_jupiter",
-        "@maven//:org_testcontainers_postgresql",
+        "@maven//:org_junit_platform_junit_platform_suite",
+        "@maven//:org_junit_platform_junit_platform_suite_api",
     ],
 )

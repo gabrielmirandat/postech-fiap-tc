@@ -1,15 +1,22 @@
 package com.gabriel.permissions.domain.repository
 
 import com.gabriel.permissions.domain.model.Role
-import org.springframework.data.jpa.repository.JpaRepository
-import java.util.Optional
+import io.quarkus.hibernate.orm.panache.PanacheRepository
+import jakarta.enterprise.context.ApplicationScoped
 import java.util.UUID
 
-interface RoleRepository : JpaRepository<Role, UUID> {
+@ApplicationScoped
+class RoleRepository : PanacheRepository<Role> {
 
-    fun findByName(name: String): Optional<Role>
+    fun findById(uuid: UUID): Role? = find("id", uuid).firstResult()
 
-    fun deleteByName(name: String)
+    fun findByName(name: String): Role? = find("name", name).firstResult()
 
-    override fun deleteAll()
+    fun deleteByName(name: String) {
+        delete("name", name)
+    }
+
+    fun deleteById(uuid: UUID) {
+        delete("id", uuid)
+    }
 }
