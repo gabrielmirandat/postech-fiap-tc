@@ -41,19 +41,6 @@
 # Ignore node modules (if using any JS)
 node_modules/
 
-# Ignore Bazel outputs
-bazel-*
-bazel-out/
-bazel-bin/
-bazel-testlogs/
-
-# Ignore IDE files
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
 # Ignore coverage reports
 /coverage/
 
