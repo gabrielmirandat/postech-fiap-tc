@@ -46,7 +46,7 @@ genrule(
     outs = ["global_uber_marker"],
     cmd = """
         echo "All executables built successfully:" > $@
-        echo "  - menu:uber (Quarkus)" >> $@
+        echo "  - menu:uber (Go)" >> $@
         echo "  - orders:uber (Spring Boot)" >> $@
         echo "  - permissions:uber (Spring Boot)" >> $@
         echo "  - customers:uber (Python/FastAPI)" >> $@

@@ -1,0 +1,9 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "messaging",
+    srcs = ["noop_publisher.go"],
+    importpath = "github.com/gabriel/menu/internal/adapter/messaging",
+    visibility = ["//visibility:public"],
+    deps = ["//menu/internal/domain"],
+)

@@ -1,0 +1,14 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "repository",
+    srcs = ["mongo_ingredient.go", "mongo_product.go"],
+    importpath = "github.com/gabriel/menu/internal/adapter/repository",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//menu/internal/domain",
+        "@org_mongodb_go_mongo_driver//bson",
+        "@org_mongodb_go_mongo_driver//mongo",
+        "@org_mongodb_go_mongo_driver//mongo/options",
+    ],
+)
