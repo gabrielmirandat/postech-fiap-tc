@@ -1,0 +1,13 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "http",
+    srcs = ["ingredients_handler.go", "products_handler.go", "router.go"],
+    importpath = "github.com/gabriel/menu/internal/adapter/http",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//menu/internal/application",
+        "//menu/internal/domain",
+        "@com_github_gin_gonic_gin//:gin",
+    ],
+)

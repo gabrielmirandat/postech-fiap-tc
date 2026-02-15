@@ -1,0 +1,12 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "application",
+    srcs = ["dto.go", "ingredient_service.go", "ports.go", "product_service.go"],
+    importpath = "github.com/gabriel/menu/internal/application",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//menu/internal/domain",
+        "@com_github_google_uuid//:uuid",
+    ],
+)
