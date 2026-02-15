@@ -93,6 +93,14 @@ for src in $(SRCS); do
       relpath=$${{src#*src/test/kotlin/}}
       mkdir -p "$$WORKDIR/src/test/kotlin/$$(dirname $$relpath)"
       cp "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
+    elif [[ "$$src" == *src/test/unit/kotlin/* ]]; then
+      relpath=$${{src#*src/test/unit/kotlin/}}
+      mkdir -p "$$WORKDIR/src/test/kotlin/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
+    elif [[ "$$src" == *src/test/integration/kotlin/* ]]; then
+      relpath=$${{src#*src/test/integration/kotlin/}}
+      mkdir -p "$$WORKDIR/src/test/kotlin/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
     fi
   elif [[ "$$src" == *src/main/resources/* ]] || [[ "$$src" == *src/test/resources/* ]]; then
     if [[ "$$src" == *src/main/resources/* ]]; then
@@ -405,6 +413,14 @@ for src in $(SRCS); do
       relpath=$${{src#*src/test/kotlin/}}
       mkdir -p "$$WORKDIR/src/test/kotlin/$$(dirname $$relpath)"
       cp "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
+    elif [[ "$$src" == *src/test/unit/kotlin/* ]]; then
+      relpath=$${{src#*src/test/unit/kotlin/}}
+      mkdir -p "$$WORKDIR/src/test/kotlin/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
+    elif [[ "$$src" == *src/test/integration/kotlin/* ]]; then
+      relpath=$${{src#*src/test/integration/kotlin/}}
+      mkdir -p "$$WORKDIR/src/test/kotlin/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
     fi
   # Handle resource files
   elif [[ "$$src" == *.properties ]] || [[ "$$src" == *.xml ]] || [[ "$$src" == *.yaml ]] || [[ "$$src" == *.yml ]] || [[ "$$src" == */*.sql ]]; then
@@ -628,6 +644,7 @@ def quarkus_maven_test(
         test_source_files = None,
         test_resource_files = None,
         deps = None,
+        test_classes = None,
         tags = [],
         visibility = None,
         restricted_to = None,
@@ -647,7 +664,44 @@ def quarkus_maven_test(
       test_source_files: Optional list of test source files (Kotlin/Java).
       test_resource_files: Optional list of test resource files.
       deps: Optional extra deps (same as quarkus_maven).
+      test_classes: Optional list of fully qualified test class names. When set,
+        creates one Bazel test target per class (mvn test -Dtest=ClassName) and a
+        test_suite named name, so "bazel test //pkg:name" lists each class with PASSED/time.
+        If None and test_source_files is set, test classes are derived from test file paths
+        (src/test/kotlin/**/*.kt and src/test/java/**/*.java); files with "Resource" in the
+        path are excluded; only *Test, *Tests, *IntegrationTest, *IT are included.
     """
+    # Derive test_classes from test_source_files when not provided
+    if test_classes == None and test_source_files:
+        _derived = []
+        for f in test_source_files:
+            # glob() returns strings (path); or Label with .name = path
+            path = f if type(f) == type("") else (getattr(f, "name", None) or getattr(f, "path", None) or str(f))
+            if ":" in path:
+                path = path.split(":", 1)[-1]
+            if "Resource" in path:
+                continue
+            if "src/test/kotlin/" in path:
+                rel = path.split("src/test/kotlin/")[-1]
+            elif "src/test/unit/kotlin/" in path:
+                rel = path.split("src/test/unit/kotlin/")[-1]
+            elif "src/test/integration/kotlin/" in path:
+                rel = path.split("src/test/integration/kotlin/")[-1]
+            elif "src/test/java/" in path:
+                rel = path.split("src/test/java/")[-1]
+            else:
+                continue
+            fqcn = rel.replace("/", ".").rsplit(".", 1)[0]
+            if not fqcn:
+                continue
+            simple = fqcn.split(".")[-1]
+            if (simple.endswith("Test") or simple.endswith("Tests") or
+                "IntegrationTest" in simple or simple.endswith("IT")):
+                if fqcn not in _derived:
+                    _derived.append(fqcn)
+        if _derived:
+            test_classes = sorted(_derived)
+
     all_srcs = [java_library]
     if pom_xml:
         all_srcs.append(pom_xml)
@@ -696,10 +750,17 @@ echo 'tar xf "$$TAR" -C "$$WORKDIR"' >> $@
 # Run as host user so files in WORKDIR stay owned by us and trap can rm -rf.
 # HOME=/workspace so Maven/shell do not try to use /root (writable).
 # Mount Docker socket and add docker group so Testcontainers can start Postgres etc. inside the container.
+# List test sources inside container (same stream as Maven). Write run_tests.sh via here-doc.
 echo 'DOCKER_GID=$$(getent group docker 2>/dev/null | cut -d: -f3)' >> $@
 echo 'DOCKER_ARGS=""' >> $@
 echo 'if [ -n "$$DOCKER_GID" ]; then DOCKER_ARGS="-v /var/run/docker.sock:/var/run/docker.sock --group-add $$DOCKER_GID"; fi' >> $@
-echo 'docker run --rm --user $$(id -u):$$(id -g) -e HOME=/workspace $$DOCKER_ARGS -v "$$WORKDIR:/workspace" -w /workspace maven:3.9-eclipse-temurin-21 sh -c "mvn test"' >> $@
+echo 'cat > "$$WORKDIR/run_tests.sh" << '\''INNEREOF'\''' >> $@
+echo 'echo "=== Test sources (files being tested) ==="' >> $@
+echo 'find /workspace/src/test -type f \\( -name "*.kt" -o -name "*.java" \\) 2>/dev/null | sort | sed "s|^/workspace/||" | while read f; do echo "  $$f"; done' >> $@
+echo 'echo ""' >> $@
+echo 'if [ -n "$$TEST_CLASS" ]; then mvn test -Dtest="$$TEST_CLASS"; else mvn test; fi' >> $@
+echo 'INNEREOF' >> $@
+echo 'docker run --rm --user $$(id -u):$$(id -g) -e HOME=/workspace -e TEST_CLASS="$$TEST_CLASS" $$DOCKER_ARGS -v "$$WORKDIR:/workspace" -w /workspace maven:3.9-eclipse-temurin-21 sh /workspace/run_tests.sh' >> $@
 echo 'EXIT=$$?' >> $@
 echo 'exit $$EXIT' >> $@
 """.format(name = name),
@@ -708,15 +769,50 @@ echo 'exit $$EXIT' >> $@
         target_compatible_with = target_compatible_with,
     )
 
-    native.sh_test(
-        name = name,
-        srcs = [":" + name + "_runner"],
-        data = [":" + name + "_workspace"],
-        tags = tags + ["requires-docker", "local"],
-        visibility = visibility,
-        restricted_to = restricted_to,
-        target_compatible_with = target_compatible_with,
-    )
+    test_tags = tags + ["requires-docker", "local"]
+    if test_classes:
+        # One test target per class + test_suite (like java_test_suite in orders).
+        suite_tests = []
+        for test_class in test_classes:
+            safe = test_class.split(".")[-1]
+            wrapper_name = name + "_wrapper_" + safe
+            wrapper_out = wrapper_name + ".sh"
+            native.genrule(
+                name = wrapper_name,
+                srcs = [":" + name + "_runner"],
+                outs = [wrapper_out],
+                cmd = ("echo '#!/bin/sh' > $@; " +
+                       "echo 'export TEST_CLASS=\"" + test_class + "\"' >> $@; " +
+                       "echo 'exec \"$$(dirname \"$$0\")/" + name + "_run_tests.sh\"' >> $@"),
+                tags = tags,
+                restricted_to = restricted_to,
+                target_compatible_with = target_compatible_with,
+            )
+            native.sh_test(
+                name = name + "_" + safe,
+                srcs = [":" + wrapper_name],
+                data = [":" + name + "_runner", ":" + name + "_workspace"],
+                tags = test_tags,
+                visibility = visibility,
+                restricted_to = restricted_to,
+                target_compatible_with = target_compatible_with,
+            )
+            suite_tests.append(":" + name + "_" + safe)
+        native.test_suite(
+            name = name,
+            tests = suite_tests,
+            visibility = visibility,
+        )
+    else:
+        native.sh_test(
+            name = name,
+            srcs = [":" + name + "_runner"],
+            data = [":" + name + "_workspace"],
+            tags = test_tags,
+            visibility = visibility,
+            restricted_to = restricted_to,
+            target_compatible_with = target_compatible_with,
+        )
 
 
 def quarkus_fastjar(
