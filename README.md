@@ -77,45 +77,43 @@ this project is a restaurant management system.
 
 ### Menu
 **Architecture:** Domain-Driven Design (DDD) + Hexagonal Architecture (Ports & Adapters)  
-**Framework:** Quarkus 3.17.6  
-**Language:** Java 21  
-**Database:** MongoDB 6.0.6 (with Mongock for migrations)  
-**Communication:** Kafka (event-driven), gRPC (synchronous)  
-**Testing:** JUnit 5, Quarkus Test
+**Framework:** Gin 1.10  
+**Language:** Go 1.23  
+**Database:** MongoDB (official driver `go.mongodb.org/mongo-driver`)  
+**Communication:** Kafka (event-driven; publisher currently no-op, pluggable)  
+**Testing:** Go testing package, `go test`
 
 **Architectural Patterns:**
 - **Hexagonal Architecture:** Isolated core with ports for repositories and publishers
 - **DDD:** Aggregates (Product, Ingredient), Domain Events, Use Cases
-- **Event-Driven:** Event publishing for product/ingredient creation
+- **Event-Driven:** Event publishing for product/ingredient creation (publisher interface; Kafka implementation optional)
 
 **Structure:**
-- `core/domain`: Domain models (Product, Ingredient, Menu), events, exceptions
-- `core/application`: Use Cases (ProductUseCase, IngredientUseCase, MenuUseCase)
-- `adapter/driver`: HTTP Controllers (REST), gRPC Controllers
-- `adapter/driven`: MongoDB repositories, Kafka publishers
-- `infra`: MongoDB configuration, Health Checks, Serializers
+- `internal/domain`: Domain models (Product, Ingredient, Category), errors
+- `internal/application`: Use cases (ProductService, IngredientService), DTOs, ports (interfaces)
+- `internal/adapter/http`: Gin handlers (products, ingredients), router
+- `internal/adapter/repository`: MongoDB repositories (products, ingredients)
+- `internal/adapter/messaging`: Publishers (no-op; can be replaced by Kafka)
+- `internal/config`: Configuration from environment
+- `cmd/server`: Application entrypoint
 
 **Key Technologies:**
-- Quarkus RESTEasy for REST APIs
-- Quarkus MongoDB Client for persistence
-- Mongock 5.4.1 for MongoDB migrations
-- Quarkus Messaging Kafka for events
-- Quarkus gRPC for synchronous communication
-- Quarkus SmallRye Health for health checks
-- OpenAPI Generator 7.0.1 (JAX-RS Spec generator)
+- Gin 1.10 for REST APIs (routing, JSON, validation)
+- go.mongodb.org/mongo-driver 1.17 for persistence
+- google/uuid for ID generation
+- Standard library `context`, `net/http`
 
 **Characteristics:**
-- Cloud-native optimized reactive framework
-- Fast startup and low memory footprint
-- Native image support with GraalVM
+- Single static binary, fast startup and low memory
+- No JVM; same target names as other services (artifact, uber, unit, integration, layer, image, push) for pipeline consistency
 
 **Bazel Build:**
-- **Dependencies:** Bazel 8.3.1+ (Java 21 JDK is automatically managed via hermetic toolchain)
+- **Dependencies:** Bazel 8.3.1+ (Go 1.23.4 SDK is automatically managed via `rules_go` hermetic toolchain)
 - **Build target:** `//menu:artifact`
-- **Test target:** `//menu:unit`
-- **Executable target:** `//menu:uber` (Quarkus JAR - no Docker required)
+- **Test targets:** `//menu:unit`, `//menu:integration`
+- **Executable target:** `//menu:uber` (Go binary - no Docker required)
 - **Image target:** `//menu:image` (Docker image - Docker required only for this target)
-- **No system dependencies required** - all dependencies are managed via Bazel's Maven integration and hermetic toolchains
+- **No system dependencies required** - Go SDK and dependencies are managed via Bazel's `rules_go` and Gazelle `go_deps`
 
 ---
 
@@ -435,13 +433,14 @@ Restaurant management system based on **Microservices** with asynchronous (event
 This project demonstrates a **polyglot microservices architecture** where each service uses the most appropriate language and technology stack for its domain:
 
 **Current Language Distribution:**
-- **Java 21** - 2 services (Orders, Menu) + Core shared module
-- **Kotlin 2.1.0** - 1 service (Permissions - hybrid: Kotlin domain + Java services)
+- **Java 21** - 1 service (Orders) + Core shared module
+- **Go 1.23** - 1 service (Menu)
+- **Kotlin 2.1.0** - 1 service (Permissions)
 - **TypeScript** - 1 service (Supplies)
 - **Rust** - 1 service (Deliveries)
 - **Python** - 1 service (Customers)
 - **Ruby** - 1 service (Notifications)
-- **C#/.NET** - 1 service (Payments - planned)
+- **C#/.NET** - 1 service (Payments)
 
 **✅ Completed Migration: Permissions to Kotlin**
 
@@ -501,7 +500,7 @@ data class Role(
 ```
 
 **Alternative Services to Migrate:**
-- **Menu** (54 files) - Medium effort, Quarkus also supports Kotlin
+- **Menu** - Migrated to **Go 1.23 + Gin** (no longer JVM)
 - **Orders** (117 files) - Not recommended due to complexity and extensive test suites
 
 ### Patterns and Practices
@@ -518,7 +517,8 @@ data class Role(
 ### Main Technology Stack
 
 **Backend Languages:**
-- Java 21 (Orders, Menu, Core)
+- Java 21 (Orders, Core)
+- Go 1.23 (Menu)
 - Kotlin 2.1.0 (Permissions - domain layer)
 - Java 21 + Kotlin 2.1.0 (Permissions - hybrid polyglot service)
 - TypeScript 5.9.3 (Supplies)
@@ -529,7 +529,7 @@ data class Role(
 
 **Frameworks:**
 - Spring Boot 3.2.4 (Orders, Permissions)
-- Quarkus 3.17.6 (Menu)
+- Gin 1.10 (Menu)
 - NestJS 10.3.0 (Supplies)
 - Axum 0.7 (Deliveries)
 - FastAPI (Customers)
@@ -559,9 +559,8 @@ data class Role(
 - Terraform
 
 **Testing:**
-- JUnit 5
-- Mockito
-- Testcontainers
+- JUnit 5, Mockito, Testcontainers (Java/Kotlin)
+- Go testing package (Menu)
 - Cucumber (BDD)
 - Specmatic (Contract Testing)
 - Rest Assured
@@ -582,6 +581,7 @@ https://miro.com/app/board/uXjVNf1J6J8=/?share_link_id=738234968069
 
 The Bazel build system uses hermetic toolchains that automatically download and manage all required language runtimes:
 - **Java 21** - Managed via `rules_java` and `contrib_rules_jvm`
+- **Go 1.23.4** - Managed via `rules_go` v0.60.0 with hermetic Go SDK and Gazelle `go_deps` for module dependencies
 - **Kotlin 2.1.0** - Managed via `rules_kotlin` v2.1.0 with Kotlin stdlib and reflect
 - **TypeScript 5.9.3 / Node.js 20.x** - Managed via `aspect_rules_ts` and `aspect_rules_js` with pnpm 10.29.3
 - **Rust (Edition 2021)** - Managed via `rules_rust` v0.63.0 with hermetic Rust toolchain and Cargo
@@ -597,6 +597,7 @@ The Bazel build system uses hermetic toolchains that automatically download and 
 
 **No need to install:**
 - ❌ Java JDK
+- ❌ Go toolchain
 - ❌ Kotlin compiler
 - ❌ Node.js / npm / pnpm
 - ❌ Rust / Cargo
@@ -633,8 +634,16 @@ All language runtimes are automatically downloaded and managed by Bazel's hermet
   cd deliveries && cargo generate-lockfile
   ```
 
+**Go (Menu):**
+- Dependencies are resolved from `menu/go.mod` via Gazelle `go_deps.from_file`
+- `menu/go.sum` must be kept in sync with `menu/go.mod` - if you add or change dependencies, run:
+  ```bash
+  cd menu && go mod tidy
+  ```
+- Bazel uses hermetic Go SDK 1.23.4 (`rules_go`); no system Go required
+
 **Docker Requirements:**
-- ✅ **Not required** for: `//orders:uber`, `//permissions:uber`, `//menu:uber`, `//customers:uber` (these generate JARs or Python binaries)
+- ✅ **Not required** for: `//orders:uber`, `//permissions:uber`, `//menu:uber` (JARs or Go binary), `//customers:uber` (Python binary)
 - ✅ **Required** for: `//notifications:uber`, `//payments:uber` (these generate Docker images)
 - ✅ **Required** for: all `:image` targets (Docker images for deployment)
 
@@ -660,10 +669,13 @@ bazel test //orders:contract
 bazel test //orders:behavior
 bazel build //orders:uber
 
-# Menu module
+# Menu module (Go/Gin)
 bazel build //menu:artifact
 bazel test //menu:unit
+bazel test //menu:integration
 bazel build //menu:uber
+bazel build //menu:layer
+bazel build //menu:image
 
 # Customers module
 bazel build //customers:artifact
