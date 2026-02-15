@@ -1,6 +1,5 @@
 load("@aspect_bazel_lib//lib:tar.bzl", "tar")
-load("@contrib_rules_jvm//java:defs.bzl", "JUNIT5_DEPS", "java_test_suite")
-load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library", "kt_jvm_test")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
 
 # Kotlin library (used by Quarkus Maven build and by tests)
@@ -61,18 +60,32 @@ quarkus_maven(
     visibility = ["//visibility:public"],
 )
 
-# Quarkus integration tests via Maven (Docker): runs mvn test with @QuarkusTest/Testcontainers.
-# Same deps as uber: core sources (model_java_jar) inlined in workspace; pom has core dep stripped.
+# bazel test //permissions:unit (Maven + JUnit 5 in Docker; one Bazel test per class, same as integration)
 quarkus_maven_test(
-    name = "quarkus_integration_tests",
+    name = "unit",
     java_library = ":artifact",
     pom_xml = "pom.xml",
     source_files = glob(["src/main/kotlin/**/*.kt"]),
     resource_files = glob(["src/main/resources/**"]),
-    test_source_files = glob([
-        "src/test/kotlin/**/*.kt",
-        "src/test/java/**/*.java",
-    ]),
+    test_source_files = glob(["src/test/unit/kotlin/**/*.kt"]),
+    test_resource_files = glob(["src/test/resources/**"]),
+    deps = [
+        "//core/src/main/java:model_lib",
+        "//core/src/main/java:model_java_jar",
+        "//core/src/main/java:permissions_java_grpc",
+        "//core/src/main/java:permissions_java_proto",
+    ],
+    tags = ["requires-docker", "local"],
+)
+
+# bazel test //permissions:integration (Quarkus @QuarkusTest, one Bazel test per class; like orders:integration)
+quarkus_maven_test(
+    name = "integration",
+    java_library = ":artifact",
+    pom_xml = "pom.xml",
+    source_files = glob(["src/main/kotlin/**/*.kt"]),
+    resource_files = glob(["src/main/resources/**"]),
+    test_source_files = glob(["src/test/integration/kotlin/**/*.kt"]),
     test_resource_files = glob(["src/test/resources/**"]),
     deps = [
         "//core/src/main/java:model_lib",
@@ -133,57 +146,4 @@ oci_push(
     image = ":image",
     remote_tags = ["latest"],
     repository = "index.docker.io/gabrielmirandat/permissions",
-)
-
-# Kotlin test code: unit tests + all integration tests (including Quarkus/Testcontainers).
-# JUnit Platform 1.13+ is required so Quarkus test (LauncherSession.getStore()) works under Bazel.
-kt_jvm_library(
-    name = "test-kotlin",
-    srcs = glob(["src/test/kotlin/**/*.kt"]),
-    deps = [
-        ":artifact",
-        "//core:permissions_java_proto",
-        "//core/src/main/java:model_lib",
-        "@maven//:org_junit_jupiter_junit_jupiter",
-        "@maven//:org_junit_jupiter_junit_jupiter_api",
-        "@maven//:org_mockito_mockito_core",
-        "@maven//:org_mockito_mockito_junit_jupiter",
-        "@maven//:com_fasterxml_jackson_core_jackson_databind",
-        "@maven//:org_assertj_assertj_core",
-        "@maven//:io_quarkus_quarkus_junit",
-        "@maven//:io_quarkus_quarkus_test_common",
-        "@maven//:org_testcontainers_testcontainers",
-        "@maven//:org_testcontainers_postgresql",
-        "@maven//:jakarta_inject_jakarta_inject_api",
-    ],
-)
-
-# JUnit 5 suite launchers (Java) that select Kotlin test classes; Bazel runs these with JUnit 5.
-java_test_suite(
-    name = "unit",
-    size = "small",
-    srcs = ["src/test/java/com/gabriel/permissions/AllUnitTests.java"],
-    test_suffixes = ["Test.java", "Tests.java"],
-    runner = "junit5",
-    runtime_deps = JUNIT5_DEPS,
-    deps = [
-        ":test-kotlin",
-        "@maven//:org_junit_jupiter_junit_jupiter_api",
-        "@maven//:org_junit_platform_junit_platform_suite",
-        "@maven//:org_junit_platform_junit_platform_suite_api",
-    ],
-)
-java_test_suite(
-    name = "integration",
-    size = "large",
-    srcs = ["src/test/java/com/gabriel/permissions/RepositoryIntegrationSuite.java"],
-    test_suffixes = ["Suite.java", "Test.java"],
-    runner = "junit5",
-    runtime_deps = JUNIT5_DEPS,
-    deps = [
-        ":test-kotlin",
-        "@maven//:org_junit_jupiter_junit_jupiter_api",
-        "@maven//:org_junit_platform_junit_platform_suite",
-        "@maven//:org_junit_platform_junit_platform_suite_api",
-    ],
 )
