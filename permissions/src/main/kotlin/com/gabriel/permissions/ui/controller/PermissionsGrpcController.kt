@@ -8,15 +8,15 @@ import com.gabriel.service.permissions.PermissionResponse
 import com.google.protobuf.Timestamp
 import io.grpc.Status
 import io.grpc.stub.StreamObserver
-import net.devh.boot.grpc.server.service.GrpcService
-import org.springframework.transaction.annotation.Transactional
+import io.quarkus.grpc.GrpcService
+import io.smallrye.common.annotation.Blocking
 
 @GrpcService
 class PermissionsGrpcController(
     private val permissionService: PermissionService
 ) : PermissionGrpc.PermissionImplBase() {
 
-    @Transactional(readOnly = true)
+    @Blocking
     override fun retrievePermissions(
         request: PermissionRequest,
         responseObserver: StreamObserver<PermissionResponse>
@@ -33,10 +33,9 @@ class PermissionsGrpcController(
             roles.forEach { role ->
                 role.roleAuthorities.forEach { authority ->
                     val instant = authority.updatedAt
-
                     val timestamp = Timestamp.newBuilder()
                         .setSeconds(instant!!.epochSecond)
-                        .setNanos(instant!!.nano)
+                        .setNanos(instant.nano)
                         .build()
 
                     responseBuilder.addItems(
@@ -52,7 +51,6 @@ class PermissionsGrpcController(
 
             responseObserver.onNext(responseBuilder.build())
             responseObserver.onCompleted()
-
         } catch (e: Exception) {
             responseObserver.onError(
                 Status.INTERNAL

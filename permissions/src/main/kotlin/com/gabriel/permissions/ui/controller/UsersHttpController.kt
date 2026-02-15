@@ -5,32 +5,35 @@ import com.gabriel.permissions.infraestructure.provider.Auth0Provider
 import com.gabriel.permissions.ui.controller.request.CredentialsRequest
 import com.gabriel.permissions.ui.controller.request.RegisterRequest
 import com.gabriel.permissions.ui.controller.response.AuthenticationResponse
-import jakarta.servlet.http.HttpServletRequest
 import kong.unirest.core.Unirest
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-import java.net.URI
+import org.eclipse.microprofile.config.inject.ConfigProperty
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.security.Principal
+import jakarta.annotation.security.PermitAll
+import jakarta.ws.rs.*
+import jakarta.ws.rs.core.Context
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
+import jakarta.ws.rs.core.SecurityContext
 
-@RestController
-@RequestMapping("/users")
+@Path("/users")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 class UsersHttpController(
-    @Value("\${auth0.issuer}") private val issuer: String,
-    @Value("\${auth0.client-id}") private val clientId: String,
-    @Value("\${auth0.client-secret}") private val clientSecret: String,
-    @Value("\${auth0.audience}") private val audience: String,
-    @Value("\${auth0.scope}") private val scope: String,
-    @Value("\${auth0.logout-url}") private val logoutRedirectUrl: String,
+    @ConfigProperty(name = "auth0.issuer") private val issuer: String,
+    @ConfigProperty(name = "auth0.client-id") private val clientId: String,
+    @ConfigProperty(name = "auth0.client-secret") private val clientSecret: String,
+    @ConfigProperty(name = "auth0.audience") private val audience: String,
+    @ConfigProperty(name = "auth0.scope") private val scope: String,
+    @ConfigProperty(name = "auth0.logout-url") private val logoutRedirectUrl: String,
     private val objectMapper: ObjectMapper,
     private val auth0Provider: Auth0Provider
 ) {
 
-    @PostMapping("/login")
-    fun login(@RequestBody credentialsRequest: CredentialsRequest): ResponseEntity<*> {
+    @POST
+    @Path("/login")
+    @PermitAll
+    fun login(credentialsRequest: CredentialsRequest): Response {
         return try {
             val response = Unirest.post("https://$issuer/oauth/token")
                 .header("Content-Type", "application/x-www-form-urlencoded")
@@ -44,27 +47,28 @@ class UsersHttpController(
                 .asString()
 
             if (response.isSuccess) {
-                val authenticationResponse = objectMapper.readValue(
-                    response.body,
-                    AuthenticationResponse::class.java
-                )
-                ResponseEntity.ok().body(authenticationResponse)
+                val authenticationResponse = objectMapper.readValue(response.body, AuthenticationResponse::class.java)
+                Response.ok(authenticationResponse).build()
             } else {
-                ResponseEntity.status(response.status).body("Authentication failed")
+                Response.status(response.status).entity("Authentication failed").build()
             }
         } catch (e: Exception) {
-            ResponseEntity.internalServerError().body("Server error during authentication")
+            Response.serverError().entity("Server error during authentication").build()
         }
     }
 
-    @PostMapping("/logout")
-    fun logout(request: HttpServletRequest): ResponseEntity<*> {
+    @POST
+    @Path("/logout")
+    @PermitAll
+    fun logout(): Response {
         val logoutUrl = "https://$issuer/v2/logout?client_id=$clientId&returnTo=$logoutRedirectUrl"
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(logoutUrl)).build<Any>()
+        return Response.seeOther(java.net.URI.create(logoutUrl)).build()
     }
 
-    @PostMapping("/register")
-    fun register(@RequestBody registerRequest: RegisterRequest): ResponseEntity<*> {
+    @POST
+    @Path("/register")
+    @PermitAll
+    fun register(registerRequest: RegisterRequest): Response {
         return try {
             val token = auth0Provider.getManagementApiToken()
             val response = Unirest.post("https://$issuer/dbconnections/signup")
@@ -80,38 +84,33 @@ class UsersHttpController(
                 .asString()
 
             if (response.isSuccess) {
-                ResponseEntity.ok("User registered successfully")
+                Response.ok("User registered successfully").build()
             } else {
-                ResponseEntity.status(response.status).body("Failed to create account: ${response.body}")
+                Response.status(response.status).entity("Failed to create account: ${response.body}").build()
             }
         } catch (e: Exception) {
-            ResponseEntity.internalServerError().body("Server error during account creation")
+            Response.serverError().entity("Server error during account creation").build()
         }
     }
 
-    @DeleteMapping("/delete-account")
-    fun deleteAccount(principal: Principal): ResponseEntity<*> {
+    @DELETE
+    @Path("/delete-account")
+    fun deleteAccount(@Context securityContext: SecurityContext): Response {
         return try {
+            val principalName = securityContext.userPrincipal?.name ?: return Response.status(Response.Status.UNAUTHORIZED).build()
             val token = auth0Provider.getManagementApiToken()
-            val response = Unirest.delete("https://$issuer/api/v2/users/${encodeUserId(principal.name)}")
+            val encodedUserId = URLEncoder.encode(principalName, StandardCharsets.UTF_8)
+            val response = Unirest.delete("https://$issuer/api/v2/users/$encodedUserId")
                 .header("Authorization", "Bearer $token")
                 .asString()
 
             if (response.isSuccess) {
-                ResponseEntity.ok("Account deleted")
+                Response.ok("Account deleted").build()
             } else {
-                ResponseEntity.status(response.status).body("Failed to delete account: ${response.body}")
+                Response.status(response.status).entity("Failed to delete account: ${response.body}").build()
             }
         } catch (e: Exception) {
-            ResponseEntity.internalServerError().body("Server error during account deletion")
-        }
-    }
-
-    private fun encodeUserId(userId: String): String {
-        return try {
-            URLEncoder.encode(userId, StandardCharsets.UTF_8)
-        } catch (e: Exception) {
-            throw RuntimeException("Error encoding user Id", e)
+            Response.serverError().entity("Server error during account deletion").build()
         }
     }
 }

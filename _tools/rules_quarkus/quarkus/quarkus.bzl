@@ -29,6 +29,149 @@ _depaggregator_rule = rule(
     },
 )
 
+# Shared script to prepare Maven workspace (copy sources + optional standalone pom).
+# Used by quarkus_maven (then docker package) and quarkus_maven_test (then tar).
+# Format with name= for pom artifactId.
+_MAVEN_COPY_AND_POM = """
+set -e
+WORKDIR=$(@D)/maven_workspace
+mkdir -p $$WORKDIR/src/main/java $$WORKDIR/src/main/resources $$WORKDIR/src/test/java $$WORKDIR/src/test/kotlin $$WORKDIR/src/test/resources
+# Copy source files from srcs
+for src in $(SRCS); do
+  if [[ "$$src" == *.jar ]] || [[ "$$src" == *.srcjar ]]; then
+    JAR_NAME=$$(basename "$$src")
+    JAR_NAME=$${{JAR_NAME%.jar}}
+    JAR_NAME=$${{JAR_NAME%.srcjar}}
+    TEMP_DIR=$$WORKDIR/temp_extract_$$(echo "$$JAR_NAME" | tr '/' '_' | tr ':' '_')
+    mkdir -p $$TEMP_DIR
+    unzip -q "$$src" -d $$TEMP_DIR 2>/dev/null || true
+    find $$TEMP_DIR -name "*.java" -type f 2>/dev/null | while read java_file; do
+      relpath=$${{java_file#$$TEMP_DIR/}}
+      if [[ "$$relpath" != META-INF/* ]] && [[ "$$relpath" == */*.java ]]; then
+        mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)"
+        cp "$$java_file" "$$WORKDIR/src/main/java/$$relpath" 2>/dev/null || true
+      fi
+    done
+    rm -rf $$TEMP_DIR
+    continue
+  fi
+  if [ -d "$$src" ]; then
+    if [[ "$$src" == *menu_api_files* ]] || [[ "$$src" == *api_files* ]]; then
+      if [ -d "$$src/src/gen/java" ]; then
+        find "$$src/src/gen/java" -name "*.java" -type f 2>/dev/null | while read java_file; do
+          [ -n "$$java_file" ] && [ -f "$$java_file" ] && relpath=$${{java_file#$$src/src/gen/java/}} && relpath=$${{relpath#/}} && [[ "$$relpath" == com/* ]] && mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)" && cp "$$java_file" "$$WORKDIR/src/main/java/$$relpath" 2>/dev/null || true
+        done
+      fi
+      if [ -d "$$src/src/main/java" ]; then
+        find "$$src/src/main/java" -name "*.java" -type f 2>/dev/null | while read java_file; do
+          [ -n "$$java_file" ] && [ -f "$$java_file" ] && relpath=$${{java_file#$$src/src/main/java/}} && relpath=$${{relpath#/}} && [[ "$$relpath" == com/* ]] && mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)" && cp "$$java_file" "$$WORKDIR/src/main/java/$$relpath" 2>/dev/null || true
+        done
+      fi
+    fi
+    continue
+  fi
+  if [[ "$$src" == *.java ]]; then
+    if [[ "$$src" == *src/main/java/* ]]; then
+      relpath=$${{src#*src/main/java/}}
+      mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/main/java/$$relpath"
+    elif [[ "$$src" == *src/gen/java/* ]]; then
+      relpath=$${{src#*src/gen/java/}}
+      mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/main/java/$$relpath"
+    elif [[ "$$src" == *src/test/java/* ]]; then
+      relpath=$${{src#*src/test/java/}}
+      mkdir -p "$$WORKDIR/src/test/java/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/test/java/$$relpath"
+    fi
+  elif [[ "$$src" == *.kt ]]; then
+    if [[ "$$src" == *src/main/kotlin/* ]]; then
+      relpath=$${{src#*src/main/kotlin/}}
+      mkdir -p "$$WORKDIR/src/main/kotlin/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/main/kotlin/$$relpath"
+    elif [[ "$$src" == *src/test/kotlin/* ]]; then
+      relpath=$${{src#*src/test/kotlin/}}
+      mkdir -p "$$WORKDIR/src/test/kotlin/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
+    fi
+  elif [[ "$$src" == *src/main/resources/* ]] || [[ "$$src" == *src/test/resources/* ]]; then
+    if [[ "$$src" == *src/main/resources/* ]]; then
+      relpath=$${{src#*src/main/resources/}}
+      mkdir -p "$$WORKDIR/src/main/resources/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/main/resources/$$relpath"
+    else
+      relpath=$${{src#*src/test/resources/}}
+      mkdir -p "$$WORKDIR/src/test/resources/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/test/resources/$$relpath"
+    fi
+  elif [[ "$${{src##*/}}" == "pom.xml" ]]; then
+    cp "$$src" $$WORKDIR/pom.xml
+  fi
+done
+if [ ! -f "$$WORKDIR/pom.xml" ] || grep -q "<parent>" "$$WORKDIR/pom.xml" 2>/dev/null; then
+  cat > $$WORKDIR/pom.xml << 'EOFPOM'
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.gabriel</groupId>
+  <artifactId>{name}</artifactId>
+  <version>1.0.0</version>
+  <properties>
+    <quarkus.platform.version>3.31.2</quarkus.platform.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.quarkus.platform</groupId>
+        <artifactId>quarkus-bom</artifactId>
+        <version>$${{quarkus.platform.version}}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency><groupId>io.quarkus</groupId><artifactId>quarkus-core</artifactId></dependency>
+    <dependency><groupId>io.quarkus</groupId><artifactId>quarkus-resteasy</artifactId></dependency>
+    <dependency><groupId>io.quarkus</groupId><artifactId>quarkus-resteasy-jackson</artifactId></dependency>
+    <dependency><groupId>io.quarkus</groupId><artifactId>quarkus-hibernate-validator</artifactId></dependency>
+    <dependency><groupId>io.quarkus</groupId><artifactId>quarkus-mongodb-client</artifactId></dependency>
+    <dependency><groupId>io.quarkus</groupId><artifactId>quarkus-grpc</artifactId></dependency>
+    <dependency><groupId>io.quarkus</groupId><artifactId>quarkus-smallrye-health</artifactId></dependency>
+    <dependency><groupId>io.quarkus</groupId><artifactId>quarkus-messaging-kafka</artifactId></dependency>
+    <dependency><groupId>org.mongodb</groupId><artifactId>mongodb-driver-sync</artifactId><version>5.6.2</version></dependency>
+    <dependency><groupId>io.mongock</groupId><artifactId>mongock-standalone</artifactId><version>5.4.1</version></dependency>
+    <dependency><groupId>io.mongock</groupId><artifactId>mongodb-sync-v4-driver</artifactId><version>5.4.1</version></dependency>
+    <dependency><groupId>com.google.protobuf</groupId><artifactId>protobuf-java</artifactId><version>4.28.3</version></dependency>
+    <dependency><groupId>io.grpc</groupId><artifactId>grpc-api</artifactId><version>1.68.1</version></dependency>
+    <dependency><groupId>io.grpc</groupId><artifactId>grpc-stub</artifactId><version>1.68.1</version></dependency>
+    <dependency><groupId>javax.annotation</groupId><artifactId>javax.annotation-api</artifactId><version>1.3.2</version></dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration><source>21</source><target>21</target></configuration>
+      </plugin>
+      <plugin>
+        <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-maven-plugin</artifactId>
+        <version>$${{quarkus.platform.version}}</version>
+        <extensions>true</extensions>
+        <executions><execution><goals><goal>build</goal></goals></execution></executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+EOFPOM
+fi
+"""
+
 
 def quarkus_app(
         name,
@@ -239,24 +382,40 @@ for src in $(SRCS); do
   fi
   # Handle Java source files
   if [[ "$$src" == *.java ]]; then
-    # Extract path after src/main/java
-    # Pattern: package/src/main/java/com/... -> com/...
     if [[ "$$src" == *src/main/java/* ]]; then
       relpath=$${{src#*src/main/java/}}
       mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)"
       cp "$$src" "$$WORKDIR/src/main/java/$$relpath"
     elif [[ "$$src" == *src/gen/java/* ]]; then
-      # OpenAPI generated files
       relpath=$${{src#*src/gen/java/}}
       mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)"
       cp "$$src" "$$WORKDIR/src/main/java/$$relpath"
+    elif [[ "$$src" == *src/test/java/* ]]; then
+      relpath=$${{src#*src/test/java/}}
+      mkdir -p "$$WORKDIR/src/test/java/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/test/java/$$relpath"
+    fi
+  # Handle Kotlin source files
+  elif [[ "$$src" == *.kt ]]; then
+    if [[ "$$src" == *src/main/kotlin/* ]]; then
+      relpath=$${{src#*src/main/kotlin/}}
+      mkdir -p "$$WORKDIR/src/main/kotlin/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/main/kotlin/$$relpath"
+    elif [[ "$$src" == *src/test/kotlin/* ]]; then
+      relpath=$${{src#*src/test/kotlin/}}
+      mkdir -p "$$WORKDIR/src/test/kotlin/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
     fi
   # Handle resource files
-  elif [[ "$$src" == *.properties ]] || [[ "$$src" == *.xml ]] || [[ "$$src" == *.yaml ]] || [[ "$$src" == *.yml ]]; then
+  elif [[ "$$src" == *.properties ]] || [[ "$$src" == *.xml ]] || [[ "$$src" == *.yaml ]] || [[ "$$src" == *.yml ]] || [[ "$$src" == */*.sql ]]; then
     if [[ "$$src" == *src/main/resources/* ]]; then
       relpath=$${{src#*src/main/resources/}}
       mkdir -p "$$WORKDIR/src/main/resources/$$(dirname $$relpath)"
       cp "$$src" "$$WORKDIR/src/main/resources/$$relpath"
+    elif [[ "$$src" == *src/test/resources/* ]]; then
+      relpath=$${{src#*src/test/resources/}}
+      mkdir -p "$$WORKDIR/src/test/resources/$$(dirname $$relpath)"
+      cp "$$src" "$$WORKDIR/src/test/resources/$$relpath"
     fi
   # Handle pom.xml
   elif [[ "$${{src##*/}}" == "pom.xml" ]]; then
@@ -457,6 +616,106 @@ fi
         name = name,
         srcs = [":" + name + "_maven_build"],
         visibility = visibility,
+    )
+
+
+def quarkus_maven_test(
+        name,
+        java_library,
+        pom_xml = None,
+        source_files = None,
+        resource_files = None,
+        test_source_files = None,
+        test_resource_files = None,
+        deps = None,
+        tags = [],
+        visibility = None,
+        restricted_to = None,
+        target_compatible_with = []):
+    """Runs Quarkus tests via Maven in Docker (same as quarkus_maven but runs mvn test).
+
+    Use this for @QuarkusTest / Testcontainers tests that need QuarkusClassLoader.
+    Requires Docker. Produces a Bazel test target that runs mvn test in the same
+    workspace layout as quarkus_maven (main + test sources).
+
+    Args:
+      name: Test target name.
+      java_library: Label of the java_library (or kt_jvm_library) for main code.
+      pom_xml: Optional path to pom.xml (e.g. "pom.xml").
+      source_files: Optional list of main source files.
+      resource_files: Optional list of main resource files.
+      test_source_files: Optional list of test source files (Kotlin/Java).
+      test_resource_files: Optional list of test resource files.
+      deps: Optional extra deps (same as quarkus_maven).
+    """
+    all_srcs = [java_library]
+    if pom_xml:
+        all_srcs.append(pom_xml)
+    if source_files:
+        all_srcs.extend(source_files)
+    if resource_files:
+        all_srcs.extend(resource_files)
+    if test_source_files:
+        all_srcs.extend(test_source_files)
+    if test_resource_files:
+        all_srcs.extend(test_resource_files)
+    if deps:
+        all_srcs.extend(deps)
+
+    workspace_tar = name + "_workspace.tar"
+    native.genrule(
+        name = name + "_workspace",
+        srcs = all_srcs,
+        outs = [workspace_tar],
+        cmd = _MAVEN_COPY_AND_POM.format(name = name) + """
+# Remove local com.gabriel:core dependency from pom.xml (sources are inlined from JARs)
+if [ -f "$$WORKDIR/pom.xml" ]; then
+  perl -i -0pe 's/\\s*<dependency>\\s*<groupId>com\\.gabriel<\\/groupId>\\s*<artifactId>core<\\/artifactId>.*?<\\/dependency>//s' "$$WORKDIR/pom.xml" || true
+fi
+# Tar the workspace for the test runner (no Docker here)
+tar -C $$WORKDIR -cf $@ .
+""",
+        tags = tags,
+        restricted_to = restricted_to,
+        target_compatible_with = target_compatible_with,
+    )
+
+    runner_script = name + "_run_tests.sh"
+    native.genrule(
+        name = name + "_runner",
+        srcs = [":" + name + "_workspace"],
+        outs = [runner_script],
+        cmd = """
+echo 'set -e' > $@
+echo 'SCRIPT_DIR=$$(cd "$$(dirname "$$0")" && pwd)' >> $@
+echo 'TAR="$$SCRIPT_DIR/{name}_workspace.tar"' >> $@
+echo 'if [ ! -f "$$TAR" ]; then echo "Tarball not found: $$TAR" >&2; exit 1; fi' >> $@
+echo 'WORKDIR=$$(mktemp -d)' >> $@
+echo 'trap "rm -rf $$WORKDIR" EXIT' >> $@
+echo 'tar xf "$$TAR" -C "$$WORKDIR"' >> $@
+# Run as host user so files in WORKDIR stay owned by us and trap can rm -rf.
+# HOME=/workspace so Maven/shell do not try to use /root (writable).
+# Mount Docker socket and add docker group so Testcontainers can start Postgres etc. inside the container.
+echo 'DOCKER_GID=$$(getent group docker 2>/dev/null | cut -d: -f3)' >> $@
+echo 'DOCKER_ARGS=""' >> $@
+echo 'if [ -n "$$DOCKER_GID" ]; then DOCKER_ARGS="-v /var/run/docker.sock:/var/run/docker.sock --group-add $$DOCKER_GID"; fi' >> $@
+echo 'docker run --rm --user $$(id -u):$$(id -g) -e HOME=/workspace $$DOCKER_ARGS -v "$$WORKDIR:/workspace" -w /workspace maven:3.9-eclipse-temurin-21 sh -c "mvn test"' >> $@
+echo 'EXIT=$$?' >> $@
+echo 'exit $$EXIT' >> $@
+""".format(name = name),
+        tags = tags,
+        restricted_to = restricted_to,
+        target_compatible_with = target_compatible_with,
+    )
+
+    native.sh_test(
+        name = name,
+        srcs = [":" + name + "_runner"],
+        data = [":" + name + "_workspace"],
+        tags = tags + ["requires-docker", "local"],
+        visibility = visibility,
+        restricted_to = restricted_to,
+        target_compatible_with = target_compatible_with,
     )
 
 

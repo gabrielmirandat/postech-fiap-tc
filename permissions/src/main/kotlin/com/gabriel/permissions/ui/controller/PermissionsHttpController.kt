@@ -1,143 +1,132 @@
 package com.gabriel.permissions.ui.controller
 
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.gabriel.permissions.application.service.PermissionService
 import com.gabriel.permissions.ui.controller.request.GroupRequest
 import com.gabriel.permissions.ui.controller.request.ScopeGroupRequest
 import com.gabriel.permissions.ui.controller.request.ScopeRequest
 import com.gabriel.permissions.ui.controller.request.UserGroupRequest
-import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.*
+import jakarta.annotation.security.RolesAllowed
+import jakarta.ws.rs.*
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-@RestController
-@RequestMapping("/permissions")
+@Path("/permissions")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 class PermissionsHttpController(
     private val permissionService: PermissionService
 ) {
 
-    // Groups Roles endpoints
-    @GetMapping("/groups")
-    @PreAuthorize("hasAuthority('groups:list')")
-    fun listGroups(): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.retrieveAllRoles())
+    @GET
+    @Path("/groups")
+    @RolesAllowed("groups:list")
+    fun listGroups(): Response = Response.ok(permissionService.retrieveAllRoles()).build()
 
-    @PostMapping("/groups")
-    @PreAuthorize("hasAuthority('groups:manage')")
-    fun createGroup(@RequestBody groupRequest: GroupRequest): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.createRole(groupRequest.toRole()))
+    @POST
+    @Path("/groups")
+    @RolesAllowed("groups:manage")
+    fun createGroup(groupRequest: GroupRequest): Response =
+        Response.ok(permissionService.createRole(groupRequest.toRole())).build()
 
-    @PutMapping("/groups/{groupId}")
-    @PreAuthorize("hasAuthority('groups:manage')")
-    fun updateGroup(
-        @PathVariable groupId: UUID,
-        @RequestBody groupRequest: GroupRequest
-    ): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.updateRoleById(groupId, groupRequest.toRole()))
+    @PUT
+    @Path("/groups/{groupId}")
+    @RolesAllowed("groups:manage")
+    fun updateGroup(@PathParam("groupId") groupId: UUID, groupRequest: GroupRequest): Response =
+        Response.ok(permissionService.updateRoleById(groupId, groupRequest.toRole())).build()
 
-    @DeleteMapping("/groups/{groupId}")
-    @PreAuthorize("hasAuthority('groups:remove')")
-    fun deleteGroup(@PathVariable groupId: UUID): ResponseEntity<*> {
+    @DELETE
+    @Path("/groups/{groupId}")
+    @RolesAllowed("groups:remove")
+    fun deleteGroup(@PathParam("groupId") groupId: UUID): Response {
         permissionService.deleteRoleById(groupId)
-        return ResponseEntity.ok("Group deleted successfully")
+        return Response.ok("Group deleted successfully").build()
     }
 
-    // Group Admins endpoints
-    @GetMapping("/group_admins")
-    @PreAuthorize("hasAuthority('groups:admins:list')")
-    @Throws(JsonProcessingException::class)
-    fun listGroupAdmins(): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.listRoleAdmins())
+    @GET
+    @Path("/group_admins")
+    @RolesAllowed("groups:admins:list")
+    fun listGroupAdmins(): Response = Response.ok(permissionService.listRoleAdmins()).build()
 
-    @PostMapping("/group_admins")
-    @PreAuthorize("hasAuthority('groups:admins:add')")
-    fun addGroupAdmin(@RequestBody userGroupRequest: UserGroupRequest): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.addRoleAdmin(userGroupRequest.userId))
+    @POST
+    @Path("/group_admins")
+    @RolesAllowed("groups:admins:add")
+    fun addGroupAdmin(userGroupRequest: UserGroupRequest): Response =
+        Response.ok(permissionService.addRoleAdmin(userGroupRequest.userId)).build()
 
-    @DeleteMapping("/group_admins/{base64adminId}")
-    @PreAuthorize("hasAuthority('groups:admins:remove')")
-    fun removeGroupAdmin(@PathVariable base64adminId: String): ResponseEntity<*> {
+    @DELETE
+    @Path("/group_admins/{base64adminId}")
+    @RolesAllowed("groups:admins:remove")
+    fun removeGroupAdmin(@PathParam("base64adminId") base64adminId: String): Response {
         val decodedAdminId = String(Base64.getDecoder().decode(base64adminId), StandardCharsets.UTF_8)
         permissionService.removeRoleAdmin(decodedAdminId)
-        return ResponseEntity.ok("Group admin removed successfully")
+        return Response.ok("Group admin removed successfully").build()
     }
 
-    // Groups Users endpoints
-    @GetMapping("/groups/{groupId}/users")
-    @PreAuthorize("hasAuthority('groups:users:list')")
-    @Throws(JsonProcessingException::class)
-    fun listGroupUsers(@PathVariable groupId: UUID): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.listRoleUsers(groupId))
+    @GET
+    @Path("/groups/{groupId}/users")
+    @RolesAllowed("groups:users:list")
+    fun listGroupUsers(@PathParam("groupId") groupId: UUID): Response =
+        Response.ok(permissionService.listRoleUsers(groupId)).build()
 
-    @PostMapping("/groups/{groupId}/users")
-    @PreAuthorize("hasAuthority('groups:users:add')")
-    fun addGroupUser(
-        @PathVariable groupId: UUID,
-        @RequestBody userGroupRequest: UserGroupRequest
-    ): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.addRoleUser(groupId, userGroupRequest.userId))
+    @POST
+    @Path("/groups/{groupId}/users")
+    @RolesAllowed("groups:users:add")
+    fun addGroupUser(@PathParam("groupId") groupId: UUID, userGroupRequest: UserGroupRequest): Response =
+        Response.ok(permissionService.addRoleUser(groupId, userGroupRequest.userId)).build()
 
-    @DeleteMapping("/groups/{groupId}/users/{base64adminId}")
-    @PreAuthorize("hasAuthority('groups:users:remove')")
-    fun removeGroupUser(
-        @PathVariable groupId: UUID,
-        @PathVariable base64adminId: String
-    ): ResponseEntity<*> {
+    @DELETE
+    @Path("/groups/{groupId}/users/{base64adminId}")
+    @RolesAllowed("groups:users:remove")
+    fun removeGroupUser(@PathParam("groupId") groupId: UUID, @PathParam("base64adminId") base64adminId: String): Response {
         val decodedAdminId = String(Base64.getDecoder().decode(base64adminId), StandardCharsets.UTF_8)
         permissionService.removeRoleUser(groupId, decodedAdminId)
-        return ResponseEntity.ok("User removed from group successfully")
+        return Response.ok("User removed from group successfully").build()
     }
 
-    // Groups Scopes endpoints
-    @GetMapping("/groups/{groupId}/scopes")
-    @PreAuthorize("hasAuthority('groups:scopes:list')")
-    fun listGroupScopes(@PathVariable groupId: UUID): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.listRoleAuthorities(groupId))
+    @GET
+    @Path("/groups/{groupId}/scopes")
+    @RolesAllowed("groups:scopes:list")
+    fun listGroupScopes(@PathParam("groupId") groupId: UUID): Response =
+        Response.ok(permissionService.listRoleAuthorities(groupId)).build()
 
-    @PostMapping("/groups/{groupId}/scopes")
-    @PreAuthorize("hasAuthority('groups:scopes:add')")
-    fun addGroupScope(
-        @PathVariable groupId: UUID,
-        @RequestBody scopeGroupRequest: ScopeGroupRequest
-    ): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.addRoleAuthority(groupId, scopeGroupRequest.authorityId))
+    @POST
+    @Path("/groups/{groupId}/scopes")
+    @RolesAllowed("groups:scopes:add")
+    fun addGroupScope(@PathParam("groupId") groupId: UUID, scopeGroupRequest: ScopeGroupRequest): Response =
+        Response.ok(permissionService.addRoleAuthority(groupId, scopeGroupRequest.authorityId)).build()
 
-    @DeleteMapping("/groups/{groupId}/scopes/{scopeId}")
-    @PreAuthorize("hasAuthority('groups:scopes:remove')")
-    fun removeGroupScope(
-        @PathVariable groupId: UUID,
-        @PathVariable scopeId: UUID
-    ): ResponseEntity<*> {
+    @DELETE
+    @Path("/groups/{groupId}/scopes/{scopeId}")
+    @RolesAllowed("groups:scopes:remove")
+    fun removeGroupScope(@PathParam("groupId") groupId: UUID, @PathParam("scopeId") scopeId: UUID): Response {
         permissionService.removeRoleAuthority(groupId, scopeId)
-        return ResponseEntity.ok("Scope removed from group successfully")
+        return Response.ok("Scope removed from group successfully").build()
     }
 
-    // Scopes endpoints
-    @GetMapping("/scopes")
-    @PreAuthorize("hasAuthority('scopes:list')")
-    fun listScopes(): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.listAuthorities())
+    @GET
+    @Path("/scopes")
+    @RolesAllowed("scopes:list")
+    fun listScopes(): Response = Response.ok(permissionService.listAuthorities()).build()
 
-    @PostMapping("/scopes")
-    @PreAuthorize("hasAuthority('scopes:manage')")
-    fun createScope(@RequestBody scopeRequest: ScopeRequest): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.createAuthority(scopeRequest.toAuthority()))
+    @POST
+    @Path("/scopes")
+    @RolesAllowed("scopes:manage")
+    fun createScope(scopeRequest: ScopeRequest): Response =
+        Response.ok(permissionService.createAuthority(scopeRequest.toAuthority())).build()
 
-    @PutMapping("/scopes/{scopeId}")
-    @PreAuthorize("hasAuthority('scopes:manage')")
-    @Throws(JsonProcessingException::class)
-    fun updateScope(
-        @PathVariable scopeId: UUID,
-        @RequestBody scopeRequest: ScopeRequest
-    ): ResponseEntity<*> =
-        ResponseEntity.ok(permissionService.updateAuthorityById(scopeId, scopeRequest.toAuthority()))
+    @PUT
+    @Path("/scopes/{scopeId}")
+    @RolesAllowed("scopes:manage")
+    fun updateScope(@PathParam("scopeId") scopeId: UUID, scopeRequest: ScopeRequest): Response =
+        Response.ok(permissionService.updateAuthorityById(scopeId, scopeRequest.toAuthority())).build()
 
-    @DeleteMapping("/scopes/{scopeId}")
-    @PreAuthorize("hasAuthority('scopes:remove')")
-    fun deleteScope(@PathVariable scopeId: UUID): ResponseEntity<*> {
+    @DELETE
+    @Path("/scopes/{scopeId}")
+    @RolesAllowed("scopes:remove")
+    fun deleteScope(@PathParam("scopeId") scopeId: UUID): Response {
         permissionService.deleteAuthorityById(scopeId)
-        return ResponseEntity.ok("Scope removed successfully")
+        return Response.ok("Scope removed successfully").build()
     }
 }

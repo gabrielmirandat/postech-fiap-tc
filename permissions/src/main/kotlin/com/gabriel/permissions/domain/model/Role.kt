@@ -3,7 +3,6 @@ package com.gabriel.permissions.domain.model
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
-import org.hibernate.annotations.GenericGenerator
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 import java.util.UUID
@@ -13,8 +12,7 @@ import java.util.UUID
 open class Role @JvmOverloads constructor(
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", updatable = false, nullable = false)
     open var id: UUID? = null,
 
