@@ -648,6 +648,7 @@ def quarkus_maven_test(
         deps = None,
         test_classes = None,
         tags = [],
+        timeout = "long",
         visibility = None,
         restricted_to = None,
         target_compatible_with = []):
@@ -672,6 +673,8 @@ def quarkus_maven_test(
         If None and test_source_files is set, test classes are derived from test file paths
         (src/test/kotlin/**/*.kt and src/test/java/**/*.java); files with "Resource" in the
         path are excluded; only *Test, *Tests, *IntegrationTest, *IT are included.
+      timeout: Bazel test timeout (e.g. "short", "medium", "long", "eternal"). Default "long"
+        (900s) for Maven+Docker/Testcontainers.
     """
     # Derive test_classes from test_source_files when not provided
     if test_classes == None and test_source_files:
@@ -795,6 +798,7 @@ echo 'exit $$EXIT' >> $@
                 srcs = [":" + wrapper_name],
                 data = [":" + name + "_runner", ":" + name + "_workspace"],
                 tags = test_tags,
+                timeout = timeout,
                 visibility = visibility,
                 restricted_to = restricted_to,
                 target_compatible_with = target_compatible_with,
@@ -811,6 +815,7 @@ echo 'exit $$EXIT' >> $@
             srcs = [":" + name + "_runner"],
             data = [":" + name + "_workspace"],
             tags = test_tags,
+            timeout = timeout,
             visibility = visibility,
             restricted_to = restricted_to,
             target_compatible_with = target_compatible_with,
