@@ -49,9 +49,10 @@ for src in $(SRCS); do
       relpath=$${{java_file#$$TEMP_DIR/}}
       if [[ "$$relpath" != META-INF/* ]] && [[ "$$relpath" == */*.java ]]; then
         mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)"
-        cp "$$java_file" "$$WORKDIR/src/main/java/$$relpath" 2>/dev/null || true
+        cp -f "$$java_file" "$$WORKDIR/src/main/java/$$relpath" 2>/dev/null || true
       fi
     done
+    chmod -R u+w $$TEMP_DIR 2>/dev/null || true
     rm -rf $$TEMP_DIR
     continue
   fi
@@ -59,12 +60,12 @@ for src in $(SRCS); do
     if [[ "$$src" == *menu_api_files* ]] || [[ "$$src" == *api_files* ]]; then
       if [ -d "$$src/src/gen/java" ]; then
         find "$$src/src/gen/java" -name "*.java" -type f 2>/dev/null | while read java_file; do
-          [ -n "$$java_file" ] && [ -f "$$java_file" ] && relpath=$${{java_file#$$src/src/gen/java/}} && relpath=$${{relpath#/}} && [[ "$$relpath" == com/* ]] && mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)" && cp "$$java_file" "$$WORKDIR/src/main/java/$$relpath" 2>/dev/null || true
+          [ -n "$$java_file" ] && [ -f "$$java_file" ] && relpath=$${{java_file#$$src/src/gen/java/}} && relpath=$${{relpath#/}} && [[ "$$relpath" == com/* ]] && mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)" && cp -f "$$java_file" "$$WORKDIR/src/main/java/$$relpath" 2>/dev/null || true
         done
       fi
       if [ -d "$$src/src/main/java" ]; then
         find "$$src/src/main/java" -name "*.java" -type f 2>/dev/null | while read java_file; do
-          [ -n "$$java_file" ] && [ -f "$$java_file" ] && relpath=$${{java_file#$$src/src/main/java/}} && relpath=$${{relpath#/}} && [[ "$$relpath" == com/* ]] && mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)" && cp "$$java_file" "$$WORKDIR/src/main/java/$$relpath" 2>/dev/null || true
+          [ -n "$$java_file" ] && [ -f "$$java_file" ] && relpath=$${{java_file#$$src/src/main/java/}} && relpath=$${{relpath#/}} && [[ "$$relpath" == com/* ]] && mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)" && cp -f "$$java_file" "$$WORKDIR/src/main/java/$$relpath" 2>/dev/null || true
         done
       fi
     fi
@@ -74,46 +75,46 @@ for src in $(SRCS); do
     if [[ "$$src" == *src/main/java/* ]]; then
       relpath=$${{src#*src/main/java/}}
       mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)"
-      cp "$$src" "$$WORKDIR/src/main/java/$$relpath"
+      cp -f "$$src" "$$WORKDIR/src/main/java/$$relpath"
     elif [[ "$$src" == *src/gen/java/* ]]; then
       relpath=$${{src#*src/gen/java/}}
       mkdir -p "$$WORKDIR/src/main/java/$$(dirname $$relpath)"
-      cp "$$src" "$$WORKDIR/src/main/java/$$relpath"
+      cp -f "$$src" "$$WORKDIR/src/main/java/$$relpath"
     elif [[ "$$src" == *src/test/java/* ]]; then
       relpath=$${{src#*src/test/java/}}
       mkdir -p "$$WORKDIR/src/test/java/$$(dirname $$relpath)"
-      cp "$$src" "$$WORKDIR/src/test/java/$$relpath"
+      cp -f "$$src" "$$WORKDIR/src/test/java/$$relpath"
     fi
   elif [[ "$$src" == *.kt ]]; then
     if [[ "$$src" == *src/main/kotlin/* ]]; then
       relpath=$${{src#*src/main/kotlin/}}
       mkdir -p "$$WORKDIR/src/main/kotlin/$$(dirname $$relpath)"
-      cp "$$src" "$$WORKDIR/src/main/kotlin/$$relpath"
+      cp -f "$$src" "$$WORKDIR/src/main/kotlin/$$relpath"
     elif [[ "$$src" == *src/test/kotlin/* ]]; then
       relpath=$${{src#*src/test/kotlin/}}
       mkdir -p "$$WORKDIR/src/test/kotlin/$$(dirname $$relpath)"
-      cp "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
+      cp -f "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
     elif [[ "$$src" == *src/test/unit/kotlin/* ]]; then
       relpath=$${{src#*src/test/unit/kotlin/}}
       mkdir -p "$$WORKDIR/src/test/kotlin/$$(dirname $$relpath)"
-      cp "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
+      cp -f "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
     elif [[ "$$src" == *src/test/integration/kotlin/* ]]; then
       relpath=$${{src#*src/test/integration/kotlin/}}
       mkdir -p "$$WORKDIR/src/test/kotlin/$$(dirname $$relpath)"
-      cp "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
+      cp -f "$$src" "$$WORKDIR/src/test/kotlin/$$relpath"
     fi
   elif [[ "$$src" == *src/main/resources/* ]] || [[ "$$src" == *src/test/resources/* ]]; then
     if [[ "$$src" == *src/main/resources/* ]]; then
       relpath=$${{src#*src/main/resources/}}
       mkdir -p "$$WORKDIR/src/main/resources/$$(dirname $$relpath)"
-      cp "$$src" "$$WORKDIR/src/main/resources/$$relpath"
+      cp -f "$$src" "$$WORKDIR/src/main/resources/$$relpath"
     else
       relpath=$${{src#*src/test/resources/}}
       mkdir -p "$$WORKDIR/src/test/resources/$$(dirname $$relpath)"
-      cp "$$src" "$$WORKDIR/src/test/resources/$$relpath"
+      cp -f "$$src" "$$WORKDIR/src/test/resources/$$relpath"
     fi
   elif [[ "$${{src##*/}}" == "pom.xml" ]]; then
-    cp "$$src" $$WORKDIR/pom.xml
+    cp -f "$$src" $$WORKDIR/pom.xml
   fi
 done
 if [ ! -f "$$WORKDIR/pom.xml" ] || grep -q "<parent>" "$$WORKDIR/pom.xml" 2>/dev/null; then
@@ -331,6 +332,7 @@ for src in $(SRCS); do
         cp "$$java_file" "$$WORKDIR/src/main/java/$$relpath" 2>/dev/null || true
       fi
     done
+    chmod -R u+w $$TEMP_DIR 2>/dev/null || true
     rm -rf $$TEMP_DIR
     continue
   fi
