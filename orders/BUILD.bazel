@@ -200,6 +200,7 @@ java_test_suite(
 )
 
 # bazel test //orders:integration
+# no-sandbox + requires-docker: Testcontainers (Redis, MongoDB, Kafka, gRPC) need Docker in CI
 java_test_suite(
     name = "integration",
     srcs = glob([
@@ -216,6 +217,7 @@ java_test_suite(
     ]),
     runner = "junit5",
     runtime_deps = JUNIT5_DEPS,
+    tags = ["no-sandbox", "requires-docker"],
     deps = [
         ":artifact",
         ":orders_api",
