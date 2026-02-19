@@ -37,7 +37,7 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
       - name: Test with Bazel
-        run: bazel test $(bazel query 'filter(":unit", //...:*)')
+        run: bazel test --test_output=errors $(bazel query 'filter(":unit", //...:*)')
         env:
           BAZELISK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -53,7 +53,7 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
       - name: Test with Bazel
-        run: bazel test $(bazel query 'filter(":integration", //...:*)')
+        run: bazel test --test_output=errors $(bazel query 'filter(":integration", //...:*)')
         env:
           BAZELISK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -69,7 +69,7 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
       - name: Test with Bazel
-        run: bazel test $(bazel query 'filter(":behavior", //...:*)')
+        run: bazel test --test_output=errors $(bazel query 'filter(":behavior", //...:*)')
         env:
           BAZELISK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -85,7 +85,7 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
       - name: Test with Bazel
-        run: bazel test $(bazel query 'filter(":contract", //...:*)')
+        run: bazel test --test_output=errors $(bazel query 'filter(":contract", //...:*)')
         env:
           BAZELISK_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

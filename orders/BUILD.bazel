@@ -273,6 +273,7 @@ java_test_suite(
     ]),
     runner = "junit5",
     runtime_deps = JUNIT5_DEPS,
+    tags = ["requires-docker", "local"],
     deps = [
         ":artifact",
         ":test_utility",
@@ -311,6 +312,7 @@ java_test_suite(
         "@maven//:org_junit_jupiter_junit_jupiter_engine",
         "@maven//:org_junit_platform_junit_platform_launcher",
     ],
+    tags = ["requires-docker", "local"],
     deps = [
         ":artifact",
         ":test_utility",
