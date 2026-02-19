@@ -217,7 +217,7 @@ java_test_suite(
     ]),
     runner = "junit5",
     runtime_deps = JUNIT5_DEPS,
-    tags = ["no-sandbox", "requires-docker"],
+    tags = ["requires-docker", "local"],
     deps = [
         ":artifact",
         ":orders_api",
