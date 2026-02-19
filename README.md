@@ -119,56 +119,62 @@ this project is a restaurant management system.
 
 ### Permissions
 **Architecture:** Domain-Driven Design (DDD) + MVC
-**Framework:** Spring Boot 3.2.4
-**Languages:** Kotlin 2.1.0 (domain models) + Java 21 (application layer)
+**Framework:** Quarkus 3.31.2
+**Language:** Kotlin 2.1.0
 **Database:** PostgreSQL 17.2 (with Liquibase for migrations)
-**Authentication/Authorization:** Auth0 (OAuth2/OIDC)
+**Authentication/Authorization:** Auth0 (OIDC/JWT)
 **Communication:** gRPC (synchronous)
 **HTTP Client:** Unirest Java
-**Testing:** JUnit 5, Spring Security Test
+**Testing:** JUnit 5, Quarkus @QuarkusTest, Testcontainers, Mockito, Rest Assured
 
 **Architectural Patterns:**
 - **MVC:** Clear separation between Controllers (UI), Services (Application), Repositories (Domain)
-- **DDD:** Domain entities (Role, Authority, RoleAuthority) - **implemented in Kotlin**
-- **Security:** Spring Security with OAuth2 Resource Server and Auth0 integration
-- **Polyglot JVM:** Demonstrates Kotlin-Java interoperability within a single microservice
+- **DDD:** Domain entities (Role, Authority, RoleAuthority) implemented in Kotlin
+- **Security:** Quarkus OIDC with Auth0 integration, custom SecurityAugmentor for permission enrichment
+- **CDI:** Jakarta Contexts and Dependency Injection (Quarkus native)
 
 **Structure:**
-- `domain/model` (**Kotlin**): Domain entities (Role, Authority, RoleAuthority), converters
-- `ui/controller` (Java): HTTP REST and gRPC controllers
-- `application/service` (Java): Application services (PermissionService)
-- `domain/repository` (Java): Repository interfaces (JPA)
-- `infraestructure/security` (Java): Spring Security configuration
-- `infraestructure/provider` (Java): Auth0 integration
+- `domain/model`: Domain entities (Role, Authority, RoleAuthority), JPA converters
+- `domain/repository`: Repository interfaces (JPA/Panache)
+- `domain/model/exceptions`: Custom domain exceptions
+- `application/service`: Application services (PermissionService with Auth0 integration)
+- `ui/controller`: HTTP REST and gRPC controllers
+- `ui/controller/request`: Request DTOs (Kotlin data classes)
+- `ui/controller/response`: Response DTOs
+- `infraestructure/security`: Quarkus SecurityAugmentor for JWT permission enrichment
+- `infraestructure/provider`: Auth0 Management API integration
 
 **Key Technologies:**
-- Kotlin 2.1.0 with Spring Boot support
-- Kotlin data classes for concise JPA entities
-- Spring Boot Starter Web, Security, OAuth2 Resource Server
-- Spring Data JPA for persistence
+- Kotlin 2.1.0 with Quarkus support
+- Quarkus RESTEasy for REST APIs
+- Quarkus Hibernate ORM + Panache for persistence
+- Quarkus OIDC for JWT/Auth0 authentication
+- Quarkus gRPC for synchronous service communication
+- Quarkus Liquibase for database migrations
+- Quarkus SmallRye Health for health checks
 - PostgreSQL Driver 42.7.3
-- Liquibase 4.27.0 for SQL migrations
-- Auth0 Spring Security API 1.5.3
-- gRPC Spring Boot Starter 3.1.0
-- Unirest Java 4.3.1 for external HTTP calls
+- Unirest Java 4.3.1 for Auth0 Management API calls
+- Protobuf + gRPC for core model interoperability
 
 **Features:**
 - Role (Group) and Authority (Scope) management
-- Auth0 integration for authentication
-- Permission validation via JWT tokens
+- Auth0 integration for authentication (OIDC)
+- Custom permission enrichment via SecurityAugmentor (JWT claims to GrantedAuthorities)
 - REST and gRPC APIs to expose permissions
+- Health checks via SmallRye Health
 
-**TODOs (from original design):** 
+**TODOs (from original design):**
 - Implement audit table for permission changes
 - Integrate Kafka to emit permission-related events
 
 **Bazel Build:**
-- **Dependencies:** Bazel 8.3.1+ (Java 21 JDK is automatically managed via hermetic toolchain)
-- **Build target:** `//permissions:artifact`
-- **Test targets:** `//permissions:unit`, `//permissions:integration`
-- **Executable target:** `//permissions:uber` (Spring Boot JAR - no Docker required)
-- **Image target:** `//permissions:image` (Docker image - Docker required only for this target)
-- **No system dependencies required** - all dependencies are managed via Bazel's Maven integration and hermetic toolchains
+- **Dependencies:** Bazel 8.3.1+, Docker (required for Maven-based Quarkus build and tests)
+- **Build target:** `//permissions:artifact` (Kotlin library)
+- **Test targets:** `//permissions:unit`, `//permissions:integration` (Quarkus @QuarkusTest + Testcontainers)
+- **Executable target:** `//permissions:uber` (Quarkus uber JAR via Maven build)
+- **Image target:** `//permissions:image` (Docker image - Docker required)
+- **Build system:** Hybrid Bazel + Maven (Bazel compiles Kotlin library, Maven builds Quarkus uber JAR)
+- **Note:** Tests require Docker because they run inside a Maven container with Testcontainers
 
 ---
 
@@ -442,67 +448,6 @@ This project demonstrates a **polyglot microservices architecture** where each s
 - **Ruby** - 1 service (Notifications)
 - **C#/.NET** - 1 service (Payments)
 
-**✅ Completed Migration: Permissions to Kotlin**
-
-The Permissions service has been successfully migrated to use **Kotlin for domain models** while keeping Java for application logic:
-
-**Migration Status:**
-- ✅ **Domain entities:** Role, Authority, RoleAuthority - migrated to Kotlin data classes
-- ✅ **Converters:** PermissionIDConverter, InstantAttributeConverter - migrated to Kotlin
-- ⏸️ **Services, Controllers, Repositories:** Remaining in Java (seamless interoperability)
-
-**Why Permissions was chosen:**
-
-**Why Permissions?**
-- **Smallest codebase:** 29 Java files (vs 54 in Menu, 117 in Orders)
-- **Simplest domain:** Basic CRUD for Role/Authority/RoleAuthority entities
-- **No complex patterns:** No event sourcing, CQRS, or distributed transactions
-- **Single database:** PostgreSQL with JPA - Kotlin has excellent Spring Data support
-- **Straightforward migration:** Java and Kotlin can coexist during migration
-
-**Why Kotlin (not Scala)?**
-- **100% Spring Boot compatibility** - Kotlin is officially supported by Spring
-- **Gradual migration** - Can migrate file-by-file, Java and Kotlin interoperate seamlessly
-- **Modern syntax** - Data classes, null safety, extension functions, coroutines
-- **Same JVM** - No runtime overhead, same deployment model
-- **Mature tooling** - `rules_kotlin` integrates with Bazel's `rules_jvm`
-- **Lower learning curve** - More similar to Java than Scala
-
-**Expected Benefits:**
-- **Conciseness:** Kotlin reduces boilerplate (data classes, no semicolons, type inference)
-- **Safety:** Null-safety at compile time prevents NullPointerExceptions
-- **Modern features:** Extension functions, sealed classes, scope functions
-- **Same performance:** JVM bytecode identical to Java
-
-**Example Migration:**
-```java
-// Java
-public class Role {
-    private UUID id;
-    private String name;
-    private String description;
-    private Instant createdAt;
-    private Instant updatedAt;
-
-    // Getters, setters, equals, hashCode, toString...
-}
-```
-
-```kotlin
-// Kotlin
-data class Role(
-    val id: UUID,
-    val name: String,
-    val description: String,
-    val createdAt: Instant,
-    val updatedAt: Instant
-)
-```
-
-**Alternative Services to Migrate:**
-- **Menu** - Migrated to **Go 1.23 + Gin** (no longer JVM)
-- **Orders** (117 files) - Not recommended due to complexity and extensive test suites
-
 ### Patterns and Practices
 
 - **Event-Driven Architecture:** Asynchronous communication via Apache Kafka using CloudEvents
@@ -519,8 +464,7 @@ data class Role(
 **Backend Languages:**
 - Java 21 (Orders, Core)
 - Go 1.23 (Menu)
-- Kotlin 2.1.0 (Permissions - domain layer)
-- Java 21 + Kotlin 2.1.0 (Permissions - hybrid polyglot service)
+- Kotlin 2.1.0 (Permissions)
 - TypeScript 5.9.3 (Supplies)
 - Rust (Edition 2021) (Deliveries)
 - Python 3.11 (Customers)
@@ -528,7 +472,8 @@ data class Role(
 - C# / .NET 10.0 (Payments - planned)
 
 **Frameworks:**
-- Spring Boot 3.2.4 (Orders, Permissions)
+- Spring Boot 3.2.4 (Orders)
+- Quarkus 3.31.2 (Permissions)
 - Gin 1.10 (Menu)
 - NestJS 10.3.0 (Supplies)
 - Axum 0.7 (Deliveries)
@@ -560,6 +505,7 @@ data class Role(
 
 **Testing:**
 - JUnit 5, Mockito, Testcontainers (Java/Kotlin)
+- Quarkus @QuarkusTest, Rest Assured, Testcontainers (Permissions)
 - Go testing package (Menu)
 - Cucumber (BDD)
 - Specmatic (Contract Testing)
