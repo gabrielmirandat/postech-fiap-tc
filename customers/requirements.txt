@@ -4,3 +4,4 @@ edgedb
 kafka-python 
 aiokafka
 dependency-injector
+strawberry-graphql[fastapi]

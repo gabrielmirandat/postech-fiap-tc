@@ -104,6 +104,17 @@ py_library(
 )
 
 py_library(
+    name = "graphql",
+    srcs = glob(["src/graphql/**/*.py"]),
+    deps = [
+        ":entities",
+        ":use_cases",
+        "@pip//strawberry_graphql",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+py_library(
     name = "config",
     srcs = [
         "src/config.py",
@@ -145,6 +156,7 @@ py_binary(
         ":entities",
         ":external_interfaces",
         ":gateways",
+        ":graphql",
         ":presenters",
         ":use_cases",
         ":web",
@@ -155,6 +167,7 @@ py_binary(
         "@pip//kafka_python",
         "@pip//aiokafka",
         "@pip//dependency_injector",
+        "@pip//strawberry_graphql",
     ],
     visibility = ["//visibility:public"],
 )
