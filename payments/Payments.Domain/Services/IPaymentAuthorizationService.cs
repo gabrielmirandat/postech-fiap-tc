@@ -15,7 +15,7 @@ public interface IPaymentAuthorizationService
 }
 
 public record PaymentAuthorizationResult(
-    string PaymentIntentId,
+    string? PaymentIntentId,
     bool Success,
     string? ErrorMessage = null
 );

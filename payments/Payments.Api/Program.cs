@@ -1,46 +1,15 @@
-using Payments.Infrastructure.Configuration;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Payments.Infrastructure.Configuration;
 
-namespace Payments.Api;
+var builder = WebApplication.CreateBuilder(args);
 
-public class Program
-{
-    public static void Main(string[] args)
-    {
-        BuildWebHost(args).Run();
-    }
+builder.Services.AddControllers();
+builder.Services.AddInfrastructure(builder.Configuration);
 
-    public static IWebHost BuildWebHost(string[] args) =>
-        WebHost.CreateDefaultBuilder(args)
-            .UseStartup<Startup>()
-            .Build();
-}
+var app = builder.Build();
 
-public class Startup
-{
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
+app.MapControllers();
 
-    public IConfiguration Configuration { get; }
 
-    public void ConfigureServices(IServiceCollection services)
-    {
-        // Add MVC services (ASP.NET Core 2.2)
-        services.AddMvcCore();
-
-        // Add infrastructure
-        services.AddInfrastructure(Configuration);
-    }
-
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-    {
-        // MVC routing (ASP.NET Core 2.2)
-        app.UseMvc();
-    }
-}
+app.Run();

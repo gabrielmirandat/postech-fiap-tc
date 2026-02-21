@@ -216,11 +216,16 @@ py_test(
     srcs = [
         "tests/__init__.py",
         "tests/unit/__init__.py",
+        "tests/unit/run_all.py",
         "tests/unit/test_customer_simple.py",
+        "tests/unit/test_graphql_schema.py",
     ],
-    main = "tests/unit/test_customer_simple.py",
+    main = "tests/unit/run_all.py",
     deps = [
         ":entities",
+        ":graphql",
+        ":use_cases",
+        "@pip//strawberry_graphql",
     ],
     imports = ["."],
     python_version = "PY3",

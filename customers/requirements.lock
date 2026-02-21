@@ -24,7 +24,7 @@ edgedb==2.2.0
     # via -r requirements.txt
 fastapi==0.128.6
     # via
-    #   -r /home/gabriel-miranda/repos/postech-fiap-tc/customers/requirements.txt
+    #   -r requirements.txt
     #   strawberry-graphql
 graphql-core==3.2.7
     # via strawberry-graphql

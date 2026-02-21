@@ -9,10 +9,10 @@ namespace Payments.Domain.Entities;
 
 public class Payment
 {
-    public PaymentId Id { get; private set; }
-    public Money Amount { get; private set; }
-    public string OrderId { get; private set; }
-    public string CustomerId { get; private set; }
+    public PaymentId Id { get; private set; } = null!;
+    public Money Amount { get; private set; } = null!;
+    public string OrderId { get; private set; } = null!;
+    public string CustomerId { get; private set; } = null!;
     public PaymentStatus Status { get; private set; }
     public string? StripePaymentIntentId { get; private set; }
     public DateTime CreatedAt { get; private set; }
@@ -76,7 +76,7 @@ public class Payment
         return new Payment(id, amount, orderId, customerId, status, stripePaymentIntentId, createdAt, processedAt);
     }
 
-    public void MarkAsProcessing(string stripePaymentIntentId)
+    public void MarkAsProcessing(string? stripePaymentIntentId)
     {
         if (Status != PaymentStatus.Pending)
             throw new InvalidOperationException($"Cannot process payment in {Status} status");
